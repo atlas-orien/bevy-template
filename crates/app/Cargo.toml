@@ -10,7 +10,8 @@ publish = false
 
 [dependencies]
 bevy.workspace = true
-ecs.workspace = true
+components.workspace = true
+controller.workspace = true
 error.workspace = true
-gameplay.workspace = true
 render_2d.workspace = true
+simulation.workspace = true

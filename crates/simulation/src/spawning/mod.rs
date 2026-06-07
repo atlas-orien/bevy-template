@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use ecs::characters::player::PlayerBundle;
+use components::characters::player::PlayerBundle;
 
-use crate::flow::GameplayState;
+use crate::flow::AppState;
 
 #[derive(Component)]
 pub struct GameplayEntity;
@@ -10,13 +10,19 @@ pub struct SpawningPlugin;
 
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameplayState::Playing), spawn_player)
-            .add_systems(OnExit(GameplayState::Playing), despawn_gameplay_entities);
+        app.add_systems(OnEnter(AppState::Playing), spawn_player)
+            .add_systems(OnExit(AppState::Playing), despawn_gameplay_entities);
     }
 }
 
 fn spawn_player(mut commands: Commands) {
-    commands.spawn((PlayerBundle::default(), GameplayEntity));
+    commands.spawn((
+        PlayerBundle {
+            transform: Transform::from_xyz(0.0, -180.0, 10.0),
+            ..default()
+        },
+        GameplayEntity,
+    ));
 }
 
 fn despawn_gameplay_entities(

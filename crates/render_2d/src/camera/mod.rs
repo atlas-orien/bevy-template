@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use gameplay::flow::GameplayState;
+use simulation::flow::AppState;
 
 #[derive(Component)]
 struct MainCamera;
@@ -8,8 +8,8 @@ pub struct Camera2dPlugin;
 
 impl Plugin for Camera2dPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameplayState::Playing), spawn_camera)
-            .add_systems(OnExit(GameplayState::Playing), despawn_camera);
+        app.add_systems(OnEnter(AppState::Playing), spawn_camera)
+            .add_systems(OnExit(AppState::Playing), despawn_camera);
     }
 }
 

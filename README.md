@@ -17,8 +17,9 @@
 ## Workspace 结构
 
 - `crates/error`: shared error event, severity, and logging system
-- `crates/ecs`: ECS/domain 数据层，按角色、背景、物品、世界等分类
-- `crates/gameplay`: 玩法规则、状态流、生成/销毁、交互、战斗等系统
+- `crates/components`: ECS 数据定义层，按角色、背景、物品、世界等分类
+- `crates/controller`: 控制层，把键盘、手柄、AI、脚本等输入转换成 intent
+- `crates/simulation`: 模拟层，负责状态流、生成/销毁、移动、战斗、交互等世界变化
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D camera、screen、UI、sprite 等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D camera、scene、3D UI 等
 - `crates/app`: 最终运行的 app crate，负责组装插件
@@ -33,8 +34,9 @@
 
 ```rust
 ErrorPlugin
-EcsPlugin
-GameplayPlugin
+ComponentsPlugin
+SimulationPlugin
+ControllerPlugin
 Render2dPlugin
 ```
 
@@ -42,8 +44,9 @@ Render2dPlugin
 
 ## 分层规则
 
-- `ecs` 只放组件、bundle、resource、domain 数据定义。
-- `gameplay` 放真正的游戏规则和系统逻辑。
+- `components` 只放组件、bundle、resource、marker、domain 数据定义。
+- `controller` 只读取输入、AI、脚本等控制源，并写入 intent。
+- `simulation` 读取 intent 和 components，真正修改 `Transform`、生命值、背包、世界状态等。
 - `render_2d` 只放 2D 表现相关代码。
 - `render_3d` 只放 3D 表现相关代码。
 - `app` 只负责最终插件组装和窗口等顶层配置。
@@ -77,8 +80,9 @@ cargo fmt
 
 给 AI 分配任务时，优先说明目标属于哪一层：
 
-- 新角色、新物品、新世界数据：优先改 `crates/ecs`
-- 新玩法规则、新状态流、新生成逻辑：优先改 `crates/gameplay`
+- 新角色、新物品、新世界数据：优先改 `crates/components`
+- 新玩家输入、AI 控制、脚本控制：优先改 `crates/controller`
+- 新移动、战斗、状态流、生成逻辑：优先改 `crates/simulation`
 - 新 2D UI、HUD、sprite、tilemap：优先改 `crates/render_2d`
 - 新 3D camera、scene、light、mesh：优先改 `crates/render_3d`
 - app 启动、插件组合、窗口配置：改 `crates/app`

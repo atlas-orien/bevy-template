@@ -1,15 +1,13 @@
 [package]
-name = "render_2d"
+name = "components"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "2D rendering and presentation layer for the Bevy game template."
+description = "Shared ECS components, bundles, and resources for the Bevy game template."
 publish = false
 
 [dependencies]
 bevy.workspace = true
-components.workspace = true
 error.workspace = true
-simulation.workspace = true

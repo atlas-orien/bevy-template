@@ -12,9 +12,9 @@ use self::characters::CharactersPlugin;
 use self::items::ItemsPlugin;
 use self::world::WorldPlugin;
 
-pub struct EcsPlugin;
+pub struct ComponentsPlugin;
 
-impl Plugin for EcsPlugin {
+impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((WorldPlugin, BackgroundPlugin, CharactersPlugin, ItemsPlugin));
     }

@@ -1,5 +1,5 @@
 pub mod flow;
-pub mod rules;
+pub mod movement;
 pub mod spawning;
 
 pub use error::Result;
@@ -7,13 +7,13 @@ pub use error::Result;
 use bevy::prelude::*;
 
 use self::flow::FlowPlugin;
-use self::rules::RulesPlugin;
+use self::movement::MovementPlugin;
 use self::spawning::SpawningPlugin;
 
-pub struct GameplayPlugin;
+pub struct SimulationPlugin;
 
-impl Plugin for GameplayPlugin {
+impl Plugin for SimulationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((FlowPlugin, RulesPlugin, SpawningPlugin));
+        app.add_plugins((FlowPlugin, SpawningPlugin, MovementPlugin));
     }
 }

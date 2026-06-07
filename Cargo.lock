@@ -177,10 +177,11 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "ecs",
+ "components",
+ "controller",
  "error",
- "gameplay",
  "render_2d",
+ "simulation",
 ]
 
 [[package]]
@@ -1900,6 +1901,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "components"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+]
+
+[[package]]
 name = "concurrent-queue"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1953,6 +1962,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1aaf9b65849a68662ac6c0810c8893a765c960b907dd7cfab9c4a50bf764fbc"
 dependencies = [
  "const_soft_float",
+]
+
+[[package]]
+name = "controller"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "components",
+ "error",
+ "simulation",
 ]
 
 [[package]]
@@ -2268,14 +2287,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8b14ccef22fc6f5a8f4d7d768562a182c04ce9a3b3157b91390b52ddfdf1a76"
 
 [[package]]
-name = "ecs"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "error",
-]
-
-[[package]]
 name = "either"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2562,15 +2573,6 @@ dependencies = [
  "futures-task",
  "pin-project-lite",
  "slab",
-]
-
-[[package]]
-name = "gameplay"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "ecs",
- "error",
 ]
 
 [[package]]
@@ -4191,9 +4193,9 @@ name = "render_2d"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "ecs",
+ "components",
  "error",
- "gameplay",
+ "simulation",
 ]
 
 [[package]]
@@ -4201,9 +4203,9 @@ name = "render_3d"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "ecs",
+ "components",
  "error",
- "gameplay",
+ "simulation",
 ]
 
 [[package]]
@@ -4441,6 +4443,15 @@ name = "simdutf8"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
+
+[[package]]
+name = "simulation"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "components",
+ "error",
+]
 
 [[package]]
 name = "skrifa"

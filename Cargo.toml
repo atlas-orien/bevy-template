@@ -12,11 +12,12 @@ publish = false
 [workspace]
 members = [
     "crates/app",
-    "crates/ecs",
+    "crates/components",
+    "crates/controller",
     "crates/error",
-    "crates/gameplay",
     "crates/render_2d",
     "crates/render_3d",
+    "crates/simulation",
 ]
 resolver = "3"
 
@@ -30,11 +31,12 @@ repository = "https://github.com/atlas-orien/bevy-template"
 [workspace.dependencies]
 bevy = "0.18"
 app = { path = "crates/app" }
-ecs = { path = "crates/ecs" }
+components = { path = "crates/components" }
+controller = { path = "crates/controller" }
 error = { path = "crates/error" }
-gameplay = { path = "crates/gameplay" }
 render_2d = { path = "crates/render_2d" }
 render_3d = { path = "crates/render_3d" }
+simulation = { path = "crates/simulation" }
 thiserror = "2"
 
 [dependencies]

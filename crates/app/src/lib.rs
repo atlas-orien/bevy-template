@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
-use components::ComponentsPlugin;
 use controller::ControllerPlugin;
+use ecs::EcsPlugin;
 use error::ErrorPlugin;
 use render_2d::Render2dPlugin;
 use simulation::SimulationPlugin;
@@ -24,7 +24,7 @@ pub fn run() {
         )
         .add_plugins((
             ErrorPlugin,
-            ComponentsPlugin,
+            EcsPlugin,
             SimulationPlugin,
             ControllerPlugin,
             Render2dPlugin,

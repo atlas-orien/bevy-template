@@ -23,8 +23,8 @@ repository = "https://github.com/atlas-orien/bevy-template"
 [workspace.dependencies]
 bevy = "0.18"
 app = { path = "crates/app" }
-components = { path = "crates/components" }
 controller = { path = "crates/controller" }
+ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
 render_2d = { path = "crates/render_2d" }
 render_3d = { path = "crates/render_3d" }

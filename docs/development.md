@@ -5,9 +5,9 @@ Use this folder for feature briefs and implementation decisions.
 This template is split into layered crates:
 
 - `error`: shared error reporting and collection.
-- `components`: reusable ECS data definitions.
+- `ecs`: core ECS components, resources, events, and systems.
 - `controller`: input, AI, and script-to-intent systems.
-- `simulation`: state flow, spawning, movement, rules, and world mutation systems.
+- `simulation`: state flow, phases, and higher-level ECS system orchestration.
 - `render_2d`: 2D rendering and presentation.
 - `render_3d`: 3D rendering and presentation.
 - `app`: final assembly crate.

@@ -22,7 +22,9 @@
 - AI 想攻击目标。
 - 脚本想打开门。
 
-真正修改 `Transform`、生命值、背包、世界状态的代码应该放到 `simulation`。
+真正修改 `Transform`、生命值、背包、世界状态的系统函数应该放到 `crates/ecs/src/systems`。
+
+如果这些系统需要按游戏状态、关卡阶段或流程组合，再由 `simulation` 负责调度。
 
 ## 不应该放这里
 

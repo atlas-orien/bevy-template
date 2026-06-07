@@ -16,8 +16,14 @@
 
 ## 工作区结构
 
+这是模板默认结构，不是固定不变的最终架构。
+
+实际项目可以根据游戏类型和团队习惯添加、修改或删除目录。比如某个游戏不需要 3D，可以长期不接入 `render_3d`；如果物品系统很复杂，也可以继续在 `crates/ecs/src/components/items` 或其他合适位置细分模块。
+
+调整目录时需要保持一个原则：目录名称应该表达清楚职责，代码应该放在最容易理解和维护的位置。修改结构后，也应该同步更新相关文档，避免后续开发继续按照旧路径写代码。
+
 - `crates/error`: 统一错误、Result、错误事件、严重级别和日志收集
-- `crates/components`: ECS 数据定义层，按角色、背景、物品、世界等分类
+- `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
 - `crates/controller`: 控制层，把键盘、手柄、AI、脚本等输入转换成意图组件
 - `crates/simulation`: 模拟层，负责状态流、生成/销毁、移动、战斗、交互等世界变化
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
@@ -34,7 +40,7 @@
 
 ```rust
 ErrorPlugin
-ComponentsPlugin
+EcsPlugin
 SimulationPlugin
 ControllerPlugin
 Render2dPlugin
@@ -44,9 +50,14 @@ Render2dPlugin
 
 ## 分层规则
 
-- `components` 只放组件、bundle、resource、marker、domain 数据定义。
+下面是模板默认规则，可以按项目需求调整。调整时优先保持职责清晰，而不是机械保留所有目录。
+
+- `crates/ecs/src/components` 放组件、bundle、marker 等挂在实体上的数据定义。
+- `crates/ecs/src/resources` 放 Bevy ECS 全局 Resource 数据。
+- `crates/ecs/src/events` 放 ECS 事件数据。
+- `crates/ecs/src/systems` 放真正读取和修改 ECS 数据的系统函数。
 - `controller` 只读取输入、AI、脚本等控制源，并写入意图组件。
-- `simulation` 读取意图组件和 `components`，真正修改 `Transform`、生命值、背包、世界状态等。
+- `simulation` 负责状态流、阶段调度和更高层模拟流程，可以组合 `crates/ecs/src/systems`。
 - `render_2d` 只放 2D 表现相关代码。
 - `render_3d` 只放 3D 表现相关代码。
 - `app` 只负责最终插件组装和窗口等顶层配置。
@@ -76,8 +87,8 @@ cargo check --workspace
 cargo fmt
 ```
 
-## AI 协议
+## 协作规则
 
-面向 AI 代理的协作规则放在根目录 [AI_PROTOCOL/README.md](/Users/ancient/src/rust/bevy-template/AI_PROTOCOL/README.md)。
+如果使用 AI 代理辅助开发，可以阅读根目录 [AI_PROTOCOL](/Users/ancient/src/rust/bevy-template/AI_PROTOCOL) 下对应 crate 的规则文件。
 
-约定：普通 `README.md` 写给人看；大写命名的协议目录或文件写给 AI 看。
+约定：普通 `README.md` 写给人看；`AI_PROTOCOL` 目录下的大写文件写给 AI 看。

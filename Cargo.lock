@@ -177,8 +177,8 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "components",
  "controller",
+ "ecs",
  "error",
  "render_2d",
  "simulation",
@@ -1901,14 +1901,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "components"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "error",
-]
-
-[[package]]
 name = "concurrent-queue"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1969,7 +1961,7 @@ name = "controller"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "components",
+ "ecs",
  "error",
  "simulation",
 ]
@@ -2285,6 +2277,14 @@ name = "dpi"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8b14ccef22fc6f5a8f4d7d768562a182c04ce9a3b3157b91390b52ddfdf1a76"
+
+[[package]]
+name = "ecs"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+]
 
 [[package]]
 name = "either"
@@ -4193,7 +4193,7 @@ name = "render_2d"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "components",
+ "ecs",
  "error",
  "simulation",
 ]
@@ -4203,7 +4203,7 @@ name = "render_3d"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "components",
+ "ecs",
  "error",
  "simulation",
 ]
@@ -4449,7 +4449,7 @@ name = "simulation"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "components",
+ "ecs",
  "error",
 ]
 

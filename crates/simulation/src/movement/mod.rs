@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use components::characters::player::{MovementIntent, PlayerSpeed};
+use ecs::components::characters::player::{MovementIntent, PlayerSpeed};
 
 use crate::flow::AppState;
 

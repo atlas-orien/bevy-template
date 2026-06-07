@@ -12,7 +12,7 @@
 
 ```rust
 ErrorPlugin
-ComponentsPlugin
+EcsPlugin
 SimulationPlugin
 ControllerPlugin
 Render2dPlugin

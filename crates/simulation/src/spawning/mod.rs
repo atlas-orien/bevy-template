@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use components::characters::player::PlayerBundle;
+use ecs::components::characters::player::PlayerBundle;
 
 use crate::flow::AppState;
 

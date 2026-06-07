@@ -10,6 +10,6 @@ publish = false
 
 [dependencies]
 bevy.workspace = true
-components.workspace = true
+ecs.workspace = true
 error.workspace = true
 simulation.workspace = true

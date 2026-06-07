@@ -7,7 +7,7 @@
 - 2D 相机。
 - 2D 屏幕背景、抬头显示、菜单、界面。
 - 精灵、纹理图集、2D 动画。
-- 读取 `components` 和 `simulation` 状态，把游戏世界显示出来。
+- 读取 `ecs` 和 `simulation` 状态，把游戏世界显示出来。
 
 ## 当前示例
 
@@ -15,11 +15,12 @@
 - `camera`: 在 Playing 状态生成 2D 相机。
 - `screens`: 生成演示背景和地面色块。
 
-## 和 components/controller/simulation 的区别
+## 和 ecs/controller/simulation 的区别
 
-- `components` 定义玩家是什么。
+- `crates/ecs/src/components` 定义玩家是什么。
+- `crates/ecs/src/systems` 定义玩家位置等 ECS 数据如何被规则改变。
 - `controller` 决定玩家想往哪走。
-- `simulation` 修改玩家位置。
+- `simulation` 负责状态流和系统调度。
 - `render_2d` 只负责玩家看起来是什么样。
 
 ## 不应该放这里

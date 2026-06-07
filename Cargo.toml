@@ -1,0 +1,41 @@
+[package]
+name = "bevy-template"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+authors = ["Atlas Orein <gamesworldcraft@gamil.com>"]
+repository = "https://github.com/atlas-orien/bevy-template"
+readme = "README.md"
+description = "A Bevy game template."
+publish = false
+
+[workspace]
+members = [
+    "crates/app",
+    "crates/ecs",
+    "crates/error",
+    "crates/gameplay",
+    "crates/render_2d",
+    "crates/render_3d",
+]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+authors = ["Atlas Orein <gamesworldcraft@gamil.com>"]
+repository = "https://github.com/atlas-orien/bevy-template"
+
+[workspace.dependencies]
+bevy = "0.18"
+app = { path = "crates/app" }
+ecs = { path = "crates/ecs" }
+error = { path = "crates/error" }
+gameplay = { path = "crates/gameplay" }
+render_2d = { path = "crates/render_2d" }
+render_3d = { path = "crates/render_3d" }
+thiserror = "2"
+
+[dependencies]
+app.workspace = true

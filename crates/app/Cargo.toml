@@ -1,0 +1,16 @@
+[package]
+name = "app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Runnable Bevy application crate."
+publish = false
+
+[dependencies]
+bevy.workspace = true
+ecs.workspace = true
+error.workspace = true
+gameplay.workspace = true
+render_2d.workspace = true

@@ -1,0 +1,19 @@
+/target/
+/log/
+**/*.rs.bk
+
+# OS files
+.DS_Store
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local environment
+.env
+.env.*
+
+# Local agent/tool state
+.claude

@@ -78,6 +78,6 @@ cargo fmt
 
 ## AI 协议
 
-面向 AI 代理的协作规则放在根目录 [AI_PROTOCOL.md](/Users/ancient/src/rust/bevy-template/AI_PROTOCOL.md)。
+面向 AI 代理的协作规则放在根目录 [AI_PROTOCOL/README.md](/Users/ancient/src/rust/bevy-template/AI_PROTOCOL/README.md)。
 
-约定：普通 `README.md` 写给人看；大写文件名的协议文件写给 AI 看。
+约定：普通 `README.md` 写给人看；大写命名的协议目录或文件写给 AI 看。

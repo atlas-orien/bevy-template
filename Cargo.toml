@@ -10,15 +10,7 @@ description = "A Bevy game template."
 publish = false
 
 [workspace]
-members = [
-    "crates/app",
-    "crates/components",
-    "crates/controller",
-    "crates/error",
-    "crates/render_2d",
-    "crates/render_3d",
-    "crates/simulation",
-]
+members = ["crates/*"]
 resolver = "3"
 
 [workspace.package]

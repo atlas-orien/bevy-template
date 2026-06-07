@@ -1,6 +1,9 @@
 pub mod base;
 pub mod characters;
+pub mod events;
 pub mod items;
+pub mod resources;
+pub mod ui;
 pub mod world;
 
 pub use error::Result;

@@ -79,6 +79,7 @@ cargo run
 ```sh
 cargo fmt --check
 cargo check --workspace
+cargo run -p xtask -- check
 ```
 
 格式化：

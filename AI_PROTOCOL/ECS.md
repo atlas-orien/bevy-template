@@ -52,3 +52,12 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - `crates/simulation`: 管理 Playing 状态下的玩家生成和系统调度。
 - `crates/ecs/src/systems`: 未来用于放根据意图移动 `Transform` 的系统函数。
 - `crates/render_2d`: 使用 Bevy 官方 `gabe-idle-run.png` 做 2D 跑步动画。
+
+## 验证要求
+
+修改 `crates/ecs` 后必须运行：
+
+```sh
+cargo run -p xtask -- check
+cargo check --workspace
+```

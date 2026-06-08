@@ -23,22 +23,22 @@
 
 - 可以读取 `ButtonInput<KeyCode>`、鼠标、手柄等输入类型。
 - 可以读取网络消息或服务端推送数据。
-- 可以查询用于定位可控 Entity 的组件。
+- 可以通过 `prefab` 提供的查询类型定位可控 Entity。
 - 必须通过 `intent` 写入意图。
 - 不直接修改 `Transform`、生命值、背包等世界结果。
 - 不定义核心 `Component`、`Bundle`、`Resource`、`Event`。
 - 不生成实体。
-- 不使用 prefab。
+- 不直接依赖或使用裸 `ecs`；需要可控对象查询时使用 `prefab` 暴露的最小合法接口。
 - 不封装物理后端。
 - 不写渲染、动画、UI、相机。
 
 ## 依赖规则
 
-- `input` 可以依赖 `ecs`。
 - `input` 可以依赖 `intent`。
-- `input` 可以依赖 `simulation` 的状态定义。
+- `input` 可以依赖 `prefab`。
 - `input` 必须依赖 `error`。
-- `input` 不依赖 `prefab`。
+- `input` 不依赖 `ecs`。
+- `input` 不依赖 `simulation`；状态调度由 `simulation` 负责。
 - `input` 不依赖 `physics`。
 - `input` 不依赖 `render_2d` 或 `render_3d`。
 

@@ -3,16 +3,14 @@ use std::path::{Path, PathBuf};
 
 use super::CheckStatus;
 
-const PREFAB_CRATE: &str = "crates/prefab";
-const PREFAB_PROTOCOL: &str = "AI_PROTOCOL/PREFAB.md";
+const APP_CRATE: &str = "crates/app";
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(PREFAB_CRATE, &mut errors);
-    require_path(PREFAB_PROTOCOL, &mut errors);
-    reject_forbidden_dependencies(&mut errors);
-    reject_direct_input(&mut errors);
+    require_path(APP_CRATE, &mut errors);
+    reject_dependencies(&mut errors);
+    reject_internal_plugins(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
@@ -21,32 +19,48 @@ pub fn check() -> CheckStatus {
     }
 }
 
-fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
-    let manifest = Path::new(PREFAB_CRATE).join("Cargo.toml");
+fn reject_dependencies(errors: &mut Vec<String>) {
+    let manifest = Path::new(APP_CRATE).join("Cargo.toml");
     let Ok(source) = fs::read_to_string(&manifest) else {
         return;
     };
 
-    for dependency in ["input", "intent", "simulation"] {
+    for dependency in [
+        "ecs",
+        "input",
+        "intent",
+        "physics",
+        "prefab",
+        "render_2d",
+        "render_3d",
+    ] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; prefab should stay an object template library",
+                "{} depends on `{dependency}`; app should only depend on the simulation runtime",
                 manifest.display()
             ));
         }
     }
 }
 
-fn reject_direct_input(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(PREFAB_CRATE)) {
+fn reject_internal_plugins(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(APP_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
 
-        for forbidden in ["ButtonInput<", "KeyCode", "MouseButton", "Gamepad"] {
+        for forbidden in [
+            "EcsPlugin",
+            "InputPlugin",
+            "IntentPlugin",
+            "PhysicsPlugin",
+            "PrefabPlugin",
+            "Render2dPlugin",
+            "Render3dPlugin",
+        ] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input belongs in crates/input",
+                    "{} references `{forbidden}`; app should register SimulationPlugin only",
                     file.display()
                 ));
             }

@@ -11,6 +11,7 @@
 - 提供写入 ECS intent 数据的语义 API。
 - 明确是哪一个 `Entity` 想做什么。
 - 写入 `MovementIntent`、`AttackIntent`、`UseItemIntent` 等 intent 数据。
+- 只作用于已经具备对应 intent 组件的 Entity；这些组件通常由 `prefab` 组合进可控制对象。
 - 不计算移动结果，不修改位置、血量、背包等世界结果。
 
 ## 当前结构
@@ -43,7 +44,7 @@ ecs/systems/movement 根据 MovementIntent + Speed 修改 Transform
 
 - 不生成实体。
 - 不读取键盘、鼠标、手柄、网络输入。
-- 不使用 prefab。
+- 不依赖或调用 prefab；可接收 intent 的对象由 prefab 负责组合对应组件。
 - 不直接修改 `Transform`、生命值、背包等世界结果。
 - 不决定怎么移动、怎么攻击、怎么结算；这些属于 `crates/ecs/src/systems`。
 - 不封装物理后端。

@@ -6,6 +6,9 @@ pub mod state;
 pub use error::Result;
 
 use bevy::prelude::*;
+use input::InputPlugin;
+use intent::IntentPlugin;
+use prefab::PrefabPlugin;
 
 use self::cleanup::CleanupPlugin;
 use self::schedule::SchedulePlugin;
@@ -16,6 +19,14 @@ pub struct SimulationPlugin;
 
 impl Plugin for SimulationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((StatePlugin, SchedulePlugin, SpawningPlugin, CleanupPlugin));
+        app.add_plugins((
+            PrefabPlugin,
+            StatePlugin,
+            SchedulePlugin,
+            SpawningPlugin,
+            CleanupPlugin,
+            InputPlugin,
+            IntentPlugin,
+        ));
     }
 }

@@ -24,12 +24,18 @@ cargo run -p xtask -- help
 
 检查项目结构是否符合当前模板规则。
 
+当前会检查 `crates/app`：
+
+- `crates/app` 必须存在。
+- `app` 只允许依赖 `bevy`、`error` 和 `simulation`。
+- `app` 不允许直接注册 prefab、input、intent、ecs、physics 或 render 插件。
+
 当前会检查 `crates/intent`：
 
 - `crates/intent` 必须存在。
 - `AI_PROTOCOL/INTENT.md` 必须存在。
 - 必须有当前意图分类目录，例如 `movement`。
-- `intent` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
+- `intent` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
 - `intent` 不允许定义 ECS 数据类型。
 - `intent` 不允许直接读取键盘、鼠标、手柄等输入来源。
 - `intent` 不允许直接使用 `Commands`、`Transform` 或物理组件。
@@ -39,7 +45,7 @@ cargo run -p xtask -- help
 - `crates/input` 必须存在。
 - `AI_PROTOCOL/INPUT.md` 必须存在。
 - 必须有当前本地输入模块 `local.rs`。
-- `input` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
+- `input` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`、`simulation`。
 - `input` 不允许定义 ECS 数据类型。
 - `input` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
@@ -78,23 +84,14 @@ cargo run -p xtask -- help
 
 - `crates/prefab` 必须存在。
 - `AI_PROTOCOL/PREFAB.md` 必须存在。
-- `prefab` 不允许依赖 `input`、`intent`、`simulation`、`scenes`。
+- `prefab` 不允许依赖 `input`、`intent`、`simulation`。
 - `prefab` 不允许定义 `_system` 结尾的 ECS system 函数。
-
-当前也会检查 `crates/scenes`：
-
-- `crates/scenes` 必须存在。
-- `AI_PROTOCOL/SCENES.md` 必须存在。
-- 默认场景目录 `main_menu`、`level_01`、`shared` 必须存在。
-- `scenes` 不允许依赖 `simulation`、`input`、`intent`、`physics`、`render_2d`、`render_3d`。
-- `scenes` 不允许直接读取键盘、鼠标、手柄等输入。
-- `scenes` 不允许写 intent。
 
 当前也会检查 `crates/simulation`：
 
 - `crates/simulation` 必须存在。
 - `AI_PROTOCOL/SIMULATION.md` 必须存在。
-- `simulation` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
+- `simulation` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
 - `simulation` 不允许定义 ECS 数据类型。
 - `simulation` 不允许直接读取键盘、鼠标、手柄等输入。
 
@@ -116,6 +113,8 @@ cargo run -p xtask -- help
 ```text
 AI_PROTOCOL/INTENT.md
 crates/xtask/src/rules/intent.rs
+crates/app
+crates/xtask/src/rules/app.rs
 AI_PROTOCOL/INPUT.md
 crates/xtask/src/rules/input.rs
 AI_PROTOCOL/ERROR.md
@@ -126,8 +125,6 @@ AI_PROTOCOL/PHYSICS.md
 crates/xtask/src/rules/physics.rs
 AI_PROTOCOL/PREFAB.md
 crates/xtask/src/rules/prefab.rs
-AI_PROTOCOL/SCENES.md
-crates/xtask/src/rules/scenes.rs
 AI_PROTOCOL/SIMULATION.md
 crates/xtask/src/rules/simulation.rs
 AI_PROTOCOL/RENDER_2D.md
@@ -140,7 +137,6 @@ crates/xtask/src/rules/render_2d.rs
 AI_PROTOCOL/INTENT.md      -> crates/xtask/src/rules/intent.rs
 AI_PROTOCOL/INPUT.md       -> crates/xtask/src/rules/input.rs
 AI_PROTOCOL/RENDER_2D.md   -> crates/xtask/src/rules/render_2d.rs
-AI_PROTOCOL/SCENES.md      -> crates/xtask/src/rules/scenes.rs
 AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```
 
@@ -153,7 +149,6 @@ crates/xtask/src/rules/
 ├── ecs.rs
 ├── input.rs
 ├── intent.rs
-├── scenes.rs
 ├── simulation.rs
 ├── render_2d.rs
 ├── render_3d.rs

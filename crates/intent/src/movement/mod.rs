@@ -1,14 +1,13 @@
 use bevy::prelude::*;
-use ecs::components::characters::player::{MovementIntent, MovementTarget};
 use error::{ErrorKind, GameError, Result};
+use prefab::intent::set_movement_target;
+pub use prefab::intent::{MovementIntentQuery, MovementTarget};
 
 pub struct MovementIntentPlugin;
 
 impl Plugin for MovementIntentPlugin {
     fn build(&self, _app: &mut App) {}
 }
-
-pub type MovementIntentQuery<'world, 'state> = Query<'world, 'state, &'static mut MovementIntent>;
 
 pub fn set_movement_intent(
     entity: Entity,
@@ -23,6 +22,6 @@ pub fn set_movement_intent(
         ));
     };
 
-    movement_intent.target = target;
+    set_movement_target(&mut movement_intent, target);
     Ok(())
 }

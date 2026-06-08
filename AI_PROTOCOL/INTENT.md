@@ -11,7 +11,7 @@
 - 提供写入 ECS intent 数据的语义 API。
 - 表达可执行意图，例如移动、攻击、交互、使用物品。
 - 设置 intent 时必须明确目标 `Entity`。
-- 只作用于已经具备对应 intent 组件的 Entity。
+- 只作用于已经具备对应 intent 组件的 Entity；这些组件通常由 `prefab` 组合进可控制对象。
 - 不决定世界结果，只表达“想做什么”。
 
 ## 代码落点
@@ -24,7 +24,7 @@
 
 - 不生成实体。
 - 不读取键盘、鼠标、手柄、网络输入。
-- 不使用 prefab。
+- 不直接依赖或使用裸 `ecs`；通过 `prefab` 提供的最小合法接口写入 intent 数据。
 - 不直接修改 `Transform`、生命值、背包等世界结果。
 - 不决定移动路径、速度、碰撞、到达判定等结算规则。
 - 不封装物理后端。
@@ -33,10 +33,10 @@
 
 ## 依赖规则
 
-- `intent` 可以依赖 `ecs`。
 - `intent` 不依赖 `simulation`；调度状态由其它层负责。
 - `intent` 必须依赖 `error`。
-- `intent` 不依赖 `prefab`。
+- `intent` 可以依赖 `prefab`。
+- `intent` 不依赖 `ecs`。
 - `intent` 不依赖 `physics`。
 - `intent` 不依赖 `render_2d` 或 `render_3d`。
 

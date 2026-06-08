@@ -26,8 +26,7 @@
 - `input` 读取键盘、鼠标、手柄、网络等外部来源。
 - `intent` 表达 Entity 想做什么。
 - `prefab` 把 render_2d 的表现 bundle 组合进完整对象模板。
-- `scenes` 选择具体场景要生成哪些 prefab。
-- `simulation` 负责状态流和 scene/system 调度。
+- `simulation` 负责状态流、runtime session 生命周期和 system 调度。
 - `render_2d` 只负责玩家看起来是什么样。
 
 ## 渲染实体

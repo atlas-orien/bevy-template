@@ -1,11 +1,6 @@
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
-use ecs::EcsPlugin;
 use error::ErrorPlugin;
-use input::InputPlugin;
-use intent::IntentPlugin;
-use physics::PhysicsPlugin;
-use render_2d::Render2dPlugin;
 use simulation::SimulationPlugin;
 
 pub use error::Result;
@@ -24,14 +19,6 @@ pub fn run() {
                     ..default()
                 }),
         )
-        .add_plugins((
-            ErrorPlugin,
-            EcsPlugin,
-            PhysicsPlugin,
-            SimulationPlugin,
-            InputPlugin,
-            IntentPlugin,
-            Render2dPlugin,
-        ))
+        .add_plugins((ErrorPlugin, SimulationPlugin))
         .run();
 }

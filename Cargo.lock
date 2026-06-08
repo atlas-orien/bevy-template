@@ -195,12 +195,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "ecs",
  "error",
- "input",
- "intent",
- "physics",
- "render_2d",
  "simulation",
 ]
 
@@ -3316,10 +3311,9 @@ name = "input"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "ecs",
  "error",
  "intent",
- "simulation",
+ "prefab",
 ]
 
 [[package]]
@@ -3327,8 +3321,8 @@ name = "intent"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "ecs",
  "error",
+ "prefab",
 ]
 
 [[package]]
@@ -5057,16 +5051,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "scenes"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "ecs",
- "error",
- "prefab",
-]
-
-[[package]]
 name = "scoped-tls"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5213,9 +5197,10 @@ name = "simulation"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "ecs",
  "error",
- "scenes",
+ "input",
+ "intent",
+ "prefab",
 ]
 
 [[package]]

@@ -1,16 +1,18 @@
 # prefab
 
-`prefab` 放可生成的游戏对象模板。
+`prefab` 放可生成的游戏对象模板和面向 runtime 的封装入口。
 
 它负责把 `crates/ecs` 的游戏语义数据、`crates/physics` 的物理能力和 `crates/render_2d` 的表现数据组合成可以直接生成的完整对象模板。
+外部 runtime 层不直接使用 `ecs`、`physics`、`render_2d` 这些基础库，而是通过这里提供的封装入口使用它们。
 
 ## 职责
 
 - 定义可生成对象的组合 Bundle。
 - 组合 ECS、physics、render bundle。
-- 给 scenes 层提供稳定的对象生成入口。
+- 给 runtime setup 提供稳定的对象生成入口。
+- 给 simulation 提供 runtime-facing plugin 或 setup API。
 
-具体游戏应该在这里添加自己的对象模板，而不是在场景或生成系统里散装很多组件。
+具体游戏应该在这里添加自己的对象模板，而不是在 runtime setup 或生成系统里散装很多组件。
 
 ## 当前结构
 
@@ -23,9 +25,7 @@
 - 可以依赖 `ecs`、`physics`、`render_2d`。
 - 未来 3D prefab 可以依赖 `render_3d`。
 - 不读取输入。
-- 不写 ECS system 函数。
+- 不写底层 ECS system 函数；可以封装并导出 runtime-facing plugin 或 setup API。
 - 不负责状态流、关卡流程或生成时机。
 
-`scenes` 决定具体场景使用哪些 prefab。
-
-`simulation` 决定什么时候进入或退出场景。
+`simulation` 决定具体 runtime session 使用哪些 prefab，以及什么时候进入或退出这些 session。

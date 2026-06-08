@@ -1,3 +1,4 @@
+mod app;
 mod ecs;
 mod error;
 mod input;
@@ -5,7 +6,6 @@ mod intent;
 mod physics;
 mod prefab;
 mod render_2d;
-mod scenes;
 mod simulation;
 
 pub enum CheckStatus {
@@ -15,6 +15,10 @@ pub enum CheckStatus {
 
 pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
+
+    if let CheckStatus::Failed(mut rule_errors) = app::check() {
+        errors.append(&mut rule_errors);
+    }
 
     if let CheckStatus::Failed(mut rule_errors) = intent::check() {
         errors.append(&mut rule_errors);
@@ -41,10 +45,6 @@ pub fn check_architecture() -> CheckStatus {
     }
 
     if let CheckStatus::Failed(mut rule_errors) = render_2d::check() {
-        errors.append(&mut rule_errors);
-    }
-
-    if let CheckStatus::Failed(mut rule_errors) = scenes::check() {
         errors.append(&mut rule_errors);
     }
 

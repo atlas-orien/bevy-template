@@ -10,6 +10,7 @@ publish = false
 
 [dependencies]
 bevy.workspace = true
-ecs.workspace = true
 error.workspace = true
-scenes.workspace = true
+input.workspace = true
+intent.workspace = true
+prefab.workspace = true

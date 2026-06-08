@@ -28,7 +28,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         return;
     };
 
-    for dependency in ["prefab", "physics", "render_2d", "render_3d"] {
+    for dependency in ["ecs", "physics", "render_2d", "render_3d"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
                 "{} depends on `{dependency}`; simulation should not depend on that crate",

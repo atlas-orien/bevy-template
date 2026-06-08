@@ -110,7 +110,7 @@ Transform
 Visibility
 ```
 
-所以 `crates/ecs/src/components/characters/player.rs` 可以定义 `Player` 和 `PlayerBundle`。如果要写 `spawn_player_system`，应该放到 `crates/ecs/src/systems/spawning` 或更高层的场景流程 crate。
+所以 `crates/ecs/src/components/characters/player.rs` 可以定义 `Player` 和 `PlayerBundle`。如果要写 `spawn_player_system`，应该放到 `crates/ecs/src/systems/spawning` 或更高层的 runtime 流程 crate。
 
 ### Resource
 

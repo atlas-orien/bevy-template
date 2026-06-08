@@ -5,22 +5,16 @@
 ## 职责
 
 - 配置 `DefaultPlugins`、窗口、图片采样等顶层 Bevy 设置。
-- 注册项目插件。
-- 决定当前运行 2D 还是 3D 表现层。
+- 注册唯一游戏 runtime 插件。
 
 ## 当前默认组装
 
 ```rust
 ErrorPlugin
-EcsPlugin
-PhysicsPlugin
 SimulationPlugin
-InputPlugin
-IntentPlugin
-Render2dPlugin
 ```
 
-`Render3dPlugin` 已存在，但默认不接入。需要做 3D 模板时，在这里替换或追加。
+`SimulationPlugin` 是游戏唯一 runtime 入口，内部负责组装 prefab、input、intent 等游戏层插件。`app` 不直接注册这些内部插件。
 
 ## 不应该放这里
 
@@ -29,4 +23,4 @@ Render2dPlugin
 - 不写移动、战斗、生成等模拟逻辑。
 - 不写具体精灵、网格、界面细节。
 
-这里应该保持很薄，只做最终组装。
+这里应该保持很薄，只做 Bevy 外壳和 runtime 入口组装。

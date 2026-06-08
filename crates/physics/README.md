@@ -6,12 +6,12 @@
 
 ## 后端选择
 
-`physics` 不设置默认后端，必须显式选择一个物理引擎。
+`physics` 默认使用 Avian 2D。
 
 使用 Avian 2D：
 
 ```sh
-cargo run --features physics/avian2d
+cargo run
 ```
 
 使用 Rapier 2D：
@@ -20,7 +20,7 @@ cargo run --features physics/avian2d
 cargo run --features physics/rapier2d
 ```
 
-同一时间只能启用一个物理后端。
+默认情况下启用 Avian 2D；如果启用 `rapier2d`，运行时后端会切换到 Rapier 2D。
 
 ## 对外 API
 

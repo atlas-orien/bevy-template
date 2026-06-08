@@ -6,9 +6,7 @@
 
 ## 后端选择
 
-`crates/physics` 不设置默认后端，必须显式选择一个物理引擎。
-
-推荐优先使用：
+默认后端：
 
 ```text
 avian2d
@@ -20,7 +18,7 @@ avian2d
 rapier2d
 ```
 
-同一时间只能启用一个物理后端。
+默认情况下启用 Avian 2D；如果启用 `rapier2d`，运行时后端切换到 Rapier 2D。
 
 ## 代码落点
 
@@ -44,6 +42,7 @@ rapier2d
 
 - 只有 `crates/physics/Cargo.toml` 可以依赖 `avian2d`、`avian3d`、`bevy_rapier2d`、`bevy_rapier3d`。
 - 新增物理后端时，必须通过 feature 暴露。
+- 如果默认后端和可选后端同时被 Cargo feature 启用，`crates/physics` 内部必须只选择一个运行时后端。
 - 新增 3D 后端时，应添加 `avian3d` 或 `rapier3d` feature，并更新本文件。
 
 ## 验证要求
@@ -51,7 +50,7 @@ rapier2d
 修改 `crates/physics` 后必须运行：
 
 ```sh
-cargo check -p physics --features avian2d
+cargo check -p physics
 cargo check -p physics --features rapier2d
 cargo run -p xtask -- check
 ```

@@ -26,7 +26,7 @@
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
 - `crates/controller`: 控制层，把键盘、手柄、AI、脚本等输入转换成意图组件
 - `crates/simulation`: 模拟层，负责状态流、生成/销毁、移动、战斗、交互等世界变化
-- `crates/physics`: 物理引擎适配层，通过 feature 显式选择 Avian 2D 或 Rapier 2D
+- `crates/physics`: 物理引擎适配层，默认使用 Avian 2D，可通过 feature 切换到 Rapier 2D
 - `crates/prefab`: 可生成对象模板层，组合 ECS 数据和物理能力
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
@@ -75,14 +75,14 @@ Render2dPlugin
 运行：
 
 ```sh
-cargo run --features physics/avian2d
+cargo run
 ```
 
 检查：
 
 ```sh
 cargo fmt --check
-cargo check --workspace --features physics/avian2d
+cargo check --workspace
 cargo run -p xtask -- check
 ```
 

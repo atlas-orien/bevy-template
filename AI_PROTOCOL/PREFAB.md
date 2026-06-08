@@ -32,5 +32,5 @@
 
 ```sh
 cargo run -p xtask -- check
-cargo check --workspace --features physics/avian2d
+cargo check --workspace
 ```

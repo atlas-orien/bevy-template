@@ -59,5 +59,5 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 
 ```sh
 cargo run -p xtask -- check
-cargo check --workspace --features physics/avian2d
+cargo check --workspace
 ```

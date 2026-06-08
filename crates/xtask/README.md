@@ -40,6 +40,13 @@ cargo run -p xtask -- help
 
 `check-architecture` 作为旧命令别名保留，也可以继续运行。
 
+当前也会检查 `crates/physics`：
+
+- `crates/physics` 必须存在。
+- `AI_PROTOCOL/PHYSICS.md` 必须存在。
+- 只有 `crates/physics/Cargo.toml` 可以依赖 Avian 或 Rapier。
+- 除 `crates/physics` 外，其它 crate 不允许直接 import Avian 或 Rapier。
+
 ## 和 AI_PROTOCOL 的关系
 
 `AI_PROTOCOL` 写规则，`xtask` 执行其中适合自动化的部分。
@@ -49,6 +56,8 @@ cargo run -p xtask -- help
 ```text
 AI_PROTOCOL/ECS.md
 crates/xtask/src/rules/ecs.rs
+AI_PROTOCOL/PHYSICS.md
+crates/xtask/src/rules/physics.rs
 ```
 
 以后如果新增 crate 规则，可以继续扩展：

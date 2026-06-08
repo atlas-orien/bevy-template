@@ -26,6 +26,7 @@ app = { path = "crates/app" }
 controller = { path = "crates/controller" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
+physics = { path = "crates/physics" }
 render_2d = { path = "crates/render_2d" }
 render_3d = { path = "crates/render_3d" }
 simulation = { path = "crates/simulation" }

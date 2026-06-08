@@ -26,6 +26,7 @@
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
 - `crates/controller`: 控制层，把键盘、手柄、AI、脚本等输入转换成意图组件
 - `crates/simulation`: 模拟层，负责状态流、生成/销毁、移动、战斗、交互等世界变化
+- `crates/physics`: 物理引擎适配层，通过 feature 显式选择 Avian 2D 或 Rapier 2D
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
 - `crates/app`: 最终运行的应用子包，负责组装插件
@@ -58,6 +59,7 @@ Render2dPlugin
 - `crates/ecs/src/systems` 放真正读取和修改 ECS 数据的系统函数。
 - `controller` 只读取输入、AI、脚本等控制源，并写入意图组件。
 - `simulation` 负责状态流、阶段调度和更高层模拟流程，可以组合 `crates/ecs/src/systems`。
+- `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
 - `render_2d` 只放 2D 表现相关代码。
 - `render_3d` 只放 3D 表现相关代码。
 - `app` 只负责最终插件组装和窗口等顶层配置。
@@ -71,14 +73,14 @@ Render2dPlugin
 运行：
 
 ```sh
-cargo run
+cargo run --features physics/avian2d
 ```
 
 检查：
 
 ```sh
 cargo fmt --check
-cargo check --workspace
+cargo check --workspace --features physics/avian2d
 cargo run -p xtask -- check
 ```
 
@@ -86,6 +88,12 @@ cargo run -p xtask -- check
 
 ```sh
 cargo fmt
+```
+
+使用 Rapier 2D 物理后端：
+
+```sh
+cargo run --features physics/rapier2d
 ```
 
 ## 协作规则

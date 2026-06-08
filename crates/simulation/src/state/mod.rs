@@ -9,9 +9,9 @@ pub enum AppState {
     Paused,
 }
 
-pub struct FlowPlugin;
+pub struct StatePlugin;
 
-impl Plugin for FlowPlugin {
+impl Plugin for StatePlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<AppState>()
             .add_systems(OnEnter(AppState::Loading), enter_loading);

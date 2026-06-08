@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use ecs::components::characters::player::{Facing, MovementIntent, Player};
-use simulation::flow::AppState;
+use simulation::state::AppState;
 
 const CHARACTER_ATLAS_PATH: &str = "images/characters/bevy/gabe/gabe-idle-run.png";
 const FRAME_SIZE: UVec2 = UVec2::splat(24);

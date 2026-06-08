@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use simulation::flow::AppState;
+use simulation::state::AppState;
 
 #[derive(Component)]
 struct MainCamera;

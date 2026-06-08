@@ -1,19 +1,21 @@
-pub mod flow;
-pub mod movement;
+pub mod cleanup;
+pub mod schedule;
 pub mod spawning;
+pub mod state;
 
 pub use error::Result;
 
 use bevy::prelude::*;
 
-use self::flow::FlowPlugin;
-use self::movement::MovementPlugin;
+use self::cleanup::CleanupPlugin;
+use self::schedule::SchedulePlugin;
 use self::spawning::SpawningPlugin;
+use self::state::StatePlugin;
 
 pub struct SimulationPlugin;
 
 impl Plugin for SimulationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((FlowPlugin, SpawningPlugin, MovementPlugin));
+        app.add_plugins((StatePlugin, SchedulePlugin, SpawningPlugin, CleanupPlugin));
     }
 }

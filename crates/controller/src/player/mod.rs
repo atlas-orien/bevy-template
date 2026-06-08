@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use ecs::components::characters::player::{Facing, MovementIntent, Player};
-use simulation::flow::AppState;
+use simulation::state::AppState;
 
 pub struct PlayerControllerPlugin;
 

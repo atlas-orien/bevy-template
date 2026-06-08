@@ -1,19 +1,16 @@
 [package]
-name = "app"
+name = "input"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Runnable Bevy application crate."
+description = "Input source adapters that convert external commands into entity intents."
 publish = false
 
 [dependencies]
 bevy.workspace = true
 ecs.workspace = true
 error.workspace = true
-input.workspace = true
 intent.workspace = true
-physics.workspace = true
-render_2d.workspace = true
 simulation.workspace = true

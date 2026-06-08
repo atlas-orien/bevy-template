@@ -1,5 +1,6 @@
 mod ecs;
 mod error;
+mod input;
 mod intent;
 mod physics;
 mod prefab;
@@ -14,6 +15,10 @@ pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
 
     if let CheckStatus::Failed(mut rule_errors) = intent::check() {
+        errors.append(&mut rule_errors);
+    }
+
+    if let CheckStatus::Failed(mut rule_errors) = input::check() {
         errors.append(&mut rule_errors);
     }
 

@@ -38,7 +38,7 @@ cargo run --features physics/rapier2d
 
 ## 边界
 
-- `app`、`intent`、`simulation`、`render_2d`、`render_3d` 不直接依赖 Avian 或 Rapier。
+- `app`、`input`、`intent`、`simulation`、`render_2d`、`render_3d` 不直接依赖 Avian 或 Rapier。
 - 如果需要新的物理能力，优先在 `physics` 暴露统一 API。
 - 游戏语义数据仍然放在 `crates/ecs`。
 - 物理引擎插件、刚体、碰撞体、传感器、调试显示放在 `physics`。

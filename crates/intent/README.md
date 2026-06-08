@@ -4,7 +4,7 @@
 
 它只描述一个 Entity “想做什么”，不描述这个想法来自哪里。
 
-键盘、手柄、AI、脚本、网络都不是 `intent` 本身。它们以后会在其它层被转换成 intent，然后再写入可控制 Entity 的意图数据。
+键盘、手柄、AI、脚本、网络都不是 `intent` 本身。它们属于 `input` 或其它来源适配层，转换成 intent 后再写入可控制 Entity 的意图数据。
 
 ## 职责
 
@@ -17,7 +17,7 @@
 
 - `movement`: 移动意图，例如“这个 Entity 想往某个方向移动”或“想移动到某个位置”。
 
-第一版暂时不定义 input 放在哪里。未来无论 input 来自键盘、手柄、AI 还是网络，都需要先转换成 intent。
+输入来源放在 `crates/input`。无论 input 来自键盘、手柄、AI 还是网络，都需要先转换成 intent。
 
 ## 和 simulation 的区别
 

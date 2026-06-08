@@ -34,6 +34,15 @@ cargo run -p xtask -- help
 - `intent` 不允许直接读取键盘、鼠标、手柄等输入来源。
 - `intent` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
+当前会检查 `crates/input`：
+
+- `crates/input` 必须存在。
+- `AI_PROTOCOL/INPUT.md` 必须存在。
+- 必须有当前本地输入模块 `local.rs`。
+- `input` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
+- `input` 不允许定义 ECS 数据类型。
+- `input` 不允许直接使用 `Commands`、`Transform` 或物理组件。
+
 当前会检查 `crates/error`：
 
 - `crates/error` 必须存在。
@@ -89,6 +98,8 @@ cargo run -p xtask -- help
 ```text
 AI_PROTOCOL/INTENT.md
 crates/xtask/src/rules/intent.rs
+AI_PROTOCOL/INPUT.md
+crates/xtask/src/rules/input.rs
 AI_PROTOCOL/ERROR.md
 crates/xtask/src/rules/error.rs
 AI_PROTOCOL/ECS.md
@@ -105,6 +116,7 @@ crates/xtask/src/rules/simulation.rs
 
 ```text
 AI_PROTOCOL/INTENT.md      -> crates/xtask/src/rules/intent.rs
+AI_PROTOCOL/INPUT.md       -> crates/xtask/src/rules/input.rs
 AI_PROTOCOL/RENDER_2D.md   -> crates/xtask/src/rules/render_2d.rs
 AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```
@@ -116,6 +128,7 @@ AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```text
 crates/xtask/src/rules/
 ├── ecs.rs
+├── input.rs
 ├── intent.rs
 ├── simulation.rs
 ├── render_2d.rs

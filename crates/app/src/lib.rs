@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
 use ecs::EcsPlugin;
 use error::ErrorPlugin;
+use input::InputPlugin;
 use intent::IntentPlugin;
 use physics::PhysicsPlugin;
 use render_2d::Render2dPlugin;
@@ -28,6 +29,7 @@ pub fn run() {
             EcsPlugin,
             PhysicsPlugin,
             SimulationPlugin,
+            InputPlugin,
             IntentPlugin,
             Render2dPlugin,
         ))

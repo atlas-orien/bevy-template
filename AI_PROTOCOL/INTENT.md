@@ -18,9 +18,7 @@
 
 - 移动意图：写到 `crates/intent/src/movement`。
 
-输入、AI、脚本、网络等来源不属于 `intent`。这些来源以后需要先在其它层转换成 intent，再调用 `intent` 提供的 API 写入 ECS intent 数据。
-
-第一版暂时不定义输入层归属。
+输入、AI、脚本、网络等来源不属于 `intent`。输入来源放在 `crates/input`，并调用 `intent` 提供的 API 写入 ECS intent 数据。
 
 ## 边界规则
 

@@ -26,6 +26,7 @@ app = { path = "crates/app" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
 intent = { path = "crates/intent" }
+input = { path = "crates/input" }
 physics = { path = "crates/physics" }
 prefab = { path = "crates/prefab" }
 render_2d = { path = "crates/render_2d" }

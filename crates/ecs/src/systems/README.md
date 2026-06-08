@@ -82,7 +82,7 @@ fn damage_system(...) {
 
 `intent` 表达某个 `Entity` 想做什么。
 
-外部控制来源不属于 `crates/ecs/src/systems`，也不属于 `intent` 本身。它们未来需要先转换成意图数据。
+外部控制来源不属于 `crates/ecs/src/systems`，也不属于 `intent` 本身。它们应该放到 `crates/input`，再转换成意图数据。
 
 例如：
 
@@ -124,7 +124,7 @@ simulation = 什么时候运行这些规则
 ## 规则
 
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`，这些放到 `crates/ecs/src/components`、`crates/ecs/src/resources`、`crates/ecs/src/events`。
-- 不读取键盘、鼠标、手柄、网络输入；外部来源需要先转换成 intent。
+- 不读取键盘、鼠标、手柄、网络输入；外部来源放到 `crates/input`，再转换成 intent。
 - 不写渲染、动画、UI、相机，这些放到渲染层。
 - 不把多个无关规则塞进一个大系统函数。
 - 系统函数命名使用 `_system` 后缀，例如 `movement_system`。

@@ -11,7 +11,7 @@ pub fn check() -> CheckStatus {
 
     require_path(PREFAB_CRATE, &mut errors);
     require_path(PREFAB_PROTOCOL, &mut errors);
-    reject_render_dependencies(&mut errors);
+    reject_forbidden_dependencies(&mut errors);
     reject_system_functions(&mut errors);
 
     if errors.is_empty() {
@@ -21,16 +21,16 @@ pub fn check() -> CheckStatus {
     }
 }
 
-fn reject_render_dependencies(errors: &mut Vec<String>) {
+fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
     let manifest = Path::new(PREFAB_CRATE).join("Cargo.toml");
     let Ok(source) = fs::read_to_string(&manifest) else {
         return;
     };
 
-    for dependency in ["render_2d", "render_3d"] {
-        if source.contains(dependency) {
+    for dependency in ["input", "intent", "simulation", "scenes"] {
+        if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; prefab must not depend on render crates",
+                "{} depends on `{dependency}`; prefab should stay an object template library",
                 manifest.display()
             ));
         }

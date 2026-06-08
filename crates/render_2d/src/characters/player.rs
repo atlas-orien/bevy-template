@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use ecs::components::characters::player::{Facing, MovementIntent, Player};
-use simulation::state::AppState;
+use ecs::components::characters::player::{Facing, MovementIntent};
 
 const CHARACTER_ATLAS_PATH: &str = "images/characters/bevy/gabe/gabe-idle-run.png";
 const FRAME_SIZE: UVec2 = UVec2::splat(24);
@@ -12,75 +11,74 @@ const RUN_LAST_FRAME: usize = 6;
 const ANIMATION_FRAME_SECONDS: f32 = 0.1;
 const PLAYER_RENDER_SCALE: f32 = 6.0;
 
-#[derive(Component)]
-struct PlayerSprite;
-
-#[derive(Component)]
-struct PlayerSpriteRoot;
+#[derive(Component, Debug, Clone, Copy, Default)]
+pub struct PlayerSprite;
 
 #[derive(Component, Deref, DerefMut)]
-struct PlayerAnimation(Timer);
-
-type PlayerWithoutSpriteQuery<'world, 'state> =
-    Query<'world, 'state, Entity, (With<Player>, Without<PlayerSpriteRoot>)>;
+pub struct PlayerAnimation(pub Timer);
 
 pub struct PlayerSpritePlugin;
 
 impl Plugin for PlayerSpritePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            attach_player_sprite.run_if(in_state(AppState::Playing)),
-        )
-        .add_systems(
-            Update,
-            animate_player_sprite.run_if(in_state(AppState::Playing)),
-        );
+        app.add_systems(Update, animate_player_sprite);
     }
 }
 
-fn attach_player_sprite(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-    players: PlayerWithoutSpriteQuery,
-) {
-    let texture = asset_server.load(CHARACTER_ATLAS_PATH);
-    let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
-        FRAME_SIZE,
-        FRAME_COLUMNS,
-        FRAME_ROWS,
-        None,
-        None,
-    ));
+#[derive(Bundle)]
+pub struct PlayerSpriteBundle {
+    pub sprite: Sprite,
+    pub transform: Transform,
+    pub marker: PlayerSprite,
+    pub animation: PlayerAnimation,
+}
 
-    for entity in &players {
-        commands.entity(entity).insert(PlayerSpriteRoot);
-        commands.entity(entity).with_children(|children| {
-            children.spawn((
-                Sprite::from_atlas_image(
-                    texture.clone(),
-                    TextureAtlas {
-                        layout: layout.clone(),
-                        index: IDLE_FRAME,
-                    },
-                ),
-                Transform::from_scale(Vec3::splat(PLAYER_RENDER_SCALE)),
-                PlayerSprite,
-                PlayerAnimation(Timer::from_seconds(
-                    ANIMATION_FRAME_SECONDS,
-                    TimerMode::Repeating,
-                )),
-            ));
-        });
+impl PlayerSpriteBundle {
+    pub fn from_assets(
+        asset_server: &AssetServer,
+        texture_atlas_layouts: &mut Assets<TextureAtlasLayout>,
+    ) -> Self {
+        let texture = asset_server.load(CHARACTER_ATLAS_PATH);
+        let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
+            FRAME_SIZE,
+            FRAME_COLUMNS,
+            FRAME_ROWS,
+            None,
+            None,
+        ));
+
+        Self {
+            sprite: Sprite::from_atlas_image(
+                texture,
+                TextureAtlas {
+                    layout,
+                    index: IDLE_FRAME,
+                },
+            ),
+            transform: Transform::from_scale(Vec3::splat(PLAYER_RENDER_SCALE)),
+            marker: PlayerSprite,
+            animation: PlayerAnimation(Timer::from_seconds(
+                ANIMATION_FRAME_SECONDS,
+                TimerMode::Repeating,
+            )),
+        }
     }
 }
 
 fn animate_player_sprite(
     time: Res<Time>,
-    mut players: Query<(&MovementIntent, &Facing, &mut PlayerAnimation, &mut Sprite)>,
+    parents: Query<&ChildOf, With<PlayerSprite>>,
+    gameplay_entities: Query<(&MovementIntent, &Facing)>,
+    mut sprites: Query<(Entity, &mut PlayerAnimation, &mut Sprite), With<PlayerSprite>>,
 ) {
-    for (movement_intent, facing, mut animation, mut sprite) in &mut players {
+    for (entity, mut animation, mut sprite) in &mut sprites {
+        let Ok(parent) = parents.get(entity) else {
+            continue;
+        };
+        let Ok((movement_intent, facing)) = gameplay_entities.get(parent.parent()) else {
+            continue;
+        };
+
         sprite.flip_x = *facing == Facing::Left;
 
         let Some(atlas) = &mut sprite.texture_atlas else {

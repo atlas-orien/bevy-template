@@ -13,6 +13,7 @@
 ```rust
 ErrorPlugin
 EcsPlugin
+PhysicsPlugin
 SimulationPlugin
 InputPlugin
 IntentPlugin

@@ -12,4 +12,4 @@ publish = false
 bevy.workspace = true
 ecs.workspace = true
 error.workspace = true
-prefab.workspace = true
+scenes.workspace = true

@@ -8,15 +8,15 @@
 
 - 定义游戏状态流。
 - 定义状态进入、运行、退出时的调度。
-- 决定什么时候生成 prefab。
-- 决定什么时候清理实体。
+- 决定什么时候进入或退出 scene。
+- 决定什么时候清理 scene entity。
 - 决定哪些 ECS system 在哪些状态或阶段运行。
 
 ## 代码落点
 
 - 游戏状态：写到 `crates/simulation/src/state`。
 - 系统调度、运行条件、系统集合：写到 `crates/simulation/src/schedule`。
-- 生成时机：写到 `crates/simulation/src/spawning`。
+- 场景进入调度：写到 `crates/simulation/src/spawning`。
 - 清理策略：写到 `crates/simulation/src/cleanup`。
 - 关卡、回合、场景生命周期：写到 `crates/simulation/src/lifecycle`。
 
@@ -29,15 +29,15 @@
 - 不封装物理后端；这些放到 `crates/physics`。
 - 不读取输入；输入来源放到 `crates/input`，再转换成 `crates/intent` 表达的意图。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
-- 不直接散装实体组件；生成实体时优先使用 `crates/prefab` 提供的 prefab bundle。
+- 不直接散装实体组件；进入场景时优先调用 `crates/scenes`。
 
 ## 依赖规则
 
 - `simulation` 可以依赖 `ecs`。
-- `simulation` 可以依赖 `prefab`。
+- `simulation` 可以依赖 `scenes`。
 - `simulation` 必须依赖 `error`。
 - `simulation` 不依赖 `render_2d` 或 `render_3d`。
-- `simulation` 默认不直接依赖 `physics`；物理能力通过 `prefab` 组合，通过 `app` 注册 `PhysicsPlugin`。
+- `simulation` 默认不直接依赖 `prefab` 或 `physics`；对象组合由 `scenes -> prefab` 完成，通过 `app` 注册 `PhysicsPlugin`。
 
 ## 验证要求
 

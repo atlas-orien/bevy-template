@@ -31,6 +31,7 @@ physics = { path = "crates/physics" }
 prefab = { path = "crates/prefab" }
 render_2d = { path = "crates/render_2d" }
 render_3d = { path = "crates/render_3d" }
+scenes = { path = "crates/scenes" }
 simulation = { path = "crates/simulation" }
 thiserror = "2"
 

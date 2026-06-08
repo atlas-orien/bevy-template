@@ -4,7 +4,7 @@
 
 `crates/render_2d` 是 2D 表现层。
 
-它读取 ECS 世界数据和 simulation 状态，把游戏显示成 2D 画面。
+它读取 ECS 世界数据，把游戏显示成 2D 画面。
 
 ## 核心职责
 
@@ -56,7 +56,6 @@ Player gameplay Entity
 ## 依赖规则
 
 - `render_2d` 可以依赖 `ecs`。
-- `render_2d` 可以依赖 `simulation` 的状态定义。
 - `render_2d` 必须依赖 `error`。
 - `render_2d` 不依赖 `input`。
 - `render_2d` 不依赖 `intent`。

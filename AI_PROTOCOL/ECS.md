@@ -49,7 +49,7 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 
 - `crates/ecs/src/components`: 定义 `Player`、`MovementIntent`、`Facing`、`PlayerSpeed`。
 - `crates/intent`: 提供写入 `MovementIntent` 等意图数据的语义 API。
-- `crates/simulation`: 管理 Playing 状态下的玩家生成和系统调度。
+- `crates/simulation`: 管理 Playing 状态下的 scene 进入和系统调度。
 - `crates/ecs/src/systems`: 未来用于放根据意图移动 `Transform` 的系统函数。
 - `crates/render_2d`: 使用 Bevy 官方 `gabe-idle-run.png` 做 2D 跑步动画。
 

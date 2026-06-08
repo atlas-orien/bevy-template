@@ -26,9 +26,10 @@
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
 - `crates/input`: 输入来源适配层，把键盘、鼠标、网络等外部来源转换成 intent
 - `crates/intent`: Entity 意图层，表达可控制实体想做什么
-- `crates/simulation`: 模拟层，负责状态流、生成/销毁、移动、战斗、交互等世界变化
+- `crates/simulation`: 模拟层，负责状态流、scene 进入/退出调度和 ECS system 调度
 - `crates/physics`: 物理引擎适配层，默认使用 Avian 2D，可通过 feature 切换到 Rapier 2D
-- `crates/prefab`: 可生成对象模板层，组合 ECS 数据和物理能力
+- `crates/prefab`: 可生成对象模板基础库，组合 ECS、physics、render 数据
+- `crates/scenes`: 场景装配层，把 prefab 组合成主菜单、关卡等具体场景
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
 - `crates/app`: 最终运行的应用子包，负责组装插件
@@ -75,13 +76,14 @@ flowchart TD
     intent --> ecs
 
     simulation --> ecs
-    simulation --> prefab["crates/prefab"]
+    simulation --> scenes["crates/scenes"]
 
+    scenes --> prefab["crates/prefab"]
     prefab --> ecs
     prefab --> physics
+    prefab --> render2d
 
     render2d --> ecs
-    render2d --> simulation
 
     error["crates/error<br/>统一 Result / GameError"]
     error -.-> app
@@ -91,6 +93,7 @@ flowchart TD
     error -.-> input
     error -.-> intent
     error -.-> prefab
+    error -.-> scenes
     error -.-> render2d
 ```
 
@@ -100,7 +103,7 @@ flowchart TD
 app.add_plugins(PhysicsPlugin)
 ```
 
-它不表示 app 负责物理规则，也不表示 app 会直接创建刚体或碰撞体。物理对象的组合放在 `prefab`，生成时机放在 `simulation`，物理后端适配放在 `physics`。
+它不表示 app 负责物理规则，也不表示 app 会直接创建刚体或碰撞体。物理对象的组合放在 `prefab`，场景对象选择放在 `scenes`，场景切换时机放在 `simulation`，物理后端适配放在 `physics`。
 
 `error` 是全项目共享基础层。所有 crate 都使用 `error::Result<T>` 和 `error::GameError`，不要在其它 crate 里定义新的 `Result` 别名，也不要直接使用 Rust 默认的 `std::result::Result` 作为项目函数返回类型。
 
@@ -114,9 +117,10 @@ app.add_plugins(PhysicsPlugin)
 - `crates/ecs/src/systems` 放真正读取和修改 ECS 数据的系统函数。
 - `input` 读取键盘、鼠标、手柄、网络等外部来源，并转换成 `intent`。
 - `intent` 只表达哪个 Entity 想做什么，并提供写入意图数据的语义 API。
-- `simulation` 负责状态流、阶段调度和更高层模拟流程，可以组合 `crates/ecs/src/systems`。
+- `simulation` 负责状态流、阶段调度和 scene 进入/退出调度，可以组合 `crates/ecs/src/systems`。
 - `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
-- `prefab` 负责组合 `ecs` 和 `physics`，提供可直接生成的对象模板。
+- `prefab` 负责组合 `ecs`、`physics`、`render_2d` 等数据，提供可直接生成的完整对象模板。
+- `scenes` 负责绑定具体 prefab，组成主菜单、关卡、战斗场景等。
 - `render_2d` 只放 2D 表现相关代码，可以创建相机、sprite、UI 和渲染专用子实体，但不能驱动 gameplay 规则。
 - `render_3d` 只放 3D 表现相关代码。
 - `app` 只负责最终插件组装和窗口等顶层配置。

@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Reusable entity prefab bundles composed from ECS and physics data."
+description = "Reusable complete object prefab bundles for the Bevy game template."
 publish = false
 
 [dependencies]
@@ -13,3 +13,4 @@ bevy.workspace = true
 ecs.workspace = true
 error.workspace = true
 physics.workspace = true
+render_2d.workspace = true

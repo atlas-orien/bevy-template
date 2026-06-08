@@ -78,14 +78,23 @@ cargo run -p xtask -- help
 
 - `crates/prefab` 必须存在。
 - `AI_PROTOCOL/PREFAB.md` 必须存在。
-- `prefab` 不允许依赖 `render_2d` 或 `render_3d`。
+- `prefab` 不允许依赖 `input`、`intent`、`simulation`、`scenes`。
 - `prefab` 不允许定义 `_system` 结尾的 ECS system 函数。
+
+当前也会检查 `crates/scenes`：
+
+- `crates/scenes` 必须存在。
+- `AI_PROTOCOL/SCENES.md` 必须存在。
+- 默认场景目录 `main_menu`、`level_01`、`shared` 必须存在。
+- `scenes` 不允许依赖 `simulation`、`input`、`intent`、`physics`、`render_2d`、`render_3d`。
+- `scenes` 不允许直接读取键盘、鼠标、手柄等输入。
+- `scenes` 不允许写 intent。
 
 当前也会检查 `crates/simulation`：
 
 - `crates/simulation` 必须存在。
 - `AI_PROTOCOL/SIMULATION.md` 必须存在。
-- `simulation` 不允许依赖 `physics`、`render_2d`、`render_3d`。
+- `simulation` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
 - `simulation` 不允许定义 ECS 数据类型。
 - `simulation` 不允许直接读取键盘、鼠标、手柄等输入。
 
@@ -117,6 +126,8 @@ AI_PROTOCOL/PHYSICS.md
 crates/xtask/src/rules/physics.rs
 AI_PROTOCOL/PREFAB.md
 crates/xtask/src/rules/prefab.rs
+AI_PROTOCOL/SCENES.md
+crates/xtask/src/rules/scenes.rs
 AI_PROTOCOL/SIMULATION.md
 crates/xtask/src/rules/simulation.rs
 AI_PROTOCOL/RENDER_2D.md
@@ -129,6 +140,7 @@ crates/xtask/src/rules/render_2d.rs
 AI_PROTOCOL/INTENT.md      -> crates/xtask/src/rules/intent.rs
 AI_PROTOCOL/INPUT.md       -> crates/xtask/src/rules/input.rs
 AI_PROTOCOL/RENDER_2D.md   -> crates/xtask/src/rules/render_2d.rs
+AI_PROTOCOL/SCENES.md      -> crates/xtask/src/rules/scenes.rs
 AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```
 
@@ -141,6 +153,7 @@ crates/xtask/src/rules/
 ├── ecs.rs
 ├── input.rs
 ├── intent.rs
+├── scenes.rs
 ├── simulation.rs
 ├── render_2d.rs
 ├── render_3d.rs

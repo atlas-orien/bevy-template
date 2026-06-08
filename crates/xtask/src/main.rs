@@ -1,5 +1,6 @@
 mod rules;
 
+use rules::CheckStatus;
 use std::env;
 use std::process::ExitCode;
 
@@ -16,15 +17,15 @@ fn main() -> ExitCode {
             print_help();
             return ExitCode::SUCCESS;
         }
-        unknown => Err(vec![format!("unknown xtask command: {unknown}")]),
+        unknown => CheckStatus::Failed(vec![format!("unknown xtask command: {unknown}")]),
     };
 
     match result {
-        Ok(()) => {
+        CheckStatus::Passed => {
             println!("architecture checks passed");
             ExitCode::SUCCESS
         }
-        Err(errors) => {
+        CheckStatus::Failed(errors) => {
             eprintln!("architecture checks failed:");
             for error in errors {
                 eprintln!("- {error}");

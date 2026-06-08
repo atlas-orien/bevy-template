@@ -18,6 +18,9 @@ struct PlayerSprite;
 #[derive(Component, Deref, DerefMut)]
 struct PlayerAnimation(Timer);
 
+type PlayerWithoutSpriteQuery<'world, 'state> =
+    Query<'world, 'state, (Entity, &'static mut Transform), (With<Player>, Without<PlayerSprite>)>;
+
 pub struct PlayerSpritePlugin;
 
 impl Plugin for PlayerSpritePlugin {
@@ -37,7 +40,7 @@ fn attach_player_sprite(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-    mut players: Query<(Entity, &mut Transform), (With<Player>, Without<PlayerSprite>)>,
+    mut players: PlayerWithoutSpriteQuery,
 ) {
     let texture = asset_server.load(CHARACTER_ATLAS_PATH);
     let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(

@@ -3,6 +3,7 @@ use bevy::window::{Window, WindowPlugin};
 use controller::ControllerPlugin;
 use ecs::EcsPlugin;
 use error::ErrorPlugin;
+use physics::PhysicsPlugin;
 use render_2d::Render2dPlugin;
 use simulation::SimulationPlugin;
 
@@ -25,6 +26,7 @@ pub fn run() {
         .add_plugins((
             ErrorPlugin,
             EcsPlugin,
+            PhysicsPlugin,
             SimulationPlugin,
             ControllerPlugin,
             Render2dPlugin,

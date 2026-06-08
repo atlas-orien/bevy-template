@@ -43,12 +43,59 @@
 ```rust
 ErrorPlugin
 EcsPlugin
+PhysicsPlugin
 SimulationPlugin
 ControllerPlugin
 Render2dPlugin
 ```
 
 `Render3dPlugin` 已经存在，但默认不接入 app。需要切换或扩展 3D 模板时，在 `crates/app` 中组装它。
+
+## crate 关系
+
+下面是当前模板的默认依赖和协作关系：
+
+```mermaid
+flowchart TD
+    main["src/main.rs"] --> app["crates/app"]
+
+    app --> ecs["crates/ecs"]
+    app --> physics["crates/physics"]
+    app --> simulation["crates/simulation"]
+    app --> controller["crates/controller"]
+    app --> render2d["crates/render_2d"]
+
+    controller --> ecs
+    controller --> simulation
+
+    simulation --> ecs
+    simulation --> prefab["crates/prefab"]
+
+    prefab --> ecs
+    prefab --> physics
+
+    render2d --> ecs
+    render2d --> simulation
+
+    error["crates/error<br/>统一 Result / GameError"]
+    error -.-> app
+    error -.-> ecs
+    error -.-> physics
+    error -.-> simulation
+    error -.-> controller
+    error -.-> prefab
+    error -.-> render2d
+```
+
+`app` 依赖 `physics` 是因为 Bevy 插件需要在最终应用里注册。这里的 `app -> physics` 只表示：
+
+```rust
+app.add_plugins(PhysicsPlugin)
+```
+
+它不表示 app 负责物理规则，也不表示 app 会直接创建刚体或碰撞体。物理对象的组合放在 `prefab`，生成时机放在 `simulation`，物理后端适配放在 `physics`。
+
+`error` 是全项目共享基础层。所有 crate 都使用 `error::Result<T>` 和 `error::GameError`，不要在其它 crate 里定义新的 `Result` 别名，也不要直接使用 Rust 默认的 `std::result::Result` 作为项目函数返回类型。
 
 ## 分层规则
 

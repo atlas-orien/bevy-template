@@ -26,6 +26,8 @@ Result<T>
 
 不要在其他子包里再定义新的 `Result` 别名。
 
+除 `crates/error` 自身外，也不要在项目函数里直接使用 `std::result::Result` 或 `core::result::Result`。需要返回错误时，统一使用 `error::Result<T>`。
+
 ## thiserror
 
 `GameError` 使用 `thiserror` 定义。

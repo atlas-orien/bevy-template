@@ -24,6 +24,14 @@ cargo run -p xtask -- help
 
 检查项目结构是否符合当前模板规则。
 
+当前会检查 `crates/error`：
+
+- `crates/error` 必须存在。
+- `AI_PROTOCOL/ERROR.md` 必须存在。
+- 每个 crate 都必须依赖 `error`。
+- 除 `crates/error` 外，其它 crate 不允许定义自己的 `Result` 类型别名。
+- 除 `crates/error` 外，其它 crate 不允许直接使用 `std::result::Result` 或 `core::result::Result`。
+
 当前会检查 `crates/ecs`：
 
 - `crates/ecs` 必须存在。
@@ -61,6 +69,8 @@ cargo run -p xtask -- help
 现在对应关系是：
 
 ```text
+AI_PROTOCOL/ERROR.md
+crates/xtask/src/rules/error.rs
 AI_PROTOCOL/ECS.md
 crates/xtask/src/rules/ecs.rs
 AI_PROTOCOL/PHYSICS.md

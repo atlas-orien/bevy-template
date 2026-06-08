@@ -1,10 +1,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use super::CheckStatus;
+
 const ECS_CRATE: &str = "crates/ecs";
 const ECS_PROTOCOL: &str = "AI_PROTOCOL/ECS.md";
 
-pub fn check() -> Result<(), Vec<String>> {
+pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
     require_path(ECS_CRATE, &mut errors);
@@ -18,9 +20,9 @@ pub fn check() -> Result<(), Vec<String>> {
     check_systems(&mut errors);
 
     if errors.is_empty() {
-        Ok(())
+        CheckStatus::Passed
     } else {
-        Err(errors)
+        CheckStatus::Failed(errors)
     }
 }
 
@@ -39,7 +41,7 @@ fn check_components(errors: &mut Vec<String>) {
     }
 
     for file in rust_files(root) {
-        let Ok(parsed) = parse_rust_file(&file, errors) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
@@ -62,7 +64,7 @@ fn check_resources(errors: &mut Vec<String>) {
     require_path(root, errors);
 
     for file in rust_files(root) {
-        let Ok(parsed) = parse_rust_file(&file, errors) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
@@ -86,7 +88,7 @@ fn check_events(errors: &mut Vec<String>) {
     require_path(root, errors);
 
     for file in rust_files(root) {
-        let Ok(parsed) = parse_rust_file(&file, errors) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
@@ -120,7 +122,7 @@ fn check_systems(errors: &mut Vec<String>) {
     require_path(root, errors);
 
     for file in rust_files(root) {
-        let Ok(parsed) = parse_rust_file(&file, errors) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
@@ -156,20 +158,20 @@ fn reject_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
     }
 }
 
-fn parse_rust_file(path: &Path, errors: &mut Vec<String>) -> Result<syn::File, ()> {
+fn parse_rust_file(path: &Path, errors: &mut Vec<String>) -> Option<syn::File> {
     let source = match fs::read_to_string(path) {
         Ok(source) => source,
         Err(error) => {
             errors.push(format!("failed to read {}: {error}", path.display()));
-            return Err(());
+            return None;
         }
     };
 
     match syn::parse_file(&source) {
-        Ok(parsed) => Ok(parsed),
+        Ok(parsed) => Some(parsed),
         Err(error) => {
             errors.push(format!("failed to parse {}: {error}", path.display()));
-            Err(())
+            None
         }
     }
 }

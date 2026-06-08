@@ -1,10 +1,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use super::CheckStatus;
+
 const PREFAB_CRATE: &str = "crates/prefab";
 const PREFAB_PROTOCOL: &str = "AI_PROTOCOL/PREFAB.md";
 
-pub fn check() -> Result<(), Vec<String>> {
+pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
     require_path(PREFAB_CRATE, &mut errors);
@@ -13,9 +15,9 @@ pub fn check() -> Result<(), Vec<String>> {
     reject_system_functions(&mut errors);
 
     if errors.is_empty() {
-        Ok(())
+        CheckStatus::Passed
     } else {
-        Err(errors)
+        CheckStatus::Failed(errors)
     }
 }
 

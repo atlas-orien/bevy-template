@@ -6,5 +6,5 @@ pub fn add_physics_backend(app: &mut App) {
 }
 
 pub fn add_debug_backend(app: &mut App) {
-    app.add_plugins(AvianPhysicsDebugPlugin::default());
+    app.add_plugins(AvianPhysicsDebugPlugin);
 }

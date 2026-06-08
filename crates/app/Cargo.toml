@@ -13,5 +13,6 @@ bevy.workspace = true
 controller.workspace = true
 ecs.workspace = true
 error.workspace = true
+physics.workspace = true
 render_2d.workspace = true
 simulation.workspace = true

@@ -9,4 +9,5 @@ description = "Internal project automation and architecture checks."
 publish = false
 
 [dependencies]
-syn = { version = "2", features = ["full"] }
+error.workspace = true
+syn = { version = "2", features = ["full", "visit"] }

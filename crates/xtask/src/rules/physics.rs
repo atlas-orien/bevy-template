@@ -1,11 +1,13 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use super::CheckStatus;
+
 const PHYSICS_CRATE: &str = "crates/physics";
 const PHYSICS_PROTOCOL: &str = "AI_PROTOCOL/PHYSICS.md";
 const BACKENDS: [&str; 4] = ["avian2d", "avian3d", "bevy_rapier2d", "bevy_rapier3d"];
 
-pub fn check() -> Result<(), Vec<String>> {
+pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
     require_path(PHYSICS_CRATE, &mut errors);
@@ -14,9 +16,9 @@ pub fn check() -> Result<(), Vec<String>> {
     check_backend_imports(&mut errors);
 
     if errors.is_empty() {
-        Ok(())
+        CheckStatus::Passed
     } else {
-        Err(errors)
+        CheckStatus::Failed(errors)
     }
 }
 

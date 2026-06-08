@@ -196,7 +196,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
- "simulation",
+ "runtime",
 ]
 
 [[package]]
@@ -4925,7 +4925,6 @@ dependencies = [
  "bevy",
  "ecs",
  "error",
- "simulation",
 ]
 
 [[package]]
@@ -4969,6 +4968,17 @@ name = "roxmltree"
 version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
+
+[[package]]
+name = "runtime"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+ "input",
+ "intent",
+ "prefab",
+]
 
 [[package]]
 name = "rustc-hash"
@@ -5191,17 +5201,6 @@ name = "simdutf8"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
-
-[[package]]
-name = "simulation"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "error",
- "input",
- "intent",
- "prefab",
-]
 
 [[package]]
 name = "skrifa"

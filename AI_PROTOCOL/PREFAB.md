@@ -20,10 +20,10 @@
 - `prefab` 不读取键盘、鼠标、手柄、网络输入。
 - `prefab` 不写底层 ECS system 函数；可以封装和导出 runtime-facing plugin 或 setup API。
 - `prefab` 不决定生成时机。
-- `simulation` 注册 `PrefabPlugin`，`app` 不直接注册 `PrefabPlugin`、`EcsPlugin`、`PhysicsPlugin` 或 `Render2dPlugin`。
-- `input`、`intent`、`simulation` 使用 `prefab` 暴露的最小合法接口，不直接使用裸 `ecs`。
-- `simulation` 决定具体 runtime session 使用哪些 prefab。
-- `simulation` 决定什么时候进入或退出 runtime session。
+- `runtime` 注册 `PrefabPlugin`，`app` 不直接注册 `PrefabPlugin`、`EcsPlugin`、`PhysicsPlugin` 或 `Render2dPlugin`。
+- `input`、`intent`、`runtime` 使用 `prefab` 暴露的最小合法接口，不直接使用裸 `ecs`。
+- `runtime` 决定具体 runtime session 使用哪些 prefab。
+- `runtime` 决定什么时候进入或退出 runtime session。
 
 ## Bundle 规则
 

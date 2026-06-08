@@ -10,7 +10,7 @@
 - 定义可生成对象的组合 Bundle。
 - 组合 ECS、physics、render bundle。
 - 给 runtime setup 提供稳定的对象生成入口。
-- 给 simulation 提供 runtime-facing plugin 或 setup API。
+- 给 runtime 提供 runtime-facing plugin 或 setup API。
 
 具体游戏应该在这里添加自己的对象模板，而不是在 runtime setup 或生成系统里散装很多组件。
 
@@ -28,4 +28,4 @@
 - 不写底层 ECS system 函数；可以封装并导出 runtime-facing plugin 或 setup API。
 - 不负责状态流、关卡流程或生成时机。
 
-`simulation` 决定具体 runtime session 使用哪些 prefab，以及什么时候进入或退出这些 session。
+`runtime` 决定具体 runtime session 使用哪些 prefab，以及什么时候进入或退出这些 session。

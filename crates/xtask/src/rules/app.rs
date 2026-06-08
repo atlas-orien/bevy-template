@@ -36,7 +36,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
     ] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; app should only depend on the simulation runtime",
+                "{} depends on `{dependency}`; app should only depend on the runtime crate",
                 manifest.display()
             ));
         }
@@ -60,7 +60,7 @@ fn reject_internal_plugins(errors: &mut Vec<String>) {
         ] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; app should register SimulationPlugin only",
+                    "{} references `{forbidden}`; app should register RuntimePlugin only",
                     file.display()
                 ));
             }

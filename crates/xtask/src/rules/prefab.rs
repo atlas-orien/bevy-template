@@ -27,7 +27,7 @@ fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
         return;
     };
 
-    for dependency in ["input", "intent", "simulation"] {
+    for dependency in ["input", "intent", "runtime"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
                 "{} depends on `{dependency}`; prefab should stay an object template library",

@@ -11,10 +11,10 @@
 
 ```rust
 ErrorPlugin
-SimulationPlugin
+RuntimePlugin
 ```
 
-`SimulationPlugin` 是游戏唯一 runtime 入口，内部负责组装 prefab、input、intent 等游戏层插件。`app` 不直接注册这些内部插件。
+`RuntimePlugin` 是游戏唯一 runtime 入口，内部负责组装 prefab、input、intent 等游戏层插件。`app` 不直接注册这些内部插件。
 
 ## 不应该放这里
 

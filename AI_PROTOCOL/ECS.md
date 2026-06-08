@@ -49,7 +49,7 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 
 - `crates/ecs/src/components`: 定义 `Player`、`MovementIntent`、`Facing`、`PlayerSpeed`。
 - `crates/intent`: 提供写入 `MovementIntent` 等意图数据的语义 API。
-- `crates/simulation`: 管理 Playing 状态下的 runtime session 进入和系统调度。
+- `crates/runtime`: 管理 Playing 状态下的 runtime session 进入和系统调度。
 - `crates/ecs/src/systems`: 放根据意图移动 `Transform` 的系统函数。
 
 ## 验证要求

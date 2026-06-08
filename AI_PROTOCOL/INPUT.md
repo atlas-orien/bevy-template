@@ -38,7 +38,7 @@
 - `input` 可以依赖 `prefab`。
 - `input` 必须依赖 `error`。
 - `input` 不依赖 `ecs`。
-- `input` 不依赖 `simulation`；状态调度由 `simulation` 负责。
+- `input` 不依赖 `runtime`；状态调度由 `runtime` 负责。
 - `input` 不依赖 `physics`。
 - `input` 不依赖 `render_2d` 或 `render_3d`。
 

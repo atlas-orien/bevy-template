@@ -104,7 +104,7 @@ crates/ecs/src/systems 根据 MovementIntent + Speed + Time 修改 Transform
 ```text
 intent = 哪个 Entity 想做什么
 ecs/systems = 根据规则怎么做
-simulation = 什么时候运行这些规则
+runtime = 什么时候运行这些规则
 ```
 
 ## 和 render 的区别

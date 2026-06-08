@@ -20,11 +20,11 @@
 
 输入来源放在 `crates/input`。无论 input 来自键盘、手柄、AI 还是网络，都需要先转换成 intent。
 
-## 和 simulation 的区别
+## 和 runtime 的区别
 
 `intent` 表达“想做什么”。
 
-`simulation` 决定处理 intent 的 ECS system 在什么状态、什么阶段被调度。
+`runtime` 决定处理 intent 的 ECS system 在什么状态、什么阶段被调度。
 
 ## 和 ecs/systems 的区别
 

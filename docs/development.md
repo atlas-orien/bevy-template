@@ -7,7 +7,7 @@ This template is split into layered crates:
 - `error`: shared error reporting and collection.
 - `ecs`: core ECS components, resources, events, and systems.
 - `controller`: input, AI, and script-to-intent systems.
-- `simulation`: state flow, phases, and higher-level ECS system orchestration.
+- `runtime`: state flow, phases, and higher-level ECS system orchestration.
 - `render_2d`: 2D rendering and presentation.
 - `render_3d`: 3D rendering and presentation.
 - `app`: final assembly crate.

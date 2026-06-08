@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
 use error::ErrorPlugin;
-use simulation::SimulationPlugin;
+use runtime::RuntimePlugin;
 
 pub use error::Result;
 
@@ -19,6 +19,6 @@ pub fn run() {
                     ..default()
                 }),
         )
-        .add_plugins((ErrorPlugin, SimulationPlugin))
+        .add_plugins((ErrorPlugin, RuntimePlugin))
         .run();
 }

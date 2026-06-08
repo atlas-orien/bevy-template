@@ -1,6 +1,6 @@
-# simulation
+# runtime
 
-`simulation` 是游戏 runtime 语义层，负责游戏流程和世界调度。
+`runtime` 是游戏 runtime 语义层，负责游戏流程和世界调度。
 
 它不定义实体数据，不封装物理引擎，不读取输入，也不负责渲染。它负责把游戏状态、阶段、runtime session 进入/退出和 ECS 系统调度组织起来。
 
@@ -29,31 +29,31 @@
 
 `prefab` 封装这些底层对象和规则，提供 runtime-facing 入口。
 
-`simulation` 决定这些封装入口在什么状态、什么阶段、什么顺序运行。
-`simulation` 也是游戏唯一 runtime，负责统一注册和调度 `prefab`、`input`、`intent`。
+`runtime` 决定这些封装入口在什么状态、什么阶段、什么顺序运行。
+`runtime` 也是游戏唯一 runtime，负责统一注册和调度 `prefab`、`input`、`intent`。
 
 例如：
 
 - `crates/ecs/src/systems/movement`: 定义 `movement_system`。
 - `crates/prefab`: 封装 movement 等 runtime-facing 能力。
-- `crates/simulation`: 决定 prefab runtime 能力只在 Playing 状态运行。
+- `crates/runtime`: 决定 prefab runtime 能力只在 Playing 状态运行。
 
 ## 和 prefab 的区别
 
 `prefab` 定义“一个对象由哪些组件组成”。
 
-`simulation` 定义“当前 runtime session 使用哪些 prefab，以及什么时候生成或清理它们”。
+`runtime` 定义“当前 runtime session 使用哪些 prefab，以及什么时候生成或清理它们”。
 
 例如：
 
 - `prefab`: 定义对象模板
-- `simulation`: `OnEnter(AppState::Playing)` 时加载当前游戏世界
+- `runtime`: `OnEnter(AppState::Playing)` 时加载当前游戏世界
 
 ## 和 intent 的区别
 
 `intent` 表达 Entity 想做什么。
 
-`simulation` 不关心意图来自哪里，只负责游戏流程和系统调度。
+`runtime` 不关心意图来自哪里，只负责游戏流程和系统调度。
 
 ## 不应该放这里
 

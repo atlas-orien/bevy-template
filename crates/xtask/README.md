@@ -27,7 +27,7 @@ cargo run -p xtask -- help
 当前会检查 `crates/app`：
 
 - `crates/app` 必须存在。
-- `app` 只允许依赖 `bevy`、`error` 和 `simulation`。
+- `app` 只允许依赖 `bevy`、`error` 和 `runtime`。
 - `app` 不允许直接注册 prefab、input、intent、ecs、physics 或 render 插件。
 
 当前会检查 `crates/intent`：
@@ -45,7 +45,7 @@ cargo run -p xtask -- help
 - `crates/input` 必须存在。
 - `AI_PROTOCOL/INPUT.md` 必须存在。
 - 必须有当前本地输入模块 `local.rs`。
-- `input` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`、`simulation`。
+- `input` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`、`runtime`。
 - `input` 不允许定义 ECS 数据类型。
 - `input` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
@@ -84,16 +84,16 @@ cargo run -p xtask -- help
 
 - `crates/prefab` 必须存在。
 - `AI_PROTOCOL/PREFAB.md` 必须存在。
-- `prefab` 不允许依赖 `input`、`intent`、`simulation`。
-- `prefab` 不允许定义 `_system` 结尾的 ECS system 函数。
+- `prefab` 不允许依赖 `input`、`intent`、`runtime`。
+- `prefab` 不允许直接读取键盘、鼠标、手柄等输入。
 
-当前也会检查 `crates/simulation`：
+当前也会检查 `crates/runtime`：
 
-- `crates/simulation` 必须存在。
-- `AI_PROTOCOL/SIMULATION.md` 必须存在。
-- `simulation` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
-- `simulation` 不允许定义 ECS 数据类型。
-- `simulation` 不允许直接读取键盘、鼠标、手柄等输入。
+- `crates/runtime` 必须存在。
+- `AI_PROTOCOL/RUNTIME.md` 必须存在。
+- `runtime` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
+- `runtime` 不允许定义 ECS 数据类型。
+- `runtime` 不允许直接读取键盘、鼠标、手柄等输入。
 
 当前也会检查 `crates/render_2d`：
 
@@ -125,8 +125,8 @@ AI_PROTOCOL/PHYSICS.md
 crates/xtask/src/rules/physics.rs
 AI_PROTOCOL/PREFAB.md
 crates/xtask/src/rules/prefab.rs
-AI_PROTOCOL/SIMULATION.md
-crates/xtask/src/rules/simulation.rs
+AI_PROTOCOL/RUNTIME.md
+crates/xtask/src/rules/runtime.rs
 AI_PROTOCOL/RENDER_2D.md
 crates/xtask/src/rules/render_2d.rs
 ```
@@ -149,7 +149,7 @@ crates/xtask/src/rules/
 ├── ecs.rs
 ├── input.rs
 ├── intent.rs
-├── simulation.rs
+├── runtime.rs
 ├── render_2d.rs
 ├── render_3d.rs
 └── app.rs

@@ -24,6 +24,15 @@ cargo run -p xtask -- help
 
 检查项目结构是否符合当前模板规则。
 
+当前会检查 `crates/controller`：
+
+- `crates/controller` 必须存在。
+- `AI_PROTOCOL/CONTROLLER.md` 必须存在。
+- 必须有 `keyboard`、`gamepad`、`ai`、`script`、`network` 控制来源目录。
+- `controller` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
+- `controller` 不允许定义 ECS 数据类型。
+- `controller` 不允许直接使用 `Commands`、`Transform` 或物理组件。
+
 当前会检查 `crates/error`：
 
 - `crates/error` 必须存在。
@@ -77,6 +86,8 @@ cargo run -p xtask -- help
 现在对应关系是：
 
 ```text
+AI_PROTOCOL/CONTROLLER.md
+crates/xtask/src/rules/controller.rs
 AI_PROTOCOL/ERROR.md
 crates/xtask/src/rules/error.rs
 AI_PROTOCOL/ECS.md

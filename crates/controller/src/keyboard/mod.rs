@@ -2,9 +2,9 @@ use bevy::prelude::*;
 use ecs::components::characters::player::{Facing, MovementIntent, Player};
 use simulation::state::AppState;
 
-pub struct PlayerControllerPlugin;
+pub struct KeyboardControllerPlugin;
 
-impl Plugin for PlayerControllerPlugin {
+impl Plugin for KeyboardControllerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,

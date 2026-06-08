@@ -48,7 +48,7 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 当前模板包含一个最小玩家演示：
 
 - `crates/ecs/src/components`: 定义 `Player`、`MovementIntent`、`Facing`、`PlayerSpeed`。
-- `crates/controller`: 读取 WASD 和方向键，写入 `MovementIntent`。
+- `crates/controller/src/keyboard`: 读取 WASD 和方向键，写入 `MovementIntent`。
 - `crates/simulation`: 管理 Playing 状态下的玩家生成和系统调度。
 - `crates/ecs/src/systems`: 未来用于放根据意图移动 `Transform` 的系统函数。
 - `crates/render_2d`: 使用 Bevy 官方 `gabe-idle-run.png` 做 2D 跑步动画。

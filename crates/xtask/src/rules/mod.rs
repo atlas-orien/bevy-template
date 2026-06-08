@@ -1,3 +1,4 @@
+mod controller;
 mod ecs;
 mod error;
 mod physics;
@@ -11,6 +12,10 @@ pub enum CheckStatus {
 
 pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
+
+    if let CheckStatus::Failed(mut rule_errors) = controller::check() {
+        errors.append(&mut rule_errors);
+    }
 
     if let CheckStatus::Failed(mut rule_errors) = ecs::check() {
         errors.append(&mut rule_errors);

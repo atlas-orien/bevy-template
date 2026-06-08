@@ -117,7 +117,7 @@ app.add_plugins(PhysicsPlugin)
 - `simulation` 负责状态流、阶段调度和更高层模拟流程，可以组合 `crates/ecs/src/systems`。
 - `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
 - `prefab` 负责组合 `ecs` 和 `physics`，提供可直接生成的对象模板。
-- `render_2d` 只放 2D 表现相关代码。
+- `render_2d` 只放 2D 表现相关代码，可以创建相机、sprite、UI 和渲染专用子实体，但不能驱动 gameplay 规则。
 - `render_3d` 只放 3D 表现相关代码。
 - `app` 只负责最终插件组装和窗口等顶层配置。
 - 可失败的项目函数统一返回 `error::Result<T>`。

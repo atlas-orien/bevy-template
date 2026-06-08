@@ -89,6 +89,15 @@ cargo run -p xtask -- help
 - `simulation` 不允许定义 ECS 数据类型。
 - `simulation` 不允许直接读取键盘、鼠标、手柄等输入。
 
+当前也会检查 `crates/render_2d`：
+
+- `crates/render_2d` 必须存在。
+- `AI_PROTOCOL/RENDER_2D.md` 必须存在。
+- 默认表现目录 `camera`、`characters`、`screens`、`ui` 必须存在。
+- `render_2d` 不允许依赖 `input`、`intent`、`prefab`、`physics`、`render_3d`。
+- `render_2d` 不允许直接读取键盘、鼠标、手柄等输入。
+- `render_2d` 不允许调用 intent 写入函数或引用物理组件。
+
 ## 和 AI_PROTOCOL 的关系
 
 `AI_PROTOCOL` 写规则，`xtask` 执行其中适合自动化的部分。
@@ -110,6 +119,8 @@ AI_PROTOCOL/PREFAB.md
 crates/xtask/src/rules/prefab.rs
 AI_PROTOCOL/SIMULATION.md
 crates/xtask/src/rules/simulation.rs
+AI_PROTOCOL/RENDER_2D.md
+crates/xtask/src/rules/render_2d.rs
 ```
 
 以后如果新增 crate 规则，可以继续扩展：

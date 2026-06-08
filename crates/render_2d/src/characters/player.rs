@@ -15,11 +15,14 @@ const PLAYER_RENDER_SCALE: f32 = 6.0;
 #[derive(Component)]
 struct PlayerSprite;
 
+#[derive(Component)]
+struct PlayerSpriteRoot;
+
 #[derive(Component, Deref, DerefMut)]
 struct PlayerAnimation(Timer);
 
 type PlayerWithoutSpriteQuery<'world, 'state> =
-    Query<'world, 'state, (Entity, &'static mut Transform), (With<Player>, Without<PlayerSprite>)>;
+    Query<'world, 'state, Entity, (With<Player>, Without<PlayerSpriteRoot>)>;
 
 pub struct PlayerSpritePlugin;
 
@@ -40,7 +43,7 @@ fn attach_player_sprite(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-    mut players: PlayerWithoutSpriteQuery,
+    players: PlayerWithoutSpriteQuery,
 ) {
     let texture = asset_server.load(CHARACTER_ATLAS_PATH);
     let layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
@@ -51,23 +54,25 @@ fn attach_player_sprite(
         None,
     ));
 
-    for (entity, mut transform) in &mut players {
-        transform.scale = Vec3::splat(PLAYER_RENDER_SCALE);
-
-        commands.entity(entity).insert((
-            Sprite::from_atlas_image(
-                texture.clone(),
-                TextureAtlas {
-                    layout: layout.clone(),
-                    index: IDLE_FRAME,
-                },
-            ),
-            PlayerSprite,
-            PlayerAnimation(Timer::from_seconds(
-                ANIMATION_FRAME_SECONDS,
-                TimerMode::Repeating,
-            )),
-        ));
+    for entity in &players {
+        commands.entity(entity).insert(PlayerSpriteRoot);
+        commands.entity(entity).with_children(|children| {
+            children.spawn((
+                Sprite::from_atlas_image(
+                    texture.clone(),
+                    TextureAtlas {
+                        layout: layout.clone(),
+                        index: IDLE_FRAME,
+                    },
+                ),
+                Transform::from_scale(Vec3::splat(PLAYER_RENDER_SCALE)),
+                PlayerSprite,
+                PlayerAnimation(Timer::from_seconds(
+                    ANIMATION_FRAME_SECONDS,
+                    TimerMode::Repeating,
+                )),
+            ));
+        });
     }
 }
 

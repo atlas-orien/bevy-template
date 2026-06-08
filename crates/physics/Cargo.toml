@@ -9,7 +9,7 @@ description = "Physics engine facade and backend integration for the Bevy game t
 publish = false
 
 [features]
-default = []
+default = ["avian2d"]
 avian2d = ["dep:avian2d"]
 rapier2d = ["dep:bevy_rapier2d"]
 

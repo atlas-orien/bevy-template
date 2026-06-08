@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use ecs::components::characters::player::PlayerBundle;
+use prefab::characters::player::PlayerPrefabBundle;
 
 use crate::flow::AppState;
 
@@ -17,10 +17,7 @@ impl Plugin for SpawningPlugin {
 
 fn spawn_player(mut commands: Commands) {
     commands.spawn((
-        PlayerBundle {
-            transform: Transform::from_xyz(0.0, -180.0, 10.0),
-            ..default()
-        },
+        PlayerPrefabBundle::at_position(Vec3::new(0.0, -180.0, 10.0)),
         GameplayEntity,
     ));
 }

@@ -47,6 +47,13 @@ cargo run -p xtask -- help
 - 只有 `crates/physics/Cargo.toml` 可以依赖 Avian 或 Rapier。
 - 除 `crates/physics` 外，其它 crate 不允许直接 import Avian 或 Rapier。
 
+当前也会检查 `crates/prefab`：
+
+- `crates/prefab` 必须存在。
+- `AI_PROTOCOL/PREFAB.md` 必须存在。
+- `prefab` 不允许依赖 `render_2d` 或 `render_3d`。
+- `prefab` 不允许定义 `_system` 结尾的 ECS system 函数。
+
 ## 和 AI_PROTOCOL 的关系
 
 `AI_PROTOCOL` 写规则，`xtask` 执行其中适合自动化的部分。
@@ -58,6 +65,8 @@ AI_PROTOCOL/ECS.md
 crates/xtask/src/rules/ecs.rs
 AI_PROTOCOL/PHYSICS.md
 crates/xtask/src/rules/physics.rs
+AI_PROTOCOL/PREFAB.md
+crates/xtask/src/rules/prefab.rs
 ```
 
 以后如果新增 crate 规则，可以继续扩展：

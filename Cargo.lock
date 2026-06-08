@@ -4568,6 +4568,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "prefab"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "ecs",
+ "error",
+ "physics",
+]
+
+[[package]]
 name = "presser"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5183,6 +5193,7 @@ dependencies = [
  "bevy",
  "ecs",
  "error",
+ "prefab",
 ]
 
 [[package]]

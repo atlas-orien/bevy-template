@@ -27,6 +27,7 @@
 - `crates/controller`: 控制层，把键盘、手柄、AI、脚本等输入转换成意图组件
 - `crates/simulation`: 模拟层，负责状态流、生成/销毁、移动、战斗、交互等世界变化
 - `crates/physics`: 物理引擎适配层，通过 feature 显式选择 Avian 2D 或 Rapier 2D
+- `crates/prefab`: 可生成对象模板层，组合 ECS 数据和物理能力
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
 - `crates/app`: 最终运行的应用子包，负责组装插件
@@ -60,6 +61,7 @@ Render2dPlugin
 - `controller` 只读取输入、AI、脚本等控制源，并写入意图组件。
 - `simulation` 负责状态流、阶段调度和更高层模拟流程，可以组合 `crates/ecs/src/systems`。
 - `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
+- `prefab` 负责组合 `ecs` 和 `physics`，提供可直接生成的对象模板。
 - `render_2d` 只放 2D 表现相关代码。
 - `render_3d` 只放 3D 表现相关代码。
 - `app` 只负责最终插件组装和窗口等顶层配置。

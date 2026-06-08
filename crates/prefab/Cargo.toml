@@ -1,15 +1,15 @@
 [package]
-name = "simulation"
+name = "prefab"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Gameplay simulation, state flow, spawning, and world mutation systems."
+description = "Reusable entity prefab bundles composed from ECS and physics data."
 publish = false
 
 [dependencies]
 bevy.workspace = true
 ecs.workspace = true
 error.workspace = true
-prefab.workspace = true
+physics.workspace = true

@@ -1,3 +1,5 @@
+pub mod gameplay;
+
 use bevy::prelude::*;
 
 #[derive(Resource, Debug, Clone)]

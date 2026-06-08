@@ -62,6 +62,14 @@ cargo run -p xtask -- help
 - `prefab` 不允许依赖 `render_2d` 或 `render_3d`。
 - `prefab` 不允许定义 `_system` 结尾的 ECS system 函数。
 
+当前也会检查 `crates/simulation`：
+
+- `crates/simulation` 必须存在。
+- `AI_PROTOCOL/SIMULATION.md` 必须存在。
+- `simulation` 不允许依赖 `physics`、`render_2d`、`render_3d`。
+- `simulation` 不允许定义 ECS 数据类型。
+- `simulation` 不允许直接读取键盘、鼠标、手柄等输入。
+
 ## 和 AI_PROTOCOL 的关系
 
 `AI_PROTOCOL` 写规则，`xtask` 执行其中适合自动化的部分。
@@ -77,6 +85,8 @@ AI_PROTOCOL/PHYSICS.md
 crates/xtask/src/rules/physics.rs
 AI_PROTOCOL/PREFAB.md
 crates/xtask/src/rules/prefab.rs
+AI_PROTOCOL/SIMULATION.md
+crates/xtask/src/rules/simulation.rs
 ```
 
 以后如果新增 crate 规则，可以继续扩展：

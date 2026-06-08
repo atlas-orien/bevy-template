@@ -2,6 +2,7 @@ mod ecs;
 mod error;
 mod physics;
 mod prefab;
+mod simulation;
 
 pub enum CheckStatus {
     Passed,
@@ -24,6 +25,10 @@ pub fn check_architecture() -> CheckStatus {
     }
 
     if let CheckStatus::Failed(mut rule_errors) = prefab::check() {
+        errors.append(&mut rule_errors);
+    }
+
+    if let CheckStatus::Failed(mut rule_errors) = simulation::check() {
         errors.append(&mut rule_errors);
     }
 

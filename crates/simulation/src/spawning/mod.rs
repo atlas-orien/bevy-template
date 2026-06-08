@@ -1,10 +1,8 @@
 use bevy::prelude::*;
+use ecs::components::world::gameplay::GameplayEntity;
 use prefab::characters::player::PlayerPrefabBundle;
 
 use crate::flow::AppState;
-
-#[derive(Component)]
-pub struct GameplayEntity;
 
 pub struct SpawningPlugin;
 

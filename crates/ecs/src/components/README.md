@@ -89,6 +89,7 @@
 适合放这里：
 
 - 世界配置：`WorldConfig`
+- 玩法实体标记：`GameplayEntity`
 - 关卡 marker：`LevelMarker`
 - 出生点：`SpawnPoint`
 - 区域：`Zone`

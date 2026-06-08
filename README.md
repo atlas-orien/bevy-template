@@ -84,17 +84,6 @@ flowchart TD
     prefab --> render2d
 
     render2d --> ecs
-
-    error["crates/error<br/>统一 Result / GameError"]
-    error -.-> app
-    error -.-> ecs
-    error -.-> physics
-    error -.-> simulation
-    error -.-> input
-    error -.-> intent
-    error -.-> prefab
-    error -.-> scenes
-    error -.-> render2d
 ```
 
 `app` 依赖 `physics` 是因为 Bevy 插件需要在最终应用里注册。这里的 `app -> physics` 只表示：

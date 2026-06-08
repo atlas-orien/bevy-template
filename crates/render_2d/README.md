@@ -7,23 +7,24 @@
 ## 职责
 
 - 2D 相机。
-- 2D 屏幕背景、抬头显示、菜单、界面。
+- 2D 屏幕、抬头显示、菜单、界面。
 - 精灵、纹理图集、2D 动画。
 - 读取 `ecs` 数据，把游戏世界显示出来。
 - 创建渲染专用 Entity、Component 和动画状态。
 
-## 当前示例
+## 当前结构
 
 - `camera`: 定义 2D 相机表现 bundle。
-- `environment`: 定义 2D 背景、地面等表现 bundle。
-- `characters/player.rs`: 定义玩家 2D sprite bundle，并根据 `MovementIntent` 播放跑步动画。
+- `characters`: 角色 2D 表现命名空间。
+- `screens`: 屏幕表现命名空间。
+- `ui`: 2D UI 表现命名空间。
 
 ## 和 ecs/intent/simulation 的区别
 
 - `crates/ecs/src/components` 定义玩家是什么。
 - `crates/ecs/src/systems` 定义玩家位置等 ECS 数据如何被规则改变。
 - `input` 读取键盘、鼠标、手柄、网络等外部来源。
-- `intent` 表达玩家想往哪走。
+- `intent` 表达 Entity 想做什么。
 - `prefab` 把 render_2d 的表现 bundle 组合进完整对象模板。
 - `scenes` 选择具体场景要生成哪些 prefab。
 - `simulation` 负责状态流和 scene/system 调度。
@@ -33,11 +34,11 @@
 
 表现层可以创建渲染专用子实体。
 
-例如玩家：
+例如：
 
 ```text
-Player gameplay Entity
-└── PlayerSprite render Entity
+Gameplay Entity
+└── Render Entity
 ```
 
 玩法 Entity 的 `Transform` 表示世界位置，由 ECS system 修改。
@@ -49,7 +50,7 @@ Player gameplay Entity
 ## 不应该放这里
 
 - 不定义核心游戏数据。
-- 不读取键盘来决定玩家意图。
+- 不读取键盘来决定 Entity 意图。
 - 不写入 intent。
 - 不执行战斗、碰撞、物品结算等世界规则。
 - 不依赖 input、intent、prefab、physics、simulation。

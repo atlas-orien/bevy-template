@@ -34,7 +34,7 @@
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
 - `crates/app`: 最终运行的应用子包，负责组装插件
 - `src/main.rs`: 工作区根入口，让 `cargo run` 可以直接运行
-- `assets`: Bevy 运行时资源
+- `assets`: Bevy 运行时资源目录，模板默认只保留空目录
 - `docs`: 设计文档、AI 任务说明、开发决策
 - `tools`: 本地辅助脚本
 

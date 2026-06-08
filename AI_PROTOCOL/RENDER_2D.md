@@ -25,7 +25,7 @@
 ## 边界规则
 
 - 可以生成相机、sprite、UI 节点和渲染专用子实体。
-- 可以定义渲染专用 `Component`，例如 `PlayerSprite`、`PlayerAnimation`、`MainCamera`。
+- 可以定义渲染专用 `Component`，例如 sprite marker、animation state、camera marker。
 - 可以读取 ECS 组件来决定显示方式。
 - 不定义核心玩法组件、bundle、resource、event。
 - 不读取键盘、鼠标、手柄、网络输入。
@@ -42,16 +42,16 @@
 
 不要为了显示效果直接修改玩法 Entity 的核心 `Transform`，除非这个 Transform 本身就是渲染专用实体。
 
-推荐：
+推荐结构：
 
 ```text
-Player gameplay Entity
-└── PlayerSprite render Entity
+Gameplay Entity
+└── Render Entity
 ```
 
-`Player gameplay Entity` 的位置由 ECS system 结算。
+`Gameplay Entity` 的位置由 ECS system 结算。
 
-`PlayerSprite render Entity` 的 sprite、scale、atlas、动画由 `render_2d` 维护。
+`Render Entity` 的 sprite、scale、atlas、动画由 `render_2d` 维护。
 
 ## 依赖规则
 

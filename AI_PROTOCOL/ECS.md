@@ -43,15 +43,14 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - 不要恢复独立的 `components` 或 `system` crate；ECS 数据和系统统一放在 `crates/ecs`。
 - 不要新增 `game_` 前缀的 ECS 模块名。
 
-## 当前演示
+## 当前模板
 
-当前模板包含一个最小玩家演示：
+当前模板只保留 ECS 基础结构和示例级组件命名，不携带运行 demo 资源。
 
 - `crates/ecs/src/components`: 定义 `Player`、`MovementIntent`、`Facing`、`PlayerSpeed`。
 - `crates/intent`: 提供写入 `MovementIntent` 等意图数据的语义 API。
 - `crates/simulation`: 管理 Playing 状态下的 scene 进入和系统调度。
-- `crates/ecs/src/systems`: 未来用于放根据意图移动 `Transform` 的系统函数。
-- `crates/render_2d`: 使用 Bevy 官方 `gabe-idle-run.png` 做 2D 跑步动画。
+- `crates/ecs/src/systems`: 放根据意图移动 `Transform` 的系统函数。
 
 ## 验证要求
 

@@ -25,9 +25,8 @@
 ## Bundle 规则
 
 - 生成实体时优先使用 prefab bundle，不要在生成系统里散装组件。
-- `Player` 只是 marker component。
-- `PlayerBundle` 是 ECS 语义组合。
-- `Player2dPrefabBundle` 是可生成 2D 玩家实体的默认模板组合。
+- 具体游戏可以添加 `Player2dPrefabBundle`、`Enemy2dPrefabBundle` 等对象模板。
+- 模板本身不携带 demo prefab 或 demo 资源。
 
 ## 验证要求
 

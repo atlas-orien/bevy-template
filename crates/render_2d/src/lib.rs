@@ -1,6 +1,5 @@
 pub mod camera;
 pub mod characters;
-pub mod environment;
 pub mod screens;
 pub mod ui;
 

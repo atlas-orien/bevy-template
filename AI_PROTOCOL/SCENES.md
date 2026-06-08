@@ -16,7 +16,7 @@
 ## 代码落点
 
 - 主菜单场景：写到 `crates/scenes/src/main_menu`。
-- 第一关场景：写到 `crates/scenes/src/level_01`。
+- 第一关场景命名空间：写到 `crates/scenes/src/level_01`。
 - 场景共享 marker 和清理函数：写到 `crates/scenes/src/shared`。
 
 ## 边界规则
@@ -24,6 +24,7 @@
 - `scenes` 可以依赖 `prefab`。
 - `scenes` 可以定义场景生命周期专用 marker，例如 `SceneEntity`。
 - `scenes` 可以写场景进入和退出 system。
+- 模板本身不携带 demo scene 内容；具体游戏再添加 prefab 组合。
 - `scenes` 不写移动、战斗、物品、碰撞等 gameplay system。
 - `scenes` 不读取键盘、鼠标、手柄、网络输入。
 - `scenes` 不写入 intent。

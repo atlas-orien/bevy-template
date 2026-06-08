@@ -17,7 +17,7 @@
 
 - `state`: 游戏状态定义和状态切换。
 - `schedule`: 系统集合、运行条件、调度顺序。
-- `spawning`: scene 进入调度，例如进入 Playing 时加载 `level_01`。
+- `spawning`: scene 进入调度，例如进入 Playing 时加载当前游戏场景。
 - `cleanup`: 清理策略，例如退出 Playing 时清理 scene entity。
 - `lifecycle`: 关卡、回合、场景等更高层生命周期。
 
@@ -44,9 +44,9 @@
 
 例如：
 
-- `prefab`: `Player2dPrefabBundle`
-- `scenes`: `level_01` 包含玩家、相机、背景
-- `simulation`: `OnEnter(AppState::Playing)` 时加载 `level_01`
+- `prefab`: 定义对象模板
+- `scenes`: 定义场景包含哪些对象模板
+- `simulation`: `OnEnter(AppState::Playing)` 时加载当前场景
 
 ## 和 intent 的区别
 

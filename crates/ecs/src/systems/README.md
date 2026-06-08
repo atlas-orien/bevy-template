@@ -78,24 +78,33 @@ fn damage_system(...) {
 
 如果代码开始“读取数据并改变世界”，放到 `crates/ecs/src/systems`。
 
-## 和 controller 的区别
+## 和 intent 的区别
 
-`controller` 负责把外部控制来源转换成意图数据。
+`intent` 表达某个 `Entity` 想做什么。
+
+外部控制来源不属于 `crates/ecs/src/systems`，也不属于 `intent` 本身。它们未来需要先转换成意图数据。
 
 例如：
 
-- 键盘输入变成 `MovementIntent`
-- 手柄输入变成 `AttackIntent`
-- AI 决策变成 `MoveToTargetIntent`
-- 网络消息变成玩家操作意图
+- 某个可控制角色想移动到一个方向或位置，写入 `MovementIntent`
+- 某个可控制角色想攻击，写入 `AttackIntent`
+- 某个可控制角色想交互，写入 `InteractIntent`
 
 `crates/ecs/src/systems` 不关心意图来自哪里，只负责根据意图和规则改变世界。
 
 例如：
 
 ```text
-controller 写入 MovementIntent
+intent 写入 MovementIntent
 crates/ecs/src/systems 根据 MovementIntent + Speed + Time 修改 Transform
+```
+
+也就是说：
+
+```text
+intent = 哪个 Entity 想做什么
+ecs/systems = 根据规则怎么做
+simulation = 什么时候运行这些规则
 ```
 
 ## 和 render 的区别
@@ -115,7 +124,7 @@ crates/ecs/src/systems 根据 MovementIntent + Speed + Time 修改 Transform
 ## 规则
 
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`，这些放到 `crates/ecs/src/components`、`crates/ecs/src/resources`、`crates/ecs/src/events`。
-- 不读取键盘、鼠标、手柄、网络输入，这些放到 `controller`。
+- 不读取键盘、鼠标、手柄、网络输入；外部来源需要先转换成 intent。
 - 不写渲染、动画、UI、相机，这些放到渲染层。
 - 不把多个无关规则塞进一个大系统函数。
 - 系统函数命名使用 `_system` 后缀，例如 `movement_system`。

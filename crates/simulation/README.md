@@ -45,9 +45,9 @@
 - `prefab`: `PlayerPrefabBundle`
 - `simulation`: `OnEnter(AppState::Playing)` 时生成 `PlayerPrefabBundle`
 
-## 和 controller 的区别
+## 和 intent 的区别
 
-`controller` 把键盘、手柄、AI、脚本、网络等控制来源转换成意图数据。
+`intent` 表达 Entity 想做什么。
 
 `simulation` 不关心意图来自哪里，只负责游戏流程和系统调度。
 

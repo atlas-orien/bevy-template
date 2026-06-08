@@ -1,6 +1,6 @@
-mod controller;
 mod ecs;
 mod error;
+mod intent;
 mod physics;
 mod prefab;
 mod simulation;
@@ -13,7 +13,7 @@ pub enum CheckStatus {
 pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
 
-    if let CheckStatus::Failed(mut rule_errors) = controller::check() {
+    if let CheckStatus::Failed(mut rule_errors) = intent::check() {
         errors.append(&mut rule_errors);
     }
 

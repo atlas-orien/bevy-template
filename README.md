@@ -24,7 +24,7 @@
 
 - `crates/error`: 统一错误、Result、错误事件、严重级别和日志收集
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
-- `crates/controller`: 控制层，把键盘、手柄、AI、脚本等输入转换成意图组件
+- `crates/intent`: Entity 意图层，表达可控制实体想做什么
 - `crates/simulation`: 模拟层，负责状态流、生成/销毁、移动、战斗、交互等世界变化
 - `crates/physics`: 物理引擎适配层，默认使用 Avian 2D，可通过 feature 切换到 Rapier 2D
 - `crates/prefab`: 可生成对象模板层，组合 ECS 数据和物理能力
@@ -45,7 +45,7 @@ ErrorPlugin
 EcsPlugin
 PhysicsPlugin
 SimulationPlugin
-ControllerPlugin
+IntentPlugin
 Render2dPlugin
 ```
 
@@ -62,11 +62,10 @@ flowchart TD
     app --> ecs["crates/ecs"]
     app --> physics["crates/physics"]
     app --> simulation["crates/simulation"]
-    app --> controller["crates/controller"]
+    app --> intent["crates/intent"]
     app --> render2d["crates/render_2d"]
 
-    controller --> ecs
-    controller --> simulation
+    intent --> ecs
 
     simulation --> ecs
     simulation --> prefab["crates/prefab"]
@@ -82,7 +81,7 @@ flowchart TD
     error -.-> ecs
     error -.-> physics
     error -.-> simulation
-    error -.-> controller
+    error -.-> intent
     error -.-> prefab
     error -.-> render2d
 ```
@@ -105,7 +104,8 @@ app.add_plugins(PhysicsPlugin)
 - `crates/ecs/src/resources` 放 Bevy ECS 全局 Resource 数据。
 - `crates/ecs/src/events` 放 ECS 事件数据。
 - `crates/ecs/src/systems` 放真正读取和修改 ECS 数据的系统函数。
-- `controller` 只读取输入、AI、脚本等控制源，并写入意图组件。
+- `intent` 只表达哪个 Entity 想做什么，并提供写入意图数据的语义 API。
+- 键盘、手柄、AI、脚本、网络等来源暂时不在模板中固定归属；未来需要先转换成 intent，再影响可控制实体。
 - `simulation` 负责状态流、阶段调度和更高层模拟流程，可以组合 `crates/ecs/src/systems`。
 - `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
 - `prefab` 负责组合 `ecs` 和 `physics`，提供可直接生成的对象模板。

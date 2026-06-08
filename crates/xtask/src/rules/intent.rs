@@ -3,21 +3,18 @@ use std::path::{Path, PathBuf};
 
 use super::CheckStatus;
 
-const CONTROLLER_CRATE: &str = "crates/controller";
-const CONTROLLER_PROTOCOL: &str = "AI_PROTOCOL/CONTROLLER.md";
+const INTENT_CRATE: &str = "crates/intent";
+const INTENT_PROTOCOL: &str = "AI_PROTOCOL/INTENT.md";
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(CONTROLLER_CRATE, &mut errors);
-    require_path(CONTROLLER_PROTOCOL, &mut errors);
-    require_path("crates/controller/src/keyboard", &mut errors);
-    require_path("crates/controller/src/gamepad", &mut errors);
-    require_path("crates/controller/src/ai", &mut errors);
-    require_path("crates/controller/src/script", &mut errors);
-    require_path("crates/controller/src/network", &mut errors);
+    require_path(INTENT_CRATE, &mut errors);
+    require_path(INTENT_PROTOCOL, &mut errors);
+    require_path("crates/intent/src/movement", &mut errors);
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
+    reject_direct_input(&mut errors);
     reject_world_mutation(&mut errors);
 
     if errors.is_empty() {
@@ -28,7 +25,7 @@ pub fn check() -> CheckStatus {
 }
 
 fn reject_dependencies(errors: &mut Vec<String>) {
-    let manifest = Path::new(CONTROLLER_CRATE).join("Cargo.toml");
+    let manifest = Path::new(INTENT_CRATE).join("Cargo.toml");
     let Ok(source) = fs::read_to_string(&manifest) else {
         return;
     };
@@ -36,7 +33,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
     for dependency in ["prefab", "physics", "render_2d", "render_3d"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; controller should not depend on that crate",
+                "{} depends on `{dependency}`; intent should not depend on that crate",
                 manifest.display()
             ));
         }
@@ -44,7 +41,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 }
 
 fn reject_data_definitions(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(CONTROLLER_CRATE)) {
+    for file in rust_files(Path::new(INTENT_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -57,7 +54,7 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Bundle", "Resource", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; controller should only write intent data",
+                            "{} derives `{forbidden}`; intent should only write intent data",
                             file.display()
                         ));
                     }
@@ -67,8 +64,25 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
     }
 }
 
+fn reject_direct_input(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(INTENT_CRATE)) {
+        let Ok(source) = fs::read_to_string(&file) else {
+            continue;
+        };
+
+        for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
+            if source.contains(forbidden) {
+                errors.push(format!(
+                    "{} references `{forbidden}`; input sources must be converted before intent",
+                    file.display()
+                ));
+            }
+        }
+    }
+}
+
 fn reject_world_mutation(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(CONTROLLER_CRATE)) {
+    for file in rust_files(Path::new(INTENT_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -76,7 +90,7 @@ fn reject_world_mutation(errors: &mut Vec<String>) {
         for forbidden in ["Commands", "Transform", "PhysicsBody", "PhysicsCollider"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; controller should not mutate world results directly",
+                    "{} references `{forbidden}`; intent should not mutate world results directly",
                     file.display()
                 ));
             }

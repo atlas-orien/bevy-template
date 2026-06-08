@@ -195,9 +195,9 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "controller",
  "ecs",
  "error",
+ "intent",
  "physics",
  "render_2d",
  "simulation",
@@ -2130,16 +2130,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "controller"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "ecs",
- "error",
- "simulation",
-]
-
-[[package]]
 name = "convert_case"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3318,6 +3308,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e05c02b5e89bff3b946cedeca278abc628fe811e604f027c45a8aa3cf793d0eb"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "intent"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "ecs",
+ "error",
 ]
 
 [[package]]

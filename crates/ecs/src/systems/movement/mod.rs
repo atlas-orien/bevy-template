@@ -4,15 +4,46 @@
 
 use bevy::prelude::*;
 
-use crate::components::characters::player::{MovementIntent, PlayerSpeed};
+use crate::components::characters::player::{Facing, MovementIntent, MovementTarget, PlayerSpeed};
+
+const POSITION_TARGET_EPSILON: f32 = 1.0;
 
 pub fn movement_system(
     time: Res<Time>,
-    mut movers: Query<(&MovementIntent, &PlayerSpeed, &mut Transform)>,
+    mut movers: Query<(
+        &mut MovementIntent,
+        &PlayerSpeed,
+        &mut Transform,
+        Option<&mut Facing>,
+    )>,
 ) {
-    for (movement_intent, speed, mut transform) in &mut movers {
-        let velocity = movement_intent.direction * speed.0 * time.delta_secs();
+    for (mut movement_intent, speed, mut transform, facing) in &mut movers {
+        let direction = match movement_intent.target {
+            MovementTarget::None => Vec2::ZERO,
+            MovementTarget::Direction(direction) => direction.normalize_or_zero(),
+            MovementTarget::Position(target) => {
+                let current = transform.translation.truncate();
+                let offset = target - current;
+
+                if offset.length() <= POSITION_TARGET_EPSILON {
+                    movement_intent.target = MovementTarget::None;
+                    Vec2::ZERO
+                } else {
+                    offset.normalize_or_zero()
+                }
+            }
+        };
+
+        let velocity = direction * speed.0 * time.delta_secs();
         transform.translation.x += velocity.x;
         transform.translation.y += velocity.y;
+
+        if let Some(mut facing) = facing {
+            if direction.x < 0.0 {
+                *facing = Facing::Left;
+            } else if direction.x > 0.0 {
+                *facing = Facing::Right;
+            }
+        }
     }
 }

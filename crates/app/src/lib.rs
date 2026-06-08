@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
-use controller::ControllerPlugin;
 use ecs::EcsPlugin;
 use error::ErrorPlugin;
+use intent::IntentPlugin;
 use physics::PhysicsPlugin;
 use render_2d::Render2dPlugin;
 use simulation::SimulationPlugin;
@@ -28,7 +28,7 @@ pub fn run() {
             EcsPlugin,
             PhysicsPlugin,
             SimulationPlugin,
-            ControllerPlugin,
+            IntentPlugin,
             Render2dPlugin,
         ))
         .run();

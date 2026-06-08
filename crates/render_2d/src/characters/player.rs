@@ -82,7 +82,7 @@ fn animate_player_sprite(
             continue;
         };
 
-        if movement_intent.direction == Vec2::ZERO {
+        if !movement_intent.is_moving() {
             animation.reset();
             atlas.index = IDLE_FRAME;
             continue;

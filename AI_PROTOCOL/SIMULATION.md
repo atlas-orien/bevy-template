@@ -27,7 +27,7 @@
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`。
 - 不写底层 ECS 规则函数；这些放到 `crates/ecs/src/systems`。
 - 不封装物理后端；这些放到 `crates/physics`。
-- 不读取输入；这些放到 `crates/controller`。
+- 不读取输入；输入来源未来需要先转换成 `crates/intent` 表达的意图。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
 - 不直接散装实体组件；生成实体时优先使用 `crates/prefab` 提供的 prefab bundle。
 

@@ -15,11 +15,11 @@
 - `camera`: 在 Playing 状态生成 2D 相机。
 - `screens`: 生成演示背景和地面色块。
 
-## 和 ecs/controller/simulation 的区别
+## 和 ecs/intent/simulation 的区别
 
 - `crates/ecs/src/components` 定义玩家是什么。
 - `crates/ecs/src/systems` 定义玩家位置等 ECS 数据如何被规则改变。
-- `controller` 决定玩家想往哪走。
+- `intent` 表达玩家想往哪走。
 - `simulation` 负责状态流和系统调度。
 - `render_2d` 只负责玩家看起来是什么样。
 

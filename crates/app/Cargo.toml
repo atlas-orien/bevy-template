@@ -10,9 +10,9 @@ publish = false
 
 [dependencies]
 bevy.workspace = true
-controller.workspace = true
 ecs.workspace = true
 error.workspace = true
+intent.workspace = true
 physics.workspace = true
 render_2d.workspace = true
 simulation.workspace = true

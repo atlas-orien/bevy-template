@@ -24,14 +24,15 @@ cargo run -p xtask -- help
 
 检查项目结构是否符合当前模板规则。
 
-当前会检查 `crates/controller`：
+当前会检查 `crates/intent`：
 
-- `crates/controller` 必须存在。
-- `AI_PROTOCOL/CONTROLLER.md` 必须存在。
-- 必须有 `keyboard`、`gamepad`、`ai`、`script`、`network` 控制来源目录。
-- `controller` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
-- `controller` 不允许定义 ECS 数据类型。
-- `controller` 不允许直接使用 `Commands`、`Transform` 或物理组件。
+- `crates/intent` 必须存在。
+- `AI_PROTOCOL/INTENT.md` 必须存在。
+- 必须有当前意图分类目录，例如 `movement`。
+- `intent` 不允许依赖 `prefab`、`physics`、`render_2d`、`render_3d`。
+- `intent` 不允许定义 ECS 数据类型。
+- `intent` 不允许直接读取键盘、鼠标、手柄等输入来源。
+- `intent` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
 当前会检查 `crates/error`：
 
@@ -86,8 +87,8 @@ cargo run -p xtask -- help
 现在对应关系是：
 
 ```text
-AI_PROTOCOL/CONTROLLER.md
-crates/xtask/src/rules/controller.rs
+AI_PROTOCOL/INTENT.md
+crates/xtask/src/rules/intent.rs
 AI_PROTOCOL/ERROR.md
 crates/xtask/src/rules/error.rs
 AI_PROTOCOL/ECS.md
@@ -103,7 +104,7 @@ crates/xtask/src/rules/simulation.rs
 以后如果新增 crate 规则，可以继续扩展：
 
 ```text
-AI_PROTOCOL/CONTROLLER.md  -> crates/xtask/src/rules/controller.rs
+AI_PROTOCOL/INTENT.md      -> crates/xtask/src/rules/intent.rs
 AI_PROTOCOL/RENDER_2D.md   -> crates/xtask/src/rules/render_2d.rs
 AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```
@@ -115,7 +116,7 @@ AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```text
 crates/xtask/src/rules/
 ├── ecs.rs
-├── controller.rs
+├── intent.rs
 ├── simulation.rs
 ├── render_2d.rs
 ├── render_3d.rs

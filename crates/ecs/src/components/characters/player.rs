@@ -8,7 +8,21 @@ pub struct PlayerSpeed(pub f32);
 
 #[derive(Component, Debug, Clone, Copy, Default)]
 pub struct MovementIntent {
-    pub direction: Vec2,
+    pub target: MovementTarget,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub enum MovementTarget {
+    #[default]
+    None,
+    Direction(Vec2),
+    Position(Vec2),
+}
+
+impl MovementIntent {
+    pub fn is_moving(&self) -> bool {
+        !matches!(self.target, MovementTarget::None)
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]

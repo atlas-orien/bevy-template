@@ -14,7 +14,7 @@
 ErrorPlugin
 EcsPlugin
 SimulationPlugin
-ControllerPlugin
+IntentPlugin
 Render2dPlugin
 ```
 

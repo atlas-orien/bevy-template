@@ -45,7 +45,7 @@ ECS 是 Entity Component System 的缩写，是 Bevy 使用的核心架构。
 - `Health`: 当前生命值
 - `MaxHealth`: 最大生命值
 - `Speed`: 移动速度
-- `MovementIntent`: 想往哪个方向移动
+- `MovementIntent`: 想往哪个方向移动，或想移动到哪个位置
 - `Player`: 玩家标记
 - `Enemy`: 敌人标记
 - `Faction`: 阵营
@@ -83,7 +83,7 @@ Entity
 
 系统负责“行为”，例如：
 
-- 读取键盘输入，写入 `MovementIntent`
+- 外部来源转换出意图后，写入某个 Entity 的 `MovementIntent`
 - 根据 `MovementIntent` 和 `Speed` 修改 `Transform`
 - 根据 `DamageEvent` 修改 `Health`
 - 根据 `Health` 判断实体是否死亡
@@ -156,7 +156,7 @@ crates/ecs/src/components = 世界里有什么实体数据
 crates/ecs/src/resources = 世界里有什么全局数据
 crates/ecs/src/events = 世界里发生了什么消息
 crates/ecs/src/systems = ECS 数据如何根据规则改变
-controller = 谁在控制实体
+intent = 实体想做什么
 render_2d/render_3d = 数据如何显示出来
 app = 如何组装并启动游戏
 ```
@@ -207,7 +207,7 @@ app = 如何组装并启动游戏
 
 - 如果代码描述“一个东西拥有什么数据”，放到 `crates/ecs/src/components`、`crates/ecs/src/resources` 或 `crates/ecs/src/events`。
 - 如果代码根据规则读取和修改 ECS 数据，放到 `crates/ecs/src/systems`。
-- 如果代码读取外部输入，放到 `controller`。
+- 如果代码读取外部输入，先不要放进 `ecs`；它应该在其它层转换成 `intent`。
 - 如果代码处理显示、动画、相机、UI 布局，放到 `render_2d` 或 `render_3d`。
 
 ## 和 assets 的区别

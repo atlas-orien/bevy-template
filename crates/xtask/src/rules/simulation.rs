@@ -71,7 +71,7 @@ fn reject_direct_input(errors: &mut Vec<String>) {
         for forbidden in ["ButtonInput<", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; direct input belongs in controller",
+                    "{} references `{forbidden}`; direct input must be converted before simulation",
                     file.display()
                 ));
             }

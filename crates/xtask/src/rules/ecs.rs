@@ -76,6 +76,9 @@ fn check_components(errors: &mut Vec<String>) {
 fn check_resources(errors: &mut Vec<String>) {
     let root = Path::new("crates/ecs/src/resources");
     require_path(root, errors);
+    require_path(root.join("README.md"), errors);
+    require_path(root.join("world.rs"), errors);
+    require_path(root.join("session.rs"), errors);
 
     for file in rust_files(root) {
         let Some(parsed) = parse_rust_file(&file, errors) else {
@@ -100,6 +103,9 @@ fn check_resources(errors: &mut Vec<String>) {
 fn check_events(errors: &mut Vec<String>) {
     let root = Path::new("crates/ecs/src/events");
     require_path(root, errors);
+    require_path(root.join("README.md"), errors);
+    require_path(root.join("combat.rs"), errors);
+    require_path(root.join("lifecycle.rs"), errors);
 
     for file in rust_files(root) {
         let Some(parsed) = parse_rust_file(&file, errors) else {
@@ -118,13 +124,22 @@ fn check_events(errors: &mut Vec<String>) {
             }
 
             if let Some(derived) = derived_names(&item) {
-                for forbidden in ["Component", "Bundle", "Resource"] {
+                for forbidden in ["Component", "Bundle", "Resource", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
                             "{} derives `{forbidden}`; events should define ECS Event message data",
                             file.display()
                         ));
                     }
+                }
+
+                if file.file_name().is_some_and(|name| name != "mod.rs")
+                    && !derived.iter().any(|name| name == "Message")
+                {
+                    errors.push(format!(
+                        "{} defines an event type without deriving `Message`; current Bevy event channels use Message/add_message",
+                        file.display()
+                    ));
                 }
             }
         }

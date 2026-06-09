@@ -187,8 +187,8 @@ app = 如何组装并启动游戏
 - `crates/ecs/src/components/items`: 物品类实体数据，例如武器、防具、消耗品、掉落物。
 - `crates/ecs/src/components/world`: 世界、地图、关卡、区域、出生点等数据。
 - `crates/ecs/src/components/ui`: UI 相关 ECS 数据，例如 HUD、血条、菜单、按钮动作。
-- `crates/ecs/src/events`: ECS 事件数据，例如伤害、治疗、死亡、拾取。
-- `crates/ecs/src/resources`: Bevy ECS 全局 `Resource` 数据，例如配置、当前关卡、运行会话。
+- `crates/ecs/src/events`: ECS 事件数据，例如 `combat.rs`、`lifecycle.rs`。
+- `crates/ecs/src/resources`: Bevy ECS 全局 `Resource` 数据，例如 `world.rs`、`session.rs`。
 - `crates/ecs/src/systems/movement`: 移动、速度、位移、朝向结算。
 - `crates/ecs/src/systems/combat`: 伤害、治疗、攻击、防御等战斗规则。
 - `crates/ecs/src/systems/lifecycle`: 出生、死亡、销毁、重生等生命周期规则。

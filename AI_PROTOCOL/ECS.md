@@ -51,6 +51,15 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - 如果 2D / 3D 差异属于渲染、物理后端或 prefab 组合，放到 `render_2d`、`render_3d`、`physics` 或 `prefab/world_2d`、`prefab/world_3d`，不要放到 `ecs` 目录结构里。
 - 不要把无关基础组件混在一个文件里，例如不要在 `movement.rs` 写血量、攻击、背包、AI 或 gameplay manager 数据。
 - 如果新增 base 文件，文件名必须表达一个清楚的基础语义组。
+- `resources` 按最小语义组拆文件，一个文件只放同一语义组的 Resource。
+- 推荐 Resource 语义组示例：`world.rs` 放 `WorldConfig`；`session.rs` 放 `GameSession`。
+- Resource 只描述 Bevy World 里的全局 ECS 数据，不加载磁盘资源文件。
+- 默认 Resource 注册写在 `resources/mod.rs` 的 `ResourcesPlugin`。
+- `events` 按最小语义组拆文件，一个文件只放同一语义组的 Event。
+- 推荐 Event 语义组示例：`combat.rs` 放 `DamageEvent`、`HealEvent`；`lifecycle.rs` 放 `SpawnedEvent`、`DiedEvent`。
+- Event 只描述“发生了什么”，不处理后果；事件处理系统写到 `crates/ecs/src/systems`。
+- 当前 Bevy 版本使用 `Message` / `add_message` 作为事件通道 API；`events` 目录表达 ECS 事件语义，不表示必须使用旧版 `Event` API。
+- 事件类型注册写在 `events/mod.rs` 的 `EventsPlugin`。
 
 ## 当前模板
 
@@ -58,6 +67,8 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 
 - `crates/ecs/src/components/base`: 定义 `DisplayName`、`PublicEntityId`、`Health`、`MaxHealth`、`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`Facing`、`Faction`、`Team`。
 - `crates/ecs/src/components/characters`: 定义 `Player`、`LocalPlayerControlled` 和角色默认 Bundle。
+- `crates/ecs/src/resources`: 定义 `WorldConfig`、`GameSession`，并通过 `ResourcesPlugin` 注册默认 Resource。
+- `crates/ecs/src/events`: 定义 `DamageEvent`、`HealEvent`、`SpawnedEvent`、`DiedEvent`，并通过 `EventsPlugin` 注册事件类型。
 - `crates/intent`: 提供写入 `MovementIntent` 等意图数据的语义 API。
 - `crates/gameplay`: 管理 Playing 状态下的 gameplay session 进入和系统调度。
 - `crates/ecs/src/systems`: 放根据意图移动 `Transform` 的系统函数。

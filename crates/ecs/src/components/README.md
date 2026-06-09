@@ -99,7 +99,6 @@
 
 适合放这里：
 
-- 世界配置：`WorldConfig`
 - 玩法实体标记：`GameplayEntity`
 - 关卡 marker：`LevelMarker`
 - 出生点：`SpawnPoint`
@@ -110,6 +109,7 @@
 不适合放这里：
 
 - 关卡加载系统
+- 世界级全局配置，例如 `WorldConfig`，这些放到 `resources`
 - 出生实体系统
 - 碰撞和寻路逻辑
 - 背景图片或地图渲染

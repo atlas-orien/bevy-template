@@ -1,7 +1,11 @@
+pub mod appearance;
 pub mod camera;
 pub mod characters;
 pub mod geometry;
+pub mod ordering;
 pub mod screens;
+pub mod sprite;
+pub mod transform;
 pub mod ui;
 
 pub use error::Result;

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use crate::geometry::{RenderColor2d, RenderSize2d};
+use crate::appearance::RenderColor2d;
+use crate::geometry::RenderSize2d;
 
 #[derive(Component, Debug, Clone, Copy, Default)]
 pub struct Character2dRender;

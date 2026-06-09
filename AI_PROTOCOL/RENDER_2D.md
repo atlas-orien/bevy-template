@@ -16,7 +16,11 @@
 ## 代码落点
 
 - 2D 相机：写到 `crates/render_2d/src/camera`。
+- 2D 外观属性：写到 `crates/render_2d/src/appearance`。
 - 2D 表现层几何：写到 `crates/render_2d/src/geometry`。
+- 2D 视觉 transform：写到 `crates/render_2d/src/transform`。
+- 2D 视觉排序：写到 `crates/render_2d/src/ordering`。
+- 2D sprite 专用属性：写到 `crates/render_2d/src/sprite`。
 - 角色表现：写到 `crates/render_2d/src/characters`。
 - 屏幕和背景表现：写到 `crates/render_2d/src/screens`。
 - 2D UI 表现：写到 `crates/render_2d/src/ui`。
@@ -29,10 +33,17 @@
 - 不要把具体 Component、Bundle 或 system 全部写进 `mod.rs`。
 - `camera/main_camera.rs` 定义主 2D 相机 marker 和 bundle。
 - `camera/systems.rs` 定义相机生成和同步 system。
+- `appearance/color.rs` 定义表现层颜色 component，例如 `RenderColor2d`。
+- `appearance/opacity.rs` 定义表现层透明度，例如 `RenderOpacity2d`。
+- `appearance/visibility.rs` 定义表现层可见性，例如 `RenderVisibility2d`。
 - `geometry/shape.rs` 定义视觉形状，例如 `RenderShape2d`。
 - `geometry/size.rs` 定义视觉尺寸，例如 `RenderSize2d`。
 - `geometry/anchor.rs` 定义视觉锚点，例如 `RenderAnchor2d`。
-- `geometry/color.rs` 定义表现层颜色 component，例如 `RenderColor2d`。
+- `transform/offset.rs` 定义视觉偏移，例如 `RenderOffset2d`。
+- `transform/scale.rs` 定义视觉缩放，例如 `RenderScale2d`。
+- `transform/rotation.rs` 定义视觉旋转，例如 `RenderRotation2d`。
+- `ordering/z_index.rs` 定义视觉排序，例如 `RenderZIndex2d`。
+- `sprite/flip.rs` 定义 sprite 翻转，例如 `RenderFlip2d`。
 - `characters/character.rs` 定义角色 2D 表现 marker、表现配置和 bundle。
 - `screens/clear_color.rs` 定义屏幕背景色等屏幕级表现 system。
 - `ui/theme.rs` 定义 2D UI/表现层颜色常量。
@@ -53,12 +64,19 @@
 - 不依赖 `external_runtime`。
 - 不放 3D 网格、3D 灯光、3D 相机。
 
-## Geometry 规则
+## 表现属性规则
 
-- `geometry` 只定义 2D 表现层几何，不定义物理碰撞、攻击范围或 gameplay 区域。
-- `RenderShape2d`、`RenderSize2d`、`RenderAnchor2d`、`RenderColor2d` 都是视觉数据。
+- `geometry` 只定义 2D 表现层几何，例如形状、尺寸、锚点。
+- `appearance` 只定义 2D 外观属性，例如颜色、透明度、可见性。
+- `transform` 只定义 2D 视觉 transform，例如表现偏移、缩放、旋转。
+- `ordering` 只定义 2D 视觉排序。
+- `sprite` 只定义 sprite 专用表现属性。
+- 这些目录都不定义物理碰撞、攻击范围或 gameplay 区域。
 - `RenderShape2d::Circle` 不等于 `PhysicsCollider::Circle`。
 - `RenderSize2d` 不等于 hitbox 或 hurtbox。
+- `RenderOffset2d`、`RenderScale2d`、`RenderRotation2d` 只影响视觉表现，不改变 gameplay Transform 或物理状态。
+- `RenderZIndex2d` 只表达视觉排序，不表达 ECS parent/child 关系或 gameplay 优先级。
+- `RenderVisibility2d` 和 `RenderOpacity2d` 只控制显示，不表示实体是否存在、死亡或可交互。
 - 如果几何数据会影响碰撞、寻路、攻击判定或世界规则，放到 `physics`、`ecs` 或 gameplay，不放到 `render_2d/geometry`。
 
 ## 渲染实体规则

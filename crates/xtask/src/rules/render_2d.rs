@@ -13,19 +13,38 @@ pub fn check() -> CheckStatus {
     require_path(RENDER_2D_PROTOCOL, &mut errors);
     require_path("crates/render_2d/src/camera", &mut errors);
     require_path("crates/render_2d/src/characters", &mut errors);
+    require_path("crates/render_2d/src/appearance", &mut errors);
     require_path("crates/render_2d/src/geometry", &mut errors);
+    require_path("crates/render_2d/src/ordering", &mut errors);
     require_path("crates/render_2d/src/screens", &mut errors);
+    require_path("crates/render_2d/src/sprite", &mut errors);
+    require_path("crates/render_2d/src/transform", &mut errors);
     require_path("crates/render_2d/src/ui", &mut errors);
     require_path("crates/render_2d/src/camera/main_camera.rs", &mut errors);
     require_path("crates/render_2d/src/camera/systems.rs", &mut errors);
     require_path("crates/render_2d/src/characters/character.rs", &mut errors);
+    require_path("crates/render_2d/src/appearance/color.rs", &mut errors);
+    require_path("crates/render_2d/src/appearance/opacity.rs", &mut errors);
+    require_path("crates/render_2d/src/appearance/visibility.rs", &mut errors);
     require_path("crates/render_2d/src/geometry/shape.rs", &mut errors);
     require_path("crates/render_2d/src/geometry/size.rs", &mut errors);
     require_path("crates/render_2d/src/geometry/anchor.rs", &mut errors);
-    require_path("crates/render_2d/src/geometry/color.rs", &mut errors);
+    require_path("crates/render_2d/src/transform/offset.rs", &mut errors);
+    require_path("crates/render_2d/src/transform/scale.rs", &mut errors);
+    require_path("crates/render_2d/src/transform/rotation.rs", &mut errors);
+    require_path("crates/render_2d/src/ordering/z_index.rs", &mut errors);
+    require_path("crates/render_2d/src/sprite/flip.rs", &mut errors);
     require_path("crates/render_2d/src/screens/clear_color.rs", &mut errors);
     require_path("crates/render_2d/src/ui/theme.rs", &mut errors);
     require_path("crates/render_2d/src/ui/markers.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/color.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/opacity.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/visibility.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/offset.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/scale.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/rotation.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/z_index.rs", &mut errors);
+    reject_path("crates/render_2d/src/geometry/flip.rs", &mut errors);
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);
     reject_world_rule_references(&mut errors);
@@ -119,6 +138,16 @@ fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
     let path = path.as_ref();
     if !path.exists() {
         errors.push(format!("required path is missing: {}", path.display()));
+    }
+}
+
+fn reject_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
+    let path = path.as_ref();
+    if path.exists() {
+        errors.push(format!(
+            "obsolete path should not exist: {}",
+            path.display()
+        ));
     }
 }
 

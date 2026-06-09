@@ -15,7 +15,11 @@
 ## 当前结构
 
 - `camera`: 2D 相机表现，`main_camera.rs` 放主相机 marker/bundle，`systems.rs` 放相机生成和同步 system。
-- `geometry`: 2D 表现层几何，放视觉形状、尺寸、锚点和颜色。
+- `appearance`: 2D 外观属性，放颜色、透明度、可见性。
+- `geometry`: 2D 表现层几何，放视觉形状、尺寸、锚点。
+- `transform`: 2D 视觉 transform，放表现偏移、缩放、旋转。
+- `ordering`: 2D 视觉排序。
+- `sprite`: sprite 专用表现属性。
 - `characters`: 角色 2D 表现，`character.rs` 放角色 sprite marker/config/bundle。
 - `screens`: 屏幕表现，`clear_color.rs` 放屏幕背景色等屏幕级表现 system。
 - `ui`: 2D UI 表现，`theme.rs` 放表现层颜色常量，`markers.rs` 放 UI marker。
@@ -27,14 +31,21 @@
 - 不新增 `common.rs`、`misc.rs` 这类含义模糊的文件。
 - 默认 2D 主相机由 `camera` 在 startup 生成；prefab 和 gameplay 不生成主相机。
 
-## geometry
+## 表现属性
 
-`geometry` 只表达视觉几何，不表达物理或 gameplay 判定。
+这些目录只表达视觉表现，不表达物理或 gameplay 判定。
 
 - `RenderShape2d`: 视觉形状，不代表 collider。
 - `RenderSize2d`: 视觉尺寸，不代表 hitbox。
 - `RenderAnchor2d`: 视觉锚点，不代表 gameplay 坐标。
 - `RenderColor2d`: 表现层颜色，不代表阵营或游戏状态。
+- `RenderOffset2d`: 视觉偏移，不改变玩法位置。
+- `RenderScale2d`: 视觉缩放，不改变物理尺寸。
+- `RenderRotation2d`: 视觉旋转，不改变 gameplay 规则。
+- `RenderZIndex2d`: 视觉排序，不代表玩法优先级。
+- `RenderVisibility2d`: 显示开关，不代表实体是否存在。
+- `RenderOpacity2d`: 视觉透明度。
+- `RenderFlip2d`: sprite 翻转。
 
 碰撞、攻击范围、寻路区域、触发区域不要写在这里。
 

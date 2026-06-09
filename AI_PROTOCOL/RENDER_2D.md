@@ -16,6 +16,7 @@
 ## 代码落点
 
 - 2D 相机：写到 `crates/render_2d/src/camera`。
+- 2D 表现层动画：写到 `crates/render_2d/src/animation`。
 - 2D 外观属性：写到 `crates/render_2d/src/appearance`。
 - 2D 表现层几何：写到 `crates/render_2d/src/geometry`。
 - 2D 视觉 transform：写到 `crates/render_2d/src/transform`。
@@ -33,6 +34,8 @@
 - 不要把具体 Component、Bundle 或 system 全部写进 `mod.rs`。
 - `camera/main_camera.rs` 定义主 2D 相机 marker 和 bundle。
 - `camera/systems.rs` 定义相机生成和同步 system。
+- `animation/frame` 定义帧动画、sprite sheet、atlas animation 数据，例如 `sprite_frame.rs`、`clip.rs`、`playback.rs`。
+- `animation/skeletal` 定义 2D 骨骼动画数据。
 - `appearance/color.rs` 定义表现层颜色 component，例如 `RenderColor2d`。
 - `appearance/opacity.rs` 定义表现层透明度，例如 `RenderOpacity2d`。
 - `appearance/visibility.rs` 定义表现层可见性，例如 `RenderVisibility2d`。
@@ -78,6 +81,16 @@
 - `RenderZIndex2d` 只表达视觉排序，不表达 ECS parent/child 关系或 gameplay 优先级。
 - `RenderVisibility2d` 和 `RenderOpacity2d` 只控制显示，不表示实体是否存在、死亡或可交互。
 - 如果几何数据会影响碰撞、寻路、攻击判定或世界规则，放到 `physics`、`ecs` 或 gameplay，不放到 `render_2d/geometry`。
+
+## Animation 规则
+
+- `animation` 只定义 2D 表现层动画。
+- `animation/frame` 放帧动画、sprite sheet、texture atlas animation。
+- `animation/skeletal` 放 2D 骨骼动画、bone、skeleton、骨骼播放状态。
+- 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `animation/frame`。
+- 第一版不实现复杂骨骼 runtime，只保留清楚的数据边界。
+- animation 可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。
+- animation 不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
 
 ## 渲染实体规则
 

@@ -15,6 +15,7 @@
 ## 当前结构
 
 - `camera`: 2D 相机表现，`main_camera.rs` 放主相机 marker/bundle，`systems.rs` 放相机生成和同步 system。
+- `animation`: 2D 表现层动画，分为 `frame` 帧动画和 `skeletal` 骨骼动画。
 - `appearance`: 2D 外观属性，放颜色、透明度、可见性。
 - `geometry`: 2D 表现层几何，放视觉形状、尺寸、锚点。
 - `transform`: 2D 视觉 transform，放表现偏移、缩放、旋转。
@@ -48,6 +49,14 @@
 - `RenderFlip2d`: sprite 翻转。
 
 碰撞、攻击范围、寻路区域、触发区域不要写在这里。
+
+## animation
+
+`animation` 只处理视觉动画，不处理玩法时序。
+
+- `animation/frame`: sprite sheet、texture atlas、逐帧播放。
+- `animation/skeletal`: 2D bone、skeleton、骨骼播放状态。
+- 攻击前摇、技能窗口、硬直、combo、碰撞判定不放在 render animation。
 
 ## 和 ecs/intent/gameplay 的区别
 

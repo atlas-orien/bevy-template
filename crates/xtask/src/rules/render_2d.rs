@@ -11,6 +11,7 @@ pub fn check() -> CheckStatus {
 
     require_path(RENDER_2D_CRATE, &mut errors);
     require_path(RENDER_2D_PROTOCOL, &mut errors);
+    require_path("crates/render_2d/src/animation", &mut errors);
     require_path("crates/render_2d/src/camera", &mut errors);
     require_path("crates/render_2d/src/characters", &mut errors);
     require_path("crates/render_2d/src/appearance", &mut errors);
@@ -20,6 +21,29 @@ pub fn check() -> CheckStatus {
     require_path("crates/render_2d/src/sprite", &mut errors);
     require_path("crates/render_2d/src/transform", &mut errors);
     require_path("crates/render_2d/src/ui", &mut errors);
+    require_path("crates/render_2d/src/animation/frame", &mut errors);
+    require_path("crates/render_2d/src/animation/skeletal", &mut errors);
+    require_path("crates/render_2d/src/animation/frame/clip.rs", &mut errors);
+    require_path(
+        "crates/render_2d/src/animation/frame/sprite_frame.rs",
+        &mut errors,
+    );
+    require_path(
+        "crates/render_2d/src/animation/frame/playback.rs",
+        &mut errors,
+    );
+    require_path(
+        "crates/render_2d/src/animation/skeletal/bone.rs",
+        &mut errors,
+    );
+    require_path(
+        "crates/render_2d/src/animation/skeletal/skeleton.rs",
+        &mut errors,
+    );
+    require_path(
+        "crates/render_2d/src/animation/skeletal/playback.rs",
+        &mut errors,
+    );
     require_path("crates/render_2d/src/camera/main_camera.rs", &mut errors);
     require_path("crates/render_2d/src/camera/systems.rs", &mut errors);
     require_path("crates/render_2d/src/characters/character.rs", &mut errors);
@@ -108,6 +132,9 @@ fn reject_world_rule_references(errors: &mut Vec<String>) {
             "PhysicsCollider",
             "Hitbox",
             "Hurtbox",
+            "Combo",
+            "SkillWindow",
+            "AttackWindow",
         ] {
             if source.contains(forbidden) {
                 errors.push(format!(

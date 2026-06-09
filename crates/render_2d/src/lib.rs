@@ -1,3 +1,4 @@
+pub mod animation;
 pub mod appearance;
 pub mod camera;
 pub mod characters;
@@ -12,6 +13,7 @@ pub use error::Result;
 
 use bevy::prelude::*;
 
+use self::animation::Animation2dPlugin;
 use self::camera::Camera2dPlugin;
 use self::characters::CharacterRenderPlugin;
 use self::screens::ScreensPlugin;
@@ -24,6 +26,7 @@ impl Plugin for Render2dPlugin {
         app.add_plugins((
             ScreensPlugin,
             Camera2dPlugin,
+            Animation2dPlugin,
             CharacterRenderPlugin,
             UiPlugin,
         ));

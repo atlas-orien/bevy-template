@@ -41,6 +41,22 @@ cargo run --features physics/rapier2d
 
 后端类型应该尽量收敛在本 crate 内部。
 
+## Avian 第一版连接方式
+
+`PhysicsBody` 这类类型不是 Avian 的类型，而是项目自己的 facade component。
+
+当 entity 添加或修改这些 facade component 时，`physics` 的 Avian backend system 会把它们转换成 Avian 真正使用的 component，并插入到同一个 entity 上：
+
+- `PhysicsBody` -> Avian `RigidBody`
+- `PhysicsCollider` -> Avian `Collider`
+- `PhysicsSensor` -> Avian `Sensor`
+- `PhysicsMaterial` -> Avian `Friction` + `Restitution`
+- `PhysicsMass` -> Avian `Mass`
+- `PhysicsVelocity2d` -> Avian `LinearVelocity`
+- `PhysicsAngularVelocity2d` -> Avian `AngularVelocity`
+
+所以 prefab 和 gameplay 只看项目自己的物理定义；真正驱动模拟的是 backend adapter 插入的 Avian component。
+
 ## 边界
 
 - `app`、`external_runtime`、`intent`、`gameplay`、`render_2d`、`render_3d` 不直接依赖 Avian 或 Rapier。
@@ -64,6 +80,9 @@ cargo run --features physics/rapier2d
 - `motion/velocity.rs`: 物理速度和角速度。
 - `force/linear.rs`: 力和冲量。
 - `events/collision.rs`: 物理事件语义。
+- `backend/avian2d/mod.rs`: Avian 插件和 adapter system 注册。
+- `backend/avian2d/convert.rs`: 项目 facade 类型到 Avian 类型的转换。
+- `backend/avian2d/systems.rs`: 同步 facade component 到 Avian backend component。
 
 hitbox、hurtbox、攻击范围、技能范围属于 gameplay 判定，不属于 physics 基础层。
 

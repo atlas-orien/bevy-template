@@ -33,7 +33,7 @@ rapier2d
 - 项目统一力和冲量语义：写到 `crates/physics/src/force`。
 - 项目统一传感器标记：写到 `crates/physics/src/sensor`。
 - 项目统一物理事件语义：写到 `crates/physics/src/events`。
-- Avian 后端适配：写到 `crates/physics/src/backend/avian2d.rs`。
+- Avian 后端适配：写到 `crates/physics/src/backend/avian2d`。
 - Rapier 后端适配：写到 `crates/physics/src/backend/rapier2d.rs`。
 
 ## 边界规则
@@ -63,6 +63,16 @@ rapier2d
 - 不要在 `crates/physics/src` 根目录直接新增物理语义文件；根目录只保留 `lib.rs`、`plugin.rs` 和 backend 入口。
 - 2D / 3D 可以作为同一语义文件里的数据形状变体，例如 `PhysicsVelocity2d`，不要因为一个类型就拆 crate。
 - 如果某个概念是 gameplay 判定，例如 hitbox、hurtbox、攻击范围、技能范围，不放在 `physics`。
+
+## 后端适配规则
+
+- 项目自己的基础组件是 facade，例如 `PhysicsBody`、`PhysicsCollider`、`PhysicsMaterial`。
+- 物理引擎自己的组件只允许在 backend 目录内部使用，例如 Avian 的 `RigidBody`、`Collider`、`Sensor`。
+- `backend/avian2d/mod.rs` 只负责注册 Avian 插件和 adapter systems。
+- `backend/avian2d/convert.rs` 只负责把项目 facade 类型转换成 Avian 类型。
+- `backend/avian2d/systems.rs` 只负责监听项目 facade component 的 `Added` / `Changed`，并向同一个 Bevy entity 插入 Avian backend component。
+- 不要在 prefab、gameplay、ecs 或 render crate 里直接插入 Avian / Rapier component。
+- 第一版 Avian adapter 覆盖 body、collider、sensor、material、mass、velocity；力、冲量和碰撞事件以后按明确语义再接入。
 
 ## Cargo 规则
 

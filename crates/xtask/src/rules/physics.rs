@@ -23,6 +23,9 @@ pub fn check() -> CheckStatus {
         "crates/physics/src/motion/velocity.rs",
         "crates/physics/src/force/linear.rs",
         "crates/physics/src/events/collision.rs",
+        "crates/physics/src/backend/avian2d/mod.rs",
+        "crates/physics/src/backend/avian2d/convert.rs",
+        "crates/physics/src/backend/avian2d/systems.rs",
     ] {
         require_path(path, &mut errors);
     }
@@ -44,6 +47,7 @@ pub fn check() -> CheckStatus {
         "crates/physics/src/force.rs",
         "crates/physics/src/force/force.rs",
         "crates/physics/src/events.rs",
+        "crates/physics/src/backend/avian2d.rs",
     ] {
         reject_path(obsolete, &mut errors);
     }

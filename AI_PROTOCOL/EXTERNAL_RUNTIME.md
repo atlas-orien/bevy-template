@@ -9,7 +9,7 @@
 - Bevy App：运行 Bevy `World`、`Schedule`、render、physics、gameplay。
 - External Runtime：运行 Bevy App 外部的输入、外设、AI、脚本、回放，以及未来网络等外部系统。
 
-`external_runtime` 通过 `external_runtime::manager` 持有 gameplay bridge API，并向 Bevy App 提交 gameplay 请求。
+`external_runtime` 通过 `external_runtime::manager` 持有 gameplay transport，并通过双向 channel 和 Bevy App 通信。
 
 ## 核心职责
 
@@ -22,7 +22,7 @@
 ## 代码落点
 
 - runtime loop：写到 `crates/external_runtime/src/runtime`。
-- Bevy App 外部到 gameplay 的桥接：写到 `crates/external_runtime/src/bridge`。
+- Bevy App 外部到 gameplay 的通道组装：写到 `crates/external_runtime/src/bridge`。
 - manager API：写到 `crates/external_runtime/src/manager`。
 - 输入域总入口：写到 `crates/external_runtime/src/input`。
 - 本地输入来源：写到 `crates/external_runtime/src/input/local`。
@@ -38,19 +38,24 @@
 - 不直接读取或修改 Bevy `World`。
 - 不直接使用 `Commands`、`Query` 或 `ResMut`。
 - 不做成 Bevy `Plugin` 注册到 `App` 里。
-- 必须通过 `external_runtime::manager` 或明确的 bridge API 进入 gameplay。
+- 必须通过 `external_runtime::manager` 和 request/update channel 进入 gameplay。
 
 ## Manager 规则
 
 - 用户和外部模块优先通过 manager API 操作 gameplay。
 - `GameplayRequest` 是 manager 到 gameplay 的内部请求，不应该被普通用户代码到处构造。
+- `GameplayUpdate` 是 gameplay 到 manager 的内部消息，不应该被普通用户代码到处构造。
 - manager API 不向用户暴露 Bevy `Entity`。
-- manager 内部可以维护 gameplay-facing id 和 Bevy `Entity` 的映射。
+- manager 必须有状态，可以维护 gameplay-facing id 的 registry，并允许用户按公开 id 查询。
+- manager 不向用户暴露 Bevy `Entity`。
 - manager 属于 `external_runtime`，不属于 `gameplay`。
-- `manager/user.rs` 定义给用户和外部模块使用的高层 API。
-- `manager/gameplay.rs` 定义 manager 内部连接 gameplay request channel 的 bridge API。
+- `manager/user.rs` 定义给用户和外部模块使用的高层 API；用户 API 优先写成纯函数式门面，内部接收 manager 并调用 manager 状态和 bridge。
+- `manager/transport.rs` 定义 manager 内部使用的 request/update channel transport。
 - 用户 API 不直接暴露 `GameplayRequestSender`。
-- gameplay bridge API 不应该被普通用户代码直接使用。
+- transport 不应该被普通用户代码直接使用。
+- `manager/transport.rs` 和 `manager/state.rs` 不对外公开；普通用户只能通过 `manager/user.rs` 和 `ExternalRuntimeManager` 进入。
+- gameplay 不依赖 manager，也不调用 manager；gameplay 只向 update channel 发消息。
+- manager 不进入 Bevy `World`，只向 request channel 发消息，并从 update channel 接收消息。
 
 ## 边界规则
 
@@ -63,7 +68,7 @@
 
 ## 依赖规则
 
-- `external_runtime` 可以依赖 `gameplay`，用于持有 gameplay bridge API 和调用 gameplay API 边界。
+- `external_runtime` 可以依赖 `gameplay`，用于持有 gameplay request/update channel 类型。
 - `external_runtime` 可以依赖 `intent` 和 `prefab`，但优先通过 manager API。
 - `external_runtime` 可以依赖 `tokio`。
 - `external_runtime` 必须依赖 `error`。

@@ -1,1 +1,1 @@
-// Runtime-to-gameplay bridges belong here.
+// Runtime-to-gameplay channel wiring belongs here.

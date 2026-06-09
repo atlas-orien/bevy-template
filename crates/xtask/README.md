@@ -47,7 +47,8 @@ cargo run -p xtask -- help
 - 必须有输入来源域目录：`input/local`、`input/device`、`input/ai`。
 - 不允许有 `crates/external_runtime/src/network`；网络是双向通信层，v2 单独设计。
 - 必须有 external runtime、manager 和 bridge 目录：`runtime`、`manager`、`bridge`。
-- `manager` 必须分成用户 API 和 gameplay bridge API：`manager/user.rs`、`manager/gameplay.rs`。
+- `manager` 必须分成用户 API 和内部 channel transport：`manager/user.rs`、`manager/transport.rs`。
+- `manager` 必须有状态 registry：`manager/state.rs`。
 - `external_runtime` 可以依赖 `prefab`、`intent`、`gameplay`，但优先通过 `gameplay::api` 提交高层请求。
 - `external_runtime` 不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
 - `external_runtime` 不允许定义 ECS 数据类型。

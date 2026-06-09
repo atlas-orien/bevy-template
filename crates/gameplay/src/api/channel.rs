@@ -11,19 +11,50 @@ pub struct GameplayRequestSender {
 }
 
 #[derive(Clone)]
+pub struct GameplayUpdateSender {
+    updates: Sender<GameplayUpdate>,
+}
+
+#[derive(Clone)]
 pub struct GameplayRequestInbox {
     requests: Arc<Mutex<Receiver<GameplayRequest>>>,
 }
 
-impl Resource for GameplayRequestInbox {}
+#[derive(Clone)]
+pub struct GameplayUpdateInbox {
+    updates: Arc<Mutex<Receiver<GameplayUpdate>>>,
+}
 
-pub fn gameplay_request_channel() -> (GameplayRequestSender, GameplayRequestInbox) {
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum GameplayUpdate {
+    EntityRegistered {
+        id: prefab::identity::GameplayEntityId,
+    },
+    EntityUnregistered {
+        id: prefab::identity::GameplayEntityId,
+    },
+}
+
+impl Resource for GameplayRequestInbox {}
+impl Resource for GameplayUpdateSender {}
+
+pub fn gameplay_channels() -> (
+    GameplayRequestSender,
+    GameplayRequestInbox,
+    GameplayUpdateSender,
+    GameplayUpdateInbox,
+) {
     let (requests, inbox) = mpsc::channel();
+    let (updates, update_inbox) = mpsc::channel();
 
     (
         GameplayRequestSender { requests },
         GameplayRequestInbox {
             requests: Arc::new(Mutex::new(inbox)),
+        },
+        GameplayUpdateSender { updates },
+        GameplayUpdateInbox {
+            updates: Arc::new(Mutex::new(update_inbox)),
         },
     )
 }
@@ -31,6 +62,12 @@ pub fn gameplay_request_channel() -> (GameplayRequestSender, GameplayRequestInbo
 impl GameplayRequestSender {
     pub fn submit(&self, request: GameplayRequest) -> bool {
         self.requests.send(request).is_ok()
+    }
+}
+
+impl GameplayUpdateSender {
+    pub fn submit(&self, update: GameplayUpdate) -> bool {
+        self.updates.send(update).is_ok()
     }
 }
 
@@ -43,5 +80,15 @@ impl GameplayRequestInbox {
         for request in inbox.try_iter() {
             requests.write(request);
         }
+    }
+}
+
+impl GameplayUpdateInbox {
+    pub fn drain(&self) -> Vec<GameplayUpdate> {
+        let Ok(inbox) = self.updates.lock() else {
+            return Vec::new();
+        };
+
+        inbox.try_iter().collect()
     }
 }

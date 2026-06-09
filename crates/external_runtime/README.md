@@ -24,8 +24,8 @@ External Runtime 负责 Bevy App 外部的来源模块，例如 input/local、in
 ## 当前结构
 
 - `runtime`: external runtime 的 loop/runner。
-- `manager`: manager API，分为用户 API 和 gameplay bridge API，不暴露 Bevy `Entity`。
-- `bridge`: external runtime 和 Bevy App/gameplay manager 之间的桥接。
+- `manager`: 有状态的 manager，分为用户 API、内部 transport 和状态 registry，不暴露 Bevy `Entity`。
+- `bridge`: external runtime 和 Bevy App/gameplay channel 之间的通道组装。
 - `input`: 输入来源域。
 - `input/local`: 本地输入来源，例如键盘、鼠标、手柄。
 - `input/device`: 外设输入来源。
@@ -43,10 +43,13 @@ External Runtime 负责 Bevy App 外部的来源模块，例如 input/local、in
 external source
 -> external_runtime
 -> ExternalRuntimeManager
--> GameplayBridgeApi
--> Bevy App inbox
+-> request channel
 -> gameplay request systems
+-> update channel
+-> manager state registry
 ```
+
+用户代码只使用 `ExternalRuntimeManager` 和 `manager/user.rs` 导出的函数。内部 transport 不对用户公开。
 
 ## 不应该放这里
 

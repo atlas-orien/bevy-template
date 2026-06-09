@@ -35,7 +35,7 @@ fn reject_manager_definitions(errors: &mut Vec<String>) {
         for forbidden in ["GameplayManager", "ExternalRuntimeManager"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; manager belongs in external_runtime, gameplay only owns request channel/inbox",
+                    "{} references `{forbidden}`; manager belongs in external_runtime, gameplay only owns request/update channels",
                     file.display()
                 ));
             }

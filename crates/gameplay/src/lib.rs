@@ -20,18 +20,24 @@ use self::state::StatePlugin;
 
 pub struct GameplayPlugin {
     request_inbox: Option<api::GameplayRequestInbox>,
+    update_sender: Option<api::GameplayUpdateSender>,
 }
 
 impl GameplayPlugin {
-    pub fn new(request_inbox: api::GameplayRequestInbox) -> Self {
+    pub fn new(
+        request_inbox: api::GameplayRequestInbox,
+        update_sender: api::GameplayUpdateSender,
+    ) -> Self {
         Self {
             request_inbox: Some(request_inbox),
+            update_sender: Some(update_sender),
         }
     }
 
     pub fn without_external_manager() -> Self {
         Self {
             request_inbox: None,
+            update_sender: None,
         }
     }
 }
@@ -46,6 +52,9 @@ impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
         if let Some(request_inbox) = self.request_inbox.clone() {
             app.insert_resource(request_inbox);
+        }
+        if let Some(update_sender) = self.update_sender.clone() {
+            app.insert_resource(update_sender);
         }
 
         app.add_plugins((

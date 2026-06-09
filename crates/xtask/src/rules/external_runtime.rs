@@ -19,7 +19,8 @@ pub fn check() -> CheckStatus {
         "crates/external_runtime/src/runtime",
         "crates/external_runtime/src/manager",
         "crates/external_runtime/src/manager/user.rs",
-        "crates/external_runtime/src/manager/gameplay.rs",
+        "crates/external_runtime/src/manager/transport.rs",
+        "crates/external_runtime/src/manager/state.rs",
         "crates/external_runtime/src/bridge",
     ] {
         require_path(path, &mut errors);
@@ -153,7 +154,7 @@ fn reject_world_mutation(errors: &mut Vec<String>) {
         for forbidden in ["Commands", "Transform", "PhysicsBody", "PhysicsCollider"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; external_runtime should use manager/gameplay api requests",
+                    "{} references `{forbidden}`; external_runtime should use manager request/update channels",
                     file.display()
                 ));
             }

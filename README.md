@@ -45,14 +45,14 @@
 GameplayPlugin
 ```
 
-`src/main.rs` 会先创建 gameplay request channel，再创建 `external_runtime::manager::ExternalRuntimeManager`，然后启动两套系统：
+`src/main.rs` 会先创建 `external_runtime::manager::ExternalRuntimeManager`，再从 manager 取 Bevy App 需要的 inbox/update sender，然后启动两套系统：
 
 ```text
 external_runtime
 Bevy App
 ```
 
-`external_runtime` 持有 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。
+`external_runtime` 持有有状态的 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。普通用户代码通过 manager 查询公开 entity id，不接触 Bevy `Entity`。
 
 `GameplayPlugin` 是注册到 Bevy App 的玩法流程入口，负责状态、spawn、request 消费和 gameplay systems 的调度。
 

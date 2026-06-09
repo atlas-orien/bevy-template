@@ -45,6 +45,7 @@ async fn run_external_runtime_loop(
     loop {
         tokio::select! {
             _ = interval.tick() => {
+                manager.sync_gameplay_updates();
                 poll_external_sources(&manager).await;
             }
             changed = shutdown.changed() => {

@@ -12,14 +12,67 @@ pub fn check() -> CheckStatus {
 
     require_path(PHYSICS_CRATE, &mut errors);
     require_path(PHYSICS_PROTOCOL, &mut errors);
+    for path in [
+        "crates/physics/src/body/kind.rs",
+        "crates/physics/src/config/settings.rs",
+        "crates/physics/src/collider/shape.rs",
+        "crates/physics/src/layer/collision_layer.rs",
+        "crates/physics/src/sensor/marker.rs",
+        "crates/physics/src/material/surface.rs",
+        "crates/physics/src/mass/properties.rs",
+        "crates/physics/src/motion/velocity.rs",
+        "crates/physics/src/force/linear.rs",
+        "crates/physics/src/events/collision.rs",
+    ] {
+        require_path(path, &mut errors);
+    }
+    for obsolete in [
+        "crates/physics/src/body.rs",
+        "crates/physics/src/body/body.rs",
+        "crates/physics/src/config.rs",
+        "crates/physics/src/config/config.rs",
+        "crates/physics/src/collider.rs",
+        "crates/physics/src/layer.rs",
+        "crates/physics/src/layer/layer.rs",
+        "crates/physics/src/sensor.rs",
+        "crates/physics/src/sensor/sensor.rs",
+        "crates/physics/src/material.rs",
+        "crates/physics/src/material/material.rs",
+        "crates/physics/src/mass.rs",
+        "crates/physics/src/mass/mass.rs",
+        "crates/physics/src/motion.rs",
+        "crates/physics/src/force.rs",
+        "crates/physics/src/force/force.rs",
+        "crates/physics/src/events.rs",
+    ] {
+        reject_path(obsolete, &mut errors);
+    }
     check_backend_dependencies(&mut errors);
     check_backend_imports(&mut errors);
     check_public_api(&mut errors);
+    reject_gameplay_hitbox_terms(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_gameplay_hitbox_terms(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(PHYSICS_CRATE).join("src").as_path()) {
+        let Ok(source) = fs::read_to_string(&file) else {
+            continue;
+        };
+
+        for forbidden in ["Hitbox", "Hurtbox", "AttackRange", "SkillRange"] {
+            if source.contains(forbidden) {
+                errors.push(format!(
+                    "{} references `{forbidden}`; gameplay hit/hurt/skill ranges do not belong in physics",
+                    file.display()
+                ));
+            }
+        }
     }
 }
 
@@ -100,6 +153,16 @@ fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
     let path = path.as_ref();
     if !path.exists() {
         errors.push(format!("required path is missing: {}", path.display()));
+    }
+}
+
+fn reject_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
+    let path = path.as_ref();
+    if path.exists() {
+        errors.push(format!(
+            "obsolete path should not exist: {}",
+            path.display()
+        ));
     }
 }
 

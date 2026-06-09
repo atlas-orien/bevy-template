@@ -23,10 +23,16 @@ rapier2d
 ## 代码落点
 
 - 物理插件入口：写到 `crates/physics/src/plugin.rs`。
-- 物理配置：写到 `crates/physics/src/config.rs`。
-- 项目统一刚体语义：写到 `crates/physics/src/body.rs`。
-- 项目统一碰撞体语义：写到 `crates/physics/src/collider.rs`。
-- 项目统一碰撞层语义：写到 `crates/physics/src/layer.rs`。
+- 物理配置：写到 `crates/physics/src/config`。
+- 项目统一刚体语义：写到 `crates/physics/src/body`。
+- 项目统一碰撞体语义：写到 `crates/physics/src/collider`。
+- 项目统一碰撞层语义：写到 `crates/physics/src/layer`。
+- 项目统一物理材质语义：写到 `crates/physics/src/material`。
+- 项目统一质量语义：写到 `crates/physics/src/mass`。
+- 项目统一物理运动语义：写到 `crates/physics/src/motion`。
+- 项目统一力和冲量语义：写到 `crates/physics/src/force`。
+- 项目统一传感器标记：写到 `crates/physics/src/sensor`。
+- 项目统一物理事件语义：写到 `crates/physics/src/events`。
 - Avian 后端适配：写到 `crates/physics/src/backend/avian2d.rs`。
 - Rapier 后端适配：写到 `crates/physics/src/backend/rapier2d.rs`。
 
@@ -38,6 +44,25 @@ rapier2d
 - `crates/physics/src/lib.rs` 不允许 re-export Avian 或 Rapier 类型。
 - 游戏语义数据仍然放在 `crates/ecs`。
 - 物理引擎插件、物理后端配置、物理调试显示放在 `crates/physics`。
+
+## 基础物理语义规则
+
+- 每个基础物理语义必须先有子目录，再在子目录里写具体文件。
+- 子目录的 `mod.rs` 只做模块导出和 re-export，不堆具体类型。
+- 具体文件名不能和所在目录同名，避免 Rust module inception。
+- `config/settings.rs` 只定义物理配置。
+- `body/kind.rs` 只定义刚体语义，例如 Dynamic、Static、Kinematic。
+- `collider/shape.rs` 只定义碰撞体形状，不定义 sensor、material 或 hitbox。
+- `layer/collision_layer.rs` 只定义物理碰撞层。
+- `sensor/marker.rs` 只定义传感器标记。
+- `material/surface.rs` 只定义物理材质，例如 friction、restitution。
+- `mass/properties.rs` 只定义质量。
+- `motion/velocity.rs` 只定义物理速度、角速度等运动状态。
+- `force/linear.rs` 只定义力和冲量。
+- `events/collision.rs` 只定义物理碰撞/传感器事件语义；当前 Bevy 版本使用 `Message` / `add_message`。
+- 不要在 `crates/physics/src` 根目录直接新增物理语义文件；根目录只保留 `lib.rs`、`plugin.rs` 和 backend 入口。
+- 2D / 3D 可以作为同一语义文件里的数据形状变体，例如 `PhysicsVelocity2d`，不要因为一个类型就拆 crate。
+- 如果某个概念是 gameplay 判定，例如 hitbox、hurtbox、攻击范围、技能范围，不放在 `physics`。
 
 ## Cargo 规则
 

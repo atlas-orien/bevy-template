@@ -22,7 +22,7 @@
 
 调整目录时需要保持一个原则：目录名称应该表达清楚职责，代码应该放在最容易理解和维护的位置。修改结构后，也应该同步更新相关文档，避免后续开发继续按照旧路径写代码。
 
-- `crates/error`: 统一错误、Result、错误事件、严重级别和日志收集
+- `crates/error`: 统一错误、Result、错误类型和严重级别
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
 - `crates/input`: 输入来源适配层，把键盘、鼠标、网络等外部来源转换成 intent
 - `crates/intent`: Entity 意图层，表达可控制实体想做什么
@@ -42,7 +42,6 @@
 当前默认 app 组装：
 
 ```rust
-ErrorPlugin
 RuntimePlugin
 ```
 

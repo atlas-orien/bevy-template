@@ -53,6 +53,8 @@ cargo run -p xtask -- help
 
 - `crates/error` 必须存在。
 - `AI_PROTOCOL/ERROR.md` 必须存在。
+- `error` 不允许依赖 `bevy`。
+- `error` 不允许定义 Bevy runtime、ECS 或 message 类型。
 - 每个 crate 都必须依赖 `error`。
 - 除 `crates/error` 外，其它 crate 不允许定义自己的 `Result` 类型别名。
 - 除 `crates/error` 外，其它 crate 不允许直接使用 `std::result::Result` 或 `core::result::Result`。

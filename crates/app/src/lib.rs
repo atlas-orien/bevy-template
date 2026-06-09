@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
-use error::ErrorPlugin;
 use runtime::RuntimePlugin;
 
 pub use error::Result;
@@ -19,6 +18,6 @@ pub fn run() {
                     ..default()
                 }),
         )
-        .add_plugins((ErrorPlugin, RuntimePlugin))
+        .add_plugins(RuntimePlugin)
         .run();
 }

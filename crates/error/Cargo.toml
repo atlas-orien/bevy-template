@@ -9,5 +9,4 @@ description = "Shared error reporting system for the Bevy game template."
 publish = false
 
 [dependencies]
-bevy.workspace = true
 thiserror.workspace = true

@@ -6,8 +6,7 @@
 
 - 定义 `GameError`。
 - 定义统一的 `Result<T>`。
-- 定义错误类型、严重级别和错误事件。
-- 通过 Bevy message 系统收集和输出错误。
+- 定义错误类型和严重级别。
 - 集中维护外部错误到 `GameError` 的转换。
 
 ## 统一 Result
@@ -39,3 +38,5 @@ Result<T>
 - 不写业务规则。
 - 不写渲染逻辑。
 - 不写输入系统。
+- 不注册 Bevy plugin。
+- 不定义 Bevy ECS 数据、message 或 runtime system。

@@ -12,6 +12,8 @@ pub fn check() -> CheckStatus {
 
     require_path(ERROR_CRATE, &mut errors);
     require_path(ERROR_PROTOCOL, &mut errors);
+    reject_bevy_dependency(&mut errors);
+    reject_bevy_runtime_types(&mut errors);
     check_manifests_depend_on_error(&mut errors);
     check_result_aliases(&mut errors);
 
@@ -20,6 +22,86 @@ pub fn check() -> CheckStatus {
     } else {
         CheckStatus::Failed(errors)
     }
+}
+
+fn reject_bevy_dependency(errors: &mut Vec<String>) {
+    let manifest = Path::new(ERROR_CRATE).join("Cargo.toml");
+    let Ok(source) = fs::read_to_string(&manifest) else {
+        return;
+    };
+
+    if source.contains("bevy.workspace = true") {
+        errors.push(format!(
+            "{} depends on `bevy`; error should stay a pure error type crate",
+            manifest.display()
+        ));
+    }
+}
+
+fn reject_bevy_runtime_types(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(ERROR_CRATE)) {
+        let Ok(source) = fs::read_to_string(&file) else {
+            continue;
+        };
+        let Ok(parsed) = syn::parse_file(&source) else {
+            continue;
+        };
+
+        if source.contains("use bevy") || source.contains("bevy::") {
+            errors.push(format!(
+                "{} imports `bevy`; error should stay a pure error type crate",
+                file.display()
+            ));
+        }
+
+        for item in parsed.items {
+            if let Some(derived) = derived_names(&item) {
+                for forbidden in ["Component", "Resource", "Message", "Event"] {
+                    if derived.iter().any(|name| name == forbidden) {
+                        errors.push(format!(
+                            "{} derives `{forbidden}`; error should not define Bevy runtime or ECS types",
+                            file.display()
+                        ));
+                    }
+                }
+            }
+
+            if let syn::Item::Struct(item) = item {
+                let name = item.ident.to_string();
+                if name.ends_with("Plugin") {
+                    errors.push(format!(
+                        "{} defines `{name}`; error should not register Bevy plugins",
+                        file.display()
+                    ));
+                }
+            }
+        }
+    }
+}
+
+fn derived_names(item: &syn::Item) -> Option<Vec<String>> {
+    let attrs = match item {
+        syn::Item::Struct(item) => &item.attrs,
+        syn::Item::Enum(item) => &item.attrs,
+        _ => return None,
+    };
+
+    let mut names = Vec::new();
+
+    for attr in attrs {
+        if !attr.path().is_ident("derive") {
+            continue;
+        }
+
+        let _ = attr.parse_nested_meta(|meta| {
+            if let Some(ident) = meta.path.get_ident() {
+                names.push(ident.to_string());
+            }
+            Ok(())
+        });
+    }
+
+    Some(names)
 }
 
 fn check_manifests_depend_on_error(errors: &mut Vec<String>) {

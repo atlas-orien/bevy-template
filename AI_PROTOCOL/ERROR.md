@@ -27,6 +27,8 @@ pub use error::Result;
 - 其它 crate 不允许定义 `type Result<T> = ...`。
 - 外部错误转换集中放在 `crates/error`。
 - `GameError` 使用 `thiserror` 定义。
+- `error` 不注册 Bevy plugin。
+- `error` 不定义 Bevy ECS 数据、message 或 runtime system。
 
 ## Cargo 规则
 

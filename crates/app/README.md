@@ -10,7 +10,6 @@
 ## 当前默认组装
 
 ```rust
-ErrorPlugin
 RuntimePlugin
 ```
 

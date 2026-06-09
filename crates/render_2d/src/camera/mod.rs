@@ -1,22 +1,16 @@
+pub mod main_camera;
+pub mod systems;
+
 use bevy::prelude::*;
 
-#[derive(Component, Debug, Clone, Copy, Default)]
-pub struct MainCamera2d;
+pub use main_camera::{MainCamera2d, MainCamera2dBundle};
+
+use self::systems::spawn_main_camera_2d_system;
 
 pub struct Camera2dPlugin;
 
 impl Plugin for Camera2dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
-
-#[derive(Bundle, Default)]
-pub struct MainCamera2dBundle {
-    pub camera: Camera2d,
-    pub marker: MainCamera2d,
-}
-
-impl MainCamera2dBundle {
-    pub fn new() -> Self {
-        Self::default()
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, spawn_main_camera_2d_system);
     }
 }

@@ -13,11 +13,23 @@ pub fn check() -> CheckStatus {
     require_path(RENDER_2D_PROTOCOL, &mut errors);
     require_path("crates/render_2d/src/camera", &mut errors);
     require_path("crates/render_2d/src/characters", &mut errors);
+    require_path("crates/render_2d/src/geometry", &mut errors);
     require_path("crates/render_2d/src/screens", &mut errors);
     require_path("crates/render_2d/src/ui", &mut errors);
+    require_path("crates/render_2d/src/camera/main_camera.rs", &mut errors);
+    require_path("crates/render_2d/src/camera/systems.rs", &mut errors);
+    require_path("crates/render_2d/src/characters/character.rs", &mut errors);
+    require_path("crates/render_2d/src/geometry/shape.rs", &mut errors);
+    require_path("crates/render_2d/src/geometry/size.rs", &mut errors);
+    require_path("crates/render_2d/src/geometry/anchor.rs", &mut errors);
+    require_path("crates/render_2d/src/geometry/color.rs", &mut errors);
+    require_path("crates/render_2d/src/screens/clear_color.rs", &mut errors);
+    require_path("crates/render_2d/src/ui/theme.rs", &mut errors);
+    require_path("crates/render_2d/src/ui/markers.rs", &mut errors);
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);
     reject_world_rule_references(&mut errors);
+    reject_ambiguous_files(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
@@ -49,7 +61,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 }
 
 fn reject_direct_input(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(RENDER_2D_CRATE)) {
+    for file in rust_files(&Path::new(RENDER_2D_CRATE).join("src")) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -66,18 +78,39 @@ fn reject_direct_input(errors: &mut Vec<String>) {
 }
 
 fn reject_world_rule_references(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(RENDER_2D_CRATE)) {
+    for file in rust_files(&Path::new(RENDER_2D_CRATE).join("src")) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
 
-        for forbidden in ["set_movement_intent", "PhysicsBody", "PhysicsCollider"] {
+        for forbidden in [
+            "set_movement_intent",
+            "PhysicsBody",
+            "PhysicsCollider",
+            "Hitbox",
+            "Hurtbox",
+        ] {
             if source.contains(forbidden) {
                 errors.push(format!(
                     "{} references `{forbidden}`; render_2d should not drive gameplay rules",
                     file.display()
                 ));
             }
+        }
+    }
+}
+
+fn reject_ambiguous_files(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(RENDER_2D_CRATE)) {
+        let Some(file_name) = file.file_name().and_then(|name| name.to_str()) else {
+            continue;
+        };
+
+        if matches!(file_name, "common.rs" | "misc.rs" | "utils.rs") {
+            errors.push(format!(
+                "{} has an ambiguous name; render_2d files should be named by presentation role",
+                file.display()
+            ));
         }
     }
 }

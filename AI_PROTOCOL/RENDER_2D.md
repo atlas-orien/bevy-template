@@ -16,11 +16,28 @@
 ## 代码落点
 
 - 2D 相机：写到 `crates/render_2d/src/camera`。
+- 2D 表现层几何：写到 `crates/render_2d/src/geometry`。
 - 角色表现：写到 `crates/render_2d/src/characters`。
 - 屏幕和背景表现：写到 `crates/render_2d/src/screens`。
 - 2D UI 表现：写到 `crates/render_2d/src/ui`。
 
 当前目录是模板默认结构，可以按具体游戏调整，但必须保持表现层边界清楚。
+
+## 文件组织规则
+
+- 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
+- 不要把具体 Component、Bundle 或 system 全部写进 `mod.rs`。
+- `camera/main_camera.rs` 定义主 2D 相机 marker 和 bundle。
+- `camera/systems.rs` 定义相机生成和同步 system。
+- `geometry/shape.rs` 定义视觉形状，例如 `RenderShape2d`。
+- `geometry/size.rs` 定义视觉尺寸，例如 `RenderSize2d`。
+- `geometry/anchor.rs` 定义视觉锚点，例如 `RenderAnchor2d`。
+- `geometry/color.rs` 定义表现层颜色 component，例如 `RenderColor2d`。
+- `characters/character.rs` 定义角色 2D 表现 marker、表现配置和 bundle。
+- `screens/clear_color.rs` 定义屏幕背景色等屏幕级表现 system。
+- `ui/theme.rs` 定义 2D UI/表现层颜色常量。
+- `ui/markers.rs` 定义 2D UI marker。
+- 新增表现类型时，先判断它属于 camera、characters、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
 
 ## 边界规则
 
@@ -35,6 +52,14 @@
 - 不依赖 `physics`。
 - 不依赖 `external_runtime`。
 - 不放 3D 网格、3D 灯光、3D 相机。
+
+## Geometry 规则
+
+- `geometry` 只定义 2D 表现层几何，不定义物理碰撞、攻击范围或 gameplay 区域。
+- `RenderShape2d`、`RenderSize2d`、`RenderAnchor2d`、`RenderColor2d` 都是视觉数据。
+- `RenderShape2d::Circle` 不等于 `PhysicsCollider::Circle`。
+- `RenderSize2d` 不等于 hitbox 或 hurtbox。
+- 如果几何数据会影响碰撞、寻路、攻击判定或世界规则，放到 `physics`、`ecs` 或 gameplay，不放到 `render_2d/geometry`。
 
 ## 渲染实体规则
 
@@ -52,6 +77,13 @@ Gameplay Entity
 `Gameplay Entity` 的位置由 ECS system 结算。
 
 `Render Entity` 的 sprite、scale、atlas、动画由 `render_2d` 维护。
+
+## 相机规则
+
+- 默认 2D 主相机由 `render_2d::camera` 在 startup 注册生成。
+- prefab 不生成主相机。
+- gameplay 不生成主相机。
+- 如果某个游戏需要多相机、跟随相机或相机切换，类型和 system 仍然写在 `render_2d/src/camera`，调度入口由 `Camera2dPlugin` 组装。
 
 ## 和 prefab 的 render 边界
 

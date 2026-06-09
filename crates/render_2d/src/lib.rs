@@ -1,5 +1,6 @@
 pub mod camera;
 pub mod characters;
+pub mod geometry;
 pub mod screens;
 pub mod ui;
 

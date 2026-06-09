@@ -14,10 +14,29 @@
 
 ## 当前结构
 
-- `camera`: 定义 2D 相机表现 bundle。
-- `characters`: 角色 2D 表现命名空间。
-- `screens`: 屏幕表现命名空间。
-- `ui`: 2D UI 表现命名空间。
+- `camera`: 2D 相机表现，`main_camera.rs` 放主相机 marker/bundle，`systems.rs` 放相机生成和同步 system。
+- `geometry`: 2D 表现层几何，放视觉形状、尺寸、锚点和颜色。
+- `characters`: 角色 2D 表现，`character.rs` 放角色 sprite marker/config/bundle。
+- `screens`: 屏幕表现，`clear_color.rs` 放屏幕背景色等屏幕级表现 system。
+- `ui`: 2D UI 表现，`theme.rs` 放表现层颜色常量，`markers.rs` 放 UI marker。
+
+## 文件规则
+
+- 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
+- 具体 Component、Bundle、system 拆到语义明确的文件里。
+- 不新增 `common.rs`、`misc.rs` 这类含义模糊的文件。
+- 默认 2D 主相机由 `camera` 在 startup 生成；prefab 和 gameplay 不生成主相机。
+
+## geometry
+
+`geometry` 只表达视觉几何，不表达物理或 gameplay 判定。
+
+- `RenderShape2d`: 视觉形状，不代表 collider。
+- `RenderSize2d`: 视觉尺寸，不代表 hitbox。
+- `RenderAnchor2d`: 视觉锚点，不代表 gameplay 坐标。
+- `RenderColor2d`: 表现层颜色，不代表阵营或游戏状态。
+
+碰撞、攻击范围、寻路区域、触发区域不要写在这里。
 
 ## 和 ecs/intent/gameplay 的区别
 

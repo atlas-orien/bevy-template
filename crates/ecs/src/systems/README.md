@@ -124,7 +124,7 @@ gameplay = 什么时候运行这些规则
 ## 规则
 
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`，这些放到 `crates/ecs/src/components`、`crates/ecs/src/resources`、`crates/ecs/src/events`。
-- 不读取键盘、鼠标、手柄、网络输入；外部来源放到 `crates/input`，再转换成 intent 或 gameplay API 请求。
+- 不读取键盘、鼠标、手柄、外设、AI、脚本、网络等外部来源；外部来源先由对应边界层转换成 intent 或 gameplay API 请求。
 - 不写渲染、动画、UI、相机，这些放到渲染层。
 - 不把多个无关规则塞进一个大系统函数。
 - 系统函数命名使用 `_system` 后缀，例如 `movement_system`。

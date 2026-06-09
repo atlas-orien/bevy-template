@@ -110,6 +110,15 @@ cargo run -p xtask -- help
 - `render_2d` 不允许直接读取键盘、鼠标、手柄等输入。
 - `render_2d` 不允许调用 intent 写入函数或引用物理组件。
 
+当前也会检查 `crates/render_3d`：
+
+- `crates/render_3d` 必须存在。
+- `AI_PROTOCOL/RENDER_3D.md` 必须存在。
+- 默认表现目录 `camera`、`scene`、`ui` 必须存在。
+- `render_3d` 不允许依赖 `input`、`intent`、`prefab`、`physics`、`render_2d`。
+- `render_3d` 不允许直接读取键盘、鼠标、手柄等输入。
+- `render_3d` 不允许调用 intent 写入函数或引用物理组件。
+
 ## 和 AI_PROTOCOL 的关系
 
 `AI_PROTOCOL` 写规则，`xtask` 执行其中适合自动化的部分。
@@ -135,6 +144,8 @@ AI_PROTOCOL/GAMEPLAY.md
 crates/xtask/src/rules/gameplay.rs
 AI_PROTOCOL/RENDER_2D.md
 crates/xtask/src/rules/render_2d.rs
+AI_PROTOCOL/RENDER_3D.md
+crates/xtask/src/rules/render_3d.rs
 ```
 
 以后如果新增 crate 规则，可以继续扩展：
@@ -143,6 +154,7 @@ crates/xtask/src/rules/render_2d.rs
 AI_PROTOCOL/INTENT.md      -> crates/xtask/src/rules/intent.rs
 AI_PROTOCOL/INPUT.md       -> crates/xtask/src/rules/input.rs
 AI_PROTOCOL/RENDER_2D.md   -> crates/xtask/src/rules/render_2d.rs
+AI_PROTOCOL/RENDER_3D.md   -> crates/xtask/src/rules/render_3d.rs
 AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```
 

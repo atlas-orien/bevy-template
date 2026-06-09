@@ -18,12 +18,14 @@
 
 - 移动意图：写到 `crates/intent/src/movement`。
 
-输入、AI、脚本、网络等来源不属于 `intent`。输入来源放在 `crates/input`，并调用 `intent` 提供的 API 写入 ECS intent 数据。
+输入、AI、脚本、网络等来源不属于 `intent`。外部来源应该先经过对应边界层，再调用 `intent` 提供的 API 写入 ECS intent 数据。
+
+`input` v1 负责 local/device/AI 等控制来源。网络是双向通信层，v2 单独设计。
 
 ## 边界规则
 
 - 不生成实体。
-- 不读取键盘、鼠标、手柄、网络输入。
+- 不读取键盘、鼠标、手柄、外设、AI、脚本或网络来源。
 - 不直接依赖或使用裸 `ecs`；通过 `prefab` 提供的最小合法接口写入 intent 数据。
 - 不直接修改 `Transform`、生命值、背包等世界结果。
 - 不决定移动路径、速度、碰撞、到达判定等结算规则。

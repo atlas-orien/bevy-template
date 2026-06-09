@@ -4,7 +4,7 @@
 
 它只描述一个 Entity “想做什么”，不描述这个想法来自哪里。
 
-键盘、手柄、AI、脚本、网络都不是 `intent` 本身。它们属于 `input` 或其它来源适配层，转换成 intent 后再写入可控制 Entity 的意图数据。
+键盘、手柄、AI、脚本、网络都不是 `intent` 本身。它们属于外部来源边界层，转换成 intent 后再写入可控制 Entity 的意图数据。
 
 ## 职责
 
@@ -18,7 +18,7 @@
 
 - `movement`: 移动意图，例如“这个 Entity 想往某个方向移动”或“想移动到某个位置”。
 
-输入来源放在 `crates/input`。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。
+`input` v1 负责 local/device/AI 等控制来源。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。网络是双向通信层，v2 单独设计。
 
 ## 和 gameplay 的区别
 
@@ -43,7 +43,7 @@ ecs/systems/movement 根据 MovementIntent + Speed 修改 Transform
 ## 不应该放这里
 
 - 不生成实体。
-- 不读取键盘、鼠标、手柄、网络输入。
+- 不读取键盘、鼠标、手柄、外设、AI、脚本或网络来源。
 - 不直接依赖或调用裸 `ecs`；通过 `prefab` 暴露的最小合法接口写入 intent 数据。
 - 不直接修改 `Transform`、生命值、背包等世界结果。
 - 不决定怎么移动、怎么攻击、怎么结算；这些属于 `crates/ecs/src/systems`。

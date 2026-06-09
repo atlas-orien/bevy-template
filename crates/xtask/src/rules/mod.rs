@@ -7,6 +7,7 @@ mod intent;
 mod physics;
 mod prefab;
 mod render_2d;
+mod render_3d;
 
 pub enum CheckStatus {
     Passed,
@@ -45,6 +46,10 @@ pub fn check_architecture() -> CheckStatus {
     }
 
     if let CheckStatus::Failed(mut rule_errors) = render_2d::check() {
+        errors.append(&mut rule_errors);
+    }
+
+    if let CheckStatus::Failed(mut rule_errors) = render_3d::check() {
         errors.append(&mut rule_errors);
     }
 

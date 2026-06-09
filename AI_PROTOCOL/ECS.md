@@ -34,7 +34,9 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - `crates/ecs/src/resources` 只描述全局 ECS 数据，不加载文件资源。
 - `crates/ecs/src/events` 只描述发生了什么，不处理后果。
 - `crates/ecs/src/systems` 负责根据 ECS 数据执行世界规则。
-- 不读取键盘、鼠标、手柄、网络输入；外部输入来源放到 `crates/input`，再转换成 `intent` 或 `gameplay::api` 请求。
+- 不读取键盘、鼠标、手柄、外设、AI、脚本、网络等外部来源。
+- `input` v1 负责 local/device/AI 等控制来源，并转换成 `intent` 或 `gameplay::api` 请求。
+- 网络是双向通信层，v2 单独设计，不属于 `input`。
 - 不写 sprite、动画、相机、UI 布局、材质、光照；这些放到渲染层。
 
 ## 命名规则

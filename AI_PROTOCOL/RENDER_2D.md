@@ -28,7 +28,7 @@
 - 可以定义渲染专用 `Component`，例如 sprite marker、animation state、camera marker。
 - 可以读取 ECS 组件来决定显示方式。
 - 不定义核心玩法组件、bundle、resource、event。
-- 不读取键盘、鼠标、手柄、网络输入。
+- 不读取键盘、鼠标、手柄、外设、AI、网络或脚本输入。
 - 不写入 `intent`。
 - 不执行移动、战斗、物品、碰撞等世界规则。
 - 不依赖 `prefab`。

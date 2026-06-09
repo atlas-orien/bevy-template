@@ -35,6 +35,7 @@ rapier2d
 - `crates/app`、`crates/input`、`crates/intent`、`crates/gameplay`、`crates/render_2d`、`crates/render_3d` 不直接依赖 Avian 或 Rapier。
 - 如果其它 crate 需要物理能力，先在 `crates/physics` 暴露统一 API。
 - 不要把 Avian 或 Rapier 类型泄漏到 `physics` 的公共 API，除非这是经过明确设计的后端扩展点。
+- `crates/physics/src/lib.rs` 不允许 re-export Avian 或 Rapier 类型。
 - 游戏语义数据仍然放在 `crates/ecs`。
 - 物理引擎插件、物理后端配置、物理调试显示放在 `crates/physics`。
 

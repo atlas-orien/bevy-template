@@ -14,11 +14,34 @@ pub fn check() -> CheckStatus {
     require_path(PHYSICS_PROTOCOL, &mut errors);
     check_backend_dependencies(&mut errors);
     check_backend_imports(&mut errors);
+    check_public_api(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn check_public_api(errors: &mut Vec<String>) {
+    let public_api = Path::new(PHYSICS_CRATE).join("src/lib.rs");
+    let Ok(source) = fs::read_to_string(&public_api) else {
+        return;
+    };
+
+    for backend in BACKENDS {
+        for forbidden in [
+            format!("pub use {backend}"),
+            format!("pub mod {backend}"),
+            format!("pub type {backend}"),
+        ] {
+            if source.contains(&forbidden) {
+                errors.push(format!(
+                    "{} exposes `{backend}` in the public API; use project-level physics facade types instead",
+                    public_api.display()
+                ));
+            }
+        }
     }
 }
 

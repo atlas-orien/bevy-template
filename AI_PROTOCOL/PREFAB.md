@@ -17,7 +17,7 @@
 
 - `prefab` 可以依赖 `ecs`、`physics`、`render_2d`。
 - 未来 3D prefab 可以依赖 `render_3d`。
-- `prefab` 不读取键盘、鼠标、手柄、网络输入。
+- `prefab` 不读取键盘、鼠标、手柄、外设、AI、网络或脚本输入。
 - `prefab` 不写底层 ECS system 函数；可以封装和导出 gameplay-facing spawn API 或窄 facade。
 - `prefab` 不决定生成时机。
 - `gameplay` 注册 `PrefabPlugin`，`app` 不直接注册 `PrefabPlugin`、`EcsPlugin`、`PhysicsPlugin` 或 `Render2dPlugin`。

@@ -43,19 +43,20 @@
 ## Manager 规则
 
 - 用户和外部模块优先通过 manager API 操作 gameplay。
-- `GameplayRequest` 是 manager 到 gameplay 的内部请求，不应该被普通用户代码到处构造。
-- `GameplayUpdate` 是 gameplay 到 manager 的内部消息，不应该被普通用户代码到处构造。
+- `RuntimeRequest` 是 external runtime 到 world 的内部请求，不应该被普通用户代码到处构造。
+- `RuntimeUpdate` 是 world 到 external runtime 的内部消息，不应该被普通用户代码到处构造。
 - manager API 不向用户暴露 Bevy `Entity`。
 - manager 必须有状态，可以维护 gameplay-facing id 的 registry，并允许用户按公开 id 查询。
 - manager 不向用户暴露 Bevy `Entity`。
 - manager 属于 `external_runtime`，不属于 `gameplay`。
 - `manager/user.rs` 定义给用户和外部模块使用的高层 API；用户 API 优先写成纯函数式门面，内部接收 manager 并调用 manager 状态和 bridge。
 - `manager/transport.rs` 定义 manager 内部使用的 request/update channel transport。
-- 用户 API 不直接暴露 `GameplayRequestSender`。
+- 用户 API 不直接暴露 `RuntimeRequestSender`。
 - transport 不应该被普通用户代码直接使用。
 - `manager/transport.rs` 和 `manager/state.rs` 不对外公开；普通用户只能通过 `manager/user.rs` 和 `ExternalRuntimeManager` 进入。
 - gameplay 不依赖 manager，也不调用 manager；gameplay 只向 update channel 发消息。
 - manager 不进入 Bevy `World`，只向 request channel 发消息，并从 update channel 接收消息。
+- channel 机制属于 `helper`，不属于 `external_runtime`。
 
 ## 边界规则
 
@@ -68,7 +69,8 @@
 
 ## 依赖规则
 
-- `external_runtime` 可以依赖 `gameplay`，用于持有 gameplay request/update channel 类型。
+- `external_runtime` 可以依赖 `gameplay`，用于持有 runtime/world endpoint 和 request/update 消息类型。
+- `external_runtime` 可以依赖 `helper`，用于共享 channel/transport 基础设施。
 - `external_runtime` 可以依赖 `intent` 和 `prefab`，但优先通过 manager API。
 - `external_runtime` 可以依赖 `tokio`。
 - `external_runtime` 必须依赖 `error`。

@@ -1,6 +1,6 @@
 use prefab::Prefab;
 
-use super::prefab::SpawnItem;
+use crate::api::SpawnItem;
 
 #[derive(Default)]
 pub struct GameplaySpawnPlan {

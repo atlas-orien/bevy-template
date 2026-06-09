@@ -1,14 +1,8 @@
 use bevy::prelude::*;
 
-#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
-pub enum AppState {
-    #[default]
-    Loading,
-    MainMenu,
-    Playing,
-    Paused,
-    GameOver,
-}
+mod state_def;
+
+pub use state_def::AppState;
 
 pub struct StatePlugin;
 

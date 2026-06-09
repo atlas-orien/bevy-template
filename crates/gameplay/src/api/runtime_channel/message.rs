@@ -2,11 +2,11 @@ use bevy::prelude::*;
 use prefab::Prefab;
 use prefab::identity::GameplayEntityId;
 
-use crate::spawning::prefab::SpawnItem;
+use super::spawn::SpawnItem;
 use crate::state::AppState;
 
 #[derive(Message)]
-pub enum GameplayRequest {
+pub enum RuntimeRequest {
     SpawnPrefab(Option<Box<dyn SpawnItem>>),
     DespawnEntity(GameplayEntityId),
     ClearSession,
@@ -17,7 +17,13 @@ pub enum GameplayRequest {
     },
 }
 
-impl GameplayRequest {
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum RuntimeUpdate {
+    EntityRegistered { id: GameplayEntityId },
+    EntityUnregistered { id: GameplayEntityId },
+}
+
+impl RuntimeRequest {
     pub fn spawn_prefab<P>(prefab: P) -> Self
     where
         P: Prefab + Send + Sync + 'static,

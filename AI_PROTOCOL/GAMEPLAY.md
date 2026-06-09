@@ -47,9 +47,10 @@
 - gameplay 内部负责把 gameplay-facing id 映射成 Bevy `Entity`。
 - `api` 可以注册 Bevy `Message`，作为外部系统和 gameplay 内部系统之间的连接。
 - `api` 的消费和执行必须放在 gameplay 内部 system 中，并注册到明确的 Bevy schedule。
-- `api` 可以提供 request/update channel，用于让 external runtime 和 Bevy App 双向通信。
+- `api` 可以定义 request/update 消息语义，并使用 `helper` 的 channel 机制让 external runtime 和 Bevy App 双向通信。
 - manager 不属于 `gameplay`，必须放在 `external_runtime`。
 - gameplay 不依赖 manager，也不调用 manager；gameplay 只向 update channel 发消息。
+- channel 机制属于 `helper`，不属于 `gameplay`。
 - 用于 external runtime transport 的 `Resource` 只能放在 `api` 边界中，不表示 gameplay 内部状态数据。
 - 运行中 spawn、despawn、状态切换、关卡加载、传送、给予物品等高层请求，都优先通过 API 进入 gameplay。
 - 已有 Entity 的连续意图，例如移动、瞄准、攻击输入，不一定属于 API 请求；这类行为可以继续由 intent 层表达。

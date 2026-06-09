@@ -3,6 +3,7 @@ mod ecs;
 mod error;
 mod external_runtime;
 mod gameplay;
+mod helper;
 mod intent;
 mod physics;
 mod prefab;
@@ -26,6 +27,10 @@ pub fn check_architecture() -> CheckStatus {
     }
 
     if let CheckStatus::Failed(mut rule_errors) = external_runtime::check() {
+        errors.append(&mut rule_errors);
+    }
+
+    if let CheckStatus::Failed(mut rule_errors) = helper::check() {
         errors.append(&mut rule_errors);
     }
 

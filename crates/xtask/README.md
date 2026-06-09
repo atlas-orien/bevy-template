@@ -55,6 +55,13 @@ cargo run -p xtask -- help
 - `external_runtime` 不允许定义 `ExternalRuntimePlugin` 或实现 Bevy `Plugin`。
 - `external_runtime` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
+当前会检查 `crates/helper`：
+
+- `crates/helper` 必须存在。
+- `AI_PROTOCOL/HELPER.md` 必须存在。
+- 必须有通用 channel helper：`crates/helper/src/channel.rs`。
+- `helper` 不允许依赖 `gameplay`、`external_runtime`、`ecs`、`physics`、`prefab`、`intent`、`render_2d`、`render_3d`。
+
 当前会检查 `crates/error`：
 
 - `crates/error` 必须存在。

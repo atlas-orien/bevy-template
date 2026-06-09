@@ -12,6 +12,7 @@ publish = false
 bevy.workspace = true
 error.workspace = true
 gameplay.workspace = true
+helper.workspace = true
 intent.workspace = true
 prefab.workspace = true
 tokio.workspace = true

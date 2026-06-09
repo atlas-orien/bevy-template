@@ -19,14 +19,14 @@ use self::spawning::SpawningPlugin;
 use self::state::StatePlugin;
 
 pub struct GameplayPlugin {
-    request_inbox: Option<api::GameplayRequestInbox>,
-    update_sender: Option<api::GameplayUpdateSender>,
+    request_inbox: Option<api::RuntimeRequestInbox>,
+    update_sender: Option<api::RuntimeUpdateSender>,
 }
 
 impl GameplayPlugin {
     pub fn new(
-        request_inbox: api::GameplayRequestInbox,
-        update_sender: api::GameplayUpdateSender,
+        request_inbox: api::RuntimeRequestInbox,
+        update_sender: api::RuntimeUpdateSender,
     ) -> Self {
         Self {
             request_inbox: Some(request_inbox),

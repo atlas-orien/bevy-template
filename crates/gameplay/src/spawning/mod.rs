@@ -1,6 +1,5 @@
 pub mod defaults;
 pub mod plan;
-pub mod prefab;
 pub mod systems;
 
 use bevy::prelude::*;

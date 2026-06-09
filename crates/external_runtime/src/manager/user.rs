@@ -1,48 +1,30 @@
 use std::sync::{Arc, Mutex};
 
-use gameplay::api::{
-    GameplayRequest, GameplayRequestInbox, GameplayUpdateSender, gameplay_channels,
-};
+use gameplay::api::{RuntimeRequest, RuntimeRequestSender, RuntimeUpdateInbox};
 use gameplay::state::AppState;
 use intent::movement::MovementTarget;
 use prefab::Prefab;
 use prefab::identity::GameplayEntityId;
 
 use super::state::ManagerState;
-use super::transport::GameplayTransport;
+use super::transport::RuntimeTransport;
 
 #[derive(Clone)]
 pub struct ExternalRuntimeManager {
-    gameplay: GameplayTransport,
+    runtime: RuntimeTransport,
     state: Arc<Mutex<ManagerState>>,
-    request_inbox: GameplayRequestInbox,
-    update_sender: GameplayUpdateSender,
 }
 
 impl ExternalRuntimeManager {
-    pub fn new() -> Self {
-        let (requests, request_inbox, update_sender, updates) = gameplay_channels();
+    pub fn new(requests: RuntimeRequestSender, updates: RuntimeUpdateInbox) -> Self {
         let state = Arc::new(Mutex::new(ManagerState::default()));
-        let gameplay = GameplayTransport::new(requests, updates, state.clone());
+        let runtime = RuntimeTransport::new(requests, updates, state.clone());
 
-        Self {
-            gameplay,
-            state,
-            request_inbox,
-            update_sender,
-        }
+        Self { runtime, state }
     }
 
     pub(crate) fn sync_gameplay_updates(&self) {
-        self.gameplay.receive_updates();
-    }
-
-    pub fn gameplay_request_inbox(&self) -> GameplayRequestInbox {
-        self.request_inbox.clone()
-    }
-
-    pub fn gameplay_update_sender(&self) -> GameplayUpdateSender {
-        self.update_sender.clone()
+        self.runtime.receive_updates();
     }
 
     pub fn has_entity(&self, id: GameplayEntityId) -> bool {
@@ -57,25 +39,19 @@ impl ExternalRuntimeManager {
     }
 }
 
-impl Default for ExternalRuntimeManager {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 pub fn spawn_prefab<P>(manager: &ExternalRuntimeManager, prefab: P) -> bool
 where
     P: Prefab + Send + Sync + 'static,
 {
     manager
-        .gameplay
-        .send_request(GameplayRequest::spawn_prefab(prefab))
+        .runtime
+        .send_request(RuntimeRequest::spawn_prefab(prefab))
 }
 
 pub fn despawn_entity(manager: &ExternalRuntimeManager, id: GameplayEntityId) -> bool {
     manager
-        .gameplay
-        .send_request(GameplayRequest::despawn_entity(id))
+        .runtime
+        .send_request(RuntimeRequest::despawn_entity(id))
 }
 
 pub fn clear_session(manager: &ExternalRuntimeManager) -> bool {
@@ -84,14 +60,14 @@ pub fn clear_session(manager: &ExternalRuntimeManager) -> bool {
     }
 
     manager
-        .gameplay
-        .send_request(GameplayRequest::clear_session())
+        .runtime
+        .send_request(RuntimeRequest::clear_session())
 }
 
 pub fn change_state(manager: &ExternalRuntimeManager, state: AppState) -> bool {
     manager
-        .gameplay
-        .send_request(GameplayRequest::change_state(state))
+        .runtime
+        .send_request(RuntimeRequest::change_state(state))
 }
 
 pub fn set_movement_intent(
@@ -100,8 +76,8 @@ pub fn set_movement_intent(
     target: MovementTarget,
 ) -> bool {
     manager
-        .gameplay
-        .send_request(GameplayRequest::set_movement_intent(id, target))
+        .runtime
+        .send_request(RuntimeRequest::set_movement_intent(id, target))
 }
 
 pub fn has_entity(manager: &ExternalRuntimeManager, id: GameplayEntityId) -> bool {

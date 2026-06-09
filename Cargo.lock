@@ -197,6 +197,7 @@ dependencies = [
  "bevy",
  "error",
  "gameplay",
+ "helper",
 ]
 
 [[package]]
@@ -424,6 +425,7 @@ dependencies = [
  "app",
  "external_runtime",
  "gameplay",
+ "helper",
  "tokio",
 ]
 
@@ -2620,6 +2622,7 @@ dependencies = [
  "bevy",
  "error",
  "gameplay",
+ "helper",
  "intent",
  "prefab",
  "tokio",
@@ -2818,6 +2821,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
+ "helper",
  "intent",
  "prefab",
 ]
@@ -3252,6 +3256,14 @@ name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+
+[[package]]
+name = "helper"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+]
 
 [[package]]
 name = "hermit-abi"

@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
-use super::request::GameplayRequest;
+use super::RuntimeRequest;
 
 pub fn submit_gameplay_request(
-    requests: &mut MessageWriter<GameplayRequest>,
-    request: GameplayRequest,
+    requests: &mut MessageWriter<RuntimeRequest>,
+    request: RuntimeRequest,
 ) {
     requests.write(request);
 }

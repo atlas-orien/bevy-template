@@ -26,6 +26,7 @@ app = { path = "crates/app" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
 external_runtime = { path = "crates/external_runtime" }
+helper = { path = "crates/helper" }
 intent = { path = "crates/intent" }
 physics = { path = "crates/physics" }
 prefab = { path = "crates/prefab" }
@@ -39,4 +40,5 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"
 app.workspace = true
 external_runtime.workspace = true
 gameplay.workspace = true
+helper.workspace = true
 tokio.workspace = true

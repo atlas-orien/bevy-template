@@ -24,6 +24,7 @@
 
 - `crates/error`: 统一错误、Result、错误类型和严重级别
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
+- `crates/helper`: 跨 runtime / 跨 crate 的共享基础设施，例如 channel、transport、未来 network helper
 - `crates/external_runtime`: Bevy App 外部 runtime，持有 manager API，运行 input/local、input/device、input/ai 等外部来源
 - `crates/intent`: Entity 意图层，表达可控制实体想做什么
 - `crates/gameplay`: 游戏玩法语义层，负责状态流、gameplay session 生命周期和 ECS system 调度
@@ -45,14 +46,14 @@
 GameplayPlugin
 ```
 
-`src/main.rs` 会先创建 `external_runtime::manager::ExternalRuntimeManager`，再从 manager 取 Bevy App 需要的 inbox/update sender，然后启动两套系统：
+`src/main.rs` 会先通过 `gameplay::api::duplex()` 创建 runtime/world 两端 endpoint，再分别交给 `external_runtime` 和 Bevy App。底层 channel 机制由 `helper` 提供。
 
 ```text
 external_runtime
 Bevy App
 ```
 
-`external_runtime` 持有有状态的 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。普通用户代码通过 manager 查询公开 entity id，不接触 Bevy `Entity`。
+`helper` 提供两个世界之间共享的通信基础设施。`external_runtime` 持有有状态的 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。普通用户代码通过 manager 查询公开 entity id，不接触 Bevy `Entity`。
 
 `GameplayPlugin` 是注册到 Bevy App 的玩法流程入口，负责状态、spawn、request 消费和 gameplay systems 的调度。
 

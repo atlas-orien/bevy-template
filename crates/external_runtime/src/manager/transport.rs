@@ -1,20 +1,22 @@
 use std::sync::{Arc, Mutex};
 
-use gameplay::api::{GameplayRequest, GameplayRequestSender, GameplayUpdate, GameplayUpdateInbox};
+use gameplay::api::{
+    RuntimeRequest, RuntimeRequestSender, RuntimeUpdate, RuntimeUpdateInbox,
+};
 
 use super::state::ManagerState;
 
 #[derive(Clone)]
-pub struct GameplayTransport {
-    requests: GameplayRequestSender,
-    updates: GameplayUpdateInbox,
+pub struct RuntimeTransport {
+    requests: RuntimeRequestSender,
+    updates: RuntimeUpdateInbox,
     state: Arc<Mutex<ManagerState>>,
 }
 
-impl GameplayTransport {
+impl RuntimeTransport {
     pub fn new(
-        requests: GameplayRequestSender,
-        updates: GameplayUpdateInbox,
+        requests: RuntimeRequestSender,
+        updates: RuntimeUpdateInbox,
         state: Arc<Mutex<ManagerState>>,
     ) -> Self {
         Self {
@@ -24,8 +26,8 @@ impl GameplayTransport {
         }
     }
 
-    pub fn send_request(&self, request: GameplayRequest) -> bool {
-        self.requests.submit(request)
+    pub fn send_request(&self, request: RuntimeRequest) -> bool {
+        self.requests.send(request)
     }
 
     pub fn receive_updates(&self) {
@@ -35,10 +37,10 @@ impl GameplayTransport {
             };
 
             match update {
-                GameplayUpdate::EntityRegistered { id } => {
+                RuntimeUpdate::EntityRegistered { id } => {
                     state.register_entity(id);
                 }
-                GameplayUpdate::EntityUnregistered { id } => {
+                RuntimeUpdate::EntityUnregistered { id } => {
                     state.unregister_entity(id);
                 }
             }

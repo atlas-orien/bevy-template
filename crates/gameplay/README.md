@@ -27,14 +27,14 @@ src/
 当前文件：
 
 - `channel.rs`: 定义 gameplay request sender 和 Bevy App 内部的 request inbox。
-- `mod.rs`: 注册 `GameplayApiPlugin`，并注册 `GameplayRequest` message。
-- `request.rs`: 定义外部可提交的 `GameplayRequest`。
+- `mod.rs`: 注册 `GameplayApiPlugin`，并注册 `RuntimeRequest` message。
+- runtime/world 消息类型定义在 `gameplay::api::runtime_channel`，底层 channel 机制来自 `helper`。
 - `submit.rs`: 提供提交 gameplay request 的窄函数。
-- `systems.rs`: 消费 `GameplayRequest`，并调用 gameplay 内部能力。
+- `systems.rs`: 消费 `RuntimeRequest`，并调用 gameplay 内部能力。
 
 API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-facing id，gameplay 内部负责映射到 Bevy `Entity`。
 
-外部 runtime 不直接拿 `MessageWriter`。外部 runtime 持有 `ExternalRuntimeManager`，manager 内部持有 gameplay request sender；Bevy App 内部持有 inbox，并在 `Update` 中转发为 `GameplayRequest` message。
+外部 runtime 不直接拿 `MessageWriter`。`main` 从 `gameplay::api::duplex()` 获得 runtime/world 两端 endpoint；external runtime 持有 runtime endpoint，Bevy App 持有 world endpoint，并在 `Update` 中转发为 `RuntimeRequest` message。
 
 当前最小请求：
 
@@ -46,7 +46,7 @@ API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-
 
 新增 API 请求时：
 
-- 请求类型写到 `api/request.rs`。
+- 请求类型写到 `gameplay::api::runtime_channel`。
 - 请求提交函数如果需要封装，写到 `api/submit.rs`。
 - 外部 runtime 入口如果需要扩展，写到 `crates/external_runtime/src/manager`。
 - 请求执行逻辑写到 `api/systems.rs`。
@@ -104,7 +104,7 @@ gameplay session 进入时的生成流程。
 
 - `mod.rs`: 组装 `SpawningPlugin`。
 - `plan.rs`: 定义 `GameplaySpawnPlan`。
-- `prefab.rs`: 定义 object-safe `SpawnItem`，用于保存任意 prefab。
+- `gameplay::api::SpawnItem`: object-safe spawn item，用于 runtime request 保存任意 prefab。
 - `defaults.rs`: 定义模板默认 spawn plan。
 - `systems.rs`: 执行默认 spawn plan。
 
@@ -118,7 +118,7 @@ gameplay session 进入时的生成流程。
 - 新增具体 prefab 时，不维护中心 enum 或 match 列表。
 - 只要 prefab 实现 `prefab::Prefab`，就可以进入 `GameplaySpawnPlan`。
 
-运行中 spawn 不放在 `spawning` 消费，走 `api::GameplayRequest::SpawnPrefab`。
+运行中 spawn 不放在 `spawning` 消费，走 `RuntimeRequest::SpawnPrefab`。
 
 ## cleanup
 
@@ -133,7 +133,7 @@ gameplay session 进入时的生成流程。
 新增清理策略时：
 
 - 如果是状态退出清理，优先使用 `OnExit(...)`。
-- 如果是外部请求触发清理，优先走 `GameplayRequest::ClearSession`。
+- 如果是外部请求触发清理，优先走 `RuntimeRequest::ClearSession`。
 - 不要在 cleanup 中散装组件查询逻辑；需要底层能力时通过 `prefab` 暴露的窄 facade。
 
 ## lifecycle

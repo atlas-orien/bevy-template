@@ -44,10 +44,13 @@ cargo run -p xtask -- help
 
 - `crates/input` 必须存在。
 - `AI_PROTOCOL/INPUT.md` 必须存在。
-- 必须有当前本地输入模块 `local.rs`。
+- 必须有当前输入来源域目录：`local`、`device`、`ai`。
+- 不允许有 `crates/input/src/network`；网络是双向通信层，v2 单独设计。
+- 必须有 input runtime 和 bridge 目录：`runtime`、`bridge`。
 - `input` 可以依赖 `prefab`、`intent`、`gameplay`，但只能通过 `gameplay::api` 提交高层请求。
 - `input` 不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
 - `input` 不允许定义 ECS 数据类型。
+- `input` 不允许定义 `InputPlugin` 或实现 Bevy `Plugin`。
 - `input` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
 当前会检查 `crates/error`：

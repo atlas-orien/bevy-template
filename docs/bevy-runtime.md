@@ -436,10 +436,10 @@ app.add_message::<MyMessage>();
 某个系统通知另一个系统发生了什么
 ```
 
-对于本项目未来的网络 spawn，可以考虑：
+对于本项目未来的网络 spawn，需要由 v2 单独的 network 层接入：
 
 ```text
-input/network system 通过 gameplay API 提交请求
+network bridge 通过 gameplay API 提交请求
 gameplay 内部 system 消费 message
 prefab.spawn 插入 World
 ```
@@ -540,7 +540,7 @@ gameplay 内部 system 决定何时执行。
 例如运行中由服务器消息触发生成对象时，理想流程是：
 
 ```text
-network/input layer
+external layer
 -> gameplay::api::GameplayRequest::spawn_prefab(prefab)
 -> gameplay::api::submit_gameplay_request(...)
 -> gameplay/spawning system

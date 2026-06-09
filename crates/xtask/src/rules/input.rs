@@ -11,15 +11,54 @@ pub fn check() -> CheckStatus {
 
     require_path(INPUT_CRATE, &mut errors);
     require_path(INPUT_PROTOCOL, &mut errors);
-    require_path("crates/input/src/local.rs", &mut errors);
+    for path in [
+        "crates/input/src/local",
+        "crates/input/src/device",
+        "crates/input/src/ai",
+        "crates/input/src/runtime",
+        "crates/input/src/bridge",
+    ] {
+        require_path(path, &mut errors);
+    }
     reject_dependencies(&mut errors);
+    reject_network_module(&mut errors);
     reject_data_definitions(&mut errors);
+    reject_plugin_definition(&mut errors);
+    reject_runtime_world_access(&mut errors);
     reject_world_mutation(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_network_module(errors: &mut Vec<String>) {
+    let network_path = Path::new(INPUT_CRATE).join("src/network");
+
+    if network_path.exists() {
+        errors.push(format!(
+            "{} exists; network is a bidirectional communication layer and does not belong in input v1",
+            network_path.display()
+        ));
+    }
+}
+
+fn reject_plugin_definition(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(INPUT_CRATE)) {
+        let Ok(source) = fs::read_to_string(&file) else {
+            continue;
+        };
+
+        for forbidden in ["InputPlugin", "impl Plugin for"] {
+            if source.contains(forbidden) {
+                errors.push(format!(
+                    "{} references `{forbidden}`; input uses its own runtime and must not be a Bevy plugin",
+                    file.display()
+                ));
+            }
+        }
     }
 }
 
@@ -58,6 +97,23 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
                         ));
                     }
                 }
+            }
+        }
+    }
+}
+
+fn reject_runtime_world_access(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(INPUT_CRATE).join("src/runtime").as_path()) {
+        let Ok(source) = fs::read_to_string(&file) else {
+            continue;
+        };
+
+        for forbidden in ["World", "Commands", "Query<", "Res<", "ResMut<"] {
+            if source.contains(forbidden) {
+                errors.push(format!(
+                    "{} references `{forbidden}`; input runtime must communicate through bridge/channel, not Bevy World",
+                    file.display()
+                ));
             }
         }
     }

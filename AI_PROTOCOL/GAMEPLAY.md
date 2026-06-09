@@ -18,6 +18,7 @@
 ## 代码落点
 
 - 游戏状态：写到 `crates/gameplay/src/state`。
+- 外部进入 gameplay 的 API 边界：写到 `crates/gameplay/src/api`。
 - 系统调度、运行条件、系统集合：写到 `crates/gameplay/src/schedule`。
 - gameplay session 进入调度：写到 `crates/gameplay/src/spawning`。
 - 清理策略：写到 `crates/gameplay/src/cleanup`。
@@ -36,14 +37,28 @@
 - `GameplaySpawnPlan` 必须能接收任意实现 `Prefab` 的具体 prefab，不要维护中心 enum 或 match 列表。
 - `gameplay` 负责决定何时执行 spawn plan；具体 prefab 内部组件组合仍然属于 `crates/prefab`。
 
+## API 目录规则
+
+- `api` 是外部来源进入 gameplay 的统一 API 边界。
+- `api` 暴露外部可以提交的 gameplay 请求类型和提交函数。
+- `api` 表达“希望 gameplay 做什么”，不直接修改 Bevy `World`。
+- `api` 不直接调用 `Commands`、`World` 或 `Prefab::spawn`。
+- `api` 可以注册 Bevy `Message`，作为外部系统和 gameplay 内部系统之间的连接。
+- `api` 的消费和执行必须放在 gameplay 内部 system 中，并注册到明确的 Bevy schedule。
+- 运行中 spawn、despawn、状态切换、关卡加载、传送、给予物品等高层请求，都优先通过 API 进入 gameplay。
+- 已有 Entity 的连续意图，例如移动、瞄准、攻击输入，不一定属于 API 请求；这类行为可以继续由 intent 层表达。
+- 未来如果外部 crate 需要直接依赖 API 类型，再考虑把 API 抽成独立 crate；现在先放在 `crates/gameplay/src/api`。
+
 ## 边界规则
 
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`。
+- `Message` 只允许用于 `api` 边界类型；不要把 gameplay 内部状态伪装成 message。
 - 不写底层 ECS 规则函数；需要调度底层规则时使用 `crates/prefab` 暴露的窄 facade。
 - 不封装物理后端；这些放到 `crates/physics`。
 - 不读取输入；输入来源放到 `crates/input`，再转换成 `crates/intent` 表达的意图。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
 - 不直接散装实体组件；生成对象时优先调用 `crates/prefab`。
+- 外部来源不要直接调用 gameplay 内部执行函数；应该通过 `api` 提交请求，由 gameplay system 统一消费。
 
 ## 依赖规则
 

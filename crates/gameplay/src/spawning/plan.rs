@@ -14,7 +14,7 @@ impl GameplaySpawnPlan {
 
     pub fn with<P>(mut self, prefab: P) -> Self
     where
-        P: Prefab + 'static,
+        P: Prefab + Send + Sync + 'static,
     {
         self.prefabs.push(Box::new(prefab));
         self

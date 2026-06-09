@@ -34,6 +34,14 @@
 - 不要把每个 prefab 做成 Bevy plugin。
 - 模板本身不携带 demo prefab 或 demo 资源。
 
+## Render 边界
+
+- `prefab` 可以组合 `render_2d` 暴露的、挂在 Bevy Main World Entity 上的表现组件、marker 或 bundle。
+- `prefab` 里的 render 组合只表达对象的表现数据或表现身份，不表示直接执行渲染。
+- `prefab` 不直接操作 RenderApp、Render World、render graph、pipeline、GPU resource 或 `wgpu`。
+- `prefab` 不把实体生成到 Render World；它只通过 `Commands` 生成 Main World Entity。
+- Render SubApp 如何 extract、prepare、queue 和 draw，属于 Bevy/render 层，不属于 `prefab`。
+
 ## 验证要求
 
 修改 `crates/prefab` 后必须运行：

@@ -10,6 +10,7 @@
 
 - 定义游戏状态流，例如 Loading、MainMenu、Playing、Paused、GameOver。
 - 定义不同状态进入、运行、退出时发生什么。
+- 提供外部来源进入 gameplay 的 API 边界。
 - 决定什么时候进入或退出 gameplay session。
 - 决定什么时候清理 gameplay entity。
 - 决定在某个状态或阶段启用哪些 ECS system。
@@ -18,12 +19,52 @@
 ## 推荐结构
 
 - `state`: 游戏状态定义和状态切换。
+- `api`: 外部来源进入 gameplay 的统一 API 边界。
 - `schedule`: 系统集合、运行条件、调度顺序。
 - `spawning`: gameplay session 进入调度，例如进入 Playing 时加载当前游戏世界。
 - `cleanup`: 清理策略，例如退出 Playing 时清理 gameplay entity。
 - `lifecycle`: 关卡、回合、gameplay session 等更高层生命周期。
 
 当前代码里的旧模块可以逐步迁移到这个结构。目录可以按项目需求调整，但必须保持职责清楚。
+
+## api 结构
+
+`api` 是外部来源进入 gameplay 的统一边界。
+
+它表达：
+
+```text
+外部或上层逻辑希望 gameplay 做什么。
+```
+
+它不直接执行：
+
+```text
+Commands
+World mutation
+Prefab::spawn
+```
+
+真正执行 API 请求的地方应该是 gameplay 内部 system，并注册到明确的 Bevy schedule。
+
+适合走 API 的事情：
+
+- 运行中生成或销毁对象。
+- 切换 gameplay state。
+- 加载关卡。
+- 传送 Entity。
+- 给予物品。
+- 触发剧情或对话。
+
+不一定适合走 API 的事情：
+
+- 已有 Entity 的连续移动输入。
+- 已有 Entity 的瞄准方向。
+- 已有 Entity 的普通攻击意图。
+
+这些更像 Entity 自己的 intent。
+
+当前阶段 API 先放在 `crates/gameplay/src/api`。如果未来 input、network、script 等外部 crate 需要直接依赖这些类型，再考虑抽成独立 crate。
 
 ## spawning 结构
 

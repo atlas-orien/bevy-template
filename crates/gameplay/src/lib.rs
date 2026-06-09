@@ -1,3 +1,4 @@
+pub mod api;
 pub mod cleanup;
 pub mod schedule;
 pub mod spawning;
@@ -10,6 +11,7 @@ use input::InputPlugin;
 use intent::IntentPlugin;
 use prefab::PrefabPlugin;
 
+use self::api::GameplayApiPlugin;
 use self::cleanup::CleanupPlugin;
 use self::schedule::SchedulePlugin;
 use self::spawning::SpawningPlugin;
@@ -21,6 +23,7 @@ impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             PrefabPlugin,
+            GameplayApiPlugin,
             StatePlugin,
             SchedulePlugin,
             SpawningPlugin,

@@ -5,12 +5,14 @@ use super::CheckStatus;
 
 const GAMEPLAY_CRATE: &str = "crates/gameplay";
 const GAMEPLAY_PROTOCOL: &str = "AI_PROTOCOL/GAMEPLAY.md";
+const GAMEPLAY_API: &str = "crates/gameplay/src/api";
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
     require_path(GAMEPLAY_CRATE, &mut errors);
     require_path(GAMEPLAY_PROTOCOL, &mut errors);
+    require_path(GAMEPLAY_API, &mut errors);
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);
@@ -56,6 +58,15 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
                             file.display()
                         ));
                     }
+                }
+
+                if derived.iter().any(|name| name == "Message")
+                    && !file.starts_with(Path::new(GAMEPLAY_API))
+                {
+                    errors.push(format!(
+                        "{} derives `Message`; gameplay messages must be part of the public api boundary",
+                        file.display()
+                    ));
                 }
             }
         }

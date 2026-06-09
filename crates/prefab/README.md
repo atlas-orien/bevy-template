@@ -31,3 +31,9 @@
 - 不负责状态流、关卡流程或生成时机。
 
 `gameplay` 决定具体 gameplay session 使用哪些 prefab，以及什么时候进入或退出这些 session。
+
+## render 边界
+
+`prefab` 可以组合 `render_2d` 暴露的 Main World 表现组件、marker 或 bundle，例如角色 sprite 表现 bundle。
+
+但 `prefab` 不直接操作 Bevy RenderApp、Render World、render graph、pipeline、GPU resource 或 `wgpu`。Render SubApp 如何抽取和绘制这些数据，属于 Bevy/render 层。

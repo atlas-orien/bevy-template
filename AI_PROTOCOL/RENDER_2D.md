@@ -53,6 +53,13 @@ Gameplay Entity
 
 `Render Entity` 的 sprite、scale、atlas、动画由 `render_2d` 维护。
 
+## 和 prefab 的 render 边界
+
+- `render_2d` 可以提供挂在 Main World Entity 上的表现组件、marker 或 bundle，供 `prefab` 组合。
+- `prefab` 只组合这些 Main World 表现数据，不直接操作 RenderApp、Render World、render graph、pipeline 或 GPU resource。
+- Render SubApp 的 extract、prepare、queue、draw 等流程属于 Bevy/render 层。
+- 如果表现逻辑需要 system 同步、动画推进、材质更新或渲染子实体维护，放在 `render_2d`，不要放在 `prefab`。
+
 ## 依赖规则
 
 - `render_2d` 可以依赖 `ecs`。

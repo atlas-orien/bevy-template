@@ -63,6 +63,7 @@ Gameplay Entity
 
 - `render_3d` 可以依赖 `ecs`。
 - `render_3d` 必须依赖 `error`。
+- `render_3d` 不依赖 `audio`。
 - `render_3d` 不依赖 `external_runtime`。
 - `render_3d` 不依赖 `intent`。
 - `render_3d` 不依赖 `prefab`。

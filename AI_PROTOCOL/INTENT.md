@@ -40,7 +40,7 @@
 - `intent` 可以依赖 `prefab`。
 - `intent` 不依赖 `ecs`。
 - `intent` 不依赖 `physics`。
-- `intent` 不依赖 `render_2d` 或 `render_3d`。
+- `intent` 不依赖 `audio`、`render_2d` 或 `render_3d`。
 
 ## 验证要求
 

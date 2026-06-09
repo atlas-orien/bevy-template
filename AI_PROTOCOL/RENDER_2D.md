@@ -127,6 +127,7 @@ Gameplay Entity
 
 - `render_2d` 可以依赖 `ecs`。
 - `render_2d` 必须依赖 `error`。
+- `render_2d` 不依赖 `audio`。
 - `render_2d` 不依赖 `external_runtime`。
 - `render_2d` 不依赖 `intent`。
 - `render_2d` 不依赖 `prefab`。

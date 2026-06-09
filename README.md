@@ -23,6 +23,7 @@
 调整目录时需要保持一个原则：目录名称应该表达清楚职责，代码应该放在最容易理解和维护的位置。修改结构后，也应该同步更新相关文档，避免后续开发继续按照旧路径写代码。
 
 - `crates/error`: 统一错误、Result、错误类型和严重级别
+- `crates/audio`: 音频基础层，定义 sample/procedural 声音来源、2D/3D 空间音频和播放请求
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
 - `crates/helper`: 跨 runtime / 跨 crate 的共享基础设施，例如 channel、transport、未来 network helper
 - `crates/external_runtime`: Bevy App 外部 runtime，持有 manager API，运行 input/local、input/device、input/ai 等外部来源

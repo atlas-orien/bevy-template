@@ -60,6 +60,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 
     for dependency in [
         "ecs",
+        "audio",
         "external_runtime",
         "physics",
         "render_2d",

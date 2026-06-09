@@ -22,6 +22,7 @@ repository = "https://github.com/atlas-orien/bevy-template"
 
 [workspace.dependencies]
 bevy = "0.18"
+audio = { path = "crates/audio" }
 app = { path = "crates/app" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }

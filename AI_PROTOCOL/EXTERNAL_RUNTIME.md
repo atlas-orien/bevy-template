@@ -74,6 +74,7 @@
 - `external_runtime` 可以依赖 `intent` 和 `prefab`，但优先通过 manager API。
 - `external_runtime` 可以依赖 `tokio`。
 - `external_runtime` 必须依赖 `error`。
+- `external_runtime` 不依赖 `audio`。
 - `external_runtime` 不依赖 `ecs`。
 - `external_runtime` 不依赖 `physics`。
 - `external_runtime` 不依赖 `render_2d` 或 `render_3d`。

@@ -29,6 +29,7 @@ fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
 
     for dependency in [
         "ecs",
+        "audio",
         "external_runtime",
         "gameplay",
         "intent",

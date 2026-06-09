@@ -21,7 +21,7 @@
 
 - 不依赖 `gameplay`。
 - 不依赖 `external_runtime`。
-- 不依赖 `ecs`、`physics`、`prefab`、`intent`、`render_2d`、`render_3d`。
+- 不依赖 `audio`、`ecs`、`physics`、`prefab`、`intent`、`render_2d`、`render_3d`。
 - 不定义 gameplay、prefab、state 或 intent 消息语义。
 - 不生成实体，不读取或修改 Bevy `World`。
 

@@ -90,7 +90,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         return;
     };
 
-    for dependency in ["ecs", "physics", "render_2d", "render_3d"] {
+    for dependency in ["ecs", "audio", "physics", "render_2d", "render_3d"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
                 "{} depends on `{dependency}`; external_runtime should not depend on that crate",

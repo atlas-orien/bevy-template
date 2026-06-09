@@ -1,4 +1,5 @@
 mod app;
+mod audio;
 mod ecs;
 mod error;
 mod external_runtime;
@@ -19,6 +20,10 @@ pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
 
     if let CheckStatus::Failed(mut rule_errors) = app::check() {
+        errors.append(&mut rule_errors);
+    }
+
+    if let CheckStatus::Failed(mut rule_errors) = audio::check() {
         errors.append(&mut rule_errors);
     }
 

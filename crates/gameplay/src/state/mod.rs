@@ -7,6 +7,7 @@ pub enum AppState {
     MainMenu,
     Playing,
     Paused,
+    GameOver,
 }
 
 pub struct StatePlugin;

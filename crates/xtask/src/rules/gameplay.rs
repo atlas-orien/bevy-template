@@ -13,6 +13,7 @@ pub fn check() -> CheckStatus {
     require_path(GAMEPLAY_CRATE, &mut errors);
     require_path(GAMEPLAY_PROTOCOL, &mut errors);
     require_path(GAMEPLAY_API, &mut errors);
+    require_path("crates/gameplay/src/lifecycle", &mut errors);
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);

@@ -49,6 +49,22 @@
 - 已有 Entity 的连续意图，例如移动、瞄准、攻击输入，不一定属于 API 请求；这类行为可以继续由 intent 层表达。
 - 未来如果外部 crate 需要直接依赖 API 类型，再考虑把 API 抽成独立 crate；现在先放在 `crates/gameplay/src/api`。
 
+当前最小 API 请求样板：
+
+- `SpawnPrefab`: 运行中生成 prefab。
+- `DespawnEntity`: 销毁指定 Entity。
+- `ClearSession`: 清理当前 gameplay session 生成的实体。
+- `ChangeState`: 请求切换 gameplay state。
+
+新增请求时，优先放到 `api/request.rs`，消费逻辑放到 `api/systems.rs`，不要散落到其它目录。
+
+## Lifecycle 目录规则
+
+- `lifecycle` 表达 session、level、round 等 gameplay 生命周期概念。
+- `lifecycle` 不直接定义 ECS 数据。
+- 具体 Entity 清理仍然通过 `prefab` 或 `ecs` 暴露的窄 facade 完成。
+- 状态进入/退出的注册可以在 `schedule`、`spawning`、`cleanup` 或 lifecycle plugin 中完成，但必须保持语义清楚。
+
 ## 边界规则
 
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`。

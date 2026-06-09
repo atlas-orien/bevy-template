@@ -1,116 +1,152 @@
 # gameplay
 
-`gameplay` 是游戏玩法语义层，负责游戏流程和世界调度。
+`gameplay` 是游戏玩法流程层。
 
-它不定义实体数据，不封装物理引擎，不读取输入，也不负责渲染。它负责把游戏状态、阶段、gameplay session 进入/退出和 ECS 系统调度组织起来。
+它负责把 gameplay state、API 请求、session 进入/退出、spawn plan、cleanup 和 system 调度注册给 Bevy。
 
-它不是 Bevy 底层 runtime。Bevy 的 `App`、`World` 和 `Schedule` 负责真正执行系统；`gameplay` 只是把游戏玩法流程注册给 Bevy。
+它不是 Bevy 底层 runtime。Bevy 的 `App`、`World`、`Schedule` 和 runner 负责真正执行系统。
 
-## 职责
-
-- 定义游戏状态流，例如 Loading、MainMenu、Playing、Paused、GameOver。
-- 定义不同状态进入、运行、退出时发生什么。
-- 提供外部来源进入 gameplay 的 API 边界。
-- 决定什么时候进入或退出 gameplay session。
-- 决定什么时候清理 gameplay entity。
-- 决定在某个状态或阶段启用哪些 ECS system。
-- 保持 app 很薄，让 app 只负责最终插件组装。
-
-## 推荐结构
-
-- `state`: 游戏状态定义和状态切换。
-- `api`: 外部来源进入 gameplay 的统一 API 边界。
-- `schedule`: 系统集合、运行条件、调度顺序。
-- `spawning`: gameplay session 进入调度，例如进入 Playing 时加载当前游戏世界。
-- `cleanup`: 清理策略，例如退出 Playing 时清理 gameplay entity。
-- `lifecycle`: 关卡、回合、gameplay session 等更高层生命周期。
-
-当前代码里的旧模块可以逐步迁移到这个结构。目录可以按项目需求调整，但必须保持职责清楚。
-
-## api 结构
-
-`api` 是外部来源进入 gameplay 的统一边界。
-
-它表达：
+## 目录结构
 
 ```text
-外部或上层逻辑希望 gameplay 做什么。
+src/
+├── api
+├── cleanup
+├── lifecycle
+├── schedule
+├── spawning
+└── state
 ```
 
-它不直接执行：
+## api
 
-```text
-Commands
-World mutation
-Prefab::spawn
-```
+外部来源进入 gameplay 的统一 API 边界。
 
-真正执行 API 请求的地方应该是 gameplay 内部 system，并注册到明确的 Bevy schedule。
+`api` 只表达“希望 gameplay 做什么”，不直接修改 `World`。
 
-适合走 API 的事情：
+当前文件：
 
-- 运行中生成或销毁对象。
-- 切换 gameplay state。
-- 加载关卡。
-- 传送 Entity。
-- 给予物品。
-- 触发剧情或对话。
+- `mod.rs`: 注册 `GameplayApiPlugin`，并注册 `GameplayRequest` message。
+- `request.rs`: 定义外部可提交的 `GameplayRequest`。
+- `submit.rs`: 提供提交 gameplay request 的窄函数。
+- `systems.rs`: 消费 `GameplayRequest`，并调用 gameplay 内部能力。
 
-不一定适合走 API 的事情：
+当前最小请求：
 
-- 已有 Entity 的连续移动输入。
-- 已有 Entity 的瞄准方向。
-- 已有 Entity 的普通攻击意图。
+- `SpawnPrefab`: 运行中生成 prefab。
+- `DespawnEntity`: 销毁指定 Entity。
+- `ClearSession`: 清理当前 gameplay session 生成的实体。
+- `ChangeState`: 请求切换 gameplay state。
 
-这些更像 Entity 自己的 intent。
+新增 API 请求时：
 
-当前阶段 API 先放在 `crates/gameplay/src/api`。如果未来 input、network、script 等外部 crate 需要直接依赖这些类型，再考虑抽成独立 crate。
+- 请求类型写到 `api/request.rs`。
+- 请求提交函数如果需要封装，写到 `api/submit.rs`。
+- 请求执行逻辑写到 `api/systems.rs`。
+- 不要让外部来源直接调用 gameplay 内部 system。
 
-## spawning 结构
+## state
 
-`spawning` 是 gameplay 管理 prefab 生成的标准目录。
+游戏状态定义和状态切换入口。
 
-- `mod.rs`: 只组装 `SpawningPlugin`。
-- `plan.rs`: 定义“这次 gameplay session 要生成什么”。
-- `prefab.rs`: 定义 object-safe spawn item 抽象。
+当前状态：
+
+- `Loading`
+- `MainMenu`
+- `Playing`
+- `Paused`
+- `GameOver`
+
+当前文件：
+
+- `mod.rs`: 定义 `AppState` 和 `StatePlugin`。
+
+状态相关规则：
+
+- 新增全局 gameplay state 时，先写到 `AppState`。
+- 状态进入时的一次性逻辑使用 `OnEnter(AppState::...)`。
+- 状态退出时的清理逻辑使用 `OnExit(AppState::...)`。
+- 每帧运行逻辑使用 schedule + `in_state(...)`。
+
+## schedule
+
+系统集合、运行条件和调度顺序。
+
+当前文件：
+
+- `mod.rs`: 定义 `SchedulePlugin`，注册 gameplay 每帧系统和退出清理系统。
+
+当前注册内容：
+
+- `Update`: 消费 gameplay API 请求。
+- `Update + Playing`: 运行 prefab 暴露的 movement system 示例。
+- `OnExit(Playing)`: 清理 gameplay session entity。
+
+新增 system 调度时：
+
+- 先判断 system 属于哪个语义目录。
+- 再在 `schedule` 中决定它注册到哪个 Bevy schedule。
+- 不要按 `Update/OnEnter/OnExit` 新建目录。
+- 不要在这里写 ECS 规则函数，只注册已有 system。
+
+## spawning
+
+gameplay session 进入时的生成流程。
+
+当前文件：
+
+- `mod.rs`: 组装 `SpawningPlugin`。
+- `plan.rs`: 定义 `GameplaySpawnPlan`。
+- `prefab.rs`: 定义 object-safe `SpawnItem`，用于保存任意 prefab。
 - `defaults.rs`: 定义模板默认 spawn plan。
-- `systems.rs`: 定义真正执行 spawn plan 的 Bevy system。
+- `systems.rs`: 执行默认 spawn plan。
 
-用户要改默认生成内容时，优先改 `defaults.rs`。新增具体 prefab 时，不应该维护中心 enum 或 match 列表；只要该 prefab 实现 `prefab::Prefab`，就可以进入 `GameplaySpawnPlan`。
+当前行为：
 
-## 和 ecs 的区别
+- `OnEnter(Playing)` 时执行 `default_gameplay_spawn_plan()`。
 
-`ecs` 定义数据和底层 ECS 系统函数。
+新增默认生成内容时：
 
-`prefab` 封装这些底层对象和规则，提供 gameplay-facing 入口。
+- 优先改 `spawning/defaults.rs`。
+- 新增具体 prefab 时，不维护中心 enum 或 match 列表。
+- 只要 prefab 实现 `prefab::Prefab`，就可以进入 `GameplaySpawnPlan`。
 
-`gameplay` 决定这些封装入口在什么状态、什么阶段、什么顺序运行。
-`gameplay` 是游戏玩法入口，负责统一注册和调度 `prefab`、`intent` 以及 gameplay API 消费系统。
+运行中 spawn 不放在 `spawning` 消费，走 `api::GameplayRequest::SpawnPrefab`。
 
-`input` 是 gameplay API 的外部调用者之一，不是 gameplay 的内部组成部分。
+## cleanup
 
-例如：
+清理策略入口。
 
-- `crates/ecs/src/systems/movement`: 定义 `movement_system`。
-- `crates/prefab`: 暴露 movement 等 gameplay-facing 窄 facade。
-- `crates/gameplay`: 决定 prefab gameplay 能力只在 Playing 状态运行。
+当前文件：
 
-## 和 prefab 的区别
+- `mod.rs`: 定义 `CleanupPlugin`。
 
-`prefab` 定义“一个对象由哪些组件组成”。
+当前第一版没有额外系统。退出 `Playing` 时的 session entity 清理由 `schedule` 注册。
 
-`gameplay` 定义“当前 gameplay session 使用哪些 prefab，以及什么时候生成或清理它们”。
+新增清理策略时：
 
-例如：
+- 如果是状态退出清理，优先使用 `OnExit(...)`。
+- 如果是外部请求触发清理，优先走 `GameplayRequest::ClearSession`。
+- 不要在 cleanup 中散装组件查询逻辑；需要底层能力时通过 `prefab` 暴露的窄 facade。
 
-- `prefab`: 定义对象模板
-- `gameplay`: `OnEnter(AppState::Playing)` 时加载当前游戏世界
+## lifecycle
 
-## 和 intent 的区别
+session、level、round 等玩法生命周期的标准落点。
 
-`intent` 表达 Entity 想做什么。
+当前文件：
 
-`gameplay` 不关心意图来自哪里，只负责游戏流程和系统调度。
+- `mod.rs`: 定义 `LifecyclePlugin`。
+
+当前第一版只保留插件入口。
+
+以后新增这些内容时放这里：
+
+- gameplay session 生命周期。
+- level 生命周期。
+- round 生命周期。
+- 进入下一局、重开本局、结束本局等流程。
+
+不要把关卡、回合、游戏局生命周期塞进 `spawning` 或 `schedule`。
 
 ## 不应该放这里
 

@@ -4,4 +4,4 @@ use bevy::prelude::*;
 pub struct GameplayEntity;
 
 #[derive(Component, Debug, Clone, Copy, Default)]
-pub struct RuntimeEntity;
+pub struct GameplaySessionEntity;

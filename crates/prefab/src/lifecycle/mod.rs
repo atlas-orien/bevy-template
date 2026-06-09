@@ -1,1 +1,1 @@
-pub use ecs::systems::lifecycle::despawn_runtime_entities_system as despawn_runtime_prefabs_system;
+pub use ecs::systems::lifecycle::despawn_gameplay_entities_system as despawn_gameplay_prefabs_system;

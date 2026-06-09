@@ -27,7 +27,7 @@ cargo run -p xtask -- help
 当前会检查 `crates/app`：
 
 - `crates/app` 必须存在。
-- `app` 只允许依赖 `bevy`、`error` 和 `runtime`。
+- `app` 只允许依赖 `bevy`、`error` 和 `gameplay`。
 - `app` 不允许直接注册 prefab、input、intent、ecs、physics 或 render 插件。
 
 当前会检查 `crates/intent`：
@@ -45,7 +45,7 @@ cargo run -p xtask -- help
 - `crates/input` 必须存在。
 - `AI_PROTOCOL/INPUT.md` 必须存在。
 - 必须有当前本地输入模块 `local.rs`。
-- `input` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`、`runtime`。
+- `input` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`、`gameplay`。
 - `input` 不允许定义 ECS 数据类型。
 - `input` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
@@ -54,7 +54,7 @@ cargo run -p xtask -- help
 - `crates/error` 必须存在。
 - `AI_PROTOCOL/ERROR.md` 必须存在。
 - `error` 不允许依赖 `bevy`。
-- `error` 不允许定义 Bevy runtime、ECS 或 message 类型。
+- `error` 不允许定义 Bevy gameplay、ECS 或 message 类型。
 - 每个 crate 都必须依赖 `error`。
 - 除 `crates/error` 外，其它 crate 不允许定义自己的 `Result` 类型别名。
 - 除 `crates/error` 外，其它 crate 不允许直接使用 `std::result::Result` 或 `core::result::Result`。
@@ -86,16 +86,16 @@ cargo run -p xtask -- help
 
 - `crates/prefab` 必须存在。
 - `AI_PROTOCOL/PREFAB.md` 必须存在。
-- `prefab` 不允许依赖 `input`、`intent`、`runtime`。
+- `prefab` 不允许依赖 `input`、`intent`、`gameplay`。
 - `prefab` 不允许直接读取键盘、鼠标、手柄等输入。
 
-当前也会检查 `crates/runtime`：
+当前也会检查 `crates/gameplay`：
 
-- `crates/runtime` 必须存在。
-- `AI_PROTOCOL/RUNTIME.md` 必须存在。
-- `runtime` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
-- `runtime` 不允许定义 ECS 数据类型。
-- `runtime` 不允许直接读取键盘、鼠标、手柄等输入。
+- `crates/gameplay` 必须存在。
+- `AI_PROTOCOL/GAMEPLAY.md` 必须存在。
+- `gameplay` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
+- `gameplay` 不允许定义 ECS 数据类型。
+- `gameplay` 不允许直接读取键盘、鼠标、手柄等输入。
 
 当前也会检查 `crates/render_2d`：
 
@@ -127,8 +127,8 @@ AI_PROTOCOL/PHYSICS.md
 crates/xtask/src/rules/physics.rs
 AI_PROTOCOL/PREFAB.md
 crates/xtask/src/rules/prefab.rs
-AI_PROTOCOL/RUNTIME.md
-crates/xtask/src/rules/runtime.rs
+AI_PROTOCOL/GAMEPLAY.md
+crates/xtask/src/rules/gameplay.rs
 AI_PROTOCOL/RENDER_2D.md
 crates/xtask/src/rules/render_2d.rs
 ```
@@ -151,7 +151,7 @@ crates/xtask/src/rules/
 ├── ecs.rs
 ├── input.rs
 ├── intent.rs
-├── runtime.rs
+├── gameplay.rs
 ├── render_2d.rs
 ├── render_3d.rs
 └── app.rs

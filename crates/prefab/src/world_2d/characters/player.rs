@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use ecs::components::characters::player::{
     Facing, LocalPlayerControlled, MovementIntent, Player, PlayerSpeed,
 };
-use ecs::components::world::gameplay::{GameplayEntity, RuntimeEntity};
+use ecs::components::world::gameplay::{GameplayEntity, GameplaySessionEntity};
 use physics::{PhysicsBody, PhysicsCollider, PhysicsLayer};
 use render_2d::characters::Character2dRenderBundle;
 
@@ -32,7 +32,7 @@ impl Default for Player2dPrefab {
 #[derive(Bundle)]
 pub struct Player2dPrefabBundle {
     pub gameplay_entity: GameplayEntity,
-    pub runtime_entity: RuntimeEntity,
+    pub gameplay_session_entity: GameplaySessionEntity,
     pub player: Player,
     pub local_player_controlled: LocalPlayerControlled,
     pub speed: PlayerSpeed,
@@ -50,7 +50,7 @@ impl Player2dPrefabBundle {
     pub fn new(prefab: Player2dPrefab) -> Self {
         Self {
             gameplay_entity: GameplayEntity,
-            runtime_entity: RuntimeEntity,
+            gameplay_session_entity: GameplaySessionEntity,
             player: Player,
             local_player_controlled: LocalPlayerControlled,
             speed: PlayerSpeed(prefab.speed),

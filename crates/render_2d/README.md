@@ -19,14 +19,14 @@
 - `screens`: 屏幕表现命名空间。
 - `ui`: 2D UI 表现命名空间。
 
-## 和 ecs/intent/runtime 的区别
+## 和 ecs/intent/gameplay 的区别
 
 - `crates/ecs/src/components` 定义玩家是什么。
 - `crates/ecs/src/systems` 定义玩家位置等 ECS 数据如何被规则改变。
 - `input` 读取键盘、鼠标、手柄、网络等外部来源。
 - `intent` 表达 Entity 想做什么。
 - `prefab` 把 render_2d 的表现 bundle 组合进完整对象模板。
-- `runtime` 负责状态流、runtime session 生命周期和 system 调度。
+- `gameplay` 负责状态流、gameplay session 生命周期和 system 调度。
 - `render_2d` 只负责玩家看起来是什么样。
 
 ## 渲染实体
@@ -52,5 +52,5 @@ Gameplay Entity
 - 不读取键盘来决定 Entity 意图。
 - 不写入 intent。
 - 不执行战斗、碰撞、物品结算等世界规则。
-- 不依赖 input、intent、prefab、physics、runtime。
+- 不依赖 input、intent、prefab、physics、gameplay。
 - 不放 3D 网格、3D 灯光、3D 相机。

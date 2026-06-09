@@ -4,11 +4,11 @@
 
 use bevy::prelude::*;
 
-use crate::components::world::gameplay::RuntimeEntity;
+use crate::components::world::gameplay::GameplaySessionEntity;
 
-pub fn despawn_runtime_entities_system(
+pub fn despawn_gameplay_entities_system(
     mut commands: Commands,
-    entities: Query<Entity, With<RuntimeEntity>>,
+    entities: Query<Entity, With<GameplaySessionEntity>>,
 ) {
     for entity in &entities {
         commands.entity(entity).despawn();

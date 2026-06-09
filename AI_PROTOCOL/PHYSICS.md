@@ -32,7 +32,7 @@ rapier2d
 
 ## 边界规则
 
-- `crates/app`、`crates/input`、`crates/intent`、`crates/runtime`、`crates/render_2d`、`crates/render_3d` 不直接依赖 Avian 或 Rapier。
+- `crates/app`、`crates/input`、`crates/intent`、`crates/gameplay`、`crates/render_2d`、`crates/render_3d` 不直接依赖 Avian 或 Rapier。
 - 如果其它 crate 需要物理能力，先在 `crates/physics` 暴露统一 API。
 - 不要把 Avian 或 Rapier 类型泄漏到 `physics` 的公共 API，除非这是经过明确设计的后端扩展点。
 - 游戏语义数据仍然放在 `crates/ecs`。

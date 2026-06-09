@@ -39,4 +39,4 @@ Result<T>
 - 不写渲染逻辑。
 - 不写输入系统。
 - 不注册 Bevy plugin。
-- 不定义 Bevy ECS 数据、message 或 runtime system。
+- 不定义 Bevy ECS 数据、message 或 gameplay/runtime system。

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
-use runtime::RuntimePlugin;
+use gameplay::GameplayPlugin;
 
 pub use error::Result;
 
@@ -18,6 +18,6 @@ pub fn run() {
                     ..default()
                 }),
         )
-        .add_plugins(RuntimePlugin)
+        .add_plugins(GameplayPlugin)
         .run();
 }

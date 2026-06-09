@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use input::local::keyboard_movement_input_system;
-use prefab::lifecycle::despawn_runtime_prefabs_system;
+use prefab::lifecycle::despawn_gameplay_prefabs_system;
 use prefab::world_2d::characters::player::player_2d_movement_system;
 
 use crate::state::AppState;
@@ -14,6 +14,6 @@ impl Plugin for SchedulePlugin {
             (keyboard_movement_input_system, player_2d_movement_system)
                 .run_if(in_state(AppState::Playing)),
         )
-        .add_systems(OnExit(AppState::Playing), despawn_runtime_prefabs_system);
+        .add_systems(OnExit(AppState::Playing), despawn_gameplay_prefabs_system);
     }
 }

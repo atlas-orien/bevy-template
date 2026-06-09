@@ -2,6 +2,8 @@
 
 这份文档不是 Bevy API 手册，而是帮助从普通 Rust 对象模型切换到 Bevy ECS 模型。
 
+如果想先理解 Bevy 真正如何运行 `App`、`Schedule` 和 `System`，先读 [bevy-runtime.md](bevy-runtime.md)。
+
 很多初学者真正卡住的地方不是语法，而是这些问题：
 
 - `Entity` 到底是不是对象实例？
@@ -304,7 +306,7 @@ World = 真正保存组件实例的地方
 World
 └── Entity(42)
     ├── GameplayEntity
-    ├── RuntimeEntity
+    ├── GameplaySessionEntity
     ├── Player
     ├── LocalPlayerControlled
     ├── PlayerSpeed(180.0)
@@ -445,6 +447,52 @@ Query 从 World 里找出需要的数据。
 System 对查询出来的数据执行逻辑。
 Prefab 是项目里用来组合组件并生成 Entity 的待生成对象描述。
 ```
+
+## Gameplay Spawn Plan
+
+在这个项目里，`prefab` 只回答：
+
+```text
+这个对象如何生成？
+```
+
+`gameplay` 回答：
+
+```text
+什么时候生成？
+这次 gameplay session 要生成哪些对象？
+```
+
+因此用户不应该在 `app` 里直接调用 `spawn`，也不应该让 `prefab` 自己决定生成时机。
+
+当前约定是：
+
+```text
+crates/gameplay/src/spawning
+```
+
+管理 gameplay 的生成流程。
+
+目录职责：
+
+```text
+mod.rs      -> 组装 SpawningPlugin
+plan.rs     -> 定义 GameplaySpawnPlan
+prefab.rs   -> 定义 object-safe spawn item 抽象
+defaults.rs -> 定义模板默认 spawn plan
+systems.rs  -> 定义执行 spawn plan 的 Bevy system
+```
+
+也就是：
+
+```text
+用户描述 plan。
+gameplay system 执行 plan。
+prefab 实例执行自己的 spawn。
+Bevy World 保存生成出来的组件实例。
+```
+
+第一版默认 plan 只生成一个 `Player2dPrefab`。以后新增敌人、道具、关卡物件时，不需要维护一个中心 enum 或 match 列表。只要新的 prefab 实现 `prefab::Prefab`，就可以放进 `GameplaySpawnPlan`。
 
 如果从普通 Rust 迁移理解，可以先记住：
 

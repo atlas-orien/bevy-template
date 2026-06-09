@@ -3,14 +3,14 @@ use std::path::{Path, PathBuf};
 
 use super::CheckStatus;
 
-const RUNTIME_CRATE: &str = "crates/runtime";
-const RUNTIME_PROTOCOL: &str = "AI_PROTOCOL/RUNTIME.md";
+const GAMEPLAY_CRATE: &str = "crates/gameplay";
+const GAMEPLAY_PROTOCOL: &str = "AI_PROTOCOL/GAMEPLAY.md";
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(RUNTIME_CRATE, &mut errors);
-    require_path(RUNTIME_PROTOCOL, &mut errors);
+    require_path(GAMEPLAY_CRATE, &mut errors);
+    require_path(GAMEPLAY_PROTOCOL, &mut errors);
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);
@@ -23,7 +23,7 @@ pub fn check() -> CheckStatus {
 }
 
 fn reject_dependencies(errors: &mut Vec<String>) {
-    let manifest = Path::new(RUNTIME_CRATE).join("Cargo.toml");
+    let manifest = Path::new(GAMEPLAY_CRATE).join("Cargo.toml");
     let Ok(source) = fs::read_to_string(&manifest) else {
         return;
     };
@@ -31,7 +31,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
     for dependency in ["ecs", "physics", "render_2d", "render_3d"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; runtime should not depend on that crate",
+                "{} depends on `{dependency}`; gameplay should not depend on that crate",
                 manifest.display()
             ));
         }
@@ -39,7 +39,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 }
 
 fn reject_data_definitions(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(RUNTIME_CRATE)) {
+    for file in rust_files(Path::new(GAMEPLAY_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -63,7 +63,7 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
 }
 
 fn reject_direct_input(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(RUNTIME_CRATE)) {
+    for file in rust_files(Path::new(GAMEPLAY_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -71,7 +71,7 @@ fn reject_direct_input(errors: &mut Vec<String>) {
         for forbidden in ["ButtonInput<", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; direct input must be converted before runtime",
+                    "{} references `{forbidden}`; direct input must be converted before gameplay",
                     file.display()
                 ));
             }

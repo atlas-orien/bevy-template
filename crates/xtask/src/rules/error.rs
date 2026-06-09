@@ -13,7 +13,7 @@ pub fn check() -> CheckStatus {
     require_path(ERROR_CRATE, &mut errors);
     require_path(ERROR_PROTOCOL, &mut errors);
     reject_bevy_dependency(&mut errors);
-    reject_bevy_runtime_types(&mut errors);
+    reject_bevy_gameplay_types(&mut errors);
     check_manifests_depend_on_error(&mut errors);
     check_result_aliases(&mut errors);
 
@@ -38,7 +38,7 @@ fn reject_bevy_dependency(errors: &mut Vec<String>) {
     }
 }
 
-fn reject_bevy_runtime_types(errors: &mut Vec<String>) {
+fn reject_bevy_gameplay_types(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(ERROR_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
@@ -59,7 +59,7 @@ fn reject_bevy_runtime_types(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Resource", "Message", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; error should not define Bevy runtime or ECS types",
+                            "{} derives `{forbidden}`; error should not define Bevy gameplay or ECS types",
                             file.display()
                         ));
                     }

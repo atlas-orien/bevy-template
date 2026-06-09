@@ -36,7 +36,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
     ] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; app should only depend on the runtime crate",
+                "{} depends on `{dependency}`; app should only depend on the gameplay crate",
                 manifest.display()
             ));
         }
@@ -60,7 +60,7 @@ fn reject_internal_plugins(errors: &mut Vec<String>) {
         ] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; app should register RuntimePlugin only",
+                    "{} references `{forbidden}`; app should register GameplayPlugin only",
                     file.display()
                 ));
             }

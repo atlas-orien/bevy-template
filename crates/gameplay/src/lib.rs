@@ -15,9 +15,9 @@ use self::schedule::SchedulePlugin;
 use self::spawning::SpawningPlugin;
 use self::state::StatePlugin;
 
-pub struct RuntimePlugin;
+pub struct GameplayPlugin;
 
-impl Plugin for RuntimePlugin {
+impl Plugin for GameplayPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             PrefabPlugin,

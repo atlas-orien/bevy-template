@@ -1,11 +1,11 @@
 [package]
-name = "runtime"
+name = "gameplay"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Gameplay runtime, state flow, spawning, and world mutation systems."
+description = "Gameplay flow, state scheduling, spawning, and world mutation systems."
 publish = false
 
 [dependencies]

@@ -1,12 +1,12 @@
 mod app;
 mod ecs;
 mod error;
+mod gameplay;
 mod input;
 mod intent;
 mod physics;
 mod prefab;
 mod render_2d;
-mod runtime;
 
 pub enum CheckStatus {
     Passed,
@@ -48,7 +48,7 @@ pub fn check_architecture() -> CheckStatus {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = runtime::check() {
+    if let CheckStatus::Failed(mut rule_errors) = gameplay::check() {
         errors.append(&mut rule_errors);
     }
 

@@ -8,7 +8,7 @@ This template is split into layered crates:
 - `ecs`: core ECS components, resources, events, and systems.
 - `input`: external input sources converted into entity intents.
 - `intent`: entity intent APIs.
-- `runtime`: state flow, phases, and higher-level ECS system orchestration.
+- `gameplay`: state flow, phases, and higher-level ECS system orchestration.
 - `render_2d`: 2D rendering and presentation.
 - `render_3d`: 3D rendering and presentation.
 - `app`: final assembly crate.

@@ -33,7 +33,7 @@
 
 ## 依赖规则
 
-- `intent` 不依赖 `runtime`；调度状态由其它层负责。
+- `intent` 不依赖 `gameplay`；调度状态由其它层负责。
 - `intent` 必须依赖 `error`。
 - `intent` 可以依赖 `prefab`。
 - `intent` 不依赖 `ecs`。

@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+use prefab::Prefab;
+use prefab::world_2d::characters::player::Player2dPrefab;
 
 use crate::state::AppState;
 
@@ -15,6 +17,7 @@ fn enter_main_menu() {
     info!("Main menu runtime ready.");
 }
 
-fn enter_playing() {
+fn enter_playing(mut commands: Commands) {
+    Player2dPrefab::default().spawn(&mut commands);
     info!("Playing runtime ready.");
 }

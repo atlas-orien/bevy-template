@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-pub use ecs::components::characters::player::{MovementTarget, PlayerBundle};
+pub use ecs::components::characters::player::MovementTarget;
 
 use ecs::components::characters::player::{
     LocalPlayerControlled, MovementIntent, MovementTarget as EcsMovementTarget,

@@ -35,7 +35,7 @@
 例如：
 
 - `crates/ecs/src/systems/movement`: 定义 `movement_system`。
-- `crates/prefab`: 封装 movement 等 runtime-facing 能力。
+- `crates/prefab`: 暴露 movement 等 runtime-facing 窄 facade。
 - `crates/runtime`: 决定 prefab runtime 能力只在 Playing 状态运行。
 
 ## 和 prefab 的区别

@@ -44,7 +44,7 @@ ecs/systems/movement 根据 MovementIntent + Speed 修改 Transform
 
 - 不生成实体。
 - 不读取键盘、鼠标、手柄、网络输入。
-- 不依赖或调用 prefab；可接收 intent 的对象由 prefab 负责组合对应组件。
+- 不直接依赖或调用裸 `ecs`；通过 `prefab` 暴露的最小合法接口写入 intent 数据。
 - 不直接修改 `Transform`、生命值、背包等世界结果。
 - 不决定怎么移动、怎么攻击、怎么结算；这些属于 `crates/ecs/src/systems`。
 - 不封装物理后端。

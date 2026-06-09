@@ -26,7 +26,7 @@
 ## 边界规则
 
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`。
-- 不写或直接调用底层 ECS 规则函数；这些由 `crates/prefab` 封装后提供给 runtime setup。
+- 不写底层 ECS 规则函数；需要调度底层规则时使用 `crates/prefab` 暴露的窄 facade。
 - 不封装物理后端；这些放到 `crates/physics`。
 - 不读取输入；输入来源放到 `crates/input`，再转换成 `crates/intent` 表达的意图。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
@@ -34,7 +34,7 @@
 
 ## 依赖规则
 
-- `runtime` 可以依赖 `prefab`，用于 runtime setup 中使用封装好的对象模板和 runtime 能力。
+- `runtime` 可以依赖 `prefab`，用于 runtime setup 中使用封装好的对象模板、spawn API 和窄 facade。
 - `runtime` 可以依赖 `input` 和 `intent`，并作为唯一游戏 runtime 负责注册和调度它们。
 - `runtime` 必须依赖 `error`。
 - `runtime` 不依赖 `ecs`。

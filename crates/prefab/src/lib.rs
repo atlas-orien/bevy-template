@@ -1,10 +1,12 @@
 pub mod intent;
-pub mod runtime;
+pub mod lifecycle;
+pub mod prefab;
 pub mod ui;
 pub mod world_2d;
 pub mod world_3d;
 
 pub use error::Result;
+pub use prefab::Prefab;
 
 use bevy::prelude::*;
 use ecs::EcsPlugin;

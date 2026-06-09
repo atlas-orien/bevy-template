@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
 use gameplay::GameplayPlugin;
+use gameplay::api::GameplayRequestInbox;
 
 pub use error::Result;
 
-pub fn run() {
+pub fn run(gameplay_inbox: GameplayRequestInbox) {
     App::new()
         .add_plugins(
             DefaultPlugins
@@ -18,6 +19,6 @@ pub fn run() {
                     ..default()
                 }),
         )
-        .add_plugins(GameplayPlugin)
+        .add_plugins(GameplayPlugin::new(gameplay_inbox))
         .run();
 }

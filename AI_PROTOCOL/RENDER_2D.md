@@ -33,7 +33,7 @@
 - 不执行移动、战斗、物品、碰撞等世界规则。
 - 不依赖 `prefab`。
 - 不依赖 `physics`。
-- 不依赖 `input`。
+- 不依赖 `external_runtime`。
 - 不放 3D 网格、3D 灯光、3D 相机。
 
 ## 渲染实体规则
@@ -64,7 +64,7 @@ Gameplay Entity
 
 - `render_2d` 可以依赖 `ecs`。
 - `render_2d` 必须依赖 `error`。
-- `render_2d` 不依赖 `input`。
+- `render_2d` 不依赖 `external_runtime`。
 - `render_2d` 不依赖 `intent`。
 - `render_2d` 不依赖 `prefab`。
 - `render_2d` 不依赖 `physics`。

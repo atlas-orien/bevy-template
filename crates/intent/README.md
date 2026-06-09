@@ -18,7 +18,7 @@
 
 - `movement`: 移动意图，例如“这个 Entity 想往某个方向移动”或“想移动到某个位置”。
 
-`input` v1 负责 local/device/AI 等控制来源。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。网络是双向通信层，v2 单独设计。
+`external_runtime` v1 负责 local/device/AI 等控制来源。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。网络是双向通信层，v2 单独设计。
 
 ## 和 gameplay 的区别
 

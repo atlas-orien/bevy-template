@@ -82,7 +82,7 @@ fn damage_system(...) {
 
 `intent` 表达某个 `Entity` 想做什么。
 
-外部控制来源不属于 `crates/ecs/src/systems`，也不属于 `intent` 本身。它们应该放到 `crates/input`，再转换成意图数据。
+外部控制来源不属于 `crates/ecs/src/systems`，也不属于 `intent` 本身。它们应该放到 `external_runtime`，再通过 manager 转换成 gameplay 请求或意图数据。
 
 例如：
 

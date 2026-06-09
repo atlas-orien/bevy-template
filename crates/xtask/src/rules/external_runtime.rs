@@ -3,20 +3,20 @@ use std::path::{Path, PathBuf};
 
 use super::CheckStatus;
 
-const INPUT_CRATE: &str = "crates/input";
-const INPUT_PROTOCOL: &str = "AI_PROTOCOL/INPUT.md";
+const EXTERNAL_RUNTIME_CRATE: &str = "crates/external_runtime";
+const EXTERNAL_RUNTIME_PROTOCOL: &str = "AI_PROTOCOL/EXTERNAL_RUNTIME.md";
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(INPUT_CRATE, &mut errors);
-    require_path(INPUT_PROTOCOL, &mut errors);
+    require_path(EXTERNAL_RUNTIME_CRATE, &mut errors);
+    require_path(EXTERNAL_RUNTIME_PROTOCOL, &mut errors);
     for path in [
-        "crates/input/src/local",
-        "crates/input/src/device",
-        "crates/input/src/ai",
-        "crates/input/src/runtime",
-        "crates/input/src/bridge",
+        "crates/external_runtime/src/local",
+        "crates/external_runtime/src/device",
+        "crates/external_runtime/src/ai",
+        "crates/external_runtime/src/runtime",
+        "crates/external_runtime/src/bridge",
     ] {
         require_path(path, &mut errors);
     }
@@ -35,26 +35,26 @@ pub fn check() -> CheckStatus {
 }
 
 fn reject_network_module(errors: &mut Vec<String>) {
-    let network_path = Path::new(INPUT_CRATE).join("src/network");
+    let network_path = Path::new(EXTERNAL_RUNTIME_CRATE).join("src/network");
 
     if network_path.exists() {
         errors.push(format!(
-            "{} exists; network is a bidirectional communication layer and does not belong in input v1",
+            "{} exists; network is a bidirectional communication layer and does not belong in external_runtime v1",
             network_path.display()
         ));
     }
 }
 
 fn reject_plugin_definition(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(INPUT_CRATE)) {
+    for file in rust_files(Path::new(EXTERNAL_RUNTIME_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
 
-        for forbidden in ["InputPlugin", "impl Plugin for"] {
+        for forbidden in ["InputPlugin", "ExternalRuntimePlugin", "impl Plugin for"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input uses its own runtime and must not be a Bevy plugin",
+                    "{} references `{forbidden}`; external_runtime must not be a Bevy plugin",
                     file.display()
                 ));
             }
@@ -63,7 +63,7 @@ fn reject_plugin_definition(errors: &mut Vec<String>) {
 }
 
 fn reject_dependencies(errors: &mut Vec<String>) {
-    let manifest = Path::new(INPUT_CRATE).join("Cargo.toml");
+    let manifest = Path::new(EXTERNAL_RUNTIME_CRATE).join("Cargo.toml");
     let Ok(source) = fs::read_to_string(&manifest) else {
         return;
     };
@@ -71,7 +71,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
     for dependency in ["ecs", "physics", "render_2d", "render_3d"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; input should not depend on that crate",
+                "{} depends on `{dependency}`; external_runtime should not depend on that crate",
                 manifest.display()
             ));
         }
@@ -79,7 +79,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 }
 
 fn reject_data_definitions(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(INPUT_CRATE)) {
+    for file in rust_files(Path::new(EXTERNAL_RUNTIME_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -92,7 +92,7 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Bundle", "Resource", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; input should not define core ECS data",
+                            "{} derives `{forbidden}`; external_runtime should not define core ECS data",
                             file.display()
                         ));
                     }
@@ -103,7 +103,11 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
 }
 
 fn reject_runtime_world_access(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(INPUT_CRATE).join("src/runtime").as_path()) {
+    for file in rust_files(
+        Path::new(EXTERNAL_RUNTIME_CRATE)
+            .join("src/runtime")
+            .as_path(),
+    ) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -111,7 +115,7 @@ fn reject_runtime_world_access(errors: &mut Vec<String>) {
         for forbidden in ["World", "Commands", "Query<", "Res<", "ResMut<"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input runtime must communicate through bridge/channel, not Bevy World",
+                    "{} references `{forbidden}`; external_runtime must communicate through manager/bridge, not Bevy World",
                     file.display()
                 ));
             }
@@ -120,7 +124,7 @@ fn reject_runtime_world_access(errors: &mut Vec<String>) {
 }
 
 fn reject_world_mutation(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(INPUT_CRATE)) {
+    for file in rust_files(Path::new(EXTERNAL_RUNTIME_CRATE)) {
         let Ok(source) = fs::read_to_string(&file) else {
             continue;
         };
@@ -128,7 +132,7 @@ fn reject_world_mutation(errors: &mut Vec<String>) {
         for forbidden in ["Commands", "Transform", "PhysicsBody", "PhysicsCollider"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input should convert sources into intent or gameplay api requests",
+                    "{} references `{forbidden}`; external_runtime should use manager/gameplay api requests",
                     file.display()
                 ));
             }

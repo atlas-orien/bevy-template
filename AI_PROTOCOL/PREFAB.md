@@ -5,7 +5,7 @@
 `crates/prefab` 是可生成对象模板和 gameplay-facing 对象组合基础库。
 
 它组合 ECS、physics、render 等数据，提供可以被 gameplay setup 直接生成的完整对象模板。
-它也是外部 gameplay、intent、input、app 面向底层 ECS、physics、render 能力的边界层；这些外部层不直接使用这些基础库。
+它也是外部 gameplay、intent、external_runtime、app 面向底层 ECS、physics、render 能力的边界层；这些外部层不直接使用这些基础库。
 
 ## 代码落点
 
@@ -21,9 +21,10 @@
 - `prefab` 不写底层 ECS system 函数；可以封装和导出 gameplay-facing spawn API 或窄 facade。
 - `prefab` 不决定生成时机。
 - `gameplay` 注册 `PrefabPlugin`，`app` 不直接注册 `PrefabPlugin`、`EcsPlugin`、`PhysicsPlugin` 或 `Render2dPlugin`。
-- `input`、`intent`、`gameplay` 使用 `prefab` 暴露的最小合法接口，不直接使用裸 `ecs`。
+- `external_runtime`、`intent`、`gameplay` 使用 `prefab` 暴露的最小合法接口，不直接使用裸 `ecs`。
 - `gameplay` 决定具体 gameplay session 使用哪些 prefab。
 - `gameplay` 决定什么时候进入或退出 gameplay session。
+- 如果 gameplay API 需要通过业务 ID 找到实体，prefab 应该组合 gameplay-facing id 组件，并暴露窄 facade 供 gameplay 查询。
 
 ## Bundle 规则
 

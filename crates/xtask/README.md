@@ -28,7 +28,7 @@ cargo run -p xtask -- help
 
 - `crates/app` 必须存在。
 - `app` 只允许依赖 `bevy`、`error` 和 `gameplay`。
-- `app` 不允许直接注册 prefab、input、intent、ecs、physics 或 render 插件。
+- `app` 不允许直接注册 prefab、external_runtime、intent、ecs、physics 或 render 插件。
 
 当前会检查 `crates/intent`：
 
@@ -40,18 +40,18 @@ cargo run -p xtask -- help
 - `intent` 不允许直接读取键盘、鼠标、手柄等输入来源。
 - `intent` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
-当前会检查 `crates/input`：
+当前会检查 `crates/external_runtime`：
 
-- `crates/input` 必须存在。
-- `AI_PROTOCOL/INPUT.md` 必须存在。
-- 必须有当前输入来源域目录：`local`、`device`、`ai`。
-- 不允许有 `crates/input/src/network`；网络是双向通信层，v2 单独设计。
-- 必须有 input runtime 和 bridge 目录：`runtime`、`bridge`。
-- `input` 可以依赖 `prefab`、`intent`、`gameplay`，但只能通过 `gameplay::api` 提交高层请求。
-- `input` 不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
-- `input` 不允许定义 ECS 数据类型。
-- `input` 不允许定义 `InputPlugin` 或实现 Bevy `Plugin`。
-- `input` 不允许直接使用 `Commands`、`Transform` 或物理组件。
+- `crates/external_runtime` 必须存在。
+- `AI_PROTOCOL/EXTERNAL_RUNTIME.md` 必须存在。
+- 必须有当前外部来源域目录：`local`、`device`、`ai`。
+- 不允许有 `crates/external_runtime/src/network`；网络是双向通信层，v2 单独设计。
+- 必须有 external runtime 和 bridge 目录：`runtime`、`bridge`。
+- `external_runtime` 可以依赖 `prefab`、`intent`、`gameplay`，但优先通过 `gameplay::api` 提交高层请求。
+- `external_runtime` 不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
+- `external_runtime` 不允许定义 ECS 数据类型。
+- `external_runtime` 不允许定义 `ExternalRuntimePlugin` 或实现 Bevy `Plugin`。
+- `external_runtime` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
 当前会检查 `crates/error`：
 
@@ -90,14 +90,14 @@ cargo run -p xtask -- help
 
 - `crates/prefab` 必须存在。
 - `AI_PROTOCOL/PREFAB.md` 必须存在。
-- `prefab` 不允许依赖 `input`、`intent`、`gameplay`。
+- `prefab` 不允许依赖 `external_runtime`、`intent`、`gameplay`。
 - `prefab` 不允许直接读取键盘、鼠标、手柄等输入。
 
 当前也会检查 `crates/gameplay`：
 
 - `crates/gameplay` 必须存在。
 - `AI_PROTOCOL/GAMEPLAY.md` 必须存在。
-- `gameplay` 可以依赖 `prefab` 和 `intent`，但不允许依赖 `input`、`ecs`、`physics`、`render_2d`、`render_3d`。
+- `gameplay` 可以依赖 `prefab` 和 `intent`，但不允许依赖 `external_runtime`、`ecs`、`physics`、`render_2d`、`render_3d`。
 - `gameplay` 不允许定义 ECS 数据类型。
 - `gameplay` 不允许直接读取键盘、鼠标、手柄等输入。
 
@@ -106,7 +106,7 @@ cargo run -p xtask -- help
 - `crates/render_2d` 必须存在。
 - `AI_PROTOCOL/RENDER_2D.md` 必须存在。
 - 默认表现目录 `camera`、`characters`、`screens`、`ui` 必须存在。
-- `render_2d` 不允许依赖 `input`、`intent`、`prefab`、`physics`、`render_3d`。
+- `render_2d` 不允许依赖 `external_runtime`、`intent`、`prefab`、`physics`、`render_3d`。
 - `render_2d` 不允许直接读取键盘、鼠标、手柄等输入。
 - `render_2d` 不允许调用 intent 写入函数或引用物理组件。
 
@@ -115,7 +115,7 @@ cargo run -p xtask -- help
 - `crates/render_3d` 必须存在。
 - `AI_PROTOCOL/RENDER_3D.md` 必须存在。
 - 默认表现目录 `camera`、`scene`、`ui` 必须存在。
-- `render_3d` 不允许依赖 `input`、`intent`、`prefab`、`physics`、`render_2d`。
+- `render_3d` 不允许依赖 `external_runtime`、`intent`、`prefab`、`physics`、`render_2d`。
 - `render_3d` 不允许直接读取键盘、鼠标、手柄等输入。
 - `render_3d` 不允许调用 intent 写入函数或引用物理组件。
 
@@ -130,8 +130,8 @@ AI_PROTOCOL/INTENT.md
 crates/xtask/src/rules/intent.rs
 crates/app
 crates/xtask/src/rules/app.rs
-AI_PROTOCOL/INPUT.md
-crates/xtask/src/rules/input.rs
+AI_PROTOCOL/EXTERNAL_RUNTIME.md
+crates/xtask/src/rules/external_runtime.rs
 AI_PROTOCOL/ERROR.md
 crates/xtask/src/rules/error.rs
 AI_PROTOCOL/ECS.md
@@ -152,7 +152,7 @@ crates/xtask/src/rules/render_3d.rs
 
 ```text
 AI_PROTOCOL/INTENT.md      -> crates/xtask/src/rules/intent.rs
-AI_PROTOCOL/INPUT.md       -> crates/xtask/src/rules/input.rs
+AI_PROTOCOL/EXTERNAL_RUNTIME.md -> crates/xtask/src/rules/external_runtime.rs
 AI_PROTOCOL/RENDER_2D.md   -> crates/xtask/src/rules/render_2d.rs
 AI_PROTOCOL/RENDER_3D.md   -> crates/xtask/src/rules/render_3d.rs
 AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
@@ -165,7 +165,7 @@ AI_PROTOCOL/APP.md         -> crates/xtask/src/rules/app.rs
 ```text
 crates/xtask/src/rules/
 ├── ecs.rs
-├── input.rs
+├── external_runtime.rs
 ├── intent.rs
 ├── gameplay.rs
 ├── render_2d.rs

@@ -25,8 +25,8 @@ bevy = "0.18"
 app = { path = "crates/app" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
+external_runtime = { path = "crates/external_runtime" }
 intent = { path = "crates/intent" }
-input = { path = "crates/input" }
 physics = { path = "crates/physics" }
 prefab = { path = "crates/prefab" }
 render_2d = { path = "crates/render_2d" }
@@ -37,5 +37,6 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"
 
 [dependencies]
 app.workspace = true
-input.workspace = true
+external_runtime.workspace = true
+gameplay.workspace = true
 tokio.workspace = true

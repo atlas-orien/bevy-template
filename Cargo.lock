@@ -422,7 +422,8 @@ name = "bevy-template"
 version = "0.1.0"
 dependencies = [
  "app",
- "input",
+ "external_runtime",
+ "gameplay",
  "tokio",
 ]
 
@@ -2613,6 +2614,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "external_runtime"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+ "gameplay",
+ "intent",
+ "prefab",
+ "tokio",
+]
+
+[[package]]
 name = "fastrand"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3318,18 +3331,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e05c02b5e89bff3b946cedeca278abc628fe811e604f027c45a8aa3cf793d0eb"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "input"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "error",
- "gameplay",
- "intent",
- "prefab",
- "tokio",
 ]
 
 [[package]]

@@ -1,3 +1,4 @@
+pub mod identity;
 pub mod intent;
 pub mod lifecycle;
 pub mod prefab;

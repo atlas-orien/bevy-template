@@ -24,15 +24,15 @@
 
 - `crates/error`: 统一错误、Result、错误类型和严重级别
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
-- `crates/input`: 输入来源适配层，把键盘、鼠标、网络等外部来源转换成 intent
+- `crates/external_runtime`: Bevy App 外部 runtime，持有 manager API，运行 local/device/AI 等外部来源
 - `crates/intent`: Entity 意图层，表达可控制实体想做什么
 - `crates/gameplay`: 游戏玩法语义层，负责状态流、gameplay session 生命周期和 ECS system 调度
 - `crates/physics`: 物理引擎适配层，默认使用 Avian 2D，可通过 feature 切换到 Rapier 2D
 - `crates/prefab`: 可生成对象模板基础库，组合 ECS、physics、render 数据
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
-- `crates/app`: 最终运行的应用子包，负责组装插件
-- `src/main.rs`: 工作区根入口，让 `cargo run` 可以直接运行
+- `crates/app`: Bevy App 子包，负责组装 Bevy 外壳和 `GameplayPlugin`
+- `src/main.rs`: 工作区根入口，同时启动 `external_runtime` 和 Bevy App
 - `assets`: Bevy 运行时资源目录，模板默认只保留空目录
 - `docs`: 设计文档、AI 任务说明、开发决策
 - `tools`: 本地辅助脚本
@@ -45,7 +45,16 @@
 GameplayPlugin
 ```
 
-`GameplayPlugin` 是游戏唯一玩法入口，内部负责组装 prefab、input、intent 等游戏层插件。
+`src/main.rs` 会先创建 `gameplay::api::GameplayManager`，再启动两套系统：
+
+```text
+external_runtime
+Bevy App
+```
+
+`external_runtime` 持有 manager API，把 Bevy App 外部的 local/device/AI 等来源转换成 gameplay 请求。
+
+`GameplayPlugin` 是注册到 Bevy App 的玩法流程入口，负责状态、spawn、request 消费和 gameplay systems 的调度。
 
 ## crate 关系
 
@@ -54,11 +63,12 @@ GameplayPlugin
 ```mermaid
 flowchart TD
     main["src/main.rs"] --> app["crates/app"]
+    main --> external_runtime["crates/external_runtime"]
 
     app --> gameplay["crates/gameplay"]
+    external_runtime --> gameplay
 
     gameplay --> prefab["crates/prefab"]
-    gameplay --> input["crates/input"]
     gameplay --> intent["crates/intent"]
 
     prefab --> ecs
@@ -66,13 +76,15 @@ flowchart TD
     prefab --> render2d
 ```
 
-`app` 依赖 `gameplay` 是因为游戏玩法层是唯一对外入口。这里的 `app -> gameplay` 只表示：
+`app` 依赖 `gameplay` 是因为游戏玩法层需要注册到 Bevy App。这里的 `app -> gameplay` 只表示：
 
 ```rust
 app.add_plugins(GameplayPlugin)
 ```
 
-它不表示 app 负责输入、意图、物理规则，也不表示 app 会直接创建刚体、碰撞体或渲染对象。app 只配置 Bevy 外壳；游戏插件组装、gameplay session 生命周期、对象生成时机和系统调度都放在 `gameplay`。
+它不表示 app 负责外部输入、意图、物理规则，也不表示 app 会直接创建刚体、碰撞体或渲染对象。app 只配置 Bevy 外壳；gameplay session 生命周期、对象生成时机和系统调度都放在 `gameplay`。
+
+`external_runtime -> gameplay` 表示外部 runtime 持有 manager API，并通过 gameplay 的 API 边界向 Bevy App 提交请求。普通用户代码不应该直接关心 Bevy `Entity`。
 
 `error` 是全项目共享基础层。所有 crate 都使用 `error::Result<T>` 和 `error::GameError`，不要在其它 crate 里定义新的 `Result` 别名，也不要直接使用 Rust 默认的 `std::result::Result` 作为项目函数返回类型。
 
@@ -84,8 +96,8 @@ app.add_plugins(GameplayPlugin)
 - `crates/ecs/src/resources` 放 Bevy ECS 全局 Resource 数据。
 - `crates/ecs/src/events` 放 ECS 事件数据。
 - `crates/ecs/src/systems` 放真正读取和修改 ECS 数据的系统函数。
-- `gameplay` 负责状态流、阶段调度、gameplay session 生命周期，并统一注册和调度 `prefab`、`input`、`intent`。
-- `input` 读取键盘、鼠标、手柄、网络等外部来源，并通过 `prefab` 暴露的查询定位可控对象，再转换成 `intent`。
+- `gameplay` 负责状态流、阶段调度、gameplay session 生命周期、request 消费和 ECS system 调度。
+- `external_runtime` 运行 Bevy App 外部的 loop，持有 manager API，并把 local/device/AI 等来源转换成 gameplay 请求。
 - `intent` 只表达哪个 Entity 想做什么，并通过 `prefab` 暴露的最小合法接口写入意图数据；可接收 intent 的对象由 `prefab` 组合对应组件。
 - `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
 - `prefab` 负责组合 `ecs`、`physics`、`render_2d` 等基础库，提供可直接生成的完整对象模板和面向 gameplay 的封装入口。

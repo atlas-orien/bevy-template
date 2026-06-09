@@ -32,6 +32,6 @@ Render2dPlugin
 - 不读取输入。
 - 不写入 intent。
 - 不写世界模拟、移动、战斗、碰撞或物品结算。
-- 不依赖 input、intent、prefab、physics、gameplay、render_2d。
+- 不依赖 external_runtime、intent、prefab、physics、gameplay、render_2d。
 
 `render_2d` 和 `render_3d` 应该保持独立。

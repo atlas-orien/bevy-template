@@ -20,7 +20,7 @@
 
 输入、AI、脚本、网络等来源不属于 `intent`。外部来源应该先经过对应边界层，再调用 `intent` 提供的 API 写入 ECS intent 数据。
 
-`input` v1 负责 local/device/AI 等控制来源。网络是双向通信层，v2 单独设计。
+`external_runtime` v1 负责 local/device/AI 等控制来源。网络是双向通信层，v2 单独设计。
 
 ## 边界规则
 

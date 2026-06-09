@@ -1,11 +1,11 @@
 [package]
-name = "input"
+name = "external_runtime"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Input source adapters that convert external commands into intents or gameplay API requests."
+description = "External runtime and manager-side adapters for Bevy gameplay."
 publish = false
 
 [dependencies]

@@ -803,4 +803,4 @@ Bevy runtime:
 负责声明对象如何组合并 spawn。
 ```
 
-这条边界非常重要。只要它清楚，后面设计 spawn、input、network、state、cleanup 时就不会把职责混在一起。
+这条边界非常重要。只要它清楚，后面设计 spawn、external_runtime、network、state、cleanup 时就不会把职责混在一起。

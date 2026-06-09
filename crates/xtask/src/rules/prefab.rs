@@ -27,7 +27,7 @@ fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
         return;
     };
 
-    for dependency in ["input", "intent", "gameplay"] {
+    for dependency in ["external_runtime", "intent", "gameplay"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
                 "{} depends on `{dependency}`; prefab should stay an object template library",
@@ -46,7 +46,7 @@ fn reject_direct_input(errors: &mut Vec<String>) {
         for forbidden in ["ButtonInput<", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input belongs in crates/input",
+                    "{} references `{forbidden}`; external sources belong in external_runtime",
                     file.display()
                 ));
             }

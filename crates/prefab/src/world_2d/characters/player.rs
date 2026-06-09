@@ -7,9 +7,11 @@ use physics::{PhysicsBody, PhysicsCollider, PhysicsLayer};
 use render_2d::characters::Character2dRenderBundle;
 
 use crate::Prefab;
+use crate::identity::GameplayEntityId;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Player2dPrefab {
+    pub id: Option<GameplayEntityId>,
     pub position: Vec2,
     pub speed: f32,
     pub size: Vec2,
@@ -20,6 +22,7 @@ pub struct Player2dPrefab {
 impl Default for Player2dPrefab {
     fn default() -> Self {
         Self {
+            id: Some(GameplayEntityId(1)),
             position: Vec2::ZERO,
             speed: 180.0,
             size: Vec2::new(32.0, 32.0),
@@ -70,7 +73,14 @@ impl Player2dPrefabBundle {
 
 impl Prefab for Player2dPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
-        commands.spawn(Player2dPrefabBundle::new(self)).id()
+        let id = self.id;
+        let mut entity = commands.spawn(Player2dPrefabBundle::new(self));
+
+        if let Some(id) = id {
+            entity.insert(id);
+        }
+
+        entity.id()
     }
 }
 

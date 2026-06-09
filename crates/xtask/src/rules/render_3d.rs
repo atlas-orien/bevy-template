@@ -31,7 +31,13 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         return;
     };
 
-    for dependency in ["input", "intent", "prefab", "physics", "render_2d"] {
+    for dependency in [
+        "external_runtime",
+        "intent",
+        "prefab",
+        "physics",
+        "render_2d",
+    ] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
                 "{} depends on `{dependency}`; render_3d should stay presentation-only",
@@ -50,7 +56,7 @@ fn reject_direct_input(errors: &mut Vec<String>) {
         for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input belongs in crates/input or a future network crate",
+                    "{} references `{forbidden}`; external sources belong in external_runtime or a future network crate",
                     file.display()
                 ));
             }

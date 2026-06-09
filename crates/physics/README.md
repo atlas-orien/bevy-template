@@ -38,7 +38,7 @@ cargo run --features physics/rapier2d
 
 ## 边界
 
-- `app`、`input`、`intent`、`gameplay`、`render_2d`、`render_3d` 不直接依赖 Avian 或 Rapier。
+- `app`、`external_runtime`、`intent`、`gameplay`、`render_2d`、`render_3d` 不直接依赖 Avian 或 Rapier。
 - 如果需要新的物理能力，优先在 `physics` 暴露统一 API。
 - `physics` 的公共 API 不 re-export Avian 或 Rapier 类型。
 - 游戏语义数据仍然放在 `crates/ecs`。

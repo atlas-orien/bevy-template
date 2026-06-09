@@ -12,6 +12,7 @@
 - 提供最小 `Prefab` trait，表达 prefab 实例可以生成主 Entity。
 - 给 gameplay setup 提供稳定的对象生成入口。
 - 给 gameplay 提供必要的窄 facade，让 gameplay 不直接依赖底层 crate。
+- 给 gameplay 提供 gameplay-facing id 到 Bevy `Entity` 的查询 facade。
 
 具体游戏应该在这里添加自己的对象模板，而不是在 gameplay setup 或生成系统里散装很多组件。
 
@@ -20,6 +21,7 @@
 - `world_2d`: 2D 世界对象 prefab，例如角色、物品、地图物件。
 - `world_3d`: 3D 世界对象 prefab，当前只保留命名空间。
 - `ui`: 屏幕 UI prefab，2D 和 3D 游戏都可以复用。
+- `identity`: gameplay-facing id 和 Bevy `Entity` 的查询 facade。
 - `lifecycle`: 面向 gameplay 的生命周期窄 facade。
 
 ## 边界

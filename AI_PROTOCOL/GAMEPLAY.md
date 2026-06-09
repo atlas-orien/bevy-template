@@ -43,8 +43,13 @@
 - `api` 暴露外部可以提交的 gameplay 请求类型和提交函数。
 - `api` 表达“希望 gameplay 做什么”，不直接修改 Bevy `World`。
 - `api` 不直接调用 `Commands`、`World` 或 `Prefab::spawn`。
+- `api` 不暴露 Bevy `Entity` 给外部来源；外部请求必须使用 gameplay-facing id。
+- gameplay 内部负责把 gameplay-facing id 映射成 Bevy `Entity`。
 - `api` 可以注册 Bevy `Message`，作为外部系统和 gameplay 内部系统之间的连接。
 - `api` 的消费和执行必须放在 gameplay 内部 system 中，并注册到明确的 Bevy schedule。
+- `api` 可以提供外部 runtime 持有的 manager/handle，用于把 Bevy 外部请求送进 gameplay。
+- manager/handle 不直接操作 Bevy `World`，只能通过 bridge/inbox 进入 Bevy App。
+- 用于 manager bridge 的 `Resource` 只能放在 `api` 边界中，不表示 gameplay 内部状态数据。
 - 运行中 spawn、despawn、状态切换、关卡加载、传送、给予物品等高层请求，都优先通过 API 进入 gameplay。
 - 已有 Entity 的连续意图，例如移动、瞄准、攻击输入，不一定属于 API 请求；这类行为可以继续由 intent 层表达。
 - 未来如果外部 crate 需要直接依赖 API 类型，再考虑把 API 抽成独立 crate；现在先放在 `crates/gameplay/src/api`。
@@ -52,9 +57,10 @@
 当前最小 API 请求样板：
 
 - `SpawnPrefab`: 运行中生成 prefab。
-- `DespawnEntity`: 销毁指定 Entity。
+- `DespawnEntity`: 按 gameplay-facing id 销毁实体。
 - `ClearSession`: 清理当前 gameplay session 生成的实体。
 - `ChangeState`: 请求切换 gameplay state。
+- `SetMovementIntent`: 按 gameplay-facing id 设置移动意图。
 
 新增请求时，优先放到 `api/request.rs`，消费逻辑放到 `api/systems.rs`，不要散落到其它目录。
 
@@ -71,7 +77,7 @@
 - `Message` 只允许用于 `api` 边界类型；不要把 gameplay 内部状态伪装成 message。
 - 不写底层 ECS 规则函数；需要调度底层规则时使用 `crates/prefab` 暴露的窄 facade。
 - 不封装物理后端；这些放到 `crates/physics`。
-- 不读取输入；输入来源放到 `crates/input`，再转换成 `intent` 或 `gameplay::api` 请求。
+- 不读取外部来源；外部来源放到 `external_runtime`，并通过 manager 进入 gameplay。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
 - 不直接散装实体组件；生成对象时优先调用 `crates/prefab`。
 - 外部来源不要直接调用 gameplay 内部执行函数；应该通过 `api` 提交请求，由 gameplay system 统一消费。
@@ -81,7 +87,7 @@
 - `gameplay` 可以依赖 `prefab`，用于 gameplay setup 中使用封装好的对象模板、spawn API 和窄 facade。
 - `gameplay` 可以依赖 `intent`，用于注册和调度 Entity 意图相关能力。
 - `gameplay` 必须依赖 `error`。
-- `gameplay` 不依赖 `input`；input 是 gameplay API 的外部调用者之一。
+- `gameplay` 不依赖 `external_runtime`；external runtime 持有 gameplay manager。
 - `gameplay` 不依赖 `ecs`。
 - `gameplay` 不依赖 `render_2d` 或 `render_3d`。
 - `gameplay` 不直接依赖 `physics`；对象组合通过 `prefab` 完成，并由 `gameplay` 注册 `PrefabPlugin`。

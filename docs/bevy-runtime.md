@@ -615,10 +615,11 @@ fn movement_system(
 
 ```text
 注册 PrefabPlugin
+注册 GameplayApiPlugin
 注册 StatePlugin
 注册 SchedulePlugin
 注册 SpawningPlugin
-注册 InputPlugin
+注册 CleanupPlugin
 注册 IntentPlugin
 ```
 

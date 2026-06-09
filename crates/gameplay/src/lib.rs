@@ -7,7 +7,6 @@ pub mod state;
 pub use error::Result;
 
 use bevy::prelude::*;
-use input::InputPlugin;
 use intent::IntentPlugin;
 use prefab::PrefabPlugin;
 
@@ -28,7 +27,6 @@ impl Plugin for GameplayPlugin {
             SchedulePlugin,
             SpawningPlugin,
             CleanupPlugin,
-            InputPlugin,
             IntentPlugin,
         ));
     }

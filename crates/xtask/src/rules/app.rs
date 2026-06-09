@@ -27,7 +27,6 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 
     for dependency in [
         "ecs",
-        "input",
         "intent",
         "physics",
         "prefab",
@@ -36,7 +35,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
     ] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
-                "{} depends on `{dependency}`; app should only depend on the gameplay crate",
+                "{} depends on `{dependency}`; app should only depend on gameplay and external adapter crates",
                 manifest.display()
             ));
         }
@@ -51,7 +50,6 @@ fn reject_internal_plugins(errors: &mut Vec<String>) {
 
         for forbidden in [
             "EcsPlugin",
-            "InputPlugin",
             "IntentPlugin",
             "PhysicsPlugin",
             "PrefabPlugin",
@@ -60,7 +58,7 @@ fn reject_internal_plugins(errors: &mut Vec<String>) {
         ] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; app should register GameplayPlugin only",
+                    "{} references `{forbidden}`; app should register gameplay and external adapter plugins only",
                     file.display()
                 ));
             }

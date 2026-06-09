@@ -10,7 +10,7 @@
 
 - 定义游戏状态流。
 - 定义状态进入、运行、退出时的调度。
-- 组装游戏玩法内部插件，例如 prefab、input、intent。
+- 组装游戏玩法内部插件，例如 prefab、intent。
 - 决定什么时候进入或退出 gameplay session。
 - 决定什么时候清理 gameplay entity。
 - 决定哪些 ECS system 在哪些状态或阶段运行。
@@ -55,7 +55,7 @@
 - `Message` 只允许用于 `api` 边界类型；不要把 gameplay 内部状态伪装成 message。
 - 不写底层 ECS 规则函数；需要调度底层规则时使用 `crates/prefab` 暴露的窄 facade。
 - 不封装物理后端；这些放到 `crates/physics`。
-- 不读取输入；输入来源放到 `crates/input`，再转换成 `crates/intent` 表达的意图。
+- 不读取输入；输入来源放到 `crates/input`，再转换成 `intent` 或 `gameplay::api` 请求。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
 - 不直接散装实体组件；生成对象时优先调用 `crates/prefab`。
 - 外部来源不要直接调用 gameplay 内部执行函数；应该通过 `api` 提交请求，由 gameplay system 统一消费。
@@ -63,8 +63,9 @@
 ## 依赖规则
 
 - `gameplay` 可以依赖 `prefab`，用于 gameplay setup 中使用封装好的对象模板、spawn API 和窄 facade。
-- `gameplay` 可以依赖 `input` 和 `intent`，并作为唯一游戏玩法入口负责注册和调度它们。
+- `gameplay` 可以依赖 `intent`，用于注册和调度 Entity 意图相关能力。
 - `gameplay` 必须依赖 `error`。
+- `gameplay` 不依赖 `input`；input 是 gameplay API 的外部调用者之一。
 - `gameplay` 不依赖 `ecs`。
 - `gameplay` 不依赖 `render_2d` 或 `render_3d`。
 - `gameplay` 不直接依赖 `physics`；对象组合通过 `prefab` 完成，并由 `gameplay` 注册 `PrefabPlugin`。

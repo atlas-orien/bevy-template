@@ -29,7 +29,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         return;
     };
 
-    for dependency in ["ecs", "physics", "render_2d", "render_3d", "gameplay"] {
+    for dependency in ["ecs", "physics", "render_2d", "render_3d"] {
         if source.contains(&format!("{dependency}.workspace = true")) {
             errors.push(format!(
                 "{} depends on `{dependency}`; input should not depend on that crate",
@@ -72,7 +72,7 @@ fn reject_world_mutation(errors: &mut Vec<String>) {
         for forbidden in ["Commands", "Transform", "PhysicsBody", "PhysicsCollider"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input should convert sources into intent only",
+                    "{} references `{forbidden}`; input should convert sources into intent or gameplay api requests",
                     file.display()
                 ));
             }

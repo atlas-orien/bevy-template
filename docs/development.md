@@ -6,7 +6,7 @@ This template is split into layered crates:
 
 - `error`: shared error reporting and collection.
 - `ecs`: core ECS components, resources, events, and systems.
-- `input`: external input sources converted into entity intents.
+- `input`: external control sources converted into entity intents or gameplay API requests.
 - `intent`: entity intent APIs.
 - `gameplay`: state flow, phases, and higher-level ECS system orchestration.
 - `render_2d`: 2D rendering and presentation.

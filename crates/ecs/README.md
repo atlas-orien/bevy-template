@@ -207,7 +207,7 @@ app = 如何组装并启动游戏
 
 - 如果代码描述“一个东西拥有什么数据”，放到 `crates/ecs/src/components`、`crates/ecs/src/resources` 或 `crates/ecs/src/events`。
 - 如果代码根据规则读取和修改 ECS 数据，放到 `crates/ecs/src/systems`。
-- 如果代码读取外部输入，放到 `crates/input`，并转换成 `intent`。
+- 如果代码读取外部输入，放到 `crates/input`，并转换成 `intent` 或 gameplay API 请求。
 - 如果代码处理显示、动画、相机、UI 布局，放到 `render_2d` 或 `render_3d`。
 
 ## 和 assets 的区别

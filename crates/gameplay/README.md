@@ -85,7 +85,9 @@ Prefab::spawn
 `prefab` 封装这些底层对象和规则，提供 gameplay-facing 入口。
 
 `gameplay` 决定这些封装入口在什么状态、什么阶段、什么顺序运行。
-`gameplay` 也是游戏唯一玩法入口，负责统一注册和调度 `prefab`、`input`、`intent`。
+`gameplay` 是游戏玩法入口，负责统一注册和调度 `prefab`、`intent` 以及 gameplay API 消费系统。
+
+`input` 是 gameplay API 的外部调用者之一，不是 gameplay 的内部组成部分。
 
 例如：
 

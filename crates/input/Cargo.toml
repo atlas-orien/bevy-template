@@ -5,11 +5,12 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Input source adapters that convert external commands into entity intents."
+description = "Input source adapters that convert external commands into intents or gameplay API requests."
 publish = false
 
 [dependencies]
 bevy.workspace = true
 error.workspace = true
+gameplay.workspace = true
 intent.workspace = true
 prefab.workspace = true

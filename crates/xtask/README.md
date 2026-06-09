@@ -45,7 +45,8 @@ cargo run -p xtask -- help
 - `crates/input` 必须存在。
 - `AI_PROTOCOL/INPUT.md` 必须存在。
 - 必须有当前本地输入模块 `local.rs`。
-- `input` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`、`gameplay`。
+- `input` 可以依赖 `prefab`、`intent`、`gameplay`，但只能通过 `gameplay::api` 提交高层请求。
+- `input` 不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
 - `input` 不允许定义 ECS 数据类型。
 - `input` 不允许直接使用 `Commands`、`Transform` 或物理组件。
 
@@ -93,7 +94,7 @@ cargo run -p xtask -- help
 
 - `crates/gameplay` 必须存在。
 - `AI_PROTOCOL/GAMEPLAY.md` 必须存在。
-- `gameplay` 可以依赖 `prefab`，但不允许依赖 `ecs`、`physics`、`render_2d`、`render_3d`。
+- `gameplay` 可以依赖 `prefab` 和 `intent`，但不允许依赖 `input`、`ecs`、`physics`、`render_2d`、`render_3d`。
 - `gameplay` 不允许定义 ECS 数据类型。
 - `gameplay` 不允许直接读取键盘、鼠标、手柄等输入。
 

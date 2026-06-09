@@ -197,6 +197,7 @@ dependencies = [
  "bevy",
  "error",
  "gameplay",
+ "input",
 ]
 
 [[package]]
@@ -2803,7 +2804,6 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
- "input",
  "intent",
  "prefab",
 ]
@@ -3322,6 +3322,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
+ "gameplay",
  "intent",
  "prefab",
 ]

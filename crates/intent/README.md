@@ -18,7 +18,7 @@
 
 - `movement`: 移动意图，例如“这个 Entity 想往某个方向移动”或“想移动到某个位置”。
 
-输入来源放在 `crates/input`。无论 input 来自键盘、手柄、AI 还是网络，都需要先转换成 intent。
+输入来源放在 `crates/input`。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。
 
 ## 和 gameplay 的区别
 

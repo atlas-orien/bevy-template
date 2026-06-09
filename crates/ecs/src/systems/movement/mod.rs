@@ -4,7 +4,7 @@
 
 use bevy::prelude::*;
 
-use crate::components::characters::player::{Facing, MovementIntent, MovementTarget, PlayerSpeed};
+use crate::components::base::{Facing, MovementIntent, MovementTarget, Speed};
 
 const POSITION_TARGET_EPSILON: f32 = 1.0;
 
@@ -12,7 +12,7 @@ pub fn movement_system(
     time: Res<Time>,
     mut movers: Query<(
         &mut MovementIntent,
-        &PlayerSpeed,
+        &Speed,
         &mut Transform,
         Option<&mut Facing>,
     )>,

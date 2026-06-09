@@ -10,12 +10,23 @@
 
 `base` 放最基础、最小颗粒度、可复用的组件。
 
+文件规则：
+
+- 按最小语义组拆文件，不按“一类型一文件”机械拆分。
+- 一个文件只放同一语义组的基础组件和强绑定辅助类型。
+- `identity.rs`: `DisplayName`、`PublicEntityId`。
+- `health.rs`: `Health`、`MaxHealth`。
+- `movement.rs`: `Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`。
+- `affiliation.rs`: `Faction`、`Team`。
+- `ecs` 不按 2D / 3D 创建目录。2D / 3D 只是同一语义组里的数据形状变体，例如 `Velocity2d` 和 `Velocity3d` 都放在 `movement.rs`。
+- 如果 2D / 3D 差异属于渲染、物理后端或 prefab 组合，放到 `render_2d`、`render_3d`、`physics` 或 `prefab/world_2d`、`prefab/world_3d`。
+- 不要把无关基础组件混在一个文件里，例如不要在 `movement.rs` 写血量、攻击、背包、AI 或 gameplay manager 数据。
+
 适合放这里：
 
 - 血量：`Health`、`MaxHealth`
-- 属性：`Strength`、`Agility`、`Intelligence`
-- 移动：`Speed`、`Velocity`、`MovementIntent`
-- 身份：`DisplayName`、`EntityId`
+- 移动：`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`Facing`
+- 身份：`DisplayName`、`PublicEntityId`
 - 阵营：`Faction`、`Team`
 
 不适合放这里：

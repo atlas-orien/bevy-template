@@ -44,12 +44,20 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - 系统函数使用 `_system` 后缀，例如 `movement_system`、`damage_system`。
 - 不要恢复独立的 `components` 或 `system` crate；ECS 数据和系统统一放在 `crates/ecs`。
 - 不要新增 `game_` 前缀的 ECS 模块名。
+- `components/base` 按最小语义组拆文件，不按“一类型一文件”机械拆分。
+- 一个 base 文件只能放同一语义组的基础组件和强绑定辅助类型。
+- 推荐语义组示例：`identity.rs` 放 `DisplayName`、`PublicEntityId`；`health.rs` 放 `Health`、`MaxHealth`；`movement.rs` 放 `Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`；`affiliation.rs` 放 `Faction`、`Team`。
+- `ecs` 不按 2D / 3D 创建目录分类。2D / 3D 只是同一语义组里的数据形状变体，例如 `Velocity2d` 和 `Velocity3d` 都放在 `base/movement.rs`。
+- 如果 2D / 3D 差异属于渲染、物理后端或 prefab 组合，放到 `render_2d`、`render_3d`、`physics` 或 `prefab/world_2d`、`prefab/world_3d`，不要放到 `ecs` 目录结构里。
+- 不要把无关基础组件混在一个文件里，例如不要在 `movement.rs` 写血量、攻击、背包、AI 或 gameplay manager 数据。
+- 如果新增 base 文件，文件名必须表达一个清楚的基础语义组。
 
 ## 当前模板
 
-当前模板只保留 ECS 基础结构和示例级组件命名，不携带运行 demo 资源。
+当前模板只保留 ECS 基础结构和基础组件命名，不携带运行 demo 资源。
 
-- `crates/ecs/src/components`: 定义 `Player`、`MovementIntent`、`Facing`、`PlayerSpeed`。
+- `crates/ecs/src/components/base`: 定义 `DisplayName`、`PublicEntityId`、`Health`、`MaxHealth`、`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`Facing`、`Faction`、`Team`。
+- `crates/ecs/src/components/characters`: 定义 `Player`、`LocalPlayerControlled` 和角色默认 Bundle。
 - `crates/intent`: 提供写入 `MovementIntent` 等意图数据的语义 API。
 - `crates/gameplay`: 管理 Playing 状态下的 gameplay session 进入和系统调度。
 - `crates/ecs/src/systems`: 放根据意图移动 `Transform` 的系统函数。

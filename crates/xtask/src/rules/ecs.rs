@@ -30,6 +30,20 @@ fn check_components(errors: &mut Vec<String>) {
     let root = Path::new("crates/ecs/src/components");
     require_path(root, errors);
     require_path(root.join("README.md"), errors);
+    require_path(root.join("base/identity.rs"), errors);
+    require_path(root.join("base/health.rs"), errors);
+    require_path(root.join("base/movement.rs"), errors);
+    require_path(root.join("base/affiliation.rs"), errors);
+    reject_path(root.join("base/vitals.rs"), errors);
+    reject_path(root.join("base/display_name.rs"), errors);
+    reject_path(root.join("base/public_entity_id.rs"), errors);
+    reject_path(root.join("base/max_health.rs"), errors);
+    reject_path(root.join("base/speed.rs"), errors);
+    reject_path(root.join("base/velocity.rs"), errors);
+    reject_path(root.join("base/movement_intent.rs"), errors);
+    reject_path(root.join("base/facing.rs"), errors);
+    reject_path(root.join("base/faction.rs"), errors);
+    reject_path(root.join("base/team.rs"), errors);
 
     for readme in readmes_below(root) {
         if readme != root.join("README.md") {

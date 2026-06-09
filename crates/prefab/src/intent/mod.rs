@@ -1,10 +1,9 @@
 use bevy::prelude::*;
 
-pub use ecs::components::characters::player::MovementTarget;
+pub use ecs::components::base::MovementTarget;
 
-use ecs::components::characters::player::{
-    LocalPlayerControlled, MovementIntent, MovementTarget as EcsMovementTarget,
-};
+use ecs::components::base::{MovementIntent, MovementTarget as EcsMovementTarget};
+use ecs::components::characters::player::LocalPlayerControlled;
 
 pub type MovementIntentQuery<'world, 'state> = Query<'world, 'state, &'static mut MovementIntent>;
 

@@ -182,7 +182,7 @@ app = 如何组装并启动游戏
 
 ## 当前结构
 
-- `crates/ecs/src/components/base`: 基础组件，例如血量、属性、移动、身份、阵营。
+- `crates/ecs/src/components/base`: 基础组件，例如名字、公开 ID、血量、移动、阵营。
 - `crates/ecs/src/components/characters`: 角色类实体数据，例如 `Player`、`Enemy`、`Npc` 以及对应 Bundle。
 - `crates/ecs/src/components/items`: 物品类实体数据，例如武器、防具、消耗品、掉落物。
 - `crates/ecs/src/components/world`: 世界、地图、关卡、区域、出生点等数据。

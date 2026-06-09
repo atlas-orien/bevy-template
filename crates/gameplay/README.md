@@ -81,7 +81,11 @@ API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-
 
 当前文件：
 
-- `mod.rs`: 定义 `SchedulePlugin`，注册 gameplay 每帧系统和退出清理系统。
+- `mod.rs`: 定义 `SchedulePlugin`，只调用各 register 函数。
+- `sets.rs`: 定义 system set 和执行顺序。
+- `update.rs`: 注册 `Update` 阶段系统。
+- `enter.rs`: 注册 `OnEnter(...)` 阶段系统。
+- `exit.rs`: 注册 `OnExit(...)` 阶段系统。
 
 当前注册内容：
 
@@ -93,7 +97,11 @@ API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-
 
 - 先判断 system 属于哪个语义目录。
 - 再在 `schedule` 中决定它注册到哪个 Bevy schedule。
-- 不要按 `Update/OnEnter/OnExit` 新建目录。
+- `Update` 注册写到 `schedule/update.rs`。
+- `OnEnter(...)` 注册写到 `schedule/enter.rs`。
+- `OnExit(...)` 注册写到 `schedule/exit.rs`。
+- system set 写到 `schedule/sets.rs`。
+- `mod.rs` 只保留入口和组装。
 - 不要在这里写 ECS 规则函数，只注册已有 system。
 
 ## spawning

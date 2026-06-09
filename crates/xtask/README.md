@@ -109,6 +109,7 @@ cargo run -p xtask -- help
 - `gameplay` 可以依赖 `prefab` 和 `intent`，但不允许依赖 `external_runtime`、`ecs`、`physics`、`render_2d`、`render_3d`。
 - `gameplay` 不允许定义 ECS 数据类型。
 - `gameplay` 不允许直接读取键盘、鼠标、手柄等输入。
+- `gameplay/src/schedule` 必须有 `mod.rs`、`sets.rs`、`update.rs`、`enter.rs`、`exit.rs`。
 
 当前也会检查 `crates/render_2d`：
 

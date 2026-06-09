@@ -14,6 +14,15 @@ pub fn check() -> CheckStatus {
     require_path(GAMEPLAY_PROTOCOL, &mut errors);
     require_path(GAMEPLAY_API, &mut errors);
     require_path("crates/gameplay/src/lifecycle", &mut errors);
+    for path in [
+        "crates/gameplay/src/schedule/mod.rs",
+        "crates/gameplay/src/schedule/sets.rs",
+        "crates/gameplay/src/schedule/update.rs",
+        "crates/gameplay/src/schedule/enter.rs",
+        "crates/gameplay/src/schedule/exit.rs",
+    ] {
+        require_path(path, &mut errors);
+    }
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);

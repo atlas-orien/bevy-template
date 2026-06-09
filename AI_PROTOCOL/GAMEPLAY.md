@@ -30,7 +30,7 @@
 
 - `spawning/mod.rs` 只组装 `SpawningPlugin` 和模块导出。
 - `spawning/plan.rs` 定义 gameplay spawn plan 数据结构。
-- `spawning/prefab.rs` 定义 object-safe spawn item 抽象，并调用 `prefab` crate 的 `Prefab::spawn`。
+- `gameplay::api::SpawnItem` 定义 object-safe spawn item 抽象，并调用 `prefab` crate 的 `Prefab::spawn`。
 - `spawning/defaults.rs` 定义模板默认 spawn plan。
 - `spawning/systems.rs` 定义 Bevy spawning system。
 - 不要把所有生成逻辑塞进 `spawning/mod.rs`。
@@ -64,7 +64,18 @@
 - `ChangeState`: 请求切换 gameplay state。
 - `SetMovementIntent`: 按 gameplay-facing id 设置移动意图。
 
-新增请求时，优先放到 `api/request.rs`，消费逻辑放到 `api/systems.rs`，不要散落到其它目录。
+新增 runtime/world 请求时，消息类型放到 `api/runtime_channel/message.rs`，消费逻辑放到 `api/systems.rs`，不要散落到其它目录。
+
+## Schedule 目录规则
+
+- `schedule/mod.rs` 只定义 `SchedulePlugin`，并调用各注册函数。
+- `schedule/mod.rs` 不直接写大段 `add_systems`。
+- `schedule/sets.rs` 定义 system set、顺序标签和 set 配置。
+- `schedule/update.rs` 注册 `Update` 阶段系统。
+- `schedule/enter.rs` 注册 `OnEnter(...)` 阶段系统。
+- `schedule/exit.rs` 注册 `OnExit(...)` 阶段系统。
+- `schedule` 只决定 system 注册到哪个 Bevy schedule、哪个 state、哪个 set。
+- `schedule` 不写具体 ECS 规则函数，不消费 request，不生成 prefab，不写 cleanup 细节。
 
 ## Lifecycle 目录规则
 

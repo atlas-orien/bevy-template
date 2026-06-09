@@ -1,8 +1,6 @@
 use std::sync::{Arc, Mutex};
 
-use gameplay::api::{
-    RuntimeRequest, RuntimeRequestSender, RuntimeUpdate, RuntimeUpdateInbox,
-};
+use gameplay::api::{RuntimeRequest, RuntimeRequestSender, RuntimeUpdate, RuntimeUpdateInbox};
 
 use super::state::ManagerState;
 

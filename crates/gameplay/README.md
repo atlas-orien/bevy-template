@@ -26,7 +26,7 @@ src/
 
 当前文件：
 
-- `manager.rs`: 定义外部 runtime 可持有的 `GameplayManager` 和 Bevy App 内部的 request inbox。
+- `channel.rs`: 定义 gameplay request sender 和 Bevy App 内部的 request inbox。
 - `mod.rs`: 注册 `GameplayApiPlugin`，并注册 `GameplayRequest` message。
 - `request.rs`: 定义外部可提交的 `GameplayRequest`。
 - `submit.rs`: 提供提交 gameplay request 的窄函数。
@@ -34,7 +34,7 @@ src/
 
 API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-facing id，gameplay 内部负责映射到 Bevy `Entity`。
 
-外部 runtime 不直接拿 `MessageWriter`。外部 runtime 持有 `GameplayManager`，把请求写入 manager；Bevy App 内部持有 inbox，并在 `Update` 中转发为 `GameplayRequest` message。
+外部 runtime 不直接拿 `MessageWriter`。外部 runtime 持有 `ExternalRuntimeManager`，manager 内部持有 gameplay request sender；Bevy App 内部持有 inbox，并在 `Update` 中转发为 `GameplayRequest` message。
 
 当前最小请求：
 
@@ -48,7 +48,7 @@ API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-
 
 - 请求类型写到 `api/request.rs`。
 - 请求提交函数如果需要封装，写到 `api/submit.rs`。
-- 外部 runtime 入口如果需要扩展，写到 `api/manager.rs`。
+- 外部 runtime 入口如果需要扩展，写到 `crates/external_runtime/src/manager`。
 - 请求执行逻辑写到 `api/systems.rs`。
 - 不要让外部来源直接调用 gameplay 内部 system。
 

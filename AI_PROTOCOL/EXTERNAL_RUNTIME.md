@@ -9,13 +9,13 @@
 - Bevy App：运行 Bevy `World`、`Schedule`、render、physics、gameplay。
 - External Runtime：运行 Bevy App 外部的输入、外设、AI、脚本、回放，以及未来网络等外部系统。
 
-`external_runtime` 通过 `gameplay::api::GameplayManager` 向 Bevy App 提交 gameplay 请求。
+`external_runtime` 通过 `external_runtime::manager` 持有 gameplay bridge API，并向 Bevy App 提交 gameplay 请求。
 
 ## 核心职责
 
 - 启动和停止 Bevy App 外部的 runtime loop。
-- 持有 `GameplayManager`，作为外部系统进入 gameplay 的唯一入口。
-- 管理 local/device/AI/script/replay 等外部来源模块。
+- 持有 manager，作为外部系统进入 gameplay 的唯一入口。
+- 管理 input/local、input/device、input/ai、script、replay 等外部来源模块。
 - 把外部来源转换成 manager API 调用。
 - 不直接读取或修改 Bevy `World`。
 
@@ -23,9 +23,11 @@
 
 - runtime loop：写到 `crates/external_runtime/src/runtime`。
 - Bevy App 外部到 gameplay 的桥接：写到 `crates/external_runtime/src/bridge`。
-- 本地输入来源：写到 `crates/external_runtime/src/local`。
-- 外设来源：写到 `crates/external_runtime/src/device`。
-- AI 控制来源：写到 `crates/external_runtime/src/ai`。
+- manager API：写到 `crates/external_runtime/src/manager`。
+- 输入域总入口：写到 `crates/external_runtime/src/input`。
+- 本地输入来源：写到 `crates/external_runtime/src/input/local`。
+- 外设输入来源：写到 `crates/external_runtime/src/input/device`。
+- AI 输入来源：写到 `crates/external_runtime/src/input/ai`。
 
 网络不是 v1 的子模块。网络是双向通信层，v2 单独设计。
 
@@ -36,7 +38,7 @@
 - 不直接读取或修改 Bevy `World`。
 - 不直接使用 `Commands`、`Query` 或 `ResMut`。
 - 不做成 Bevy `Plugin` 注册到 `App` 里。
-- 必须通过 `GameplayManager` 或明确的 bridge/manager API 进入 gameplay。
+- 必须通过 `external_runtime::manager` 或明确的 bridge API 进入 gameplay。
 
 ## Manager 规则
 
@@ -44,6 +46,11 @@
 - `GameplayRequest` 是 manager 到 gameplay 的内部请求，不应该被普通用户代码到处构造。
 - manager API 不向用户暴露 Bevy `Entity`。
 - manager 内部可以维护 gameplay-facing id 和 Bevy `Entity` 的映射。
+- manager 属于 `external_runtime`，不属于 `gameplay`。
+- `manager/user.rs` 定义给用户和外部模块使用的高层 API。
+- `manager/gameplay.rs` 定义 manager 内部连接 gameplay request channel 的 bridge API。
+- 用户 API 不直接暴露 `GameplayRequestSender`。
+- gameplay bridge API 不应该被普通用户代码直接使用。
 
 ## 边界规则
 
@@ -56,7 +63,7 @@
 
 ## 依赖规则
 
-- `external_runtime` 可以依赖 `gameplay`，用于持有 `GameplayManager`。
+- `external_runtime` 可以依赖 `gameplay`，用于持有 gameplay bridge API 和调用 gameplay API 边界。
 - `external_runtime` 可以依赖 `intent` 和 `prefab`，但优先通过 manager API。
 - `external_runtime` 可以依赖 `tokio`。
 - `external_runtime` 必须依赖 `error`。

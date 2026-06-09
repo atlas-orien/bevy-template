@@ -1,6 +1,7 @@
-use gameplay::api::GameplayManager;
 use tokio::sync::watch;
 use tokio::task::JoinHandle;
+
+use crate::manager::ExternalRuntimeManager;
 
 #[derive(Debug, Clone, Copy)]
 pub struct ExternalRuntimeConfig {
@@ -21,9 +22,9 @@ pub struct ExternalRuntime {
 }
 
 impl ExternalRuntime {
-    pub fn spawn(config: ExternalRuntimeConfig, gameplay: GameplayManager) -> Self {
+    pub fn spawn(config: ExternalRuntimeConfig, manager: ExternalRuntimeManager) -> Self {
         let (shutdown, shutdown_rx) = watch::channel(false);
-        let task = tokio::spawn(run_external_runtime_loop(config, gameplay, shutdown_rx));
+        let task = tokio::spawn(run_external_runtime_loop(config, manager, shutdown_rx));
 
         Self { shutdown, task }
     }
@@ -36,7 +37,7 @@ impl ExternalRuntime {
 
 async fn run_external_runtime_loop(
     config: ExternalRuntimeConfig,
-    gameplay: GameplayManager,
+    manager: ExternalRuntimeManager,
     mut shutdown: watch::Receiver<bool>,
 ) {
     let mut interval = tokio::time::interval(config.tick_interval);
@@ -44,7 +45,7 @@ async fn run_external_runtime_loop(
     loop {
         tokio::select! {
             _ = interval.tick() => {
-                poll_external_sources(&gameplay).await;
+                poll_external_sources(&manager).await;
             }
             changed = shutdown.changed() => {
                 if changed.is_err() || *shutdown.borrow() {
@@ -55,6 +56,6 @@ async fn run_external_runtime_loop(
     }
 }
 
-async fn poll_external_sources(_gameplay: &GameplayManager) {
+async fn poll_external_sources(_manager: &ExternalRuntimeManager) {
     // Local, device, and AI sources will be polled here.
 }

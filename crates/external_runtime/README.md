@@ -11,24 +11,25 @@ External Runtime
 
 Bevy App 负责 `World`、`Schedule`、render、physics、gameplay。
 
-External Runtime 负责 Bevy App 外部的来源模块，例如 local input、device、AI、script、replay，以及未来 v2 单独设计的 network。
+External Runtime 负责 Bevy App 外部的来源模块，例如 input/local、input/device、input/ai、script、replay，以及未来 v2 单独设计的 network。
 
 ## 职责
 
 - 启动和停止 Bevy App 外部的 runtime loop。
-- 持有 `gameplay::api::GameplayManager`。
-- 运行 local/device/AI/script/replay 等外部来源模块。
+- 持有 `external_runtime::manager::ExternalRuntimeManager`。
+- 运行 input/local、input/device、input/ai、script/replay 等外部来源模块。
 - 把外部来源转换成 manager API 调用。
 - 不直接操作 Bevy `World`。
 
 ## 当前结构
 
 - `runtime`: external runtime 的 loop/runner。
+- `manager`: manager API，分为用户 API 和 gameplay bridge API，不暴露 Bevy `Entity`。
 - `bridge`: external runtime 和 Bevy App/gameplay manager 之间的桥接。
-- `local`: 本地输入来源，例如键盘、鼠标、手柄。
-- `device`: 外设来源。
-- `ai`: AI 控制来源。
-- `gameplay_api`: 调用 gameplay API 的窄转发入口。
+- `input`: 输入来源域。
+- `input/local`: 本地输入来源，例如键盘、鼠标、手柄。
+- `input/device`: 外设输入来源。
+- `input/ai`: AI 输入来源。
 
 网络不是 v1 子模块。网络是双向通信层，v2 单独设计。
 
@@ -41,7 +42,8 @@ External Runtime 负责 Bevy App 外部的来源模块，例如 local input、de
 ```text
 external source
 -> external_runtime
--> GameplayManager
+-> ExternalRuntimeManager
+-> GameplayBridgeApi
 -> Bevy App inbox
 -> gameplay request systems
 ```

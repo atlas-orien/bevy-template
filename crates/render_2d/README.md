@@ -23,7 +23,7 @@
 
 - `crates/ecs/src/components` 定义玩家是什么。
 - `crates/ecs/src/systems` 定义玩家位置等 ECS 数据如何被规则改变。
-- `external_runtime` 读取 local/device/AI 等控制来源；网络是双向通信层，v2 单独设计。
+- `external_runtime` 读取 input/local、input/device、input/ai 等控制来源；网络是双向通信层，v2 单独设计。
 - `intent` 表达 Entity 想做什么。
 - `prefab` 把 render_2d 的表现 bundle 组合进完整对象模板。
 - `gameplay` 负责状态流、gameplay session 生命周期和 system 调度。

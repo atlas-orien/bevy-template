@@ -1,13 +1,12 @@
-use std::sync::Arc;
-use std::sync::Mutex;
 use std::sync::mpsc::{self, Receiver, Sender};
+use std::sync::{Arc, Mutex};
 
 use bevy::prelude::*;
 
 use super::request::GameplayRequest;
 
 #[derive(Clone)]
-pub struct GameplayManager {
+pub struct GameplayRequestSender {
     requests: Sender<GameplayRequest>,
 }
 
@@ -18,18 +17,18 @@ pub struct GameplayRequestInbox {
 
 impl Resource for GameplayRequestInbox {}
 
-impl GameplayManager {
-    pub fn new() -> (Self, GameplayRequestInbox) {
-        let (requests, inbox) = mpsc::channel();
+pub fn gameplay_request_channel() -> (GameplayRequestSender, GameplayRequestInbox) {
+    let (requests, inbox) = mpsc::channel();
 
-        (
-            Self { requests },
-            GameplayRequestInbox {
-                requests: Arc::new(Mutex::new(inbox)),
-            },
-        )
-    }
+    (
+        GameplayRequestSender { requests },
+        GameplayRequestInbox {
+            requests: Arc::new(Mutex::new(inbox)),
+        },
+    )
+}
 
+impl GameplayRequestSender {
     pub fn submit(&self, request: GameplayRequest) -> bool {
         self.requests.send(request).is_ok()
     }

@@ -5,7 +5,7 @@ use prefab::lifecycle::{GameplaySessionEntities, despawn_gameplay_prefabs};
 
 use crate::state::AppState;
 
-use super::manager::GameplayRequestInbox;
+use super::channel::GameplayRequestInbox;
 use super::request::GameplayRequest;
 
 pub fn forward_manager_requests_system(

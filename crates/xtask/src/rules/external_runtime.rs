@@ -12,14 +12,19 @@ pub fn check() -> CheckStatus {
     require_path(EXTERNAL_RUNTIME_CRATE, &mut errors);
     require_path(EXTERNAL_RUNTIME_PROTOCOL, &mut errors);
     for path in [
-        "crates/external_runtime/src/local",
-        "crates/external_runtime/src/device",
-        "crates/external_runtime/src/ai",
+        "crates/external_runtime/src/input",
+        "crates/external_runtime/src/input/local",
+        "crates/external_runtime/src/input/device",
+        "crates/external_runtime/src/input/ai",
         "crates/external_runtime/src/runtime",
+        "crates/external_runtime/src/manager",
+        "crates/external_runtime/src/manager/user.rs",
+        "crates/external_runtime/src/manager/gameplay.rs",
         "crates/external_runtime/src/bridge",
     ] {
         require_path(path, &mut errors);
     }
+    reject_root_input_domains(&mut errors);
     reject_dependencies(&mut errors);
     reject_network_module(&mut errors);
     reject_data_definitions(&mut errors);
@@ -31,6 +36,22 @@ pub fn check() -> CheckStatus {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_root_input_domains(errors: &mut Vec<String>) {
+    for path in [
+        "crates/external_runtime/src/local",
+        "crates/external_runtime/src/device",
+        "crates/external_runtime/src/ai",
+    ] {
+        let path = Path::new(path);
+        if path.exists() {
+            errors.push(format!(
+                "{} exists; input source domains must live under crates/external_runtime/src/input",
+                path.display()
+            ));
+        }
     }
 }
 

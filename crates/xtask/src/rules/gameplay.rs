@@ -17,11 +17,29 @@ pub fn check() -> CheckStatus {
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);
+    reject_manager_definitions(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_manager_definitions(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(GAMEPLAY_CRATE)) {
+        let Ok(source) = fs::read_to_string(&file) else {
+            continue;
+        };
+
+        for forbidden in ["GameplayManager", "ExternalRuntimeManager"] {
+            if source.contains(forbidden) {
+                errors.push(format!(
+                    "{} references `{forbidden}`; manager belongs in external_runtime, gameplay only owns request channel/inbox",
+                    file.display()
+                ));
+            }
+        }
     }
 }
 

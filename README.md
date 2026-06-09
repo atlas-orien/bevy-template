@@ -24,7 +24,7 @@
 
 - `crates/error`: 统一错误、Result、错误类型和严重级别
 - `crates/ecs`: Bevy ECS 核心层，包含组件、资源、事件和系统函数
-- `crates/external_runtime`: Bevy App 外部 runtime，持有 manager API，运行 local/device/AI 等外部来源
+- `crates/external_runtime`: Bevy App 外部 runtime，持有 manager API，运行 input/local、input/device、input/ai 等外部来源
 - `crates/intent`: Entity 意图层，表达可控制实体想做什么
 - `crates/gameplay`: 游戏玩法语义层，负责状态流、gameplay session 生命周期和 ECS system 调度
 - `crates/physics`: 物理引擎适配层，默认使用 Avian 2D，可通过 feature 切换到 Rapier 2D
@@ -45,14 +45,14 @@
 GameplayPlugin
 ```
 
-`src/main.rs` 会先创建 `gameplay::api::GameplayManager`，再启动两套系统：
+`src/main.rs` 会先创建 gameplay request channel，再创建 `external_runtime::manager::ExternalRuntimeManager`，然后启动两套系统：
 
 ```text
 external_runtime
 Bevy App
 ```
 
-`external_runtime` 持有 manager API，把 Bevy App 外部的 local/device/AI 等来源转换成 gameplay 请求。
+`external_runtime` 持有 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。
 
 `GameplayPlugin` 是注册到 Bevy App 的玩法流程入口，负责状态、spawn、request 消费和 gameplay systems 的调度。
 
@@ -97,7 +97,7 @@ app.add_plugins(GameplayPlugin)
 - `crates/ecs/src/events` 放 ECS 事件数据。
 - `crates/ecs/src/systems` 放真正读取和修改 ECS 数据的系统函数。
 - `gameplay` 负责状态流、阶段调度、gameplay session 生命周期、request 消费和 ECS system 调度。
-- `external_runtime` 运行 Bevy App 外部的 loop，持有 manager API，并把 local/device/AI 等来源转换成 gameplay 请求。
+- `external_runtime` 运行 Bevy App 外部的 loop，持有 manager API，并把 input/local、input/device、input/ai 等来源转换成 gameplay 请求。
 - `intent` 只表达哪个 Entity 想做什么，并通过 `prefab` 暴露的最小合法接口写入意图数据；可接收 intent 的对象由 `prefab` 组合对应组件。
 - `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
 - `prefab` 负责组合 `ecs`、`physics`、`render_2d` 等基础库，提供可直接生成的完整对象模板和面向 gameplay 的封装入口。

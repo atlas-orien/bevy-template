@@ -1,8 +1,6 @@
-pub mod ai;
 pub mod bridge;
-pub mod device;
-pub mod gameplay_api;
-pub mod local;
+pub mod input;
+pub mod manager;
 pub mod runtime;
 
 pub use error::Result;

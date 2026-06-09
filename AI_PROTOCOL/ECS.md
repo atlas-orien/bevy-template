@@ -35,7 +35,7 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - `crates/ecs/src/events` 只描述发生了什么，不处理后果。
 - `crates/ecs/src/systems` 负责根据 ECS 数据执行世界规则。
 - 不读取键盘、鼠标、手柄、外设、AI、脚本、网络等外部来源。
-- `external_runtime` v1 负责 local/device/AI 等控制来源，并通过 manager 进入 gameplay。
+- `external_runtime` v1 负责 input/local、input/device、input/ai 等控制来源，并通过 manager 进入 gameplay。
 - 网络是双向通信层，v2 单独设计。
 - 不写 sprite、动画、相机、UI 布局、材质、光照；这些放到渲染层。
 

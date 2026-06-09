@@ -34,7 +34,12 @@ src/
 
 API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-facing id，gameplay 内部负责映射到 Bevy `Entity`。
 
-外部 runtime 不直接拿 `MessageWriter`。`main` 从 `gameplay::api::duplex()` 获得 runtime/world 两端 endpoint；external runtime 持有 runtime endpoint，Bevy App 持有 world endpoint，并在 `Update` 中转发为 `RuntimeRequest` message。
+外部 runtime 不直接拿 `MessageWriter`。`main` 创建两个具体 channel：
+
+- `RuntimeRequestChannel`: gameplay/Bevy App 接收请求，所以它的 inbox 交给 `GameplayPlugin`，sender 交给 `ExternalRuntimeManager`。
+- `ManagerUpdateChannel`: external runtime manager 接收 world 更新，所以它的 inbox 交给 `ExternalRuntimeManager`，sender 交给 `GameplayPlugin`。
+
+Bevy App 在 `Update` 中把 request inbox 转发为 `RuntimeRequest` message，再由 gameplay 内部 system 消费。
 
 当前最小请求：
 
@@ -106,27 +111,35 @@ API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-
 
 ## spawning
 
-gameplay session 进入时的生成流程。
+gameplay 内部“生成流程”的标准落点。
+
+它不只表示初始化生成。初始化生成、运行中生成、生成计划这些概念需要拆开写，避免以后把所有 spawn 逻辑塞进一个文件。
 
 当前文件：
 
-- `mod.rs`: 组装 `SpawningPlugin`。
+- `mod.rs`: 只做模块导出。
 - `plan.rs`: 定义 `GameplaySpawnPlan`。
 - `gameplay::api::SpawnItem`: object-safe spawn item，用于 runtime request 保存任意 prefab。
-- `defaults.rs`: 定义模板默认 spawn plan。
-- `systems.rs`: 执行默认 spawn plan。
+- `initial.rs`: 定义模板默认 spawn plan，并提供进入 `Playing` 时执行的初始化 spawn system。
+- `runtime.rs`: 定义运行中 spawn 的内部执行入口，供 API/request 消费逻辑调用。
 
 当前行为：
 
 - `OnEnter(Playing)` 时执行 `default_gameplay_spawn_plan()`。
+- `OnEnter(Playing)` 的注册位置是 `schedule/enter.rs`。
 
-新增默认生成内容时：
+新增初始化生成内容时：
 
-- 优先改 `spawning/defaults.rs`。
+- 优先改 `spawning/initial.rs`。
 - 新增具体 prefab 时，不维护中心 enum 或 match 列表。
 - 只要 prefab 实现 `prefab::Prefab`，就可以进入 `GameplaySpawnPlan`。
 
-运行中 spawn 不放在 `spawning` 消费，走 `RuntimeRequest::SpawnPrefab`。
+运行中 spawn：
+
+- 外部请求仍然走 `RuntimeRequest::SpawnPrefab`。
+- 请求消费逻辑写在 `api/systems.rs`。
+- 具体执行入口放在 `spawning/runtime.rs`。
+- 不要把运行中 spawn 写进 `initial.rs`。
 
 ## cleanup
 

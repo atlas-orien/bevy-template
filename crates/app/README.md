@@ -11,19 +11,21 @@
 ## 当前默认组装
 
 ```rust
-GameplayPlugin::new(world_endpoint)
+GameplayPlugin::new(runtime_requests.inbox(), manager_updates.sender())
 ```
 
 `GameplayPlugin` 是游戏玩法入口，内部负责 gameplay 状态、spawn、API 消费和 intent 能力。
 
 `external_runtime` 不作为 Bevy plugin 注册到 app。外设、AI 等外部来源由 external runtime 持有 `ExternalRuntimeManager` 进入 gameplay。网络是双向通信层，v2 单独设计。
 
-顶层 `main` 通过 `gameplay::api::duplex()` 创建两端 endpoint：
+顶层 `main` 创建两个具体 channel：
 
 ```text
-external runtime -> ExternalRuntimeManager
-Bevy App -> GameplayPlugin::new(world_endpoint)
+RuntimeRequestChannel: ExternalRuntimeManager -> Bevy App / GameplayPlugin
+ManagerUpdateChannel: Bevy App / GameplayPlugin -> ExternalRuntimeManager
 ```
+
+接收方定义语义并持有 inbox；另一侧只拿 sender。
 
 ## 不应该放这里
 

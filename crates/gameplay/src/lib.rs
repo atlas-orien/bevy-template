@@ -15,7 +15,6 @@ use self::api::GameplayApiPlugin;
 use self::cleanup::CleanupPlugin;
 use self::lifecycle::LifecyclePlugin;
 use self::schedule::SchedulePlugin;
-use self::spawning::SpawningPlugin;
 use self::state::StatePlugin;
 
 pub struct GameplayPlugin {
@@ -62,7 +61,6 @@ impl Plugin for GameplayPlugin {
             GameplayApiPlugin,
             StatePlugin,
             SchedulePlugin,
-            SpawningPlugin,
             CleanupPlugin,
             LifecyclePlugin,
             IntentPlugin,

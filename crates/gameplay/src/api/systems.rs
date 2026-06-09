@@ -5,6 +5,7 @@ use prefab::lifecycle::{GameplaySessionEntities, despawn_gameplay_prefabs};
 
 use super::channel::{RuntimeRequestInbox, RuntimeUpdateSender, drain_runtime_requests_into};
 use super::{RuntimeRequest, RuntimeUpdate};
+use crate::spawning::runtime::spawn_runtime_prefab;
 use crate::state::AppState;
 
 pub fn forward_manager_requests_system(
@@ -31,7 +32,7 @@ pub fn consume_gameplay_requests_system(
         match request {
             RuntimeRequest::SpawnPrefab(prefab) => {
                 if let Some(prefab) = prefab.take() {
-                    prefab.spawn_boxed(&mut commands);
+                    spawn_runtime_prefab(&mut commands, prefab);
                 }
             }
             RuntimeRequest::DespawnEntity(id) => {

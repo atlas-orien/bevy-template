@@ -69,7 +69,7 @@
 
 ## 依赖规则
 
-- `external_runtime` 可以依赖 `gameplay`，用于持有 runtime/world endpoint 和 request/update 消息类型。
+- `external_runtime` 可以依赖 `gameplay`，用于持有 request/update channel 端点和消息类型。
 - `external_runtime` 可以依赖 `helper`，用于共享 channel/transport 基础设施。
 - `external_runtime` 可以依赖 `intent` 和 `prefab`，但优先通过 manager API。
 - `external_runtime` 可以依赖 `tokio`。

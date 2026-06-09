@@ -28,14 +28,18 @@
 
 ## Spawning 目录规则
 
-- `spawning/mod.rs` 只组装 `SpawningPlugin` 和模块导出。
+- `spawning` 是 gameplay 内部“生成流程”的标准落点，不只表示初始化生成。
+- `spawning/mod.rs` 只做模块导出，不注册 Bevy schedule，不写具体 spawn 逻辑。
 - `spawning/plan.rs` 定义 gameplay spawn plan 数据结构。
 - `gameplay::api::SpawnItem` 定义 object-safe spawn item 抽象，并调用 `prefab` crate 的 `Prefab::spawn`。
-- `spawning/defaults.rs` 定义模板默认 spawn plan。
-- `spawning/systems.rs` 定义 Bevy spawning system。
+- `spawning/initial.rs` 定义进入 gameplay session 时的默认 spawn plan 和对应 Bevy system。
+- `spawning/runtime.rs` 定义运行中 spawn 的 gameplay 内部执行入口。
 - 不要把所有生成逻辑塞进 `spawning/mod.rs`。
+- spawn system 的 `OnEnter(...)` 注册写到 `schedule/enter.rs`。
 - `GameplaySpawnPlan` 必须能接收任意实现 `Prefab` 的具体 prefab，不要维护中心 enum 或 match 列表。
 - `gameplay` 负责决定何时执行 spawn plan；具体 prefab 内部组件组合仍然属于 `crates/prefab`。
+- 初始化生成只写在 `spawning/initial.rs`。
+- 运行中生成不要写在 `initial.rs`；由 API/request 消费逻辑调用 `spawning/runtime.rs` 中的窄入口。
 
 ## API 目录规则
 

@@ -46,11 +46,11 @@
 GameplayPlugin
 ```
 
-`src/main.rs` 会先通过 `gameplay::api::duplex()` 创建 runtime/world 两端 endpoint，再分别交给 `external_runtime` 和 Bevy App。底层 channel 机制由 `helper` 提供。
+`src/main.rs` 会创建两个具体 channel，再分别交给 `external_runtime` 和 Bevy App。底层 channel 机制由 `helper` 提供，request/update 的语义类型由 `gameplay::api` 定义。
 
 ```text
-external_runtime
-Bevy App
+RuntimeRequestChannel: external_runtime -> Bevy App
+ManagerUpdateChannel: Bevy App -> external_runtime
 ```
 
 `helper` 提供两个世界之间共享的通信基础设施。`external_runtime` 持有有状态的 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。普通用户代码通过 manager 查询公开 entity id，不接触 Bevy `Entity`。

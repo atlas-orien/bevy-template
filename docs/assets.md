@@ -7,7 +7,7 @@
 
 ## Imported Assets
 
-- `assets/images/characters/bevy/gabe/gabe-idle-run.png`
+- `assets/2d/characters/bevy/gabe/gabe-idle-run.png`
   - Source: Bevy official repository, `assets/textures/rpg/chars/gabe/gabe-idle-run.png`
   - Local reference: `/Users/ancient/src/github/bevy/assets/textures/rpg/chars/gabe/gabe-idle-run.png`
   - License: Bevy repository asset license

@@ -1,10 +1,10 @@
 use std::path::Path;
 
+use super::CheckStatus;
 use super::util::{
     derived_names, files_named_below, parse_rust_file, reject_path, require_mod_rs_in_subdirs,
     require_path, rust_files,
 };
-use super::CheckStatus;
 
 const ECS_CRATE: &str = "crates/ecs";
 const ECS_PROTOCOL: &str = "AI_PROTOCOL/ECS.md";

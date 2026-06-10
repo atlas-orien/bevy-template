@@ -1,7 +1,10 @@
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use super::CheckStatus;
+use super::util::{
+    manifest_has_workspace_dependency, read_file_if_exists, require_mod_rs_in_subdirs,
+    require_path, rust_files,
+};
 
 const RENDER_3D_CRATE: &str = "crates/render_3d";
 const RENDER_3D_PROTOCOL: &str = "AI_PROTOCOL/RENDER_3D.md";
@@ -9,11 +12,33 @@ const RENDER_3D_PROTOCOL: &str = "AI_PROTOCOL/RENDER_3D.md";
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(RENDER_3D_CRATE, &mut errors);
-    require_path(RENDER_3D_PROTOCOL, &mut errors);
-    require_path("crates/render_3d/src/camera", &mut errors);
-    require_path("crates/render_3d/src/scene", &mut errors);
-    require_path("crates/render_3d/src/ui", &mut errors);
+    require_path(
+        RENDER_3D_CRATE,
+        &mut errors,
+        "render_3d is the 3D presentation layer and must remain present",
+    );
+    require_path(
+        RENDER_3D_PROTOCOL,
+        &mut errors,
+        "AI_PROTOCOL/RENDER_3D.md documents the 3D render boundary rules",
+    );
+    require_path(
+        "crates/render_3d/src/lib.rs",
+        &mut errors,
+        "render_3d needs a crate root that exports presentation plugins/types",
+    );
+    for dir in [
+        "crates/render_3d/src/camera",
+        "crates/render_3d/src/scene",
+        "crates/render_3d/src/ui",
+    ] {
+        require_path(
+            dir,
+            &mut errors,
+            "3D presentation concepts should stay grouped by semantic directories",
+        );
+    }
+    require_mod_rs_in_subdirs(Path::new(RENDER_3D_CRATE).join("src"), &mut errors);
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);
     reject_world_rule_references(&mut errors);
@@ -27,7 +52,7 @@ pub fn check() -> CheckStatus {
 
 fn reject_dependencies(errors: &mut Vec<String>) {
     let manifest = Path::new(RENDER_3D_CRATE).join("Cargo.toml");
-    let Ok(source) = fs::read_to_string(&manifest) else {
+    let Some(source) = read_file_if_exists(&manifest) else {
         return;
     };
 
@@ -39,9 +64,9 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         "physics",
         "render_2d",
     ] {
-        if source.contains(&format!("{dependency}.workspace = true")) {
+        if manifest_has_workspace_dependency(&source, dependency) {
             errors.push(format!(
-                "{} depends on `{dependency}`; render_3d should stay presentation-only",
+                "{} depends on `{dependency}`; render_3d should stay presentation-only, so communicate through ecs data/facades instead",
                 manifest.display()
             ));
         }
@@ -50,7 +75,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 
 fn reject_direct_input(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(RENDER_3D_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
@@ -67,45 +92,17 @@ fn reject_direct_input(errors: &mut Vec<String>) {
 
 fn reject_world_rule_references(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(RENDER_3D_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
         for forbidden in ["set_movement_intent", "PhysicsBody", "PhysicsCollider"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; render_3d should not drive gameplay rules",
+                    "{} references `{forbidden}`; render_3d should not drive gameplay rules, so move the rule to gameplay/ecs/physics",
                     file.display()
                 ));
             }
-        }
-    }
-}
-
-fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!("required path is missing: {}", path.display()));
-    }
-}
-
-fn rust_files(root: &Path) -> Vec<PathBuf> {
-    let mut files = Vec::new();
-    collect_rust_files(root, &mut files);
-    files
-}
-
-fn collect_rust_files(root: &Path, files: &mut Vec<PathBuf>) {
-    let Ok(entries) = fs::read_dir(root) else {
-        return;
-    };
-
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            collect_rust_files(&path, files);
-        } else if path.extension().is_some_and(|ext| ext == "rs") {
-            files.push(path);
         }
     }
 }

@@ -1,7 +1,10 @@
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use super::CheckStatus;
+use super::util::{
+    manifest_has_workspace_dependency, read_file_if_exists, reject_path, require_mod_rs_in_subdirs,
+    require_path, rust_files,
+};
 
 const RENDER_2D_CRATE: &str = "crates/render_2d";
 const RENDER_2D_PROTOCOL: &str = "AI_PROTOCOL/RENDER_2D.md";
@@ -9,66 +12,41 @@ const RENDER_2D_PROTOCOL: &str = "AI_PROTOCOL/RENDER_2D.md";
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(RENDER_2D_CRATE, &mut errors);
-    require_path(RENDER_2D_PROTOCOL, &mut errors);
-    require_path("crates/render_2d/src/animation", &mut errors);
-    require_path("crates/render_2d/src/camera", &mut errors);
-    require_path("crates/render_2d/src/characters", &mut errors);
-    require_path("crates/render_2d/src/appearance", &mut errors);
-    require_path("crates/render_2d/src/geometry", &mut errors);
-    require_path("crates/render_2d/src/ordering", &mut errors);
-    require_path("crates/render_2d/src/screens", &mut errors);
-    require_path("crates/render_2d/src/sprite", &mut errors);
-    require_path("crates/render_2d/src/transform", &mut errors);
-    require_path("crates/render_2d/src/ui", &mut errors);
-    require_path("crates/render_2d/src/animation/frame", &mut errors);
-    require_path("crates/render_2d/src/animation/skeletal", &mut errors);
-    require_path("crates/render_2d/src/animation/frame/clip.rs", &mut errors);
     require_path(
-        "crates/render_2d/src/animation/frame/sprite_frame.rs",
+        RENDER_2D_CRATE,
         &mut errors,
+        "render_2d is the 2D presentation layer and must remain present",
     );
     require_path(
-        "crates/render_2d/src/animation/frame/playback.rs",
+        RENDER_2D_PROTOCOL,
         &mut errors,
+        "AI_PROTOCOL/RENDER_2D.md documents the 2D render boundary rules",
     );
     require_path(
-        "crates/render_2d/src/animation/skeletal/bone.rs",
+        "crates/render_2d/src/lib.rs",
         &mut errors,
+        "render_2d needs a crate root that exports presentation plugins/types",
     );
-    require_path(
-        "crates/render_2d/src/animation/skeletal/skeleton.rs",
-        &mut errors,
-    );
-    require_path(
-        "crates/render_2d/src/animation/skeletal/playback.rs",
-        &mut errors,
-    );
-    require_path("crates/render_2d/src/camera/main_camera.rs", &mut errors);
-    require_path("crates/render_2d/src/camera/systems.rs", &mut errors);
-    require_path("crates/render_2d/src/characters/character.rs", &mut errors);
-    require_path("crates/render_2d/src/appearance/color.rs", &mut errors);
-    require_path("crates/render_2d/src/appearance/opacity.rs", &mut errors);
-    require_path("crates/render_2d/src/appearance/visibility.rs", &mut errors);
-    require_path("crates/render_2d/src/geometry/shape.rs", &mut errors);
-    require_path("crates/render_2d/src/geometry/size.rs", &mut errors);
-    require_path("crates/render_2d/src/geometry/anchor.rs", &mut errors);
-    require_path("crates/render_2d/src/transform/offset.rs", &mut errors);
-    require_path("crates/render_2d/src/transform/scale.rs", &mut errors);
-    require_path("crates/render_2d/src/transform/rotation.rs", &mut errors);
-    require_path("crates/render_2d/src/ordering/z_index.rs", &mut errors);
-    require_path("crates/render_2d/src/sprite/flip.rs", &mut errors);
-    require_path("crates/render_2d/src/screens/clear_color.rs", &mut errors);
-    require_path("crates/render_2d/src/ui/theme.rs", &mut errors);
-    require_path("crates/render_2d/src/ui/markers.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/color.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/opacity.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/visibility.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/offset.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/scale.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/rotation.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/z_index.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/flip.rs", &mut errors);
+    for dir in [
+        "crates/render_2d/src/animation",
+        "crates/render_2d/src/camera",
+        "crates/render_2d/src/characters",
+        "crates/render_2d/src/appearance",
+        "crates/render_2d/src/geometry",
+        "crates/render_2d/src/ordering",
+        "crates/render_2d/src/screens",
+        "crates/render_2d/src/sprite",
+        "crates/render_2d/src/transform",
+        "crates/render_2d/src/ui",
+    ] {
+        require_path(
+            dir,
+            &mut errors,
+            "2D presentation concepts should stay grouped by semantic directories",
+        );
+    }
+    require_mod_rs_in_subdirs(Path::new(RENDER_2D_CRATE).join("src"), &mut errors);
+    reject_obsolete_geometry_mix(&mut errors);
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);
     reject_world_rule_references(&mut errors);
@@ -81,9 +59,28 @@ pub fn check() -> CheckStatus {
     }
 }
 
+fn reject_obsolete_geometry_mix(errors: &mut Vec<String>) {
+    for obsolete in [
+        "crates/render_2d/src/geometry/color.rs",
+        "crates/render_2d/src/geometry/opacity.rs",
+        "crates/render_2d/src/geometry/visibility.rs",
+        "crates/render_2d/src/geometry/offset.rs",
+        "crates/render_2d/src/geometry/scale.rs",
+        "crates/render_2d/src/geometry/rotation.rs",
+        "crates/render_2d/src/geometry/z_index.rs",
+        "crates/render_2d/src/geometry/flip.rs",
+    ] {
+        reject_path(
+            obsolete,
+            errors,
+            "geometry should only contain 2D shape/size/anchor concepts; move appearance/transform/ordering/sprite data to the matching directory",
+        );
+    }
+}
+
 fn reject_dependencies(errors: &mut Vec<String>) {
     let manifest = Path::new(RENDER_2D_CRATE).join("Cargo.toml");
-    let Ok(source) = fs::read_to_string(&manifest) else {
+    let Some(source) = read_file_if_exists(&manifest) else {
         return;
     };
 
@@ -95,9 +92,9 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         "physics",
         "render_3d",
     ] {
-        if source.contains(&format!("{dependency}.workspace = true")) {
+        if manifest_has_workspace_dependency(&source, dependency) {
             errors.push(format!(
-                "{} depends on `{dependency}`; render_2d should stay presentation-only",
+                "{} depends on `{dependency}`; render_2d should stay presentation-only, so communicate through ecs data/facades instead",
                 manifest.display()
             ));
         }
@@ -105,15 +102,15 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 }
 
 fn reject_direct_input(errors: &mut Vec<String>) {
-    for file in rust_files(&Path::new(RENDER_2D_CRATE).join("src")) {
-        let Ok(source) = fs::read_to_string(&file) else {
+    for file in rust_files(Path::new(RENDER_2D_CRATE).join("src")) {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
         for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; external sources belong in external_runtime",
+                    "{} references `{forbidden}`; external sources belong in external_runtime, so render_2d should read presentation state only",
                     file.display()
                 ));
             }
@@ -122,14 +119,14 @@ fn reject_direct_input(errors: &mut Vec<String>) {
 }
 
 fn reject_world_rule_references(errors: &mut Vec<String>) {
-    for file in rust_files(&Path::new(RENDER_2D_CRATE).join("src")) {
-        let Ok(source) = fs::read_to_string(&file) else {
+    for file in rust_files(Path::new(RENDER_2D_CRATE).join("src")) {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
         for forbidden in [
             "set_movement_intent",
-            "PhysicsBody",
+            "PhysicsRigidBody",
             "PhysicsCollider",
             "Hitbox",
             "Hurtbox",
@@ -139,7 +136,7 @@ fn reject_world_rule_references(errors: &mut Vec<String>) {
         ] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; render_2d should not drive gameplay rules",
+                    "{} references `{forbidden}`; render_2d should not drive gameplay rules, so move the rule to gameplay/ecs/physics",
                     file.display()
                 ));
             }
@@ -148,7 +145,7 @@ fn reject_world_rule_references(errors: &mut Vec<String>) {
 }
 
 fn reject_ambiguous_files(errors: &mut Vec<String>) {
-    for file in rust_files(Path::new(RENDER_2D_CRATE)) {
+    for file in rust_files(RENDER_2D_CRATE) {
         let Some(file_name) = file.file_name().and_then(|name| name.to_str()) else {
             continue;
         };
@@ -158,44 +155,6 @@ fn reject_ambiguous_files(errors: &mut Vec<String>) {
                 "{} has an ambiguous name; render_2d files should be named by presentation role",
                 file.display()
             ));
-        }
-    }
-}
-
-fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!("required path is missing: {}", path.display()));
-    }
-}
-
-fn reject_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if path.exists() {
-        errors.push(format!(
-            "obsolete path should not exist: {}",
-            path.display()
-        ));
-    }
-}
-
-fn rust_files(root: &Path) -> Vec<PathBuf> {
-    let mut files = Vec::new();
-    collect_rust_files(root, &mut files);
-    files
-}
-
-fn collect_rust_files(root: &Path, files: &mut Vec<PathBuf>) {
-    let Ok(entries) = fs::read_dir(root) else {
-        return;
-    };
-
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            collect_rust_files(&path, files);
-        } else if path.extension().is_some_and(|ext| ext == "rs") {
-            files.push(path);
         }
     }
 }

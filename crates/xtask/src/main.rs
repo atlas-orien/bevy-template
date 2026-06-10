@@ -93,7 +93,7 @@ fn parse_pack_frame_args(args: impl Iterator<Item = String>) -> Result<(String, 
             value => {
                 if target.replace(value.to_string()).is_some() {
                     return Err(argument_error(
-                        "pack-frame accepts exactly one target like `characters/player`",
+                        "pack-frame accepts exactly one target like `{category}/{name}`",
                     ));
                 }
             }
@@ -102,7 +102,7 @@ fn parse_pack_frame_args(args: impl Iterator<Item = String>) -> Result<(String, 
 
     let Some(target) = target else {
         return Err(argument_error(
-            "pack-frame requires a target like `characters/player`",
+            "pack-frame requires a target like `{category}/{name}`",
         ));
     };
 

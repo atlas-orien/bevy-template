@@ -13,7 +13,7 @@
 
 ECS 是 Entity Component System 的缩写，是 Bevy 使用的核心架构。
 
-传统面向对象写法里，我们可能会设计一个很大的 `Player` 类型，把血量、移动、输入、动画、背包、攻击逻辑都放进去。ECS 的思路不同：游戏对象不是一个“大类”，而是一个实体 ID 加上一组小的数据组件，再由系统函数去处理这些数据。
+传统面向对象写法里，我们可能会设计一个很大的 `Character` 类型，把血量、移动、输入、动画、背包、攻击逻辑都放进去。ECS 的思路不同：游戏对象不是一个“大类”，而是一个实体 ID 加上一组小的数据组件，再由系统函数去处理这些数据。
 
 ### Entity
 
@@ -23,7 +23,7 @@ ECS 是 Entity Component System 的缩写，是 Bevy 使用的核心架构。
 
 例如这些都可以是实体：
 
-- 玩家
+- 角色
 - 敌人
 - NPC
 - 武器
@@ -46,16 +46,16 @@ ECS 是 Entity Component System 的缩写，是 Bevy 使用的核心架构。
 - `MaxHealth`: 最大生命值
 - `Speed`: 移动速度
 - `MovementIntent`: 想往哪个方向移动，或想移动到哪个位置
-- `Player`: 玩家标记
+- `Character`: 角色标记
 - `Enemy`: 敌人标记
 - `Faction`: 阵营
 - `Inventory`: 背包数据
 
-在 ECS 里，一个“玩家”不是一个很大的 `Player` 类，而是一个实体加上一组组件：
+在 ECS 里，一个“角色”不是一个很大的 `Character` 类，而是一个实体加上一组组件：
 
 ```text
 Entity
-+ Player
++ Character
 + Health
 + MaxHealth
 + MovementIntent
@@ -75,7 +75,7 @@ Entity
 + Transform
 ```
 
-这样 `movement_system` 可以同时处理玩家和敌人，因为它只关心实体有没有 `MovementIntent`、`Speed`、`Transform`，不关心它是不是玩家。
+这样 `movement_system` 可以同时处理角色和敌人，因为它只关心实体有没有 `MovementIntent`、`Speed`、`Transform`，不关心它是不是角色。
 
 ### System
 
@@ -97,10 +97,10 @@ Entity
 
 它不是新的运行时能力，只是方便生成实体时一次性插入多种组件。
 
-例如 `PlayerBundle` 可以组合：
+具体 prefab 可以组合这些 ECS 组件：
 
 ```text
-Player
+Character
 Health
 MaxHealth
 Speed
@@ -110,7 +110,7 @@ Transform
 Visibility
 ```
 
-所以 `crates/ecs/src/components/characters/player.rs` 可以定义 `Player` 和 `PlayerBundle`。如果要写 `spawn_player_system`，应该放到 `crates/ecs/src/systems/spawning` 或更高层的 gameplay 流程 crate。
+`ecs` 只定义可复用数据和 marker。具体对象 Bundle 和生成逻辑属于 `prefab` 或具体项目内容。
 
 ### Resource
 
@@ -183,7 +183,7 @@ app = 如何组装并启动游戏
 ## 当前结构
 
 - `crates/ecs/src/components/base`: 基础组件，例如名字、公开 ID、血量、移动、阵营。
-- `crates/ecs/src/components/characters`: 角色类实体数据，例如 `Player`、`Enemy`、`Npc` 以及对应 Bundle。
+- `crates/ecs/src/components/characters`: 角色类实体数据，例如 `Character`、`Enemy`、`Npc` 以及对应 Bundle。
 - `crates/ecs/src/components/items`: 物品类实体数据，例如武器、防具、消耗品、掉落物。
 - `crates/ecs/src/components/world`: 世界、地图、关卡、区域、出生点等数据。
 - `crates/ecs/src/components/ui`: UI 相关 ECS 数据，例如 HUD、血条、菜单、按钮动作。

@@ -6,7 +6,7 @@
 
 这里可以直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等类型。
 
-模板阶段默认没有真实游戏内容。每个表现目录只保留可删除的 `example.rs`，用于示范代码应该写在哪里。
+模板阶段默认没有真实游戏内容。每个表现目录只保留可替换的占位文件，用于固定代码落点。
 
 ## 职责
 
@@ -41,7 +41,7 @@
 - `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
 - `ui`: 2D UI 表现。
 
-每个目录都有可删除的 `example.rs`。`animation` 继续拆成 `frame/example.rs` 和 `skeletal/example.rs`，分别示范帧动画和骨骼动画的边界。用户开始真实项目后，可以直接删除或替换这些 example 文件。
+每个目录都可以保留一个可删除的占位模块。`animation` 继续拆成 `frame` 和 `skeletal`，分别表达帧动画和骨骼动画的边界。用户开始真实项目后，可以直接删除或替换这些占位文件。
 
 ## 文件规则
 

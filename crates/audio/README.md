@@ -18,7 +18,7 @@
 - `AudioSampleSource`: 文件型声音，例如 wav、ogg、flac、mp3。
 - `ProceduralAudioSource`: 程序生成声音，例如发动机、风、噪声、纯音。
 
-具体的 `player_attack.wav`、`engine_loop`、`level_bgm` 不放在这里，放到 prefab 或未来 content。
+具体的 `object_action.wav`、`engine_loop`、`level_bgm` 不放在这里，放到 prefab 或未来 content。
 
 ## spatial
 

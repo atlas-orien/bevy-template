@@ -95,7 +95,6 @@ Bevy App 在 `Update` 中把 request inbox 转发为 `RuntimeRequest` message，
 当前注册内容：
 
 - `Update`: 消费 gameplay API 请求。
-- `Update + Playing`: 运行 prefab 暴露的 movement system 示例。
 - `OnExit(Playing)`: 清理 gameplay session entity。
 
 新增 system 调度时：

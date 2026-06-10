@@ -61,8 +61,8 @@
 
 - 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
 - 具体 Component、Bundle、Resource、system 拆到语义明确的文件里。
-- 模板阶段每个目录可以只保留可删除的 `example.rs`。
-- 用户开始真实项目后，可以直接删除或替换 example 文件。
+- 模板阶段每个目录可以只保留可删除的占位文件。
+- 用户开始真实项目后，可以直接删除或替换占位文件。
 - 不新增 `common.rs`、`misc.rs`、`utils.rs` 这类含义模糊的文件。
 - 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `animation/frame`。
 

@@ -38,7 +38,7 @@
 - `audio` 定义“声音怎么表达和播放”。
 - `prefab` 或未来 `content` 定义“这个对象使用哪些声音”。
 - `assets/audio` 放真实音频文件。
-- 不写具体 `player_attack.wav`、`level_bgm`、`engine_loop` 配置。
+- 不写具体 `object_action.wav`、`level_bgm`、`engine_loop` 配置。
 - 不写 gameplay 判定。
 - 不读取输入。
 - 不定义渲染、物理或核心 ECS 数据。

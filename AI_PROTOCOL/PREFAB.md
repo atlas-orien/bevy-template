@@ -36,7 +36,7 @@
 - 具体 prefab 本身保存生成所需数据，优先暴露 prefab struct + bundle，并实现最小 `Prefab` trait。
 - `Prefab` trait 只表达公共生成能力；具体 prefab 的特殊能力放在自己的类型或模块里。
 - 不要把每个 prefab 做成 Bevy plugin。
-- 模板本身不携带 demo prefab 或 demo 资源。
+- 模板本身不携带默认内容 prefab 或默认内容资源。
 
 ## Render 边界
 
@@ -49,7 +49,7 @@
 ## Audio 边界
 
 - `prefab` 当前不依赖 `audio`；audio prefab 接入后，可以组合 `audio` 暴露的声音来源、播放设置、空间音频等基础数据。
-- 具体对象使用哪些声音，例如 `player_attack.wav`、`engine_loop`、`level_bgm`，属于 prefab 或未来 content。
+- 具体对象使用哪些声音，例如 `object_action.wav`、`engine_loop`、`level_bgm`，属于 prefab 或未来 content。
 - `prefab` 不实现音频后端、DSP 合成器或播放 runtime。
 - `prefab` 不决定什么时候播放声音；播放时机由 gameplay、ecs event 或其它上层流程决定。
 

@@ -32,9 +32,9 @@
 
 ## 步骤总览
 
-1. `01-local-input.md` — 把本地键盘改成符合架构的外部输入源（让玩家能动；含最小烟雾测试）。
+1. `01-local-input.md` — 把本地键盘改成符合架构的外部输入源。
 2. `02-ai-control.md` — 实现 AI 控制源（本模板的立项目的）。
-3. `03-subsystems-and-examples.md` — 填充 audio / render_3d / animation / ui 子系统与各 `example.rs`。
+3. `03-subsystems.md` — 填充 audio / render_3d / animation / ui 子系统与表现占位模块。
 
 网络输入属于 v2，结构上和 AI 源走同一条 `RuntimeRequest` 路，本路线图暂不展开。
 

@@ -31,7 +31,7 @@
 
 不适合放这里：
 
-- `Player`、`Enemy` 这种角色身份，放到 `characters`
+- `Character`、`Enemy` 这种角色身份，放到 `characters`
 - `Weapon`、`Consumable` 这种物品身份，放到 `items`
 - 系统函数，例如 `movement_system`
 
@@ -41,8 +41,8 @@
 
 适合放这里：
 
-- 角色身份 marker：`Player`、`Enemy`、`Npc`
-- 角色默认组合：`PlayerBundle`、`EnemyBundle`、`NpcBundle`
+- 角色身份 marker：`Character`、`Enemy`、`Npc`
+- 具体对象组合不放在 ecs，放到 prefab 或具体项目内容
 - 角色专属纯数据：例如职业、等级、角色类型
 
 `characters` 可以组合 `base` 里的基础组件，但不写行为逻辑。

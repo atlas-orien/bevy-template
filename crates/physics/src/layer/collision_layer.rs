@@ -4,7 +4,7 @@ use bevy::prelude::*;
 pub enum PhysicsLayer {
     #[default]
     Default,
-    Player,
+    Actor,
     Enemy,
     World,
     Sensor,

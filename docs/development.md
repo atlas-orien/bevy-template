@@ -23,7 +23,7 @@ Suggested brief format:
 
 ## Goal
 
-## Player Experience
+## Character Experience
 
 ## Technical Notes
 

@@ -9,7 +9,7 @@
 - `Entity` 到底是不是对象实例？
 - `Component` 是一个共享实例，还是每个对象都有一份？
 - `spawn` 之后数据放在哪里？
-- 为什么不是 `player.move()`，而是 `Query` 和 `System`？
+- 为什么不是 `object.move()`，而是 `Query` 和 `System`？
 - `Prefab` 和真正生成出来的对象是什么关系？
 
 ## Bevy 到底是什么
@@ -140,15 +140,15 @@ World 里有这么一个东西。
 
 ```text
 Entity(42)
-├── Player
-├── PlayerSpeed(180.0)
+├── Character
+├── Speed(180.0)
 ├── MovementIntent
 ├── Transform
 ├── PhysicsRigidBody
 └── Character2dRender
 ```
 
-这个 Entity 被我们理解成“玩家”，不是因为 `Entity` 自己叫玩家，而是因为它拥有 `Player`、`PlayerSpeed`、`MovementIntent` 等组件。
+这个 Entity 被我们理解成“角色”，不是因为 `Entity` 自己叫角色，而是因为它拥有 `Character`、`Speed`、`MovementIntent` 等组件。
 
 ## Component
 
@@ -165,7 +165,7 @@ struct Speed(f32);
 
 ```rust
 #[derive(Component)]
-struct Player;
+struct Character;
 ```
 
 如果 100 个 Entity 都有 `Speed`，那就是 100 份 `Speed` 数据：
@@ -226,7 +226,7 @@ fn movement_system(mut query: Query<(&Speed, &mut Transform)>) {
 在面向对象写法里，我们可能会写：
 
 ```rust
-player.move_right();
+object.move_right();
 ```
 
 在 ECS 里，通常不是 Entity 调用方法，而是 system 批量处理符合条件的 Entity：
@@ -291,11 +291,11 @@ spawn 时，把组件实例交给 World。
 如何把 ecs + physics + render 的组件组合起来，生成一个完整对象。
 ```
 
-例如具体项目可以定义自己的玩家 prefab。prefab 不是已经进入 World 的玩家实例，而是一个待生成的 prefab 实例，保存生成对象所需的数据：
+例如具体项目可以定义自己的角色 prefab。prefab 不是已经进入 World 的角色实例，而是一个待生成的 prefab 实例，保存生成对象所需的数据：
 
 ```text
-PlayerPrefab = 待生成的玩家 prefab 实例，包含生成所需的数据
-PlayerPrefabBundle = 要放进 World 的组件组合
+CharacterPrefab = 待生成的角色 prefab 实例，包含生成所需的数据
+CharacterPrefabBundle = 要放进 World 的组件组合
 Entity = 生成后返回的主对象 ID
 World = 真正保存组件实例的地方
 ```
@@ -307,9 +307,8 @@ World
 └── Entity(42)
     ├── GameplayEntity
     ├── GameplaySessionEntity
-    ├── Player
-    ├── LocalPlayerControlled
-    ├── PlayerSpeed(180.0)
+    ├── Character
+    ├── Speed(180.0)
     ├── MovementIntent
     ├── Facing
     ├── Transform
@@ -330,7 +329,7 @@ World
 ```text
 Root
 └── Level
-    ├── Player
+    ├── Character
     ├── Enemy
     └── Camera
 ```
@@ -344,10 +343,10 @@ Root
 让生命周期跟着树结构传播。
 ```
 
-在这种模型里，要找玩家，可能会写成：
+在这种模型里，要找角色，可能会写成：
 
 ```text
-root.get_node("Level/Player")
+root.get_node("Level/Character")
 ```
 
 或者让父节点保存子节点引用。
@@ -363,13 +362,13 @@ World 里谁拥有我需要的这些组件？
 例如：
 
 ```rust
-Query<(&Player, &Transform)>
+Query<(&Character, &Transform)>
 ```
 
 表达的是：
 
 ```text
-从整个 World 里找出所有同时拥有 Player 和 Transform 的 Entity。
+从整个 World 里找出所有同时拥有 Character 和 Transform 的 Entity。
 ```
 
 所以核心差异是：
@@ -397,19 +396,19 @@ Resource
 Entity ID
 ```
 
-例如，想找到玩家，可以给玩家 Entity 挂上 `Player` marker：
+例如，想找到角色，可以给目标 Entity 挂上 `Character` marker：
 
 ```rust
 #[derive(Component)]
-struct Player;
+struct Character;
 ```
 
 然后通过查询找到它：
 
 ```rust
-fn find_player(query: Query<Entity, With<Player>>) {
-    for player in &query {
-        // player 是玩家 Entity ID
+fn find_character(query: Query<Entity, With<Character>>) {
+    for entity in &query {
+        // entity 是目标 Entity ID
     }
 }
 ```
@@ -418,7 +417,7 @@ fn find_player(query: Query<Entity, With<Player>>) {
 
 ```rust
 #[derive(Resource)]
-struct PlayerEntity(Entity);
+struct CharacterEntity(Entity);
 ```
 
 这不是回到 root tree，而是明确告诉 ECS：
@@ -492,7 +491,7 @@ prefab 实例执行自己的 spawn。
 Bevy World 保存生成出来的组件实例。
 ```
 
-模板默认 plan 为空。以后新增玩家、敌人、道具、关卡物件时，不需要维护一个中心 enum 或 match 列表。只要新的 prefab 实现 `prefab::Prefab`，就可以放进 `GameplaySpawnPlan`。
+模板默认 plan 为空。以后新增角色、敌人、道具、关卡物件时，不需要维护一个中心 enum 或 match 列表。只要新的 prefab 实现 `prefab::Prefab`，就可以放进 `GameplaySpawnPlan`。
 
 如果从普通 Rust 迁移理解，可以先记住：
 

@@ -287,7 +287,7 @@ fn validate_target(target: &str) -> Result<()> {
     {
         return Err(asset_error(
             "pack-frame-target",
-            "target must look like `characters/player`",
+            "target must look like `{category}/{name}`",
         ));
     }
 

@@ -1,8 +1,8 @@
-# 步骤 1：本地输入源（让玩家能动）
+# 步骤 1：本地输入源
 
 ## 目标
 
-让玩家按方向键/WASD 时，目标玩家（示例使用 `GameplayEntityId(1)`）移动。本地键盘必须走架构规定的路：**在 `external_runtime` 内读输入 → 发 `RuntimeRequest::SetMovementIntent` → channel**，绝不在 Bevy App 内直接写 intent。
+方向键/WASD 产生移动意图请求。本地键盘必须走架构规定的路：**在 `external_runtime` 内读输入 → 发 `RuntimeRequest::SetMovementIntent` → channel**，绝不在 Bevy App 内直接写 intent。
 
 ## 现状
 
@@ -13,7 +13,7 @@
 - 轮询点：`crates/external_runtime/src/runtime/task.rs` 的 `poll_external_sources(&manager)`，每 16ms 调用一次。
 - 发请求：`crates/external_runtime/src/manager` 暴露的自由函数
   `set_movement_intent(&manager, id, target) -> bool`。
-- 目标 id：示例目标是 `prefab::identity::GameplayEntityId(1)`；模板默认不生成玩家，具体项目或 example 分支需要自行生成带这个 id 的 prefab。
+- 目标 id：模板默认不生成对象；具体项目需要自行决定目标 `GameplayEntityId`，并生成带这个 id 的 prefab。
 - 移动目标类型：`intent::movement::MovementTarget`，变体 `None / Direction(Vec2) / Position(Vec2)`。
 - 这两个类型 `external_runtime` 已作为依赖引入，无需改依赖。
 
@@ -24,7 +24,7 @@
 1. 重写 `crates/external_runtime/src/input/local/keyboard.rs`：不再是 Bevy system，而是一个**读 OS 键盘状态**的普通函数，返回当前 `MovementTarget`。
    - 读 OS 键盘需要一个不依赖窗口的输入库，例如在 `crates/external_runtime/Cargo.toml` 加 `device_query`。
    - 方向键/WASD 合成方向向量，无按键时返回 `MovementTarget::None`，否则 `Direction(dir.normalize_or_zero())`。
-2. 在 `poll_external_sources` 中调用它，对 `GameplayEntityId(1)` 调 `set_movement_intent`。
+2. 在 `poll_external_sources` 中调用它，对项目选定的 `GameplayEntityId` 调 `set_movement_intent`。
 3. `input/local/mod.rs` 导出外部键盘来源类型。
 
 ## 已知注意点
@@ -41,4 +41,4 @@
 
 ## 验收
 
-按 README 通用验收全绿。具体项目或 example 分支生成目标 prefab 后，`cargo run` 后用键盘能让该对象移动。
+按 README 通用验收全绿。具体项目生成目标 prefab 后，`cargo run` 后用键盘能让该对象移动。

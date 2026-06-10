@@ -36,8 +36,8 @@ assets/2d/animated/{category}/{name}/
 例如：
 
 ```text
-workbench/source_frames/characters/player/
-assets/2d/animated/characters/player/
+workbench/source_frames/{category}/{name}/
+assets/2d/animated/{category}/{name}/
 ```
 
 散帧文件使用这个命名格式：
@@ -60,25 +60,25 @@ run_down_002.png
 打包后目标目录只放运行时需要的文件：
 
 ```text
-assets/2d/animated/characters/player/player.png
-assets/2d/animated/characters/player/player.frames.ron
+assets/2d/animated/{category}/{name}/{name}.png
+assets/2d/animated/{category}/{name}/{name}.frames.ron
 ```
 
-`player.png` 是打包后的规则网格 sprite sheet。
+`{name}.png` 是打包后的规则网格 sprite sheet。
 
-`player.frames.ron` 是帧动画描述文件，记录图片路径、帧尺寸、行列数、clip 名称、帧 index、fps 和是否循环。
+`{name}.frames.ron` 是帧动画描述文件，记录图片路径、帧尺寸、行列数、clip 名称、帧 index、fps 和是否循环。
 
 当前打包命令：
 
 ```sh
-cargo run -p xtask -- pack-frame characters/player
+cargo run -p xtask -- pack-frame {category}/{name}
 ```
 
-其中 `characters/player` 会自动映射：
+其中 `{category}/{name}` 会自动映射：
 
 ```text
-workbench/source_frames/characters/player/
-assets/2d/animated/characters/player/
+workbench/source_frames/{category}/{name}/
+assets/2d/animated/{category}/{name}/
 ```
 
 ## 命名

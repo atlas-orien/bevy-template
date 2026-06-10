@@ -43,6 +43,7 @@ pub fn check() -> CheckStatus {
     reject_network_module(&mut errors);
     reject_data_definitions(&mut errors);
     reject_plugin_definition(&mut errors);
+    reject_bevy_input_access(&mut errors);
     reject_runtime_world_access(&mut errors);
     reject_world_mutation(&mut errors);
 
@@ -151,13 +152,38 @@ fn reject_runtime_world_access(errors: &mut Vec<String>) {
     }
 }
 
+fn reject_bevy_input_access(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(EXTERNAL_RUNTIME_CRATE)) {
+        let Some(source) = read_file_if_exists(&file) else {
+            continue;
+        };
+
+        for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
+            if source.contains(forbidden) {
+                errors.push(format!(
+                    "{} references `{forbidden}`; local input should be polled as an external source and submitted through manager requests",
+                    file.display()
+                ));
+            }
+        }
+    }
+}
+
 fn reject_world_mutation(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(EXTERNAL_RUNTIME_CRATE)) {
         let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
-        for forbidden in ["Commands", "Transform", "PhysicsBody", "PhysicsCollider"] {
+        for forbidden in [
+            "Commands",
+            "Query<",
+            "Res<",
+            "ResMut<",
+            "Transform",
+            "PhysicsBody",
+            "PhysicsCollider",
+        ] {
             if source.contains(forbidden) {
                 errors.push(format!(
                     "{} references `{forbidden}`; external_runtime should use manager request/update channels instead of mutating world results",

@@ -10,6 +10,7 @@ publish = false
 
 [dependencies]
 bevy.workspace = true
+device_query = "4.0.1"
 error.workspace = true
 gameplay.workspace = true
 helper.workspace = true

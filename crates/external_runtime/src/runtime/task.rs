@@ -1,7 +1,11 @@
 use tokio::sync::watch;
 use tokio::task::JoinHandle;
 
+use crate::input::local::LocalKeyboardInput;
 use crate::manager::ExternalRuntimeManager;
+use crate::manager::set_movement_intent;
+
+use prefab::identity::GameplayEntityId;
 
 #[derive(Debug, Clone, Copy)]
 pub struct ExternalRuntimeConfig {
@@ -41,12 +45,13 @@ async fn run_external_runtime_loop(
     mut shutdown: watch::Receiver<bool>,
 ) {
     let mut interval = tokio::time::interval(config.tick_interval);
+    let mut sources = ExternalSources::default();
 
     loop {
         tokio::select! {
             _ = interval.tick() => {
                 manager.sync_gameplay_updates();
-                poll_external_sources(&manager).await;
+                sources.poll(&manager).await;
             }
             changed = shutdown.changed() => {
                 if changed.is_err() || *shutdown.borrow() {
@@ -57,6 +62,18 @@ async fn run_external_runtime_loop(
     }
 }
 
-async fn poll_external_sources(_manager: &ExternalRuntimeManager) {
-    // Local, device, and AI sources will be polled here.
+#[derive(Default)]
+struct ExternalSources {
+    local_keyboard: LocalKeyboardInput,
+}
+
+impl ExternalSources {
+    async fn poll(&mut self, manager: &ExternalRuntimeManager) {
+        self.poll_local_keyboard(manager);
+    }
+
+    fn poll_local_keyboard(&self, manager: &ExternalRuntimeManager) {
+        let target = self.local_keyboard.movement_target();
+        let _ = set_movement_intent(manager, GameplayEntityId(1), target);
+    }
 }

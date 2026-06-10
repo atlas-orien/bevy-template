@@ -1,40 +1,53 @@
-use bevy::prelude::*;
-use intent::movement::{MovementIntentQuery, set_movement_intent};
-use prefab::intent::{LocalMovementIntentEntities, MovementTarget};
+use bevy::prelude::Vec2;
+use device_query::{DeviceQuery, DeviceState, Keycode};
+use intent::movement::MovementTarget;
 
-pub fn keyboard_movement_input_system(
-    keyboard_input: Res<ButtonInput<KeyCode>>,
-    controlled_entities: LocalMovementIntentEntities,
-    mut movement_intents: MovementIntentQuery,
-) {
-    let direction = keyboard_movement_direction(&keyboard_input);
-    let target = if direction == Vec2::ZERO {
-        MovementTarget::None
-    } else {
-        MovementTarget::Direction(direction)
-    };
+#[derive(Debug, Clone)]
+pub struct LocalKeyboardInput {
+    device_state: DeviceState,
+}
 
-    for entity in &controlled_entities {
-        let _ = set_movement_intent(entity, target, &mut movement_intents);
+impl LocalKeyboardInput {
+    pub fn new() -> Self {
+        Self {
+            device_state: DeviceState::new(),
+        }
+    }
+
+    pub fn movement_target(&self) -> MovementTarget {
+        let keys = self.device_state.get_keys();
+        let direction = keyboard_movement_direction(&keys);
+
+        if direction == Vec2::ZERO {
+            MovementTarget::None
+        } else {
+            MovementTarget::Direction(direction)
+        }
     }
 }
 
-fn keyboard_movement_direction(keyboard_input: &ButtonInput<KeyCode>) -> Vec2 {
+impl Default for LocalKeyboardInput {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+fn keyboard_movement_direction(keys: &[Keycode]) -> Vec2 {
     let mut direction = Vec2::ZERO;
 
-    if keyboard_input.pressed(KeyCode::KeyA) || keyboard_input.pressed(KeyCode::ArrowLeft) {
+    if keys.contains(&Keycode::A) || keys.contains(&Keycode::Left) {
         direction.x -= 1.0;
     }
 
-    if keyboard_input.pressed(KeyCode::KeyD) || keyboard_input.pressed(KeyCode::ArrowRight) {
+    if keys.contains(&Keycode::D) || keys.contains(&Keycode::Right) {
         direction.x += 1.0;
     }
 
-    if keyboard_input.pressed(KeyCode::KeyW) || keyboard_input.pressed(KeyCode::ArrowUp) {
+    if keys.contains(&Keycode::W) || keys.contains(&Keycode::Up) {
         direction.y += 1.0;
     }
 
-    if keyboard_input.pressed(KeyCode::KeyS) || keyboard_input.pressed(KeyCode::ArrowDown) {
+    if keys.contains(&Keycode::S) || keys.contains(&Keycode::Down) {
         direction.y -= 1.0;
     }
 

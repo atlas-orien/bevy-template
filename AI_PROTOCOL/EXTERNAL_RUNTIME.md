@@ -2,18 +2,12 @@
 
 这个文件是 `crates/external_runtime` 的 AI 规则。
 
-`external_runtime` 是外部来源和 Bevy gameplay 之间的 adapter 层。
-
-它包含两类代码：
-
-- Bevy App 外部的 runtime loop 和 manager-side API。
-- 注册在 Bevy App 内的 source adapter system，例如本地键盘输入转 intent。
+`external_runtime` 是 Bevy App 外部的 runtime 和 manager-side adapter 层。
 
 项目运行时有两套系统：
 
 - Bevy App：运行 Bevy `World`、`Schedule`、render、physics、gameplay。
-- External Runtime：运行 Bevy App 外部的外设、AI、脚本、回放，以及未来网络等外部系统。
-- Bevy-side source adapter：在 Bevy App 内读取本地输入等 Bevy 资源，并转换成 intent 或 gameplay API 请求。
+- External Runtime：运行 Bevy App 外部的本地输入、外设、AI、脚本、回放，以及未来网络等外部系统。
 
 `external_runtime` 通过 `external_runtime::manager` 持有 gameplay transport，并通过双向 channel 和 Bevy App 通信。
 
@@ -21,10 +15,10 @@
 
 - 启动和停止 Bevy App 外部的 runtime loop。
 - 持有 manager，作为外部系统进入 gameplay 的唯一入口。
-- 管理 input/local、input/device、input/ai、script、replay 等来源模块。
+- 管理 input/local、input/device、input/ai、script、replay 等外部来源模块。
 - 把外部来源转换成 manager API 调用。
-- runtime loop 和 manager 不直接读取或修改 Bevy `World`。
-- Bevy-side input adapter 可以读取 Bevy 输入资源，并通过 `intent` 或 `gameplay::api` 的窄入口写入请求。
+- 不直接读取或修改 Bevy `World`。
+- 本地键盘/鼠标也作为 external runtime 来源处理；v1 通过 OS 设备状态轮询转成 manager API 请求。
 
 ## 代码落点
 
@@ -49,10 +43,11 @@
 
 ## Input adapter 规则
 
-- `input/local` 可以定义 Bevy-side input system，例如读取 `ButtonInput<KeyCode>`。
-- input adapter 只把外部来源转换成 intent 或 gameplay API 请求，不直接生成实体。
-- input adapter 不直接使用裸 `ecs`，通过 `intent` 和 `prefab` 暴露的窄 facade 定位可控实体和写入 intent。
-- input adapter 不直接使用 `Commands`、`Transform` 或物理组件。
+- `input/local` 读取本地 OS 设备状态，例如键盘、鼠标、手柄。
+- `input/local` 不读取 Bevy `ButtonInput`、`KeyCode`、`MouseButton` 或 `Gamepad` 资源。
+- input adapter 只把外部来源转换成 manager API 调用，不直接生成实体。
+- input adapter 不直接使用裸 `ecs`，通过 manager API 提交 gameplay 请求或 intent 请求。
+- input adapter 不直接使用 `Commands`、`Query`、`Res`、`ResMut`、`Transform` 或物理组件。
 
 ## Manager 规则
 
@@ -75,7 +70,7 @@
 ## 边界规则
 
 - 不定义核心 `Component`、`Bundle`、`Resource`、`Event`。
-- runtime loop 和 manager 不生成实体；运行中生成必须通过 gameplay API 请求。
+- 不生成实体；运行中生成必须通过 gameplay API 请求。
 - 不直接依赖或使用裸 `ecs`。
 - 不封装物理后端。
 - 不写渲染、动画、UI、相机。

@@ -12,12 +12,14 @@ use prefab::identity::GameplayEntityId;
 #[derive(Debug, Clone, Copy)]
 pub struct ExternalRuntimeConfig {
     pub tick_interval: core::time::Duration,
+    pub ai_fallback_enabled: bool,
 }
 
 impl Default for ExternalRuntimeConfig {
     fn default() -> Self {
         Self {
             tick_interval: core::time::Duration::from_millis(16),
+            ai_fallback_enabled: false,
         }
     }
 }
@@ -53,7 +55,7 @@ async fn run_external_runtime_loop(
         tokio::select! {
             _ = interval.tick() => {
                 manager.sync_gameplay_updates();
-                sources.poll(&manager).await;
+                sources.poll(&manager, config).await;
             }
             changed = shutdown.changed() => {
                 if changed.is_err() || *shutdown.borrow() {
@@ -72,8 +74,9 @@ struct ExternalSources {
 }
 
 impl ExternalSources {
-    async fn poll(&mut self, manager: &ExternalRuntimeManager) {
-        if !self.poll_local_keyboard(manager) {
+    async fn poll(&mut self, manager: &ExternalRuntimeManager, config: ExternalRuntimeConfig) {
+        let keyboard_active = self.poll_local_keyboard(manager);
+        if config.ai_fallback_enabled && !keyboard_active {
             self.ai_control.poll(manager);
         }
     }

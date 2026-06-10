@@ -1,6 +1,6 @@
 pub mod example;
 
-pub use example::{ExampleCharacter2d, ExampleCharacter2dBundle};
+pub use example::{ExampleCharacter2d, ExampleCharacter2dBundle, ExampleGabeCharacter2dBundle};
 
 use bevy::prelude::*;
 

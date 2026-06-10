@@ -1,8 +1,6 @@
-pub mod character;
+pub mod example;
 
 use bevy::prelude::*;
-
-pub use character::{Character2dRender, Character2dRenderBundle};
 
 pub struct CharacterRenderPlugin;
 

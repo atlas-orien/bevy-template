@@ -1,8 +1,11 @@
 mod convert;
+mod events;
 mod systems;
 
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::{NoUserData, RapierDebugRenderPlugin, RapierPhysicsPlugin};
+use bevy_rapier2d::prelude::{
+    NoUserData, PhysicsSet as RapierPhysicsSet, RapierDebugRenderPlugin, RapierPhysicsPlugin,
+};
 
 pub fn add_physics_backend(app: &mut App) {
     app.add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
@@ -44,6 +47,14 @@ pub fn add_physics_backend(app: &mut App) {
                 systems::sync_physics_forces,
                 systems::sync_physics_impulses,
             ),
+        )
+        .add_systems(
+            PostUpdate,
+            (
+                events::forward_collision_events,
+                events::forward_contact_force_events,
+            )
+                .after(RapierPhysicsSet::Writeback),
         );
 }
 

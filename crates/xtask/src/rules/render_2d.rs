@@ -16,35 +16,11 @@ pub fn check() -> CheckStatus {
     require_path("crates/render_2d/src/characters", &mut errors);
     require_path("crates/render_2d/src/screens", &mut errors);
     require_path("crates/render_2d/src/ui", &mut errors);
-    require_path("crates/render_2d/src/animation/frame", &mut errors);
-    require_path("crates/render_2d/src/animation/skeletal", &mut errors);
-    require_path("crates/render_2d/src/animation/frame/clip.rs", &mut errors);
-    require_path(
-        "crates/render_2d/src/animation/frame/sprite_frame.rs",
-        &mut errors,
-    );
-    require_path(
-        "crates/render_2d/src/animation/frame/playback.rs",
-        &mut errors,
-    );
-    require_path(
-        "crates/render_2d/src/animation/skeletal/bone.rs",
-        &mut errors,
-    );
-    require_path(
-        "crates/render_2d/src/animation/skeletal/skeleton.rs",
-        &mut errors,
-    );
-    require_path(
-        "crates/render_2d/src/animation/skeletal/playback.rs",
-        &mut errors,
-    );
-    require_path("crates/render_2d/src/camera/main_camera.rs", &mut errors);
-    require_path("crates/render_2d/src/camera/systems.rs", &mut errors);
-    require_path("crates/render_2d/src/characters/character.rs", &mut errors);
-    require_path("crates/render_2d/src/screens/clear_color.rs", &mut errors);
-    require_path("crates/render_2d/src/ui/theme.rs", &mut errors);
-    require_path("crates/render_2d/src/ui/markers.rs", &mut errors);
+    require_path("crates/render_2d/src/animation/example.rs", &mut errors);
+    require_path("crates/render_2d/src/camera/example.rs", &mut errors);
+    require_path("crates/render_2d/src/characters/example.rs", &mut errors);
+    require_path("crates/render_2d/src/screens/example.rs", &mut errors);
+    require_path("crates/render_2d/src/ui/example.rs", &mut errors);
     reject_mirror_facade_paths(&mut errors);
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);

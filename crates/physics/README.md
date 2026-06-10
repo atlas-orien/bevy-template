@@ -24,7 +24,8 @@
 - `PhysicsVelocity3d`、`PhysicsAngularVelocity3d`: 项目自己的 3D 物理运动状态。
 - `PhysicsForce2d`、`PhysicsImpulse2d`: 项目自己的 2D 力和冲量语义。
 - `PhysicsForce3d`、`PhysicsImpulse3d`: 项目自己的 3D 力和冲量语义。
-- `PhysicsCollisionStarted`、`PhysicsCollisionEnded`、`PhysicsSensorTriggered`: 项目自己的物理事件语义。
+- `PhysicsCollisionStarted`、`PhysicsCollisionEnded`、`PhysicsSensorTriggered`: 项目自己的碰撞和传感器事件语义。
+- `PhysicsContactForce2d`、`PhysicsContactForce3d`: 项目自己的 2D / 3D 接触力事件语义。
 
 后端类型收敛在本 crate 内部。
 
@@ -60,6 +61,8 @@ Rapier 2D 第一版映射：
 - `PhysicsVelocity2d` + `PhysicsAngularVelocity2d` -> Rapier2D `Velocity`
 - `PhysicsForce2d` -> Rapier2D `ExternalForce`
 - `PhysicsImpulse2d` -> Rapier2D `ExternalImpulse`
+- Rapier2D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
+- Rapier2D `ContactForceEvent` -> `PhysicsContactForce2d`
 
 Rapier 3D 第一版映射：
 
@@ -71,6 +74,8 @@ Rapier 3D 第一版映射：
 - `PhysicsVelocity3d` + `PhysicsAngularVelocity3d` -> Rapier3D `Velocity`
 - `PhysicsForce3d` -> Rapier3D `ExternalForce`
 - `PhysicsImpulse3d` -> Rapier3D `ExternalImpulse`
+- Rapier3D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
+- Rapier3D `ContactForceEvent` -> `PhysicsContactForce3d`
 
 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
 
@@ -98,13 +103,16 @@ Rapier 3D 第一版映射：
 - `mass/properties.rs`: 质量。
 - `motion/velocity.rs`: 物理速度和角速度。
 - `force/linear.rs`: 力和冲量。
-- `events/collision.rs`: 物理事件语义。
+- `events/collision.rs`: 碰撞和传感器事件语义。
+- `events/contact_force.rs`: 接触力事件语义。
 - `backend/rapier/mod.rs`: Rapier 总入口。
 - `backend/rapier/dim2/mod.rs`: Rapier2D 插件和 adapter system 注册。
 - `backend/rapier/dim2/convert.rs`: 项目 facade 类型到 Rapier2D 类型的转换。
 - `backend/rapier/dim2/systems.rs`: 同步 facade component 到 Rapier2D backend component。
+- `backend/rapier/dim2/events.rs`: Rapier2D message 到项目 physics message 的转发。
 - `backend/rapier/dim3/mod.rs`: Rapier3D 插件和 adapter system 注册。
 - `backend/rapier/dim3/convert.rs`: 项目 facade 类型到 Rapier3D 类型的转换。
 - `backend/rapier/dim3/systems.rs`: 同步 facade component 到 Rapier3D backend component。
+- `backend/rapier/dim3/events.rs`: Rapier3D message 到项目 physics message 的转发。
 
 hitbox、hurtbox、攻击范围、技能范围属于 gameplay 判定，不属于 physics 基础层。

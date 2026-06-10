@@ -74,6 +74,7 @@ bevy_rapier3d
 - `motion/velocity.rs` 只定义物理速度、角速度等运动状态。
 - `force/linear.rs` 只定义力和冲量。
 - `events/collision.rs` 只定义物理碰撞/传感器事件语义；当前 Bevy 版本使用 `Message` / `add_message`。
+- `events/contact_force.rs` 只定义物理接触力事件语义。因为力向量维度不同，接触力事件必须显式区分 `PhysicsContactForce2d` 和 `PhysicsContactForce3d`。
 - 不要在 `crates/physics/src` 根目录直接新增物理语义文件；根目录只保留 `lib.rs`、`plugin.rs` 和 backend 入口。
 - 2D / 3D 可以作为同一语义文件里的数据形状变体，例如 `PhysicsVelocity2d` 和 `PhysicsVelocity3d`。
 - 如果某个概念是 gameplay 判定，例如 hitbox、hurtbox、攻击范围、技能范围，不放在 `physics`。
@@ -87,8 +88,10 @@ bevy_rapier3d
 - `backend/rapier/dim3/mod.rs` 只负责注册 `bevy_rapier3d` 插件和 3D adapter systems。
 - `backend/rapier/dim*/convert.rs` 只负责把项目 facade 类型转换成 Rapier 类型。
 - `backend/rapier/dim*/systems.rs` 只负责监听项目 facade component 的 `Added` / `Changed`，并向同一个 Bevy entity 插入 Rapier component。
+- `backend/rapier/dim*/events.rs` 只负责把 Rapier message 转发成项目自己的 physics message。
 - 不要在 prefab、gameplay、ecs 或 render crate 里直接插入 Rapier component。
 - 第一版 Rapier adapter 覆盖 rigid_body、rigid body control、collider、collider control、collider filtering、sensor、material、mass、velocity、force、impulse。
+- 第二阶段 Rapier adapter 覆盖 collision started、collision ended、sensor triggered、2D / 3D contact force event 转发。
 - `PhysicsCollider2d::Circle`、`Rectangle`、`Polyline`、`ConvexPolygon` 属于 2D Rapier。
 - `PhysicsCollider3d::Sphere` 和 `PhysicsCollider3d::Cuboid` 属于 3D Rapier。
 - 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
@@ -99,6 +102,9 @@ bevy_rapier3d
 - Rapier 的线速度和角速度共享同一个 `Velocity` component，更新其中一个时必须保留另一个。
 - `PhysicsForce2d/3d` 映射到 Rapier `ExternalForce`，第一版只表达作用在质心的线性力，torque 默认为 0。
 - `PhysicsImpulse2d/3d` 映射到 Rapier `ExternalImpulse`，第一版只表达作用在质心的线性冲量，torque impulse 默认为 0。
+- `PhysicsCollisionStarted` / `PhysicsCollisionEnded` 来自 Rapier collision event，但不暴露 Rapier event 类型。
+- `PhysicsSensorTriggered` 来自 Rapier sensor collision started event；第一版只表达进入/触发，不表达退出。
+- `PhysicsContactForce2d/3d` 来自 Rapier contact force event；用户需要在 collider 上启用 `PhysicsActiveEvents` 和 `PhysicsContactForceEventThreshold` 才能收到。
 
 ## Cargo 规则
 

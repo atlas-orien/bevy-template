@@ -4,15 +4,15 @@
 
 `crates/render_2d` 是项目 2D 表现内容层。
 
-它不是 Bevy 2D/render 的二次封装层。它直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等组件，把本项目已经配置好的 2D 表现内容提供给 `prefab` 组合使用。
+它不是 Bevy 2D/render 的二次封装层。它直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等组件。
 
-和 `physics` 不同，`render_2d` 是用户会经常修改的内容层。用户新增或修改角色外观、动画、UI、背景、相机表现时，应该修改这里。
+这个模板阶段默认没有真实游戏内容。每个表现目录只保留一个可删除的 `example.rs`，用于告诉用户代码应该写在哪里。和 `physics` 不同，`render_2d` 是用户会经常修改的内容层。用户新增或修改角色外观、动画、UI、背景、相机表现时，应该修改这里。
 
 ## 核心职责
 
 - 2D 相机。
-- 已配置好的 2D sprite、纹理图集、动画状态和表现专用 marker。
-- 已配置好的 2D 场景背景、屏幕表现、HUD、菜单、界面。
+- 用户配置的 2D sprite、纹理图集、动画状态和表现专用 marker。
+- 用户配置的 2D 场景背景、屏幕表现、HUD、菜单、界面。
 - 根据 ECS 世界数据更新 2D 表现，但不改变玩法规则。
 - 为 `prefab` 提供高层表现 bundle、marker 和配置好的表现系统。
 
@@ -30,15 +30,9 @@
 
 - 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
 - 不要把具体 Component、Bundle 或 system 全部写进 `mod.rs`。
-- `camera/main_camera.rs` 定义主 2D 相机 marker 和 bundle。
-- `camera/systems.rs` 定义相机生成和同步 system。
-- `animation/frame` 定义帧动画、sprite sheet、atlas animation 数据，例如 `sprite_frame.rs`、`clip.rs`、`playback.rs`。
-- `animation/skeletal` 定义 2D 骨骼动画数据。
-- `characters/character.rs` 定义角色 2D 表现 marker 和已经配置好的表现 bundle。
-- `screens/clear_color.rs` 定义屏幕背景色等屏幕级表现 system。
-- `ui/theme.rs` 定义 2D UI/表现层颜色常量。
-- `ui/markers.rs` 定义 2D UI marker。
-- 新增表现类型时，先判断它属于 camera、characters、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
+- 每个默认目录保留一个 `example.rs`，示范该目录里应该写什么。
+- 用户开始具体项目后，可以删除或替换 `example.rs`。
+- 新增表现类型时，先判断它属于 animation、camera、characters、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
 
 ## 边界规则
 
@@ -94,7 +88,8 @@ Gameplay Entity
 
 ## 相机规则
 
-- 默认 2D 主相机由 `render_2d::camera` 在 startup 注册生成。
+- 默认模板不强制生成主相机。
+- 如果项目需要默认 2D 主相机，由 `render_2d::camera` 注册生成。
 - prefab 不生成主相机。
 - gameplay 不生成主相机。
 - 如果某个游戏需要多相机、跟随相机或相机切换，类型和 system 仍然写在 `render_2d/src/camera`，调度入口由 `Camera2dPlugin` 组装。

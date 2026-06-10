@@ -26,12 +26,15 @@ pub fn check() -> CheckStatus {
         "crates/physics/src/motion/velocity.rs",
         "crates/physics/src/force/linear.rs",
         "crates/physics/src/events/collision.rs",
+        "crates/physics/src/events/contact_force.rs",
         "crates/physics/src/backend/rapier/mod.rs",
         "crates/physics/src/backend/rapier/dim2/mod.rs",
         "crates/physics/src/backend/rapier/dim2/convert.rs",
+        "crates/physics/src/backend/rapier/dim2/events.rs",
         "crates/physics/src/backend/rapier/dim2/systems.rs",
         "crates/physics/src/backend/rapier/dim3/mod.rs",
         "crates/physics/src/backend/rapier/dim3/convert.rs",
+        "crates/physics/src/backend/rapier/dim3/events.rs",
         "crates/physics/src/backend/rapier/dim3/systems.rs",
     ] {
         require_path(path, &mut errors);

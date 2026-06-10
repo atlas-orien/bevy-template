@@ -3,7 +3,7 @@ use ecs::components::base::{Facing, MovementIntent, Speed};
 use ecs::components::characters::player::{LocalPlayerControlled, Player};
 use ecs::components::world::gameplay::{GameplayEntity, GameplaySessionEntity};
 use physics::{PhysicsCollider2d, PhysicsLayer, PhysicsRigidBody};
-use render_2d::characters::Character2dRenderBundle;
+use render_2d::characters::example::ExampleCharacter2dBundle;
 
 use crate::Prefab;
 use crate::identity::GameplayEntityId;
@@ -45,7 +45,7 @@ pub struct Player2dPrefabBundle {
     pub physics_rigid_body: PhysicsRigidBody,
     pub physics_collider: PhysicsCollider2d,
     pub physics_layer: PhysicsLayer,
-    pub render: Character2dRenderBundle,
+    pub render: ExampleCharacter2dBundle,
 }
 
 impl Player2dPrefabBundle {
@@ -65,7 +65,7 @@ impl Player2dPrefabBundle {
                 radius: prefab.collider_radius,
             },
             physics_layer: PhysicsLayer::Player,
-            render: Character2dRenderBundle::new(prefab.color, prefab.size),
+            render: ExampleCharacter2dBundle::new(prefab.color, prefab.size),
         }
     }
 }

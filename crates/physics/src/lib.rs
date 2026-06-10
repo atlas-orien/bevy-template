@@ -22,7 +22,10 @@ pub use collider::{
 };
 pub use config::PhysicsConfig;
 pub use error::Result;
-pub use events::{PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsSensorTriggered};
+pub use events::{
+    PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsContactForce2d, PhysicsContactForce3d,
+    PhysicsSensorTriggered,
+};
 pub use force::{PhysicsForce2d, PhysicsForce3d, PhysicsImpulse2d, PhysicsImpulse3d};
 pub use layer::PhysicsLayer;
 pub use mass::PhysicsMass;

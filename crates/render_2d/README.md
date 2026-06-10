@@ -4,31 +4,36 @@
 
 它的任务是“这个游戏里的东西看起来是什么样”，不是“重新封装 Bevy 2D 渲染”。
 
-这里可以直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等类型。`render_2d` 只负责把它们组织成项目已经配置好的表现内容，供 `prefab` 直接组合。
+这里可以直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等类型。
+
+模板阶段默认没有真实游戏内容。每个表现目录只保留一个可删除的 `example.rs`，用于示范代码应该写在哪里。
 
 ## 职责
 
-- 2D 相机。
-- 2D 屏幕、抬头显示、菜单、界面。
-- 已配置好的精灵、纹理图集、2D 动画。
+- 用户配置的 2D 相机。
+- 用户配置的 2D 屏幕、抬头显示、菜单、界面。
+- 用户配置的精灵、纹理图集、2D 动画。
 - 读取 `ecs` 数据，把游戏世界显示出来。
 - 创建渲染专用 Entity、Component、bundle 和动画状态。
 - 提供 `prefab` 可以直接使用的高层表现 bundle。
 
 ## 当前结构
 
-- `camera`: 2D 相机表现，`main_camera.rs` 放主相机 marker/bundle，`systems.rs` 放相机生成和同步 system。
-- `animation`: 2D 表现层动画，分为 `frame` 帧动画和 `skeletal` 骨骼动画。
-- `characters`: 角色 2D 表现，`character.rs` 放角色 marker 和已配置好的表现 bundle。
-- `screens`: 屏幕表现，`clear_color.rs` 放屏幕背景色等屏幕级表现 system。
-- `ui`: 2D UI 表现，`theme.rs` 放表现层颜色常量，`markers.rs` 放 UI marker。
+- `camera`: 2D 相机表现。
+- `animation`: 2D 表现层动画。
+- `characters`: 角色 2D 表现。
+- `screens`: 屏幕和背景表现。
+- `ui`: 2D UI 表现。
+
+每个目录都有一个 `example.rs`。用户开始真实项目后，可以直接删除或替换这些 example 文件。
 
 ## 文件规则
 
 - 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
 - 具体 Component、Bundle、system 拆到语义明确的文件里。
 - 不新增 `common.rs`、`misc.rs` 这类含义模糊的文件。
-- 默认 2D 主相机由 `camera` 在 startup 生成；prefab 和 gameplay 不生成主相机。
+- 默认模板不强制生成主相机；如果项目需要默认相机，写在 `camera`。
+- prefab 和 gameplay 不生成主相机。
 
 ## Bevy 边界
 

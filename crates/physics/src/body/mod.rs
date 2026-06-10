@@ -1,3 +1,3 @@
 pub mod kind;
 
-pub use kind::PhysicsBody;
+pub use kind::PhysicsRigidBody;

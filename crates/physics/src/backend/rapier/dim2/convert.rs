@@ -5,15 +5,15 @@ use bevy_rapier2d::prelude::{
 };
 
 use crate::{
-    PhysicsAngularVelocity2d, PhysicsBody, PhysicsCollider, PhysicsMass, PhysicsMaterial,
+    PhysicsAngularVelocity2d, PhysicsCollider, PhysicsMass, PhysicsMaterial, PhysicsRigidBody,
     PhysicsVelocity2d,
 };
 
-pub fn body(body: PhysicsBody) -> RapierRigidBody {
-    match body {
-        PhysicsBody::Dynamic => RapierRigidBody::Dynamic,
-        PhysicsBody::Static => RapierRigidBody::Fixed,
-        PhysicsBody::Kinematic => RapierRigidBody::KinematicVelocityBased,
+pub fn rigid_body(rigid_body: PhysicsRigidBody) -> RapierRigidBody {
+    match rigid_body {
+        PhysicsRigidBody::Dynamic => RapierRigidBody::Dynamic,
+        PhysicsRigidBody::Static => RapierRigidBody::Fixed,
+        PhysicsRigidBody::Kinematic => RapierRigidBody::KinematicVelocityBased,
     }
 }
 

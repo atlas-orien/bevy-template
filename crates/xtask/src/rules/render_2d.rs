@@ -129,7 +129,7 @@ fn reject_world_rule_references(errors: &mut Vec<String>) {
 
         for forbidden in [
             "set_movement_intent",
-            "PhysicsBody",
+            "PhysicsRigidBody",
             "PhysicsCollider",
             "Hitbox",
             "Hurtbox",

@@ -2,29 +2,31 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::{Sensor as RapierSensor, Velocity as RapierVelocity};
 
 use crate::{
-    PhysicsAngularVelocity2d, PhysicsBody, PhysicsCollider, PhysicsMass, PhysicsMaterial,
+    PhysicsAngularVelocity2d, PhysicsCollider, PhysicsMass, PhysicsMaterial, PhysicsRigidBody,
     PhysicsSensor, PhysicsVelocity2d,
 };
 
 use super::convert;
 
 type Synced<T> = Or<(Added<T>, Changed<T>)>;
-type BodySynced = Or<(
-    Added<PhysicsBody>,
-    Changed<PhysicsBody>,
+type RigidBodySynced = Or<(
+    Added<PhysicsRigidBody>,
+    Changed<PhysicsRigidBody>,
     Added<PhysicsCollider>,
     Changed<PhysicsCollider>,
 )>;
 
-pub fn sync_physics_bodies(
+pub fn sync_physics_rigid_bodies(
     mut commands: Commands,
-    bodies: Query<(Entity, &PhysicsBody, &PhysicsCollider), BodySynced>,
+    rigid_bodies: Query<(Entity, &PhysicsRigidBody, &PhysicsCollider), RigidBodySynced>,
 ) {
-    for (entity, body, collider) in &bodies {
+    for (entity, rigid_body, collider) in &rigid_bodies {
         if !collider.is_2d() {
             continue;
         }
-        commands.entity(entity).insert(convert::body(*body));
+        commands
+            .entity(entity)
+            .insert(convert::rigid_body(*rigid_body));
     }
 }
 

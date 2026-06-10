@@ -9,7 +9,7 @@ pub fn add_physics_backend(app: &mut App) {
         .add_systems(
             Update,
             (
-                systems::sync_physics_bodies,
+                systems::sync_physics_rigid_bodies,
                 systems::sync_physics_colliders,
                 systems::sync_physics_sensors,
                 systems::sync_physics_materials,

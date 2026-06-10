@@ -71,7 +71,7 @@ fn reject_world_rule_references(errors: &mut Vec<String>) {
             continue;
         };
 
-        for forbidden in ["set_movement_intent", "PhysicsBody", "PhysicsCollider"] {
+        for forbidden in ["set_movement_intent", "PhysicsRigidBody", "PhysicsCollider"] {
             if source.contains(forbidden) {
                 errors.push(format!(
                     "{} references `{forbidden}`; render_3d should not drive gameplay rules",

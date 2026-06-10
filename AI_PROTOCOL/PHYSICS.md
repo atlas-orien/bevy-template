@@ -53,7 +53,9 @@ bevy_rapier3d
 - 子目录的 `mod.rs` 只做模块导出和 re-export，不堆具体类型。
 - 具体文件名不能和所在目录同名，避免 Rust module inception。
 - `config/settings.rs` 只定义物理配置。
-- `body/kind.rs` 只定义刚体语义，例如 Dynamic、Static、Kinematic。
+- `body/kind.rs` 当前只定义刚体语义，例如 `PhysicsRigidBody::Dynamic`、`Static`、`Kinematic`。
+- `body` 目录可以作为物理主体分类目录；但第一版 Rapier 后端只承诺 rigid body。
+- 不要提前添加 soft body、fluid body、particle body 等 facade 类型，除非后端能力和项目用法已经明确。
 - `collider/shape.rs` 只定义碰撞体形状，不定义 sensor、material 或 hitbox。
 - `layer/collision_layer.rs` 只定义物理碰撞层。
 - `sensor/marker.rs` 只定义传感器标记。
@@ -68,7 +70,7 @@ bevy_rapier3d
 
 ## Rapier 适配规则
 
-- 项目自己的基础组件是 facade，例如 `PhysicsBody`、`PhysicsCollider`、`PhysicsMaterial`。
+- 项目自己的基础组件是 facade，例如 `PhysicsRigidBody`、`PhysicsCollider`、`PhysicsMaterial`。
 - Rapier 自己的组件只允许在 backend 目录内部使用，例如 Rapier 的 `RigidBody`、`Collider`、`Sensor`。
 - `backend/rapier/mod.rs` 只负责注册 2D / 3D Rapier 子适配。
 - `backend/rapier/dim2/mod.rs` 只负责注册 `bevy_rapier2d` 插件和 2D adapter systems。
@@ -76,10 +78,10 @@ bevy_rapier3d
 - `backend/rapier/dim*/convert.rs` 只负责把项目 facade 类型转换成 Rapier 类型。
 - `backend/rapier/dim*/systems.rs` 只负责监听项目 facade component 的 `Added` / `Changed`，并向同一个 Bevy entity 插入 Rapier component。
 - 不要在 prefab、gameplay、ecs 或 render crate 里直接插入 Rapier component。
-- 第一版 Rapier adapter 覆盖 body、collider、sensor、material、mass、velocity；力、冲量和碰撞事件以后按明确语义再接入。
+- 第一版 Rapier adapter 覆盖 rigid_body、collider、sensor、material、mass、velocity；力、冲量和碰撞事件以后按明确语义再接入。
 - `PhysicsCollider::Circle` 和 `PhysicsCollider::Rectangle` 属于 2D Rapier。
 - `PhysicsCollider::Sphere` 和 `PhysicsCollider::Cuboid` 属于 3D Rapier。
-- 2D / 3D 归属由 collider 形状决定，不由 `PhysicsBody` 决定。
+- 2D / 3D 归属由 collider 形状决定，不由 `PhysicsRigidBody` 决定。
 - Rapier 的 rectangle / cuboid collider 使用半尺寸，转换逻辑必须留在 `convert.rs`。
 - Rapier 的线速度和角速度共享同一个 `Velocity` component，更新其中一个时必须保留另一个。
 

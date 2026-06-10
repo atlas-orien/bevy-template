@@ -11,7 +11,7 @@
 - `PhysicsPlugin`: 物理插件入口。
 - `PhysicsDebugPlugin`: 物理调试显示插件入口。
 - `PhysicsConfig`: 项目自己的物理配置数据。
-- `PhysicsBody`: 项目自己的刚体语义。
+- `PhysicsRigidBody`: 项目自己的刚体语义。
 - `PhysicsCollider`: 项目自己的碰撞体语义。
 - `PhysicsSensor`: 项目自己的传感器标记。
 - `PhysicsLayer`: 项目自己的碰撞层语义。
@@ -27,13 +27,13 @@
 
 ## 连接方式
 
-`PhysicsBody` 这类类型不是 Rapier 的类型，而是项目自己的 facade component。
+`PhysicsRigidBody` 这类类型不是 Rapier 的类型，而是项目自己的 facade component。
 
 当 entity 添加或修改这些 facade component 时，`physics` 的 backend system 会把它们转换成 Rapier 真正使用的 component，并插入到同一个 entity 上。
 
 Rapier 2D 第一版映射：
 
-- `PhysicsBody` -> Rapier2D `RigidBody`
+- `PhysicsRigidBody` -> Rapier2D `RigidBody`
 - `PhysicsCollider::Circle` / `Rectangle` -> Rapier2D `Collider`
 - `PhysicsSensor` -> Rapier2D `Sensor`
 - `PhysicsMaterial` -> Rapier2D `Friction` + `Restitution`
@@ -42,7 +42,7 @@ Rapier 2D 第一版映射：
 
 Rapier 3D 第一版映射：
 
-- `PhysicsBody` -> Rapier3D `RigidBody`
+- `PhysicsRigidBody` -> Rapier3D `RigidBody`
 - `PhysicsCollider::Sphere` / `Cuboid` -> Rapier3D `Collider`
 - `PhysicsSensor` -> Rapier3D `Sensor`
 - `PhysicsMaterial` -> Rapier3D `Friction` + `Restitution`
@@ -65,7 +65,7 @@ Rapier 3D 第一版映射：
 - 子目录的 `mod.rs` 只做模块导出和 re-export。
 - 具体文件名不能和所在目录同名，避免 Rust module inception。
 - `config/settings.rs`: 物理配置。
-- `body/kind.rs`: 刚体语义。
+- `body/kind.rs`: 当前只放刚体语义，例如 `PhysicsRigidBody`。
 - `collider/shape.rs`: 碰撞体形状。
 - `layer/collision_layer.rs`: 碰撞层。
 - `sensor/marker.rs`: 传感器标记。

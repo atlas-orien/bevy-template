@@ -36,6 +36,8 @@ pub fn check() -> CheckStatus {
     for obsolete in [
         "crates/physics/src/body.rs",
         "crates/physics/src/body/body.rs",
+        "crates/physics/src/rigid_body",
+        "crates/physics/src/rigid_body/rigid_body.rs",
         "crates/physics/src/config.rs",
         "crates/physics/src/config/config.rs",
         "crates/physics/src/collider.rs",

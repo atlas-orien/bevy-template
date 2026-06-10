@@ -11,7 +11,7 @@ mod motion;
 mod plugin;
 mod sensor;
 
-pub use body::PhysicsBody;
+pub use body::PhysicsRigidBody;
 pub use collider::PhysicsCollider;
 pub use config::PhysicsConfig;
 pub use error::Result;

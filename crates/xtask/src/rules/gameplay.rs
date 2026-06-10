@@ -1,7 +1,10 @@
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use super::CheckStatus;
+use super::util::{
+    derived_names, manifest_has_workspace_dependency, parse_rust_file, read_file_if_exists,
+    require_mod_rs_in_subdirs, require_path, rust_files,
+};
 
 const GAMEPLAY_CRATE: &str = "crates/gameplay";
 const GAMEPLAY_PROTOCOL: &str = "AI_PROTOCOL/GAMEPLAY.md";
@@ -10,19 +13,28 @@ const GAMEPLAY_API: &str = "crates/gameplay/src/api";
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(GAMEPLAY_CRATE, &mut errors);
-    require_path(GAMEPLAY_PROTOCOL, &mut errors);
-    require_path(GAMEPLAY_API, &mut errors);
-    require_path("crates/gameplay/src/lifecycle", &mut errors);
+    require_path(
+        GAMEPLAY_CRATE,
+        &mut errors,
+        "gameplay is the state/schedule/API layer and must remain present",
+    );
+    require_path(
+        GAMEPLAY_PROTOCOL,
+        &mut errors,
+        "AI_PROTOCOL/GAMEPLAY.md documents the gameplay boundary rules",
+    );
     for path in [
-        "crates/gameplay/src/schedule/mod.rs",
-        "crates/gameplay/src/schedule/sets.rs",
-        "crates/gameplay/src/schedule/update.rs",
-        "crates/gameplay/src/schedule/enter.rs",
-        "crates/gameplay/src/schedule/exit.rs",
+        GAMEPLAY_API,
+        "crates/gameplay/src/lifecycle",
+        "crates/gameplay/src/schedule",
     ] {
-        require_path(path, &mut errors);
+        require_path(
+            path,
+            &mut errors,
+            "gameplay API, lifecycle, and schedule boundaries should stay explicit directories",
+        );
     }
+    require_mod_rs_in_subdirs(Path::new(GAMEPLAY_CRATE).join("src"), &mut errors);
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);
@@ -37,7 +49,7 @@ pub fn check() -> CheckStatus {
 
 fn reject_manager_definitions(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(GAMEPLAY_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
@@ -54,7 +66,7 @@ fn reject_manager_definitions(errors: &mut Vec<String>) {
 
 fn reject_dependencies(errors: &mut Vec<String>) {
     let manifest = Path::new(GAMEPLAY_CRATE).join("Cargo.toml");
-    let Ok(source) = fs::read_to_string(&manifest) else {
+    let Some(source) = read_file_if_exists(&manifest) else {
         return;
     };
 
@@ -66,9 +78,9 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         "render_2d",
         "render_3d",
     ] {
-        if source.contains(&format!("{dependency}.workspace = true")) {
+        if manifest_has_workspace_dependency(&source, dependency) {
             errors.push(format!(
-                "{} depends on `{dependency}`; gameplay should not depend on that crate",
+                "{} depends on `{dependency}`; gameplay should not depend on that crate, so reach lower-level behavior through prefab/intent APIs",
                 manifest.display()
             ));
         }
@@ -77,10 +89,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 
 fn reject_data_definitions(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(GAMEPLAY_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
-            continue;
-        };
-        let Ok(parsed) = syn::parse_file(&source) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
@@ -89,7 +98,7 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Bundle", "Resource", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; ECS data definitions belong in ecs/prefab/physics",
+                            "{} derives `{forbidden}`; ECS data definitions belong in ecs/prefab/physics, so keep gameplay focused on flow and scheduling",
                             file.display()
                         ));
                     }
@@ -99,7 +108,7 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
                     && !file.starts_with(Path::new(GAMEPLAY_API))
                 {
                     errors.push(format!(
-                        "{} derives `Message`; gameplay messages must be part of the public api boundary",
+                        "{} derives `Message`; gameplay messages must be part of the public api boundary, so move the message under crates/gameplay/src/api",
                         file.display()
                     ));
                 }
@@ -110,70 +119,17 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
 
 fn reject_direct_input(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(GAMEPLAY_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
         for forbidden in ["ButtonInput<", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; direct input must be converted before gameplay",
+                    "{} references `{forbidden}`; direct input must be converted before gameplay, so source handling belongs in external_runtime",
                     file.display()
                 ));
             }
         }
     }
-}
-
-fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!("required path is missing: {}", path.display()));
-    }
-}
-
-fn rust_files(root: &Path) -> Vec<PathBuf> {
-    let mut files = Vec::new();
-    collect_rust_files(root, &mut files);
-    files
-}
-
-fn collect_rust_files(root: &Path, files: &mut Vec<PathBuf>) {
-    let Ok(entries) = fs::read_dir(root) else {
-        return;
-    };
-
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            collect_rust_files(&path, files);
-        } else if path.extension().is_some_and(|ext| ext == "rs") {
-            files.push(path);
-        }
-    }
-}
-
-fn derived_names(item: &syn::Item) -> Option<Vec<String>> {
-    let attrs = match item {
-        syn::Item::Struct(item) => &item.attrs,
-        syn::Item::Enum(item) => &item.attrs,
-        _ => return None,
-    };
-
-    let mut names = Vec::new();
-
-    for attr in attrs {
-        if !attr.path().is_ident("derive") {
-            continue;
-        }
-
-        let _ = attr.parse_nested_meta(|meta| {
-            if let Some(ident) = meta.path.get_ident() {
-                names.push(ident.to_string());
-            }
-            Ok(())
-        });
-    }
-
-    Some(names)
 }

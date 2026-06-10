@@ -29,7 +29,7 @@
 - `crates/external_runtime`: Bevy App 外部 runtime，持有 manager API，运行 input/local、input/device、input/ai 等外部来源
 - `crates/intent`: Entity 意图层，表达可控制实体想做什么
 - `crates/gameplay`: 游戏玩法语义层，负责状态流、gameplay session 生命周期和 ECS system 调度
-- `crates/physics`: 物理引擎适配层，默认使用 Avian 2D，可通过 feature 切换到 Rapier 2D
+- `crates/physics`: 物理基础层，唯一后端是 `bevy_rapier`，同时准备 2D / 3D facade
 - `crates/prefab`: 可生成对象模板基础库，组合 ECS、physics、render 数据
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
@@ -101,7 +101,7 @@ app.add_plugins(GameplayPlugin)
 - `gameplay` 负责状态流、阶段调度、gameplay session 生命周期、request 消费和 ECS system 调度。
 - `external_runtime` 运行 Bevy App 外部的 loop，持有 manager API，并把 input/local、input/device、input/ai 等来源转换成 gameplay 请求。
 - `intent` 只表达哪个 Entity 想做什么，并通过 `prefab` 暴露的最小合法接口写入意图数据；可接收 intent 的对象由 `prefab` 组合对应组件。
-- `physics` 对外提供统一物理 API，内部通过 feature 选择物理后端。
+- `physics` 对外提供统一物理 API，内部使用 `bevy_rapier2d` / `bevy_rapier3d` adapter，不通过 feature 切换后端。
 - `prefab` 负责组合 `ecs`、`physics`、`render_2d` 等基础库，提供可直接生成的完整对象模板和面向 gameplay 的封装入口。
 - `render_2d` 只放 2D 表现相关代码，可以创建相机、sprite、UI 和渲染专用子实体，但不能驱动 gameplay 规则。
 - `render_3d` 只放 3D 表现相关代码。
@@ -131,12 +131,6 @@ cargo run -p xtask -- check
 
 ```sh
 cargo fmt
-```
-
-使用 Rapier 2D 物理后端：
-
-```sh
-cargo run --features physics/rapier2d
 ```
 
 ## 协作规则

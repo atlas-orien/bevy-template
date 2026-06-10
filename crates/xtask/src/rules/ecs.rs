@@ -1,6 +1,9 @@
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
+use super::util::{
+    derived_names, files_named_below, parse_rust_file, reject_path, require_mod_rs_in_subdirs,
+    require_path, rust_files,
+};
 use super::CheckStatus;
 
 const ECS_CRATE: &str = "crates/ecs";
@@ -9,10 +12,26 @@ const ECS_PROTOCOL: &str = "AI_PROTOCOL/ECS.md";
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(ECS_CRATE, &mut errors);
-    require_path(ECS_PROTOCOL, &mut errors);
-    reject_path("crates/components", &mut errors);
-    reject_path("crates/system", &mut errors);
+    require_path(
+        ECS_CRATE,
+        &mut errors,
+        "ecs is the Bevy ECS data/system crate and must remain present",
+    );
+    require_path(
+        ECS_PROTOCOL,
+        &mut errors,
+        "AI_PROTOCOL/ECS.md documents ECS data/system boundaries",
+    );
+    reject_path(
+        "crates/components",
+        &mut errors,
+        "components belong under crates/ecs/src/components",
+    );
+    reject_path(
+        "crates/system",
+        &mut errors,
+        "systems belong under crates/ecs/src/systems",
+    );
 
     check_components(&mut errors);
     check_resources(&mut errors);
@@ -28,27 +47,22 @@ pub fn check() -> CheckStatus {
 
 fn check_components(errors: &mut Vec<String>) {
     let root = Path::new("crates/ecs/src/components");
-    require_path(root, errors);
-    require_path(root.join("README.md"), errors);
-    require_path(root.join("base/identity.rs"), errors);
-    require_path(root.join("base/health.rs"), errors);
-    require_path(root.join("base/movement.rs"), errors);
-    require_path(root.join("base/affiliation.rs"), errors);
-    reject_path(root.join("base/vitals.rs"), errors);
-    reject_path(root.join("base/display_name.rs"), errors);
-    reject_path(root.join("base/public_entity_id.rs"), errors);
-    reject_path(root.join("base/max_health.rs"), errors);
-    reject_path(root.join("base/speed.rs"), errors);
-    reject_path(root.join("base/velocity.rs"), errors);
-    reject_path(root.join("base/movement_intent.rs"), errors);
-    reject_path(root.join("base/facing.rs"), errors);
-    reject_path(root.join("base/faction.rs"), errors);
-    reject_path(root.join("base/team.rs"), errors);
+    require_path(
+        root,
+        errors,
+        "ECS component data must live under crates/ecs/src/components",
+    );
+    require_path(
+        root.join("README.md"),
+        errors,
+        "component documentation should stay centralized at components/README.md",
+    );
+    require_mod_rs_in_subdirs(root, errors);
 
-    for readme in readmes_below(root) {
+    for readme in files_named_below(root, "README.md") {
         if readme != root.join("README.md") {
             errors.push(format!(
-                "{} should not exist; component docs belong in crates/ecs/src/components/README.md",
+                "{} duplicates component docs; keep component documentation in crates/ecs/src/components/README.md",
                 readme.display()
             ));
         }
@@ -64,7 +78,7 @@ fn check_components(errors: &mut Vec<String>) {
                 let name = function.sig.ident.to_string();
                 if name.ends_with("_system") {
                     errors.push(format!(
-                        "{} defines `{name}`; ECS system functions belong in crates/ecs/src/systems",
+                        "{} defines `{name}`; ECS system functions belong in crates/ecs/src/systems, so move behavior out of components",
                         file.display()
                     ));
                 }
@@ -75,10 +89,17 @@ fn check_components(errors: &mut Vec<String>) {
 
 fn check_resources(errors: &mut Vec<String>) {
     let root = Path::new("crates/ecs/src/resources");
-    require_path(root, errors);
-    require_path(root.join("README.md"), errors);
-    require_path(root.join("world.rs"), errors);
-    require_path(root.join("session.rs"), errors);
+    require_path(
+        root,
+        errors,
+        "ECS resource data must live under crates/ecs/src/resources",
+    );
+    require_path(
+        root.join("README.md"),
+        errors,
+        "resource documentation should stay centralized at resources/README.md",
+    );
+    require_mod_rs_in_subdirs(root, errors);
 
     for file in rust_files(root) {
         let Some(parsed) = parse_rust_file(&file, errors) else {
@@ -90,7 +111,7 @@ fn check_resources(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Bundle", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; resources should define global ECS Resource data",
+                            "{} derives `{forbidden}`; resources should define global ECS Resource data, so move this type to components/events as appropriate",
                             file.display()
                         ));
                     }
@@ -102,10 +123,17 @@ fn check_resources(errors: &mut Vec<String>) {
 
 fn check_events(errors: &mut Vec<String>) {
     let root = Path::new("crates/ecs/src/events");
-    require_path(root, errors);
-    require_path(root.join("README.md"), errors);
-    require_path(root.join("combat.rs"), errors);
-    require_path(root.join("lifecycle.rs"), errors);
+    require_path(
+        root,
+        errors,
+        "ECS event/message data must live under crates/ecs/src/events",
+    );
+    require_path(
+        root.join("README.md"),
+        errors,
+        "event documentation should stay centralized at events/README.md",
+    );
+    require_mod_rs_in_subdirs(root, errors);
 
     for file in rust_files(root) {
         let Some(parsed) = parse_rust_file(&file, errors) else {
@@ -127,7 +155,7 @@ fn check_events(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Bundle", "Resource", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; events should define ECS Event message data",
+                            "{} derives `{forbidden}`; events should define Message-based event data, so move other ECS data to its owning directory",
                             file.display()
                         ));
                     }
@@ -148,7 +176,12 @@ fn check_events(errors: &mut Vec<String>) {
 
 fn check_systems(errors: &mut Vec<String>) {
     let root = Path::new("crates/ecs/src/systems");
-    require_path(root, errors);
+    require_path(
+        root,
+        errors,
+        "ECS behavior systems must live under crates/ecs/src/systems",
+    );
+    require_mod_rs_in_subdirs(root, errors);
 
     for file in rust_files(root) {
         let Some(parsed) = parse_rust_file(&file, errors) else {
@@ -160,7 +193,7 @@ fn check_systems(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Bundle", "Resource", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; ECS data definitions belong in components/resources/events",
+                            "{} derives `{forbidden}`; ECS data definitions belong in components/resources/events, so keep systems focused on behavior",
                             file.display()
                         ));
                     }
@@ -168,101 +201,4 @@ fn check_systems(errors: &mut Vec<String>) {
             }
         }
     }
-}
-
-fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!("required path is missing: {}", path.display()));
-    }
-}
-
-fn reject_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if path.exists() {
-        errors.push(format!(
-            "obsolete path should not exist: {}",
-            path.display()
-        ));
-    }
-}
-
-fn parse_rust_file(path: &Path, errors: &mut Vec<String>) -> Option<syn::File> {
-    let source = match fs::read_to_string(path) {
-        Ok(source) => source,
-        Err(error) => {
-            errors.push(format!("failed to read {}: {error}", path.display()));
-            return None;
-        }
-    };
-
-    match syn::parse_file(&source) {
-        Ok(parsed) => Some(parsed),
-        Err(error) => {
-            errors.push(format!("failed to parse {}: {error}", path.display()));
-            None
-        }
-    }
-}
-
-fn rust_files(root: &Path) -> Vec<PathBuf> {
-    files_with_extension(root, "rs")
-}
-
-fn readmes_below(root: &Path) -> Vec<PathBuf> {
-    let mut files = Vec::new();
-    collect_files(root, &mut files);
-    files
-        .into_iter()
-        .filter(|path| path.file_name().is_some_and(|name| name == "README.md"))
-        .collect()
-}
-
-fn files_with_extension(root: &Path, extension: &str) -> Vec<PathBuf> {
-    let mut files = Vec::new();
-    collect_files(root, &mut files);
-    files
-        .into_iter()
-        .filter(|path| path.extension().is_some_and(|ext| ext == extension))
-        .collect()
-}
-
-fn collect_files(root: &Path, files: &mut Vec<PathBuf>) {
-    let Ok(entries) = fs::read_dir(root) else {
-        return;
-    };
-
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            collect_files(&path, files);
-        } else {
-            files.push(path);
-        }
-    }
-}
-
-fn derived_names(item: &syn::Item) -> Option<Vec<String>> {
-    let attrs = match item {
-        syn::Item::Struct(item) => &item.attrs,
-        syn::Item::Enum(item) => &item.attrs,
-        _ => return None,
-    };
-
-    let mut names = Vec::new();
-
-    for attr in attrs {
-        if !attr.path().is_ident("derive") {
-            continue;
-        }
-
-        let _ = attr.parse_nested_meta(|meta| {
-            if let Some(ident) = meta.path.get_ident() {
-                names.push(ident.to_string());
-            }
-            Ok(())
-        });
-    }
-
-    Some(names)
 }

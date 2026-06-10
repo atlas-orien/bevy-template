@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use ecs::components::base::{Facing, MovementIntent, Speed};
 use ecs::components::characters::player::{LocalPlayerControlled, Player};
 use ecs::components::world::gameplay::{GameplayEntity, GameplaySessionEntity};
-use physics::{PhysicsBody, PhysicsCollider, PhysicsLayer};
+use physics::{PhysicsCollider2d, PhysicsLayer, PhysicsRigidBody};
 use render_2d::characters::Character2dRenderBundle;
 
 use crate::Prefab;
@@ -42,8 +42,8 @@ pub struct Player2dPrefabBundle {
     pub facing: Facing,
     pub transform: Transform,
     pub visibility: Visibility,
-    pub physics_body: PhysicsBody,
-    pub physics_collider: PhysicsCollider,
+    pub physics_body: PhysicsRigidBody,
+    pub physics_collider: PhysicsCollider2d,
     pub physics_layer: PhysicsLayer,
     pub render: Character2dRenderBundle,
 }
@@ -60,8 +60,8 @@ impl Player2dPrefabBundle {
             facing: Facing::default(),
             transform: Transform::from_translation(prefab.position.extend(0.0)),
             visibility: Visibility::default(),
-            physics_body: PhysicsBody::Dynamic,
-            physics_collider: PhysicsCollider::Circle {
+            physics_body: PhysicsRigidBody::Dynamic,
+            physics_collider: PhysicsCollider2d::Circle {
                 radius: prefab.collider_radius,
             },
             physics_layer: PhysicsLayer::Player,

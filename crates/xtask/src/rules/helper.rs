@@ -1,7 +1,7 @@
-use std::fs;
 use std::path::Path;
 
 use super::CheckStatus;
+use super::util::{manifest_has_workspace_dependency, read_file_if_exists, require_path};
 
 const HELPER_CRATE: &str = "crates/helper";
 const HELPER_PROTOCOL: &str = "AI_PROTOCOL/HELPER.md";
@@ -9,9 +9,21 @@ const HELPER_PROTOCOL: &str = "AI_PROTOCOL/HELPER.md";
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(HELPER_CRATE, &mut errors);
-    require_path(HELPER_PROTOCOL, &mut errors);
-    require_path("crates/helper/src/channel.rs", &mut errors);
+    require_path(
+        HELPER_CRATE,
+        &mut errors,
+        "helper is the shared infrastructure crate and must remain present",
+    );
+    require_path(
+        HELPER_PROTOCOL,
+        &mut errors,
+        "AI_PROTOCOL/HELPER.md documents the helper boundary rules",
+    );
+    require_path(
+        "crates/helper/src/lib.rs",
+        &mut errors,
+        "helper needs a crate root that exports reusable infrastructure",
+    );
     reject_forbidden_dependencies(&mut errors);
 
     if errors.is_empty() {
@@ -23,7 +35,7 @@ pub fn check() -> CheckStatus {
 
 fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
     let manifest = Path::new(HELPER_CRATE).join("Cargo.toml");
-    let Ok(source) = fs::read_to_string(&manifest) else {
+    let Some(source) = read_file_if_exists(&manifest) else {
         return;
     };
 
@@ -38,18 +50,11 @@ fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
         "render_2d",
         "render_3d",
     ] {
-        if source.contains(&format!("{dependency}.workspace = true")) {
+        if manifest_has_workspace_dependency(&source, dependency) {
             errors.push(format!(
-                "{} depends on `{dependency}`; helper should stay shared infrastructure",
+                "{} depends on `{dependency}`; helper should stay shared infrastructure, so move game-specific logic to the owning crate",
                 manifest.display()
             ));
         }
-    }
-}
-
-fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!("required path is missing: {}", path.display()));
     }
 }

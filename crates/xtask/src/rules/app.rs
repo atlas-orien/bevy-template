@@ -1,14 +1,25 @@
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use super::CheckStatus;
+use super::util::{
+    manifest_has_workspace_dependency, read_file_if_exists, require_path, rust_files,
+};
 
 const APP_CRATE: &str = "crates/app";
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(APP_CRATE, &mut errors);
+    require_path(
+        APP_CRATE,
+        &mut errors,
+        "app is the runnable Bevy application crate and must remain present",
+    );
+    require_path(
+        Path::new(APP_CRATE).join("src/lib.rs"),
+        &mut errors,
+        "app needs a stable crate entry point for application assembly",
+    );
     reject_dependencies(&mut errors);
     reject_internal_plugins(&mut errors);
 
@@ -21,7 +32,7 @@ pub fn check() -> CheckStatus {
 
 fn reject_dependencies(errors: &mut Vec<String>) {
     let manifest = Path::new(APP_CRATE).join("Cargo.toml");
-    let Ok(source) = fs::read_to_string(&manifest) else {
+    let Some(source) = read_file_if_exists(&manifest) else {
         return;
     };
 
@@ -34,9 +45,9 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         "render_2d",
         "render_3d",
     ] {
-        if source.contains(&format!("{dependency}.workspace = true")) {
+        if manifest_has_workspace_dependency(&source, dependency) {
             errors.push(format!(
-                "{} depends on `{dependency}`; app should only depend on gameplay and external adapter crates",
+                "{} depends on `{dependency}`; app should only depend on gameplay/external adapter crates, so move lower-level wiring behind gameplay or prefab",
                 manifest.display()
             ));
         }
@@ -45,7 +56,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 
 fn reject_internal_plugins(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(APP_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
@@ -59,38 +70,10 @@ fn reject_internal_plugins(errors: &mut Vec<String>) {
         ] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; app should register gameplay and external adapter plugins only",
+                    "{} references `{forbidden}`; app should register gameplay and external adapter plugins only, so expose this through gameplay instead",
                     file.display()
                 ));
             }
-        }
-    }
-}
-
-fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!("required path is missing: {}", path.display()));
-    }
-}
-
-fn rust_files(root: &Path) -> Vec<PathBuf> {
-    let mut files = Vec::new();
-    collect_rust_files(root, &mut files);
-    files
-}
-
-fn collect_rust_files(root: &Path, files: &mut Vec<PathBuf>) {
-    let Ok(entries) = fs::read_dir(root) else {
-        return;
-    };
-
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            collect_rust_files(&path, files);
-        } else if path.extension().is_some_and(|ext| ext == "rs") {
-            files.push(path);
         }
     }
 }

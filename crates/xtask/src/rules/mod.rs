@@ -10,6 +10,7 @@ mod physics;
 mod prefab;
 mod render_2d;
 mod render_3d;
+mod util;
 
 pub enum CheckStatus {
     Passed,

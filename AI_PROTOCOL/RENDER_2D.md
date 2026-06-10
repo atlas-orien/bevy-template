@@ -75,7 +75,7 @@
 - `ordering` 只定义 2D 视觉排序。
 - `sprite` 只定义 sprite 专用表现属性。
 - 这些目录都不定义物理碰撞、攻击范围或 gameplay 区域。
-- `RenderShape2d::Circle` 不等于 `PhysicsCollider::Circle`。
+- `RenderShape2d::Circle` 不等于 `PhysicsCollider2d::Circle`。
 - `RenderSize2d` 不等于 hitbox 或 hurtbox。
 - `RenderOffset2d`、`RenderScale2d`、`RenderRotation2d` 只影响视觉表现，不改变 gameplay Transform 或物理状态。
 - `RenderZIndex2d` 只表达视觉排序，不表达 ECS parent/child 关系或 gameplay 优先级。

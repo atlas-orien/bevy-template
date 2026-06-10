@@ -1,26 +1,8 @@
 # physics
 
-`physics` 是物理引擎适配层。
+`physics` 是项目物理基础层。
 
-外部 crate 不需要知道内部使用 Avian 还是 Rapier，只使用这里暴露的统一 API。
-
-## 后端选择
-
-`physics` 默认使用 Avian 2D。
-
-使用 Avian 2D：
-
-```sh
-cargo run
-```
-
-使用 Rapier 2D：
-
-```sh
-cargo run --features physics/rapier2d
-```
-
-默认情况下启用 Avian 2D；如果启用 `rapier2d`，运行时后端会切换到 Rapier 2D。
+外部 crate 不直接使用 Rapier，只使用这里暴露的统一 API。当前唯一后端是 `bevy_rapier`，并同时准备 2D / 3D。
 
 ## 对外 API
 
@@ -29,39 +11,58 @@ cargo run --features physics/rapier2d
 - `PhysicsPlugin`: 物理插件入口。
 - `PhysicsDebugPlugin`: 物理调试显示插件入口。
 - `PhysicsConfig`: 项目自己的物理配置数据。
-- `PhysicsBody`: 项目自己的刚体语义。
-- `PhysicsCollider`: 项目自己的碰撞体语义。
+- `PhysicsRigidBody`: 项目自己的刚体语义。
+- `PhysicsLockedAxes`、`PhysicsGravityScale`、`PhysicsDamping`、`PhysicsCcd`、`PhysicsSoftCcd`、`PhysicsSleeping`、`PhysicsRigidBodyDisabled`、`PhysicsAdditionalSolverIterations`: 项目自己的刚体控制语义。
+- `PhysicsCollider2d`、`PhysicsCollider3d`: 项目自己的 2D / 3D 碰撞体语义。
+- `PhysicsColliderDisabled`、`PhysicsContactSkin`、`PhysicsContactForceEventThreshold`: 项目自己的碰撞体控制语义。
+- `PhysicsCollisionGroups`、`PhysicsSolverGroups`、`PhysicsActiveEvents`、`PhysicsActiveCollisionTypes`: 项目自己的碰撞体过滤和事件开关语义。
 - `PhysicsSensor`: 项目自己的传感器标记。
 - `PhysicsLayer`: 项目自己的碰撞层语义。
 - `PhysicsMaterial`: 项目自己的物理材质语义。
 - `PhysicsMass`: 项目自己的质量语义。
-- `PhysicsVelocity2d`、`PhysicsAngularVelocity2d`: 项目自己的物理运动状态。
-- `PhysicsForce2d`、`PhysicsImpulse2d`: 项目自己的力和冲量语义。
+- `PhysicsVelocity2d`、`PhysicsAngularVelocity2d`: 项目自己的 2D 物理运动状态。
+- `PhysicsVelocity3d`、`PhysicsAngularVelocity3d`: 项目自己的 3D 物理运动状态。
+- `PhysicsForce2d`、`PhysicsImpulse2d`: 项目自己的 2D 力和冲量语义。
+- `PhysicsForce3d`、`PhysicsImpulse3d`: 项目自己的 3D 力和冲量语义。
 - `PhysicsCollisionStarted`、`PhysicsCollisionEnded`、`PhysicsSensorTriggered`: 项目自己的物理事件语义。
 
-后端类型应该尽量收敛在本 crate 内部。
+后端类型收敛在本 crate 内部。
 
-## Avian 第一版连接方式
+## 连接方式
 
-`PhysicsBody` 这类类型不是 Avian 的类型，而是项目自己的 facade component。
+`PhysicsRigidBody`、`PhysicsCollider2d`、`PhysicsCollider3d` 这类类型不是 Rapier 的类型，而是项目自己的 facade component。
 
-当 entity 添加或修改这些 facade component 时，`physics` 的 Avian backend system 会把它们转换成 Avian 真正使用的 component，并插入到同一个 entity 上：
+当 entity 添加或修改这些 facade component 时，`physics` 的 backend system 会把它们转换成 Rapier 真正使用的 component，并插入到同一个 entity 上。
 
-- `PhysicsBody` -> Avian `RigidBody`
-- `PhysicsCollider` -> Avian `Collider`
-- `PhysicsSensor` -> Avian `Sensor`
-- `PhysicsMaterial` -> Avian `Friction` + `Restitution`
-- `PhysicsMass` -> Avian `Mass`
-- `PhysicsVelocity2d` -> Avian `LinearVelocity`
-- `PhysicsAngularVelocity2d` -> Avian `AngularVelocity`
+Rapier 2D 第一版映射：
 
-所以 prefab 和 gameplay 只看项目自己的物理定义；真正驱动模拟的是 backend adapter 插入的 Avian component。
+- `PhysicsRigidBody` -> Rapier2D `RigidBody`
+- `PhysicsCollider2d::Circle` / `Rectangle` / `Polyline` / `ConvexPolygon` -> Rapier2D `Collider`
+- `PhysicsSensor` -> Rapier2D `Sensor`
+- `PhysicsMaterial` -> Rapier2D `Friction` + `Restitution`
+- `PhysicsMass` -> Rapier2D `AdditionalMassProperties`
+- `PhysicsVelocity2d` + `PhysicsAngularVelocity2d` -> Rapier2D `Velocity`
+- `PhysicsForce2d` -> Rapier2D `ExternalForce`
+- `PhysicsImpulse2d` -> Rapier2D `ExternalImpulse`
+
+Rapier 3D 第一版映射：
+
+- `PhysicsRigidBody` -> Rapier3D `RigidBody`
+- `PhysicsCollider3d::Sphere` / `Cuboid` -> Rapier3D `Collider`
+- `PhysicsSensor` -> Rapier3D `Sensor`
+- `PhysicsMaterial` -> Rapier3D `Friction` + `Restitution`
+- `PhysicsMass` -> Rapier3D `AdditionalMassProperties`
+- `PhysicsVelocity3d` + `PhysicsAngularVelocity3d` -> Rapier3D `Velocity`
+- `PhysicsForce3d` -> Rapier3D `ExternalForce`
+- `PhysicsImpulse3d` -> Rapier3D `ExternalImpulse`
+
+2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
 
 ## 边界
 
-- `app`、`external_runtime`、`intent`、`gameplay`、`render_2d`、`render_3d` 不直接依赖 Avian 或 Rapier。
+- `app`、`external_runtime`、`intent`、`gameplay`、`render_2d`、`render_3d` 不直接依赖 `bevy_rapier2d` 或 `bevy_rapier3d`。
 - 如果需要新的物理能力，优先在 `physics` 暴露统一 API。
-- `physics` 的公共 API 不 re-export Avian 或 Rapier 类型。
+- `physics` 的公共 API 不 re-export Rapier 类型。
 - 游戏语义数据仍然放在 `crates/ecs`。
 - 物理引擎插件、刚体、碰撞体、传感器、调试显示放在 `physics`。
 
@@ -72,27 +73,19 @@ cargo run --features physics/rapier2d
 - 具体文件名不能和所在目录同名，避免 Rust module inception。
 - `config/settings.rs`: 物理配置。
 - `body/kind.rs`: 刚体语义。
+- `body/control.rs`: 刚体控制语义。
 - `collider/shape.rs`: 碰撞体形状。
+- `collider/control.rs`: 碰撞体控制语义。
+- `collider/filter.rs`: 碰撞过滤和事件开关语义。
 - `layer/collision_layer.rs`: 碰撞层。
 - `sensor/marker.rs`: 传感器标记。
 - `material/surface.rs`: 物理材质。
 - `mass/properties.rs`: 质量。
 - `motion/velocity.rs`: 物理速度和角速度。
 - `force/linear.rs`: 力和冲量。
-- `events/collision.rs`: 物理事件语义。
-- `backend/avian2d/mod.rs`: Avian 插件和 adapter system 注册。
-- `backend/avian2d/convert.rs`: 项目 facade 类型到 Avian 类型的转换。
-- `backend/avian2d/systems.rs`: 同步 facade component 到 Avian backend component。
+- `events/collision.rs`: 碰撞和传感器事件语义。
+- `backend/rapier/mod.rs`: Rapier 总入口。
+- `backend/rapier/dim2/*`: Rapier2D adapter。
+- `backend/rapier/dim3/*`: Rapier3D adapter。
 
 hitbox、hurtbox、攻击范围、技能范围属于 gameplay 判定，不属于 physics 基础层。
-
-## 后续扩展
-
-当前模板先支持 2D 物理。
-
-未来需要 3D 时，可以继续添加：
-
-```text
-avian3d
-rapier3d
-```

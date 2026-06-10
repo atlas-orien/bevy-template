@@ -144,7 +144,7 @@ Entity(42)
 ├── PlayerSpeed(180.0)
 ├── MovementIntent
 ├── Transform
-├── PhysicsBody
+├── PhysicsRigidBody
 └── Character2dRender
 ```
 
@@ -313,8 +313,8 @@ World
     ├── MovementIntent
     ├── Facing
     ├── Transform
-    ├── PhysicsBody
-    ├── PhysicsCollider
+    ├── PhysicsRigidBody
+    ├── PhysicsCollider2d
     ├── PhysicsLayer
     └── Character2dRender
 ```

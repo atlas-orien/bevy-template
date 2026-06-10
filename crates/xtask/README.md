@@ -92,8 +92,8 @@ cargo run -p xtask -- help
 
 - `crates/physics` 必须存在。
 - `AI_PROTOCOL/PHYSICS.md` 必须存在。
-- 只有 `crates/physics/Cargo.toml` 可以依赖 Avian 或 Rapier。
-- 除 `crates/physics` 外，其它 crate 不允许直接 import Avian 或 Rapier。
+- 只有 `crates/physics/Cargo.toml` 可以依赖 `bevy_rapier2d` 或 `bevy_rapier3d`。
+- 除 `crates/physics` 外，其它 crate 不允许直接 import Rapier。
 
 当前也会检查 `crates/prefab`：
 

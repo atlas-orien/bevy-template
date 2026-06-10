@@ -7,3 +7,9 @@ pub struct PhysicsVelocity2d(pub Vec2);
 pub struct PhysicsAngularVelocity2d {
     pub radians_per_second: f32,
 }
+
+#[derive(Component, Debug, Clone, Copy, Default, PartialEq)]
+pub struct PhysicsVelocity3d(pub Vec3);
+
+#[derive(Component, Debug, Clone, Copy, Default, PartialEq)]
+pub struct PhysicsAngularVelocity3d(pub Vec3);

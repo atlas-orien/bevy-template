@@ -1,7 +1,10 @@
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use super::CheckStatus;
+use super::util::{
+    derived_names, manifest_has_workspace_dependency, parse_rust_file, read_file_if_exists,
+    require_mod_rs_in_subdirs, require_path, rust_files,
+};
 
 const INTENT_CRATE: &str = "crates/intent";
 const INTENT_PROTOCOL: &str = "AI_PROTOCOL/INTENT.md";
@@ -9,9 +12,22 @@ const INTENT_PROTOCOL: &str = "AI_PROTOCOL/INTENT.md";
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
 
-    require_path(INTENT_CRATE, &mut errors);
-    require_path(INTENT_PROTOCOL, &mut errors);
-    require_path("crates/intent/src/movement", &mut errors);
+    require_path(
+        INTENT_CRATE,
+        &mut errors,
+        "intent is the semantic API for writing entity intent data",
+    );
+    require_path(
+        INTENT_PROTOCOL,
+        &mut errors,
+        "AI_PROTOCOL/INTENT.md documents the intent boundary rules",
+    );
+    require_path(
+        "crates/intent/src/lib.rs",
+        &mut errors,
+        "intent needs a crate root that exports semantic intent APIs",
+    );
+    require_mod_rs_in_subdirs(Path::new(INTENT_CRATE).join("src"), &mut errors);
     reject_dependencies(&mut errors);
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);
@@ -26,14 +42,14 @@ pub fn check() -> CheckStatus {
 
 fn reject_dependencies(errors: &mut Vec<String>) {
     let manifest = Path::new(INTENT_CRATE).join("Cargo.toml");
-    let Ok(source) = fs::read_to_string(&manifest) else {
+    let Some(source) = read_file_if_exists(&manifest) else {
         return;
     };
 
     for dependency in ["ecs", "audio", "physics", "render_2d", "render_3d"] {
-        if source.contains(&format!("{dependency}.workspace = true")) {
+        if manifest_has_workspace_dependency(&source, dependency) {
             errors.push(format!(
-                "{} depends on `{dependency}`; intent should not depend on that crate",
+                "{} depends on `{dependency}`; intent should not depend on that crate, so write through prefab/gameplay-facing APIs instead",
                 manifest.display()
             ));
         }
@@ -42,10 +58,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
 
 fn reject_data_definitions(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(INTENT_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
-            continue;
-        };
-        let Ok(parsed) = syn::parse_file(&source) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
@@ -54,7 +67,7 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
                 for forbidden in ["Component", "Bundle", "Resource", "Event"] {
                     if derived.iter().any(|name| name == forbidden) {
                         errors.push(format!(
-                            "{} derives `{forbidden}`; intent should only write intent data",
+                            "{} derives `{forbidden}`; intent should only write intent data, so define ECS data in ecs/prefab instead",
                             file.display()
                         ));
                     }
@@ -66,14 +79,14 @@ fn reject_data_definitions(errors: &mut Vec<String>) {
 
 fn reject_direct_input(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(INTENT_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
         for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; input sources must be converted before intent",
+                    "{} references `{forbidden}`; input sources must be converted before intent, so move source handling to external_runtime",
                     file.display()
                 ));
             }
@@ -83,70 +96,17 @@ fn reject_direct_input(errors: &mut Vec<String>) {
 
 fn reject_world_mutation(errors: &mut Vec<String>) {
     for file in rust_files(Path::new(INTENT_CRATE)) {
-        let Ok(source) = fs::read_to_string(&file) else {
+        let Some(source) = read_file_if_exists(&file) else {
             continue;
         };
 
         for forbidden in ["Commands", "Transform", "PhysicsBody", "PhysicsCollider"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; intent should not mutate world results directly",
+                    "{} references `{forbidden}`; intent should not mutate world results directly, so express the desired action through intent data",
                     file.display()
                 ));
             }
         }
     }
-}
-
-fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!("required path is missing: {}", path.display()));
-    }
-}
-
-fn rust_files(root: &Path) -> Vec<PathBuf> {
-    let mut files = Vec::new();
-    collect_rust_files(root, &mut files);
-    files
-}
-
-fn collect_rust_files(root: &Path, files: &mut Vec<PathBuf>) {
-    let Ok(entries) = fs::read_dir(root) else {
-        return;
-    };
-
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            collect_rust_files(&path, files);
-        } else if path.extension().is_some_and(|ext| ext == "rs") {
-            files.push(path);
-        }
-    }
-}
-
-fn derived_names(item: &syn::Item) -> Option<Vec<String>> {
-    let attrs = match item {
-        syn::Item::Struct(item) => &item.attrs,
-        syn::Item::Enum(item) => &item.attrs,
-        _ => return None,
-    };
-
-    let mut names = Vec::new();
-
-    for attr in attrs {
-        if !attr.path().is_ident("derive") {
-            continue;
-        }
-
-        let _ = attr.parse_nested_meta(|meta| {
-            if let Some(ident) = meta.path.get_ident() {
-                names.push(ident.to_string());
-            }
-            Ok(())
-        });
-    }
-
-    Some(names)
 }

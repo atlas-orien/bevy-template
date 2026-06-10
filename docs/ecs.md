@@ -291,11 +291,11 @@ spawn 时，把组件实例交给 World。
 如何把 ecs + physics + render 的组件组合起来，生成一个完整对象。
 ```
 
-例如 `Player2dPrefab` 不是已经进入 World 的玩家实例。它是一个待生成的 prefab 实例，保存生成玩家所需的数据：
+例如具体项目可以定义自己的玩家 prefab。prefab 不是已经进入 World 的玩家实例，而是一个待生成的 prefab 实例，保存生成对象所需的数据：
 
 ```text
-Player2dPrefab = 待生成的玩家 prefab 实例，包含生成所需的数据
-Player2dPrefabBundle = 要放进 World 的组件组合
+PlayerPrefab = 待生成的玩家 prefab 实例，包含生成所需的数据
+PlayerPrefabBundle = 要放进 World 的组件组合
 Entity = 生成后返回的主对象 ID
 World = 真正保存组件实例的地方
 ```
@@ -492,7 +492,7 @@ prefab 实例执行自己的 spawn。
 Bevy World 保存生成出来的组件实例。
 ```
 
-第一版默认 plan 只生成一个 `Player2dPrefab`。以后新增敌人、道具、关卡物件时，不需要维护一个中心 enum 或 match 列表。只要新的 prefab 实现 `prefab::Prefab`，就可以放进 `GameplaySpawnPlan`。
+模板默认 plan 为空。以后新增玩家、敌人、道具、关卡物件时，不需要维护一个中心 enum 或 match 列表。只要新的 prefab 实现 `prefab::Prefab`，就可以放进 `GameplaySpawnPlan`。
 
 如果从普通 Rust 迁移理解，可以先记住：
 

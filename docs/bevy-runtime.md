@@ -222,16 +222,18 @@ FixedUpdate -> 固定时间步长逻辑，常用于物理、AI、网络同步
 ```rust
 app.add_systems(
     Update,
-    (keyboard_movement_input_system, player_2d_movement_system)
-        .run_if(in_state(AppState::Playing)),
+    (
+        forward_manager_requests_system,
+        consume_gameplay_requests_system,
+        sync_gameplay_entities_system,
+    ),
 );
 ```
 
 含义：
 
 ```text
-在 Update 阶段运行输入和移动系统。
-但只有处于 Playing 状态时才运行。
+在 Update 阶段把 external_runtime 发来的请求转交给 gameplay，并同步 manager 可见的 entity registry。
 ```
 
 ### Startup
@@ -305,7 +307,7 @@ app.add_systems(OnEnter(AppState::Playing), spawn_gameplay_plan_system);
 进入暂停时打开暂停界面
 ```
 
-当前项目中，`gameplay/src/spawning` 使用这个入口生成默认 gameplay spawn plan。
+当前项目中，`gameplay/src/spawning` 使用这个入口执行默认 gameplay spawn plan；模板默认 plan 为空。
 
 ### OnExit
 

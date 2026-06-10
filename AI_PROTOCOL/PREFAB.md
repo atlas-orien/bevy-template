@@ -32,7 +32,7 @@
 ## Bundle 规则
 
 - 生成实体时优先使用 prefab bundle，不要在生成系统里散装组件。
-- 具体游戏可以添加 `Player2dPrefabBundle`、`Enemy2dPrefabBundle` 等对象模板。
+- 具体游戏可以添加 `CharacterPrefabBundle`、`EnemyPrefabBundle` 等对象模板。
 - 具体 prefab 本身保存生成所需数据，优先暴露 prefab struct + bundle，并实现最小 `Prefab` trait。
 - `Prefab` trait 只表达公共生成能力；具体 prefab 的特殊能力放在自己的类型或模块里。
 - 不要把每个 prefab 做成 Bevy plugin。

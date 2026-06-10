@@ -19,7 +19,7 @@
 
 已就绪的事实：
 
-- `App` 启动后 `AppState::Loading` 会自动切到 `Playing`，`OnEnter(Playing)` 生成默认 `Player2dPrefab`（id = `GameplayEntityId(1)`）。
+- `App` 启动后 `AppState::Loading` 会自动切到 `Playing`，`OnEnter(Playing)` 执行默认 spawn plan；模板默认 plan 为空，具体项目自行添加 prefab。
 - `RuntimeRequest` 已支持 `SpawnPrefab / DespawnEntity / ClearSession / ChangeState / SetMovementIntent`，并已在 `gameplay/api/systems.rs` 全部消费。
 - `external_runtime` 已有独立 tokio 循环，每 16ms 调一次 `poll_external_sources(&manager)`（`crates/external_runtime/src/runtime/task.rs`）。
 - manager 已暴露发请求的自由函数：`spawn_prefab / despawn_entity / clear_session / change_state / set_movement_intent / entity_ids / has_entity`（`crates/external_runtime/src/manager`）。

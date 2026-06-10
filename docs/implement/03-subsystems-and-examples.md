@@ -7,13 +7,13 @@
 ## 3a. render_2d 表现层
 
 - 现状：`camera / screens / characters / ui` 等已有插件骨架，但大量 `example.rs` 只是占位 marker（如 `ExampleCamera2d`）。
-- 要做：把 `Player2dPrefab` 用到的渲染（`render_2d::characters::example::ExampleCharacter2dBundle`）作为范例，逐步补 sprite、动画帧、UI 等真实表现。
+- 要做：在具体项目或 example 分支里添加 prefab 使用的渲染表现，逐步补 sprite、动画帧、UI 等真实表现。
 - 边界：`render_2d` 只读表现状态，**不驱动玩法规则**，不读输入，不依赖 `physics/prefab/intent`（见 `AI_PROTOCOL/RENDER_2D.md` 与 xtask 规则）。
 
 ## 3b. animation
 
 - 现状：`animation/frame`、`animation/skeletal` 有结构与示例占位。
-- 要做：实现帧动画驱动（按 `Facing`、移动状态切帧），先覆盖默认玩家。
+- 要做：实现帧动画驱动（按 `Facing`、移动状态切帧），先在具体项目或 example 分支覆盖实际角色。
 
 ## 3c. audio
 
@@ -28,7 +28,7 @@
 ## 3e. 黄金路径示例（重要）
 
 - 现状：缺一条带注释、可模仿的端到端纵切示例。
-- 要做：以「默认玩家：输入源 → SetMovementIntent → movement_system → render」为主线，在注释或 `docs/` 里串成一条「做新功能照这个抄」的范例，并在 `AGENTS.md` 指向它。
+- 要做：以「输入源 → SetMovementIntent → movement_system → render」为主线，在注释或 `docs/` 里串成一条「做新功能照这个抄」的范例，并在 `AGENTS.md` 指向它。
 - 价值：约束（xtask + AI_PROTOCOL）告诉 AI 不能做什么，这条示例告诉 AI 该怎么做，是当前最缺的一块。
 
 ## 验收

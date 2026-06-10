@@ -3652,6 +3652,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "navigation"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+]
+
+[[package]]
 name = "ndk"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4383,6 +4391,7 @@ dependencies = [
  "bevy",
  "ecs",
  "error",
+ "navigation",
  "physics",
  "render_2d",
 ]

@@ -95,6 +95,15 @@ cargo run -p xtask -- help
 - 只有 `crates/physics/Cargo.toml` 可以依赖 `bevy_rapier2d` 或 `bevy_rapier3d`。
 - 除 `crates/physics` 外，其它 crate 不允许直接 import Rapier。
 
+当前也会检查 `crates/navigation`：
+
+- `crates/navigation` 必须存在。
+- `AI_PROTOCOL/NAVIGATION.md` 必须存在。
+- 必须有导航语义目录：`agent`、`target`、`path`、`query`、`systems`。
+- `navigation` 不允许依赖 `external_runtime`、`intent`、`gameplay`、`prefab`、`physics` 或 render crate。
+- `navigation` 不允许直接读取键盘、鼠标、手柄等输入。
+- `navigation` 不写渲染可视化；可视化放到 render crate。
+
 当前也会检查 `crates/prefab`：
 
 - `crates/prefab` 必须存在。
@@ -148,6 +157,8 @@ AI_PROTOCOL/ECS.md
 crates/xtask/src/rules/ecs.rs
 AI_PROTOCOL/PHYSICS.md
 crates/xtask/src/rules/physics.rs
+AI_PROTOCOL/NAVIGATION.md
+crates/xtask/src/rules/navigation.rs
 AI_PROTOCOL/PREFAB.md
 crates/xtask/src/rules/prefab.rs
 AI_PROTOCOL/GAMEPLAY.md

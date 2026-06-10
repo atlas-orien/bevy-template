@@ -6,6 +6,7 @@ mod external_runtime;
 mod gameplay;
 mod helper;
 mod intent;
+mod navigation;
 mod physics;
 mod prefab;
 mod render_2d;
@@ -49,6 +50,10 @@ pub fn check_architecture() -> CheckStatus {
     }
 
     if let CheckStatus::Failed(mut rule_errors) = physics::check() {
+        errors.append(&mut rule_errors);
+    }
+
+    if let CheckStatus::Failed(mut rule_errors) = navigation::check() {
         errors.append(&mut rule_errors);
     }
 

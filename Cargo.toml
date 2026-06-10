@@ -29,6 +29,7 @@ error = { path = "crates/error" }
 external_runtime = { path = "crates/external_runtime" }
 helper = { path = "crates/helper" }
 intent = { path = "crates/intent" }
+navigation = { path = "crates/navigation" }
 physics = { path = "crates/physics" }
 prefab = { path = "crates/prefab" }
 render_2d = { path = "crates/render_2d" }

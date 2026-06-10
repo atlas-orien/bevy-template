@@ -13,6 +13,7 @@ external source
 -> gameplay::api::systems::consume_gameplay_requests_system
 -> prefab::identity::find_gameplay_entity(id)
 -> intent::movement::set_movement_intent(entity, target, query)
+-> optional navigation target/path/follower systems
 -> ecs::systems::movement::movement_system
 -> Transform changes
 -> render_2d displays the entity
@@ -29,6 +30,8 @@ external source
 - `gameplay::api` receives requests and is the only place that maps a public id
   back to a Bevy entity for execution.
 - `intent` only writes intent data.
+- `navigation` owns path/query/follower data when an object needs path-based
+  movement.
 - `ecs::systems` performs the world rule that moves `Transform`.
 - `render_2d` reads world state and presents it.
 
@@ -42,7 +45,7 @@ external source
 6. Put object composition in `prefab`.
 7. Put ECS data in `ecs::components`, global state in `ecs::resources`, and world
    rules in `ecs::systems`.
-8. Keep render and physics as presentation/foundation layers, not control
+8. Keep render, physics, and navigation as presentation/foundation layers, not control
    sources.
 
 ## Do not do this

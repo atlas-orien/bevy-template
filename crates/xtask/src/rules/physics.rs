@@ -30,6 +30,7 @@ pub fn check() -> CheckStatus {
         "crates/physics/src/query/filter.rs",
         "crates/physics/src/query/point.rs",
         "crates/physics/src/query/raycast.rs",
+        "crates/physics/src/query/shape.rs",
         "crates/physics/src/backend/rapier/mod.rs",
         "crates/physics/src/backend/rapier/dim2/mod.rs",
         "crates/physics/src/backend/rapier/dim2/convert.rs",

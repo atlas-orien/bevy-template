@@ -37,7 +37,8 @@ pub use motion::{
 pub use plugin::{PhysicsDebugPlugin, PhysicsPlugin};
 pub use query::{
     PhysicsPointProjection2d, PhysicsPointProjection3d, PhysicsQueryFilter, PhysicsRayHit2d,
-    PhysicsRayHit3d,
+    PhysicsRayHit3d, PhysicsShapeCastHit2d, PhysicsShapeCastHit3d, PhysicsShapeCastHitDetails2d,
+    PhysicsShapeCastHitDetails3d,
 };
 pub use sensor::PhysicsSensor;
 

@@ -79,6 +79,7 @@ bevy_rapier3d
 - `query/filter.rs` 只定义项目自己的查询过滤条件，不暴露 Rapier `QueryFilter`。
 - `query/raycast.rs` 只定义项目自己的 raycast 返回数据，不暴露 Rapier `RayIntersection`。
 - `query/point.rs` 只定义项目自己的 point query 返回数据，不暴露 Rapier `PointProjection`。
+- `query/shape.rs` 只定义项目自己的 shape query / shapecast 返回数据，不暴露 Rapier `ShapeCastHit`。
 - 不要在 `crates/physics/src` 根目录直接新增物理语义文件；根目录只保留 `lib.rs`、`plugin.rs` 和 backend 入口。
 - 2D / 3D 可以作为同一语义文件里的数据形状变体，例如 `PhysicsVelocity2d` 和 `PhysicsVelocity3d`。
 - 如果某个概念是 gameplay 判定，例如 hitbox、hurtbox、攻击范围、技能范围，不放在 `physics`。
@@ -96,7 +97,7 @@ bevy_rapier3d
 - `backend/rapier/dim*/query.rs` 只负责实现项目 physics query facade 对 Rapier query API 的调用。
 - 不要在 prefab、gameplay、ecs 或 render crate 里直接插入 Rapier component。
 - 第一版 Rapier adapter 覆盖 rigid_body、rigid body control、collider、collider control、collider filtering、sensor、material、mass、velocity、force、impulse。
-- 第二阶段 Rapier adapter 覆盖 collision started、collision ended、sensor triggered、2D / 3D contact force event 转发，以及 2D / 3D raycast 和 point query。
+- 第二阶段 Rapier adapter 覆盖 collision started、collision ended、sensor triggered、2D / 3D contact force event 转发，以及 2D / 3D raycast、point query、shape query、shapecast。
 - `PhysicsCollider2d::Circle`、`Rectangle`、`Polyline`、`ConvexPolygon` 属于 2D Rapier。
 - `PhysicsCollider3d::Sphere` 和 `PhysicsCollider3d::Cuboid` 属于 3D Rapier。
 - 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
@@ -116,9 +117,13 @@ bevy_rapier3d
 - `PhysicsQuery2d/3d::intersect_ray` 返回 raycast 路径上的所有命中。
 - `PhysicsQuery2d/3d::intersect_point` 返回包含某个点的所有 collider entity。
 - `PhysicsQuery2d/3d::project_point` 返回某个点投影到最近 collider 上的结果。
+- `PhysicsQuery2d/3d::intersect_shape` 返回与查询形状相交的所有 collider entity。
+- `PhysicsQuery2d/3d::cast_shape` 返回移动查询形状时最近的 shapecast 命中。
+- shape query / shapecast 的查询形状复用 `PhysicsCollider2d/3d`，不要新增重复的 query shape enum。
 - `PhysicsRayHit2d/3d` 是项目 raycast 命中结果，第一版包含命中 entity、time of impact、point、normal。
 - `PhysicsPointProjection2d/3d` 是项目 point projection 结果，第一版包含命中 entity、投影点、是否在 collider 内部。
-- 不要在公共 API 中暴露 Rapier `QueryFilter`、`RayIntersection`、`PointProjection`、`RapierContext`、`ReadRapierContext`。
+- `PhysicsShapeCastHit2d/3d` 是项目 shapecast 命中结果，第一版包含命中 entity、time of impact、可选 witness / normal 细节。
+- 不要在公共 API 中暴露 Rapier `QueryFilter`、`RayIntersection`、`PointProjection`、`ShapeCastHit`、`ShapeCastStatus`、`RapierContext`、`ReadRapierContext`。
 
 ## Cargo 规则
 

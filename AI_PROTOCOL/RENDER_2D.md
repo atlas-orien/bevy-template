@@ -20,11 +20,14 @@
 
 - 2D 相机：写到 `crates/render_2d/src/camera`。
 - 2D 表现层动画：写到 `crates/render_2d/src/animation`。
+- 背景、远景、视差背景层：写到 `crates/render_2d/src/background`。
 - 角色表现：写到 `crates/render_2d/src/characters`。
+- 物品、掉落物、可拾取物的 2D 表现：写到 `crates/render_2d/src/items`。
 - 静物、装饰物、可见但不负责玩法规则的场景物件：写到 `crates/render_2d/src/props`。
 - tile map、tile layer、tile chunk 和 tileset 表现：写到 `crates/render_2d/src/tilemap`。
-- 背景、远景、视差层、环境装饰：写到 `crates/render_2d/src/environment`。
+- 天气、雾、环境氛围、非背景类环境装饰：写到 `crates/render_2d/src/environment`。
 - 命中特效、粒子替代 sprite、纯视觉生命周期效果：写到 `crates/render_2d/src/effects`。
+- 粒子发射器、粒子配置、纯视觉粒子生命周期：写到 `crates/render_2d/src/particles`。
 - 屏幕级表现，例如标题画面、过场屏、加载屏：写到 `crates/render_2d/src/screens`。
 - 2D UI 表现：写到 `crates/render_2d/src/ui`。
 
@@ -37,7 +40,7 @@
 - 每个默认目录保留可删除的 `example.rs`，示范该目录里应该写什么。
 - `animation` 必须继续拆成 `frame` 和 `skeletal` 两个子目录，各自保留 `example.rs`。
 - 用户开始具体项目后，可以删除或替换 `example.rs`。
-- 新增表现类型时，先判断它属于 animation、camera、characters、props、tilemap、environment、effects、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
+- 新增表现类型时，先判断它属于 animation、background、camera、characters、items、props、tilemap、environment、effects、particles、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
 
 ## 边界规则
 

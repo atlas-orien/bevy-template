@@ -1,34 +1,32 @@
 use bevy::prelude::*;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct ExampleBackground2d;
+pub struct ExampleEnvironmentDecoration2d;
 
 #[derive(Component, Debug, Clone, Copy, Default, PartialEq)]
-pub struct ExampleParallaxLayer2d {
-    pub speed: Vec2,
+pub struct ExampleAmbientMotion2d {
+    pub drift: Vec2,
 }
 
 #[derive(Bundle)]
-pub struct ExampleBackground2dBundle {
-    pub marker: ExampleBackground2d,
-    pub parallax: ExampleParallaxLayer2d,
+pub struct ExampleEnvironmentDecoration2dBundle {
+    pub marker: ExampleEnvironmentDecoration2d,
+    pub ambient_motion: ExampleAmbientMotion2d,
     pub sprite: Sprite,
     pub transform: Transform,
 }
 
-impl ExampleBackground2dBundle {
-    pub fn new(color: Color, size: Vec2, z: f32, parallax_speed: Vec2) -> Self {
+impl ExampleEnvironmentDecoration2dBundle {
+    pub fn new(color: Color, size: Vec2, translation: Vec3, drift: Vec2) -> Self {
         Self {
-            marker: ExampleBackground2d,
-            parallax: ExampleParallaxLayer2d {
-                speed: parallax_speed,
-            },
+            marker: ExampleEnvironmentDecoration2d,
+            ambient_motion: ExampleAmbientMotion2d { drift },
             sprite: Sprite {
                 color,
                 custom_size: Some(size),
                 ..default()
             },
-            transform: Transform::from_xyz(0.0, 0.0, z),
+            transform: Transform::from_translation(translation),
         }
     }
 }

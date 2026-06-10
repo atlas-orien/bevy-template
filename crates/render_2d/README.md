@@ -21,11 +21,14 @@
 
 - `camera`: 2D 相机表现。
 - `animation`: 2D 表现层动画。
+- `background`: 背景、远景、视差背景层。
 - `characters`: 角色 2D 表现。
+- `items`: 物品、掉落物、可拾取物的 2D 表现。
 - `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
 - `tilemap`: tile map、tile layer、tile chunk 和 tileset 表现。
-- `environment`: 背景、远景、视差层、环境装饰。
+- `environment`: 天气、雾、环境氛围、非背景类环境装饰。
 - `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。
+- `particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
 - `screens`: 屏幕级表现，例如标题画面、过场屏、加载屏。
 - `ui`: 2D UI 表现。
 

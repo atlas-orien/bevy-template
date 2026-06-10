@@ -30,6 +30,7 @@
 - `PhysicsQueryFilter`: 项目自己的物理查询过滤条件。
 - `PhysicsRayHit2d`、`PhysicsRayHit3d`: 项目自己的 raycast 命中结果。
 - `PhysicsPointProjection2d`、`PhysicsPointProjection3d`: 项目自己的点投影命中结果。
+- `PhysicsShapeCastHit2d`、`PhysicsShapeCastHit3d`: 项目自己的 shapecast 命中结果。
 
 后端类型收敛在本 crate 内部。
 
@@ -69,6 +70,7 @@ Rapier 2D 第一版映射：
 - Rapier2D `ContactForceEvent` -> `PhysicsContactForce2d`
 - Rapier2D raycast query -> `PhysicsQuery2d::cast_ray` / `intersect_ray`
 - Rapier2D point query -> `PhysicsQuery2d::intersect_point` / `project_point`
+- Rapier2D shape query -> `PhysicsQuery2d::intersect_shape` / `cast_shape`
 
 Rapier 3D 第一版映射：
 
@@ -84,6 +86,7 @@ Rapier 3D 第一版映射：
 - Rapier3D `ContactForceEvent` -> `PhysicsContactForce3d`
 - Rapier3D raycast query -> `PhysicsQuery3d::cast_ray` / `intersect_ray`
 - Rapier3D point query -> `PhysicsQuery3d::intersect_point` / `project_point`
+- Rapier3D shape query -> `PhysicsQuery3d::intersect_shape` / `cast_shape`
 
 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
 
@@ -116,6 +119,7 @@ Rapier 3D 第一版映射：
 - `query/filter.rs`: 查询过滤条件。
 - `query/raycast.rs`: raycast 命中结果。
 - `query/point.rs`: point query 命中结果。
+- `query/shape.rs`: shape query / shapecast 命中结果。
 - `backend/rapier/mod.rs`: Rapier 总入口。
 - `backend/rapier/dim2/mod.rs`: Rapier2D 插件和 adapter system 注册。
 - `backend/rapier/dim2/convert.rs`: 项目 facade 类型到 Rapier2D 类型的转换。

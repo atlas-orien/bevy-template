@@ -68,6 +68,19 @@ assets/2d/animated/characters/player/player.frames.ron
 
 `player.frames.ron` 是帧动画描述文件，记录图片路径、帧尺寸、行列数、clip 名称、帧 index、fps 和是否循环。
 
+当前打包命令：
+
+```sh
+cargo run -p xtask -- pack-frame characters/player
+```
+
+其中 `characters/player` 会自动映射：
+
+```text
+workbench/source_frames/characters/player/
+assets/2d/animated/characters/player/
+```
+
 ## 命名
 
 - 文件和目录使用 lowercase kebab-case。

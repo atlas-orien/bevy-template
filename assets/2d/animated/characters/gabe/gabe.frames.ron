@@ -1,0 +1,27 @@
+(
+    image: "2d/animated/characters/gabe/gabe.png",
+    frame_size: (24, 24),
+    columns: 7,
+    rows: 1,
+    clips: {
+        "idle": (
+            frames: [
+                0,
+                1,
+                2,
+            ],
+            fps: 8.0,
+            repeat: true,
+        ),
+        "run": (
+            frames: [
+                3,
+                4,
+                5,
+                6,
+            ],
+            fps: 8.0,
+            repeat: true,
+        ),
+    },
+)

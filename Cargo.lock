@@ -6776,6 +6776,9 @@ name = "xtask"
 version = "0.1.0"
 dependencies = [
  "error",
+ "image",
+ "ron",
+ "serde",
  "syn",
 ]
 

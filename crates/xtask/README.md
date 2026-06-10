@@ -20,6 +20,42 @@ cargo run -p xtask -- help
 
 ## 当前命令
 
+### pack-frame
+
+把 `workbench/source_frames/{category}/{name}` 下的 PNG 散帧打包成 Bevy 运行时使用的 sprite sheet 和 `.frames.ron` 描述文件。
+
+```sh
+cargo run -p xtask -- pack-frame characters/player
+```
+
+输入：
+
+```text
+workbench/source_frames/characters/player/idle_down_000.png
+workbench/source_frames/characters/player/idle_down_001.png
+workbench/source_frames/characters/player/run_down_000.png
+```
+
+输出：
+
+```text
+assets/2d/animated/characters/player/player.png
+assets/2d/animated/characters/player/player.frames.ron
+```
+
+散帧命名必须是：
+
+```text
+{clip_name}_{frame_number}.png
+```
+
+可选参数：
+
+```sh
+cargo run -p xtask -- pack-frame characters/player --columns 8 --fps 12
+cargo run -p xtask -- pack-frame effects/slash --once
+```
+
 ### check
 
 检查项目结构是否符合当前模板规则。

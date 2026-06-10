@@ -32,6 +32,7 @@ bevy_rapier3d
 - 项目统一质量语义：写到 `crates/physics/src/mass`。
 - 项目统一物理运动语义：写到 `crates/physics/src/motion`。
 - 项目统一力和冲量语义：写到 `crates/physics/src/force`。
+- 项目统一关节语义：写到 `crates/physics/src/joint`。
 - 项目统一传感器标记：写到 `crates/physics/src/sensor`。
 - 项目统一物理事件语义：写到 `crates/physics/src/events`。
 - 项目统一物理查询语义：写到 `crates/physics/src/query`。
@@ -74,6 +75,7 @@ bevy_rapier3d
 - `mass/properties.rs` 只定义质量。
 - `motion/velocity.rs` 只定义物理速度、角速度等运动状态。
 - `force/linear.rs` 只定义力和冲量。
+- `joint/impulse.rs` 只定义项目自己的 impulse joint facade，不暴露 Rapier `ImpulseJoint`、`TypedJoint` 或具体 Rapier joint 类型。
 - `events/collision.rs` 只定义物理碰撞/传感器事件语义；当前 Bevy 版本使用 `Message` / `add_message`。
 - `events/contact_force.rs` 只定义物理接触力事件语义。因为力向量维度不同，接触力事件必须显式区分 `PhysicsContactForce2d` 和 `PhysicsContactForce3d`。
 - `query/filter.rs` 只定义项目自己的查询过滤条件，不暴露 Rapier `QueryFilter`。
@@ -98,6 +100,7 @@ bevy_rapier3d
 - 不要在 prefab、gameplay、ecs 或 render crate 里直接插入 Rapier component。
 - 第一版 Rapier adapter 覆盖 rigid_body、rigid body control、collider、collider control、collider filtering、sensor、material、mass、velocity、force、impulse。
 - 第二阶段 Rapier adapter 覆盖 collision started、collision ended、sensor triggered、2D / 3D contact force event 转发，以及 2D / 3D raycast、point query、shape query、shapecast。
+- 第二阶段 Rapier adapter 覆盖第一版 impulse joint facade：fixed、revolute、prismatic、rope、spring。
 - `PhysicsCollider2d::Circle`、`Rectangle`、`Polyline`、`ConvexPolygon` 属于 2D Rapier。
 - `PhysicsCollider3d::Sphere` 和 `PhysicsCollider3d::Cuboid` 属于 3D Rapier。
 - 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
@@ -108,6 +111,9 @@ bevy_rapier3d
 - Rapier 的线速度和角速度共享同一个 `Velocity` component，更新其中一个时必须保留另一个。
 - `PhysicsForce2d/3d` 映射到 Rapier `ExternalForce`，第一版只表达作用在质心的线性力，torque 默认为 0。
 - `PhysicsImpulse2d/3d` 映射到 Rapier `ExternalImpulse`，第一版只表达作用在质心的线性冲量，torque impulse 默认为 0。
+- `PhysicsImpulseJoint2d/3d` 映射到 Rapier `ImpulseJoint`，第一版只表达 fixed、revolute、prismatic、rope、spring。
+- `PhysicsImpulseJoint2d/3d::parent` 是 joint 的第一个刚体 entity，挂载该 component 的 entity 是第二个刚体。
+- 第一版 joint 不做 multibody joint，不做 motor facade，不做 limit facade。未来需要时先更新本文件和 README。
 - `PhysicsCollisionStarted` / `PhysicsCollisionEnded` 来自 Rapier collision event，但不暴露 Rapier event 类型。
 - `PhysicsSensorTriggered` 来自 Rapier sensor collision started event；第一版只表达进入/触发，不表达退出。
 - `PhysicsContactForce2d/3d` 来自 Rapier contact force event；用户需要在 collider 上启用 `PhysicsActiveEvents` 和 `PhysicsContactForceEventThreshold` 才能收到。

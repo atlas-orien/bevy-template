@@ -4,6 +4,7 @@ mod collider;
 mod config;
 mod events;
 mod force;
+mod joint;
 mod layer;
 mod mass;
 mod material;
@@ -28,6 +29,9 @@ pub use events::{
     PhysicsSensorTriggered,
 };
 pub use force::{PhysicsForce2d, PhysicsForce3d, PhysicsImpulse2d, PhysicsImpulse3d};
+pub use joint::{
+    PhysicsImpulseJoint2d, PhysicsImpulseJoint3d, PhysicsJointKind2d, PhysicsJointKind3d,
+};
 pub use layer::PhysicsLayer;
 pub use mass::PhysicsMass;
 pub use material::PhysicsMaterial;

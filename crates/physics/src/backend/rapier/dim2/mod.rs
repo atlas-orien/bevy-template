@@ -47,6 +47,7 @@ pub fn add_physics_backend(app: &mut App) {
                 systems::sync_physics_angular_velocities,
                 systems::sync_physics_forces,
                 systems::sync_physics_impulses,
+                systems::sync_physics_impulse_joints,
             ),
         )
         .add_systems(

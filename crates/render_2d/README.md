@@ -23,13 +23,20 @@
 - `animation`: 2D 表现层动画。
 - `background`: 背景、远景、视差背景层。
 - `characters`: 角色 2D 表现。
+- `debug`: 渲染调试显示，例如边界、坐标轴、可视化标记。
+- `lighting`: 2D 光照感、发光层、假阴影、bloom 相关表现配置。
 - `items`: 物品、掉落物、可拾取物的 2D 表现。
+- `materials`: 自定义 2D material、shader、特殊 sprite material 的项目落点。
+- `mesh`: 自定义 2D mesh、程序化形状、非 sprite 几何表现。
+- `overlays`: 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示。
 - `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
 - `tilemap`: tile map、tile layer、tile chunk 和 tileset 表现。
 - `environment`: 天气、雾、环境氛围、非背景类环境装饰。
 - `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。
 - `particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
 - `screens`: 屏幕级表现，例如标题画面、过场屏、加载屏。
+- `text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
+- `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
 - `ui`: 2D UI 表现。
 
 每个目录都有可删除的 `example.rs`。`animation` 继续拆成 `frame/example.rs` 和 `skeletal/example.rs`，分别示范帧动画和骨骼动画的边界。用户开始真实项目后，可以直接删除或替换这些 example 文件。

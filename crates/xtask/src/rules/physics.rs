@@ -25,6 +25,7 @@ pub fn check() -> CheckStatus {
         "crates/physics/src/mass/properties.rs",
         "crates/physics/src/motion/velocity.rs",
         "crates/physics/src/force/linear.rs",
+        "crates/physics/src/joint/impulse.rs",
         "crates/physics/src/events/collision.rs",
         "crates/physics/src/events/contact_force.rs",
         "crates/physics/src/query/filter.rs",

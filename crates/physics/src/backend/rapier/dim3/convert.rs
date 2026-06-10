@@ -5,19 +5,23 @@ use bevy_rapier3d::prelude::{
     Ccd as RapierCcd, Collider as RapierCollider, CollisionGroups as RapierCollisionGroups,
     ContactForceEventThreshold as RapierContactForceEventThreshold,
     ContactSkin as RapierContactSkin, Damping as RapierDamping, ExternalForce as RapierForce,
-    ExternalImpulse as RapierImpulse, Friction as RapierFriction,
-    GravityScale as RapierGravityScale, Group as RapierGroup, LockedAxes as RapierLockedAxes,
-    Restitution as RapierRestitution, RigidBody as RapierRigidBody,
-    RigidBodyDisabled as RapierRigidBodyDisabled, Sleeping as RapierSleeping,
-    SoftCcd as RapierSoftCcd, SolverGroups as RapierSolverGroups, Velocity as RapierVelocity,
+    ExternalImpulse as RapierImpulse, FixedJoint as RapierFixedJoint, Friction as RapierFriction,
+    GravityScale as RapierGravityScale, Group as RapierGroup, ImpulseJoint as RapierImpulseJoint,
+    LockedAxes as RapierLockedAxes, PrismaticJoint as RapierPrismaticJoint,
+    Restitution as RapierRestitution, RevoluteJoint as RapierRevoluteJoint,
+    RigidBody as RapierRigidBody, RigidBodyDisabled as RapierRigidBodyDisabled,
+    RopeJoint as RapierRopeJoint, Sleeping as RapierSleeping, SoftCcd as RapierSoftCcd,
+    SolverGroups as RapierSolverGroups, SpringJoint as RapierSpringJoint,
+    TypedJoint as RapierTypedJoint, Velocity as RapierVelocity,
 };
 
 use crate::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsAdditionalSolverIterations,
     PhysicsAngularVelocity3d, PhysicsCcd, PhysicsCollider3d, PhysicsCollisionGroups,
     PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping, PhysicsForce3d,
-    PhysicsGravityScale, PhysicsImpulse3d, PhysicsLockedAxes, PhysicsMass, PhysicsMaterial,
-    PhysicsRigidBody, PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity3d,
+    PhysicsGravityScale, PhysicsImpulse3d, PhysicsImpulseJoint3d, PhysicsJointKind3d,
+    PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody, PhysicsSleeping,
+    PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity3d,
 };
 
 pub fn rigid_body(rigid_body: PhysicsRigidBody) -> RapierRigidBody {
@@ -206,4 +210,68 @@ pub fn contact_force_threshold(
 
 pub fn rigid_body_disabled() -> RapierRigidBodyDisabled {
     RapierRigidBodyDisabled
+}
+
+pub fn impulse_joint(joint: PhysicsImpulseJoint3d) -> RapierImpulseJoint {
+    let mut data: RapierTypedJoint = match joint.kind {
+        PhysicsJointKind3d::Fixed {
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierFixedJoint::new();
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Revolute {
+            axis,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierRevoluteJoint::new(axis);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Prismatic {
+            axis,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierPrismaticJoint::new(axis);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Rope {
+            max_distance,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierRopeJoint::new(max_distance);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Spring {
+            rest_length,
+            stiffness,
+            damping,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierSpringJoint::new(rest_length, stiffness, damping);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+    };
+
+    data.as_mut().set_contacts_enabled(joint.contacts_enabled);
+    RapierImpulseJoint::new(joint.parent, data)
 }

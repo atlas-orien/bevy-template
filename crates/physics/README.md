@@ -24,6 +24,8 @@
 - `PhysicsVelocity3d`、`PhysicsAngularVelocity3d`: 项目自己的 3D 物理运动状态。
 - `PhysicsForce2d`、`PhysicsImpulse2d`: 项目自己的 2D 力和冲量语义。
 - `PhysicsForce3d`、`PhysicsImpulse3d`: 项目自己的 3D 力和冲量语义。
+- `PhysicsImpulseJoint2d`、`PhysicsImpulseJoint3d`: 项目自己的 2D / 3D impulse joint 语义。
+- `PhysicsJointKind2d`、`PhysicsJointKind3d`: 项目自己的 joint 类型语义。
 - `PhysicsCollisionStarted`、`PhysicsCollisionEnded`、`PhysicsSensorTriggered`: 项目自己的碰撞和传感器事件语义。
 - `PhysicsContactForce2d`、`PhysicsContactForce3d`: 项目自己的 2D / 3D 接触力事件语义。
 - `PhysicsQuery2d`、`PhysicsQuery3d`: 项目自己的 2D / 3D 物理查询入口。
@@ -66,6 +68,7 @@ Rapier 2D 第一版映射：
 - `PhysicsVelocity2d` + `PhysicsAngularVelocity2d` -> Rapier2D `Velocity`
 - `PhysicsForce2d` -> Rapier2D `ExternalForce`
 - `PhysicsImpulse2d` -> Rapier2D `ExternalImpulse`
+- `PhysicsImpulseJoint2d` -> Rapier2D `ImpulseJoint`
 - Rapier2D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
 - Rapier2D `ContactForceEvent` -> `PhysicsContactForce2d`
 - Rapier2D raycast query -> `PhysicsQuery2d::cast_ray` / `intersect_ray`
@@ -82,6 +85,7 @@ Rapier 3D 第一版映射：
 - `PhysicsVelocity3d` + `PhysicsAngularVelocity3d` -> Rapier3D `Velocity`
 - `PhysicsForce3d` -> Rapier3D `ExternalForce`
 - `PhysicsImpulse3d` -> Rapier3D `ExternalImpulse`
+- `PhysicsImpulseJoint3d` -> Rapier3D `ImpulseJoint`
 - Rapier3D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
 - Rapier3D `ContactForceEvent` -> `PhysicsContactForce3d`
 - Rapier3D raycast query -> `PhysicsQuery3d::cast_ray` / `intersect_ray`
@@ -114,6 +118,7 @@ Rapier 3D 第一版映射：
 - `mass/properties.rs`: 质量。
 - `motion/velocity.rs`: 物理速度和角速度。
 - `force/linear.rs`: 力和冲量。
+- `joint/impulse.rs`: impulse joint。
 - `events/collision.rs`: 碰撞和传感器事件语义。
 - `events/contact_force.rs`: 接触力事件语义。
 - `query/filter.rs`: 查询过滤条件。

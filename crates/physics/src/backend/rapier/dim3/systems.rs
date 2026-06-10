@@ -7,9 +7,9 @@ use crate::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsAdditionalSolverIterations,
     PhysicsAngularVelocity3d, PhysicsCcd, PhysicsCollider3d, PhysicsColliderDisabled,
     PhysicsCollisionGroups, PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping,
-    PhysicsForce3d, PhysicsGravityScale, PhysicsImpulse3d, PhysicsLockedAxes, PhysicsMass,
-    PhysicsMaterial, PhysicsRigidBody, PhysicsRigidBodyDisabled, PhysicsSensor, PhysicsSleeping,
-    PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity3d,
+    PhysicsForce3d, PhysicsGravityScale, PhysicsImpulse3d, PhysicsImpulseJoint3d,
+    PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody, PhysicsRigidBodyDisabled,
+    PhysicsSensor, PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity3d,
 };
 
 use super::convert;
@@ -231,6 +231,17 @@ pub fn sync_physics_impulses(
 ) {
     for (entity, impulse) in &impulses {
         commands.entity(entity).insert(convert::impulse(*impulse));
+    }
+}
+
+pub fn sync_physics_impulse_joints(
+    mut commands: Commands,
+    joints: Query<(Entity, &PhysicsImpulseJoint3d), Synced<PhysicsImpulseJoint3d>>,
+) {
+    for (entity, joint) in &joints {
+        commands
+            .entity(entity)
+            .insert(convert::impulse_joint(*joint));
     }
 }
 

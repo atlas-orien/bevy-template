@@ -22,13 +22,20 @@
 - 2D 表现层动画：写到 `crates/render_2d/src/animation`。
 - 背景、远景、视差背景层：写到 `crates/render_2d/src/background`。
 - 角色表现：写到 `crates/render_2d/src/characters`。
+- 渲染调试显示，例如边界、坐标轴、可视化标记：写到 `crates/render_2d/src/debug`。
+- 2D 光照感、发光层、假阴影、bloom 相关表现配置：写到 `crates/render_2d/src/lighting`。
 - 物品、掉落物、可拾取物的 2D 表现：写到 `crates/render_2d/src/items`。
+- 自定义 2D material、shader、特殊 sprite material 的项目落点：写到 `crates/render_2d/src/materials`。
+- 自定义 2D mesh、程序化形状、非 sprite 几何表现：写到 `crates/render_2d/src/mesh`。
+- 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示：写到 `crates/render_2d/src/overlays`。
 - 静物、装饰物、可见但不负责玩法规则的场景物件：写到 `crates/render_2d/src/props`。
 - tile map、tile layer、tile chunk 和 tileset 表现：写到 `crates/render_2d/src/tilemap`。
 - 天气、雾、环境氛围、非背景类环境装饰：写到 `crates/render_2d/src/environment`。
 - 命中特效、粒子替代 sprite、纯视觉生命周期效果：写到 `crates/render_2d/src/effects`。
 - 粒子发射器、粒子配置、纯视觉粒子生命周期：写到 `crates/render_2d/src/particles`。
 - 屏幕级表现，例如标题画面、过场屏、加载屏：写到 `crates/render_2d/src/screens`。
+- 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字：写到 `crates/render_2d/src/text`。
+- 屏幕转场、淡入淡出、wipe 等过渡表现：写到 `crates/render_2d/src/transitions`。
 - 2D UI 表现：写到 `crates/render_2d/src/ui`。
 
 当前目录是模板默认结构，可以按具体游戏调整，但必须保持表现层边界清楚。
@@ -40,7 +47,7 @@
 - 每个默认目录保留可删除的 `example.rs`，示范该目录里应该写什么。
 - `animation` 必须继续拆成 `frame` 和 `skeletal` 两个子目录，各自保留 `example.rs`。
 - 用户开始具体项目后，可以删除或替换 `example.rs`。
-- 新增表现类型时，先判断它属于 animation、background、camera、characters、items、props、tilemap、environment、effects、particles、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
+- 新增表现类型时，先判断它属于 animation、background、camera、characters、debug、lighting、items、materials、mesh、overlays、props、tilemap、environment、effects、particles、screens、text、transitions 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
 
 ## 边界规则
 

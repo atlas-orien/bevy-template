@@ -72,11 +72,14 @@ pub fn sync_physics_masses(
 pub fn sync_physics_velocities(
     mut commands: Commands,
     velocities: Query<(Entity, &PhysicsVelocity3d), Synced<PhysicsVelocity3d>>,
+    existing_velocities: Query<&RapierVelocity>,
 ) {
     for (entity, velocity) in &velocities {
-        commands
-            .entity(entity)
-            .insert(convert::linear_velocity(*velocity));
+        let mut velocity = convert::linear_velocity(*velocity);
+        if let Ok(existing) = existing_velocities.get(entity) {
+            velocity.angular = existing.angular;
+        }
+        commands.entity(entity).insert(velocity);
     }
 }
 

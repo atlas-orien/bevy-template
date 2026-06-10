@@ -4,8 +4,10 @@
 
 `crates/prefab` 是可生成对象模板和 gameplay-facing 对象组合基础库。
 
-它组合 ECS、physics、render、audio 等数据，提供可以被 gameplay setup 直接生成的完整对象模板。
-它也是外部 gameplay、intent、external_runtime、app 面向底层 ECS、physics、render、audio 能力的边界层；这些外部层不直接使用这些基础库。
+它组合 ECS、physics、render 等数据，提供可以被 gameplay setup 直接生成的完整对象模板。
+它也是外部 gameplay、intent、external_runtime、app 面向底层 ECS、physics、render 能力的边界层；这些外部层不直接使用这些基础库。
+
+音频能力已经有独立的 `crates/audio` 基础层，但当前 prefab 模板尚未接入具体 audio prefab。未来如果对象模板需要声音配置，可以由 `prefab` 或后续 content 层组合 `audio` 暴露的基础数据。
 
 ## 代码落点
 
@@ -15,7 +17,8 @@
 
 ## 边界规则
 
-- `prefab` 可以依赖 `audio`、`ecs`、`physics`、`render_2d`。
+- `prefab` 可以依赖 `ecs`、`physics`、`render_2d`。
+- 未来对象模板需要声音配置时，`prefab` 可以依赖 `audio` 或通过 content 层组合 audio 数据。
 - 未来 3D prefab 可以依赖 `render_3d`。
 - `prefab` 不读取键盘、鼠标、手柄、外设、AI、网络或脚本输入。
 - `prefab` 不写底层 ECS system 函数；可以封装和导出 gameplay-facing spawn API 或窄 facade。
@@ -45,7 +48,7 @@
 
 ## Audio 边界
 
-- `prefab` 可以组合 `audio` 暴露的声音来源、播放设置、空间音频等基础数据。
+- `prefab` 当前不依赖 `audio`；audio prefab 接入后，可以组合 `audio` 暴露的声音来源、播放设置、空间音频等基础数据。
 - 具体对象使用哪些声音，例如 `player_attack.wav`、`engine_loop`、`level_bgm`，属于 prefab 或未来 content。
 - `prefab` 不实现音频后端、DSP 合成器或播放 runtime。
 - `prefab` 不决定什么时候播放声音；播放时机由 gameplay、ecs event 或其它上层流程决定。

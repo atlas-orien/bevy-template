@@ -65,8 +65,11 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 
 当前模板只保留 ECS 基础结构和基础组件命名，不携带运行 demo 资源。
 
-- `crates/ecs/src/components/base`: 定义 `DisplayName`、`PublicEntityId`、`Health`、`MaxHealth`、`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`Facing`、`Faction`、`Team`。
+- `crates/ecs/src/components/base`: 定义 `DisplayName`、`PublicEntityId`、`Health`、`MaxHealth`、`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`、`Faction`、`Team`。
 - `crates/ecs/src/components/characters`: 定义 `Player`、`LocalPlayerControlled` 和角色默认 Bundle。
+- `crates/ecs/src/components/items`: 定义基础物品身份数据。
+- `crates/ecs/src/components/ui`: 保留 UI 相关 ECS 数据命名空间。
+- `crates/ecs/src/components/world`: 定义 gameplay-facing 实体标记，例如 `GameplayEntity`、`GameplaySessionEntity`、`GameplayEntityId`。
 - `crates/ecs/src/resources`: 定义 `WorldConfig`、`GameSession`，并通过 `ResourcesPlugin` 注册默认 Resource。
 - `crates/ecs/src/events`: 定义 `DamageEvent`、`HealEvent`、`SpawnedEvent`、`DiedEvent`，并通过 `EventsPlugin` 注册事件类型。
 - `crates/intent`: 提供写入 `MovementIntent` 等意图数据的语义 API。

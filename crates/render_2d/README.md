@@ -6,7 +6,7 @@
 
 这里可以直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等类型。
 
-模板阶段默认没有真实游戏内容。每个表现目录只保留一个可删除的 `example.rs`，用于示范代码应该写在哪里。
+模板阶段默认没有真实游戏内容。每个表现目录只保留可删除的 `example.rs`，用于示范代码应该写在哪里。
 
 ## 职责
 
@@ -22,10 +22,14 @@
 - `camera`: 2D 相机表现。
 - `animation`: 2D 表现层动画。
 - `characters`: 角色 2D 表现。
-- `screens`: 屏幕和背景表现。
+- `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
+- `tilemap`: tile map、tile layer、tile chunk 和 tileset 表现。
+- `environment`: 背景、远景、视差层、环境装饰。
+- `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。
+- `screens`: 屏幕级表现，例如标题画面、过场屏、加载屏。
 - `ui`: 2D UI 表现。
 
-每个目录都有一个 `example.rs`。用户开始真实项目后，可以直接删除或替换这些 example 文件。
+每个目录都有可删除的 `example.rs`。`animation` 继续拆成 `frame/example.rs` 和 `skeletal/example.rs`，分别示范帧动画和骨骼动画的边界。用户开始真实项目后，可以直接删除或替换这些 example 文件。
 
 ## 文件规则
 

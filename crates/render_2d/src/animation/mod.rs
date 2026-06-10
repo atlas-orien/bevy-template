@@ -1,4 +1,5 @@
-pub mod example;
+pub mod frame;
+pub mod skeletal;
 
 use bevy::prelude::*;
 

@@ -9,6 +9,7 @@ mod mass;
 mod material;
 mod motion;
 mod plugin;
+mod query;
 mod sensor;
 
 pub use body::{
@@ -34,4 +35,10 @@ pub use motion::{
     PhysicsAngularVelocity2d, PhysicsAngularVelocity3d, PhysicsVelocity2d, PhysicsVelocity3d,
 };
 pub use plugin::{PhysicsDebugPlugin, PhysicsPlugin};
+pub use query::{
+    PhysicsPointProjection2d, PhysicsPointProjection3d, PhysicsQueryFilter, PhysicsRayHit2d,
+    PhysicsRayHit3d,
+};
 pub use sensor::PhysicsSensor;
+
+pub use backend::{PhysicsQuery2d, PhysicsQuery3d};

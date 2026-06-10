@@ -6,7 +6,7 @@
 
 它不是 Bevy 2D/render 的二次封装层。它直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等组件。
 
-这个模板阶段默认没有真实游戏内容。每个表现目录只保留一个可删除的 `example.rs`，用于告诉用户代码应该写在哪里。和 `physics` 不同，`render_2d` 是用户会经常修改的内容层。用户新增或修改角色外观、动画、UI、背景、相机表现时，应该修改这里。
+这个模板阶段默认没有真实游戏内容。每个表现目录只保留可删除的 `example.rs`，用于告诉用户代码应该写在哪里。和 `physics` 不同，`render_2d` 是用户会经常修改的内容层。用户新增或修改角色外观、动画、UI、背景、相机表现时，应该修改这里。
 
 ## 核心职责
 
@@ -21,7 +21,11 @@
 - 2D 相机：写到 `crates/render_2d/src/camera`。
 - 2D 表现层动画：写到 `crates/render_2d/src/animation`。
 - 角色表现：写到 `crates/render_2d/src/characters`。
-- 屏幕和背景表现：写到 `crates/render_2d/src/screens`。
+- 静物、装饰物、可见但不负责玩法规则的场景物件：写到 `crates/render_2d/src/props`。
+- tile map、tile layer、tile chunk 和 tileset 表现：写到 `crates/render_2d/src/tilemap`。
+- 背景、远景、视差层、环境装饰：写到 `crates/render_2d/src/environment`。
+- 命中特效、粒子替代 sprite、纯视觉生命周期效果：写到 `crates/render_2d/src/effects`。
+- 屏幕级表现，例如标题画面、过场屏、加载屏：写到 `crates/render_2d/src/screens`。
 - 2D UI 表现：写到 `crates/render_2d/src/ui`。
 
 当前目录是模板默认结构，可以按具体游戏调整，但必须保持表现层边界清楚。
@@ -30,9 +34,10 @@
 
 - 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
 - 不要把具体 Component、Bundle 或 system 全部写进 `mod.rs`。
-- 每个默认目录保留一个 `example.rs`，示范该目录里应该写什么。
+- 每个默认目录保留可删除的 `example.rs`，示范该目录里应该写什么。
+- `animation` 必须继续拆成 `frame` 和 `skeletal` 两个子目录，各自保留 `example.rs`。
 - 用户开始具体项目后，可以删除或替换 `example.rs`。
-- 新增表现类型时，先判断它属于 animation、camera、characters、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
+- 新增表现类型时，先判断它属于 animation、camera、characters、props、tilemap、environment、effects、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
 
 ## 边界规则
 
@@ -64,6 +69,7 @@
 - `animation` 只定义 2D 表现层动画。
 - `animation/frame` 放帧动画、sprite sheet、texture atlas animation。
 - `animation/skeletal` 放 2D 骨骼动画、bone、skeleton、骨骼播放状态。
+- 模板阶段 `animation/frame/example.rs` 和 `animation/skeletal/example.rs` 只示范数据边界，不代表真实游戏动画。
 - 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `animation/frame`。
 - 第一版不实现复杂骨骼 runtime，只保留清楚的数据边界。
 - animation 可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。

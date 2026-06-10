@@ -16,7 +16,16 @@ pub fn check() -> CheckStatus {
     require_path("crates/render_2d/src/characters", &mut errors);
     require_path("crates/render_2d/src/screens", &mut errors);
     require_path("crates/render_2d/src/ui", &mut errors);
-    require_path("crates/render_2d/src/animation/example.rs", &mut errors);
+    require_path("crates/render_2d/src/animation/frame", &mut errors);
+    require_path("crates/render_2d/src/animation/skeletal", &mut errors);
+    require_path(
+        "crates/render_2d/src/animation/frame/example.rs",
+        &mut errors,
+    );
+    require_path(
+        "crates/render_2d/src/animation/skeletal/example.rs",
+        &mut errors,
+    );
     require_path("crates/render_2d/src/camera/example.rs", &mut errors);
     require_path("crates/render_2d/src/characters/example.rs", &mut errors);
     require_path("crates/render_2d/src/screens/example.rs", &mut errors);

@@ -1,5 +1,6 @@
 mod convert;
 mod events;
+mod query;
 mod systems;
 
 use bevy::prelude::*;
@@ -61,3 +62,5 @@ pub fn add_physics_backend(app: &mut App) {
 pub fn add_debug_backend(app: &mut App) {
     app.add_plugins(RapierDebugRenderPlugin::default());
 }
+
+pub use query::PhysicsQuery2d;

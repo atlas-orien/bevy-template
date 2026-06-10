@@ -26,6 +26,10 @@
 - `PhysicsForce3d`、`PhysicsImpulse3d`: 项目自己的 3D 力和冲量语义。
 - `PhysicsCollisionStarted`、`PhysicsCollisionEnded`、`PhysicsSensorTriggered`: 项目自己的碰撞和传感器事件语义。
 - `PhysicsContactForce2d`、`PhysicsContactForce3d`: 项目自己的 2D / 3D 接触力事件语义。
+- `PhysicsQuery2d`、`PhysicsQuery3d`: 项目自己的 2D / 3D 物理查询入口。
+- `PhysicsQueryFilter`: 项目自己的物理查询过滤条件。
+- `PhysicsRayHit2d`、`PhysicsRayHit3d`: 项目自己的 raycast 命中结果。
+- `PhysicsPointProjection2d`、`PhysicsPointProjection3d`: 项目自己的点投影命中结果。
 
 后端类型收敛在本 crate 内部。
 
@@ -63,6 +67,8 @@ Rapier 2D 第一版映射：
 - `PhysicsImpulse2d` -> Rapier2D `ExternalImpulse`
 - Rapier2D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
 - Rapier2D `ContactForceEvent` -> `PhysicsContactForce2d`
+- Rapier2D raycast query -> `PhysicsQuery2d::cast_ray` / `intersect_ray`
+- Rapier2D point query -> `PhysicsQuery2d::intersect_point` / `project_point`
 
 Rapier 3D 第一版映射：
 
@@ -76,6 +82,8 @@ Rapier 3D 第一版映射：
 - `PhysicsImpulse3d` -> Rapier3D `ExternalImpulse`
 - Rapier3D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
 - Rapier3D `ContactForceEvent` -> `PhysicsContactForce3d`
+- Rapier3D raycast query -> `PhysicsQuery3d::cast_ray` / `intersect_ray`
+- Rapier3D point query -> `PhysicsQuery3d::intersect_point` / `project_point`
 
 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
 
@@ -105,14 +113,19 @@ Rapier 3D 第一版映射：
 - `force/linear.rs`: 力和冲量。
 - `events/collision.rs`: 碰撞和传感器事件语义。
 - `events/contact_force.rs`: 接触力事件语义。
+- `query/filter.rs`: 查询过滤条件。
+- `query/raycast.rs`: raycast 命中结果。
+- `query/point.rs`: point query 命中结果。
 - `backend/rapier/mod.rs`: Rapier 总入口。
 - `backend/rapier/dim2/mod.rs`: Rapier2D 插件和 adapter system 注册。
 - `backend/rapier/dim2/convert.rs`: 项目 facade 类型到 Rapier2D 类型的转换。
 - `backend/rapier/dim2/systems.rs`: 同步 facade component 到 Rapier2D backend component。
 - `backend/rapier/dim2/events.rs`: Rapier2D message 到项目 physics message 的转发。
+- `backend/rapier/dim2/query.rs`: 项目 2D physics query facade 到 Rapier2D query API 的桥接。
 - `backend/rapier/dim3/mod.rs`: Rapier3D 插件和 adapter system 注册。
 - `backend/rapier/dim3/convert.rs`: 项目 facade 类型到 Rapier3D 类型的转换。
 - `backend/rapier/dim3/systems.rs`: 同步 facade component 到 Rapier3D backend component。
 - `backend/rapier/dim3/events.rs`: Rapier3D message 到项目 physics message 的转发。
+- `backend/rapier/dim3/query.rs`: 项目 3D physics query facade 到 Rapier3D query API 的桥接。
 
 hitbox、hurtbox、攻击范围、技能范围属于 gameplay 判定，不属于 physics 基础层。

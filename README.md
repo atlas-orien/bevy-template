@@ -36,6 +36,7 @@
 - `crates/app`: Bevy App 子包，负责组装 Bevy 外壳和 `GameplayPlugin`
 - `src/main.rs`: 工作区根入口，同时启动 `external_runtime` 和 Bevy App
 - `assets`: Bevy 运行时资源目录，模板默认只保留空目录
+- `workbench`: 用户给 AI 和离线工具使用的工作台目录，不由 Bevy runtime 直接加载
 - `docs`: 设计文档、AI 任务说明、开发决策
 - `tools`: 本地辅助脚本
 

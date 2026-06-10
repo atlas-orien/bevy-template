@@ -25,6 +25,20 @@
 
 后端类型收敛在本 crate 内部。
 
+## 使用规则
+
+`physics` 是基础能力 crate，不是普通游戏内容目录。普通用户通常不需要修改这里。
+
+用户使用物理时，应该在 prefab 或 gameplay 代码里引用这里的类型：
+
+```rust
+use physics::{PhysicsCollider, PhysicsMaterial, PhysicsRigidBody};
+```
+
+然后把它们组合到具体对象上。比如角色、道具、地形、触发器这些具体内容，应该写在 `prefab` 或更上层的游戏逻辑里。
+
+只有在扩展项目通用物理能力时才修改 `physics`，例如新增通用 collider 形状、joint、raycast、shapecast、collision event 映射、物理配置或 Rapier adapter。
+
 ## 连接方式
 
 `PhysicsRigidBody` 这类类型不是 Rapier 的类型，而是项目自己的 facade component。
@@ -35,6 +49,8 @@ Rapier 2D 第一版映射：
 
 - `PhysicsRigidBody` -> Rapier2D `RigidBody`
 - `PhysicsCollider::Circle` / `Rectangle` -> Rapier2D `Collider`
+- `PhysicsCollider::Polyline2d` -> Rapier2D line-segment `Collider`
+- `PhysicsCollider::ConvexPolygon2d` -> Rapier2D convex-hull `Collider`
 - `PhysicsSensor` -> Rapier2D `Sensor`
 - `PhysicsMaterial` -> Rapier2D `Friction` + `Restitution`
 - `PhysicsMass` -> Rapier2D `AdditionalMassProperties`
@@ -49,7 +65,9 @@ Rapier 3D 第一版映射：
 - `PhysicsMass` -> Rapier3D `AdditionalMassProperties`
 - `PhysicsVelocity3d` + `PhysicsAngularVelocity3d` -> Rapier3D `Velocity`
 
-2D / 3D 归属由 `PhysicsCollider` 的形状决定。`Circle` 和 `Rectangle` 属于 2D，`Sphere` 和 `Cuboid` 属于 3D。
+2D / 3D 归属由 `PhysicsCollider` 的形状决定。`Circle`、`Rectangle`、`Polyline2d`、`ConvexPolygon2d` 属于 2D，`Sphere` 和 `Cuboid` 属于 3D。
+
+`Polyline2d` 是线段碰撞体，适合地形边缘、平台边缘、墙体轮廓。`ConvexPolygon2d` 是凸多边形实体碰撞体，不表示任意凹多边形。
 
 ## 边界
 

@@ -40,6 +40,11 @@ bevy_rapier3d
 
 ## 边界规则
 
+- `crates/physics` 是基础能力层，不是普通游戏内容层。
+- 普通用户默认不修改 `crates/physics`；用户在 prefab、gameplay 或 ecs system 里引用 `physics` 提供的类型来组合对象和规则。
+- 只有在明确扩展项目通用物理能力时才修改 `crates/physics`，例如新增通用 collider 形状、joint、raycast、shapecast、collision event 映射、物理配置或 Rapier adapter。
+- 如果只是某个具体角色、道具、场景物体需要物理属性，写到 `crates/prefab`，不要修改 `crates/physics`。
+- 如果只是某个游戏规则影响速度、移动、受力或状态，优先写到 `crates/ecs`、`crates/gameplay` 或后续明确的规则 crate，不要修改 `crates/physics`。
 - `crates/app`、`crates/external_runtime`、`crates/intent`、`crates/gameplay`、`crates/render_2d`、`crates/render_3d` 不直接依赖 `bevy_rapier2d` 或 `bevy_rapier3d`。
 - 如果其它 crate 需要物理能力，先在 `crates/physics` 暴露统一 API。
 - 不要把 Rapier 类型泄漏到 `physics` 的公共 API，除非这是经过明确设计的后端扩展点。
@@ -57,6 +62,8 @@ bevy_rapier3d
 - `body` 目录可以作为物理主体分类目录；但第一版 Rapier 后端只承诺 rigid body。
 - 不要提前添加 soft body、fluid body、particle body 等 facade 类型，除非后端能力和项目用法已经明确。
 - `collider/shape.rs` 只定义碰撞体形状，不定义 sensor、material 或 hitbox。
+- `PhysicsCollider::Polyline2d` 表示用户自定义线段碰撞体，不表示有面积的多边形。
+- `PhysicsCollider::ConvexPolygon2d` 表示用户自定义凸多边形碰撞体；不要用 `Polygon` 命名承诺任意凹多边形。
 - `layer/collision_layer.rs` 只定义物理碰撞层。
 - `sensor/marker.rs` 只定义传感器标记。
 - `material/surface.rs` 只定义物理材质，例如 friction、restitution。
@@ -79,10 +86,12 @@ bevy_rapier3d
 - `backend/rapier/dim*/systems.rs` 只负责监听项目 facade component 的 `Added` / `Changed`，并向同一个 Bevy entity 插入 Rapier component。
 - 不要在 prefab、gameplay、ecs 或 render crate 里直接插入 Rapier component。
 - 第一版 Rapier adapter 覆盖 rigid_body、collider、sensor、material、mass、velocity；力、冲量和碰撞事件以后按明确语义再接入。
-- `PhysicsCollider::Circle` 和 `PhysicsCollider::Rectangle` 属于 2D Rapier。
+- `PhysicsCollider::Circle`、`Rectangle`、`Polyline2d`、`ConvexPolygon2d` 属于 2D Rapier。
 - `PhysicsCollider::Sphere` 和 `PhysicsCollider::Cuboid` 属于 3D Rapier。
 - 2D / 3D 归属由 collider 形状决定，不由 `PhysicsRigidBody` 决定。
 - Rapier 的 rectangle / cuboid collider 使用半尺寸，转换逻辑必须留在 `convert.rs`。
+- Rapier 的 `ConvexPolygon2d` 使用 `Collider::convex_hull`，转换可能失败；失败时不要插入 Rapier collider。
+- Rapier 的 `Polyline2d` 使用 `Collider::polyline(points, None)`，用于地形边缘、平台边缘、墙体轮廓等线段碰撞。
 - Rapier 的线速度和角速度共享同一个 `Velocity` component，更新其中一个时必须保留另一个。
 
 ## Cargo 规则

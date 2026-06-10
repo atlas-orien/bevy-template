@@ -17,15 +17,18 @@ pub fn rigid_body(rigid_body: PhysicsRigidBody) -> RapierRigidBody {
     }
 }
 
-pub fn collider(collider: PhysicsCollider) -> RapierCollider {
+pub fn collider(collider: &PhysicsCollider) -> RapierCollider {
     match collider {
-        PhysicsCollider::Sphere { radius } => RapierCollider::ball(radius),
+        PhysicsCollider::Sphere { radius } => RapierCollider::ball(*radius),
         PhysicsCollider::Cuboid {
             width,
             height,
             depth,
         } => RapierCollider::cuboid(width * 0.5, height * 0.5, depth * 0.5),
-        PhysicsCollider::Circle { .. } | PhysicsCollider::Rectangle { .. } => {
+        PhysicsCollider::Circle { .. }
+        | PhysicsCollider::Rectangle { .. }
+        | PhysicsCollider::Polyline2d { .. }
+        | PhysicsCollider::ConvexPolygon2d { .. } => {
             unreachable!("2D colliders are handled by the Rapier 2D adapter")
         }
     }

@@ -38,7 +38,7 @@ pub fn sync_physics_colliders(
         if !collider.is_3d() {
             continue;
         }
-        commands.entity(entity).insert(convert::collider(*collider));
+        commands.entity(entity).insert(convert::collider(collider));
     }
 }
 

@@ -38,7 +38,10 @@ pub fn sync_physics_colliders(
         if !collider.is_2d() {
             continue;
         }
-        commands.entity(entity).insert(convert::collider(*collider));
+        let Some(collider) = convert::collider(collider) else {
+            continue;
+        };
+        commands.entity(entity).insert(collider);
     }
 }
 

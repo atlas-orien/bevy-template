@@ -2,26 +2,24 @@
 
 这个文件是 `crates/render_2d` 的 AI 规则。
 
-`crates/render_2d` 是 2D 表现层。
+`crates/render_2d` 是项目 2D 表现内容层。
 
-它读取 ECS 世界数据，把游戏显示成 2D 画面。
+它不是 Bevy 2D/render 的二次封装层。它直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等组件，把本项目已经配置好的 2D 表现内容提供给 `prefab` 组合使用。
+
+和 `physics` 不同，`render_2d` 是用户会经常修改的内容层。用户新增或修改角色外观、动画、UI、背景、相机表现时，应该修改这里。
 
 ## 核心职责
 
 - 2D 相机。
-- 2D sprite、纹理图集、动画状态和表现专用 marker。
-- 2D 场景背景、屏幕表现、HUD、菜单、界面。
-- 根据 ECS 数据更新 2D 表现。
+- 已配置好的 2D sprite、纹理图集、动画状态和表现专用 marker。
+- 已配置好的 2D 场景背景、屏幕表现、HUD、菜单、界面。
+- 根据 ECS 世界数据更新 2D 表现，但不改变玩法规则。
+- 为 `prefab` 提供高层表现 bundle、marker 和配置好的表现系统。
 
 ## 代码落点
 
 - 2D 相机：写到 `crates/render_2d/src/camera`。
 - 2D 表现层动画：写到 `crates/render_2d/src/animation`。
-- 2D 外观属性：写到 `crates/render_2d/src/appearance`。
-- 2D 表现层几何：写到 `crates/render_2d/src/geometry`。
-- 2D 视觉 transform：写到 `crates/render_2d/src/transform`。
-- 2D 视觉排序：写到 `crates/render_2d/src/ordering`。
-- 2D sprite 专用属性：写到 `crates/render_2d/src/sprite`。
 - 角色表现：写到 `crates/render_2d/src/characters`。
 - 屏幕和背景表现：写到 `crates/render_2d/src/screens`。
 - 2D UI 表现：写到 `crates/render_2d/src/ui`。
@@ -36,18 +34,7 @@
 - `camera/systems.rs` 定义相机生成和同步 system。
 - `animation/frame` 定义帧动画、sprite sheet、atlas animation 数据，例如 `sprite_frame.rs`、`clip.rs`、`playback.rs`。
 - `animation/skeletal` 定义 2D 骨骼动画数据。
-- `appearance/color.rs` 定义表现层颜色 component，例如 `RenderColor2d`。
-- `appearance/opacity.rs` 定义表现层透明度，例如 `RenderOpacity2d`。
-- `appearance/visibility.rs` 定义表现层可见性，例如 `RenderVisibility2d`。
-- `geometry/shape.rs` 定义视觉形状，例如 `RenderShape2d`。
-- `geometry/size.rs` 定义视觉尺寸，例如 `RenderSize2d`。
-- `geometry/anchor.rs` 定义视觉锚点，例如 `RenderAnchor2d`。
-- `transform/offset.rs` 定义视觉偏移，例如 `RenderOffset2d`。
-- `transform/scale.rs` 定义视觉缩放，例如 `RenderScale2d`。
-- `transform/rotation.rs` 定义视觉旋转，例如 `RenderRotation2d`。
-- `ordering/z_index.rs` 定义视觉排序，例如 `RenderZIndex2d`。
-- `sprite/flip.rs` 定义 sprite 翻转，例如 `RenderFlip2d`。
-- `characters/character.rs` 定义角色 2D 表现 marker、表现配置和 bundle。
+- `characters/character.rs` 定义角色 2D 表现 marker 和已经配置好的表现 bundle。
 - `screens/clear_color.rs` 定义屏幕背景色等屏幕级表现 system。
 - `ui/theme.rs` 定义 2D UI/表现层颜色常量。
 - `ui/markers.rs` 定义 2D UI marker。
@@ -58,6 +45,8 @@
 - 可以生成相机、sprite、UI 节点和渲染专用子实体。
 - 可以定义渲染专用 `Component`，例如 sprite marker、animation state、camera marker。
 - 可以读取 ECS 组件来决定显示方式。
+- 可以定义项目具体表现 bundle，例如 `Player2dRenderBundle`、`Slime2dRenderBundle`、`HealthBar2dBundle`。
+- 可以直接使用 Bevy 的 2D/UI 组件；不要为了字段命名再包一层项目 facade。
 - 不定义核心玩法组件、bundle、resource、event。
 - 不读取键盘、鼠标、手柄、外设、AI、网络或脚本输入。
 - 不写入 `intent`。
@@ -67,20 +56,14 @@
 - 不依赖 `external_runtime`。
 - 不放 3D 网格、3D 灯光、3D 相机。
 
-## 表现属性规则
+## Bevy 使用规则
 
-- `geometry` 只定义 2D 表现层几何，例如形状、尺寸、锚点。
-- `appearance` 只定义 2D 外观属性，例如颜色、透明度、可见性。
-- `transform` 只定义 2D 视觉 transform，例如表现偏移、缩放、旋转。
-- `ordering` 只定义 2D 视觉排序。
-- `sprite` 只定义 sprite 专用表现属性。
-- 这些目录都不定义物理碰撞、攻击范围或 gameplay 区域。
-- `RenderShape2d::Circle` 不等于 `PhysicsCollider::Circle`。
-- `RenderSize2d` 不等于 hitbox 或 hurtbox。
-- `RenderOffset2d`、`RenderScale2d`、`RenderRotation2d` 只影响视觉表现，不改变 gameplay Transform 或物理状态。
-- `RenderZIndex2d` 只表达视觉排序，不表达 ECS parent/child 关系或 gameplay 优先级。
-- `RenderVisibility2d` 和 `RenderOpacity2d` 只控制显示，不表示实体是否存在、死亡或可交互。
-- 如果几何数据会影响碰撞、寻路、攻击判定或世界规则，放到 `physics`、`ecs` 或 gameplay，不放到 `render_2d/geometry`。
+- 不要重建 Bevy render、Bevy sprite 或 Bevy UI 的基础 API。
+- 不要新增 `RenderColor2d`、`RenderSize2d`、`RenderFlip2d`、`RenderVisibility2d`、`RenderZIndex2d` 这类只镜像 Bevy 字段的 facade。
+- 颜色、尺寸、翻转、锚点、可见性、z 排序、纹理图集、sprite image mode 等，优先直接使用 Bevy 的 `Sprite`、`Anchor`、`Visibility`、`Transform`、`TextureAtlas`、`Node`、`ImageNode`、`ZIndex`、`GlobalZIndex`。
+- `render_2d` 的价值在于把这些 Bevy 组件配置成项目具体表现内容，而不是隐藏 Bevy。
+- 碰撞、攻击范围、寻路区域、触发区域不要写在这里。
+- 如果几何数据会影响碰撞、寻路、攻击判定或世界规则，放到 `physics`、`ecs` 或 gameplay，不放到 `render_2d`。
 
 ## Animation 规则
 
@@ -119,7 +102,8 @@ Gameplay Entity
 ## 和 prefab 的 render 边界
 
 - `render_2d` 可以提供挂在 Main World Entity 上的表现组件、marker 或 bundle，供 `prefab` 组合。
-- `prefab` 只组合这些 Main World 表现数据，不直接操作 RenderApp、Render World、render graph、pipeline 或 GPU resource。
+- `prefab` 只组合 `render_2d` 提供的高层表现 bundle、marker 或组件，不配置表现细节。
+- `prefab` 不直接操作 RenderApp、Render World、render graph、pipeline 或 GPU resource。
 - Render SubApp 的 extract、prepare、queue、draw 等流程属于 Bevy/render 层。
 - 如果表现逻辑需要 system 同步、动画推进、材质更新或渲染子实体维护，放在 `render_2d`，不要放在 `prefab`。
 

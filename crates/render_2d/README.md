@@ -1,27 +1,25 @@
 # 2D 渲染子包
 
-`render_2d` 是 2D 表现层。
+`render_2d` 是项目 2D 表现内容层。
 
-它的任务是“把世界显示出来”，不是“决定世界怎么变化”。
+它的任务是“这个游戏里的东西看起来是什么样”，不是“重新封装 Bevy 2D 渲染”。
+
+这里可以直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等类型。`render_2d` 只负责把它们组织成项目已经配置好的表现内容，供 `prefab` 直接组合。
 
 ## 职责
 
 - 2D 相机。
 - 2D 屏幕、抬头显示、菜单、界面。
-- 精灵、纹理图集、2D 动画。
+- 已配置好的精灵、纹理图集、2D 动画。
 - 读取 `ecs` 数据，把游戏世界显示出来。
-- 创建渲染专用 Entity、Component 和动画状态。
+- 创建渲染专用 Entity、Component、bundle 和动画状态。
+- 提供 `prefab` 可以直接使用的高层表现 bundle。
 
 ## 当前结构
 
 - `camera`: 2D 相机表现，`main_camera.rs` 放主相机 marker/bundle，`systems.rs` 放相机生成和同步 system。
 - `animation`: 2D 表现层动画，分为 `frame` 帧动画和 `skeletal` 骨骼动画。
-- `appearance`: 2D 外观属性，放颜色、透明度、可见性。
-- `geometry`: 2D 表现层几何，放视觉形状、尺寸、锚点。
-- `transform`: 2D 视觉 transform，放表现偏移、缩放、旋转。
-- `ordering`: 2D 视觉排序。
-- `sprite`: sprite 专用表现属性。
-- `characters`: 角色 2D 表现，`character.rs` 放角色 sprite marker/config/bundle。
+- `characters`: 角色 2D 表现，`character.rs` 放角色 marker 和已配置好的表现 bundle。
 - `screens`: 屏幕表现，`clear_color.rs` 放屏幕背景色等屏幕级表现 system。
 - `ui`: 2D UI 表现，`theme.rs` 放表现层颜色常量，`markers.rs` 放 UI marker。
 
@@ -32,21 +30,16 @@
 - 不新增 `common.rs`、`misc.rs` 这类含义模糊的文件。
 - 默认 2D 主相机由 `camera` 在 startup 生成；prefab 和 gameplay 不生成主相机。
 
-## 表现属性
+## Bevy 边界
 
-这些目录只表达视觉表现，不表达物理或 gameplay 判定。
+不要在这里重建 Bevy 的基础组件。
 
-- `RenderShape2d`: 视觉形状，不代表 collider。
-- `RenderSize2d`: 视觉尺寸，不代表 hitbox。
-- `RenderAnchor2d`: 视觉锚点，不代表 gameplay 坐标。
-- `RenderColor2d`: 表现层颜色，不代表阵营或游戏状态。
-- `RenderOffset2d`: 视觉偏移，不改变玩法位置。
-- `RenderScale2d`: 视觉缩放，不改变物理尺寸。
-- `RenderRotation2d`: 视觉旋转，不改变 gameplay 规则。
-- `RenderZIndex2d`: 视觉排序，不代表玩法优先级。
-- `RenderVisibility2d`: 显示开关，不代表实体是否存在。
-- `RenderOpacity2d`: 视觉透明度。
-- `RenderFlip2d`: sprite 翻转。
+- `Sprite`、`TextureAtlas`、`SpriteImageMode` 直接用 Bevy。
+- `Transform`、`Visibility`、`Anchor` 直接用 Bevy。
+- `Text2d`、`Text`、`Node`、`ImageNode` 直接用 Bevy。
+- UI 的 `ZIndex`、`GlobalZIndex` 直接用 Bevy。
+
+`render_2d` 可以把这些 Bevy 类型放进项目自己的表现 bundle，例如 `Character2dRenderBundle`。但不要新增只镜像 Bevy 字段的 facade。
 
 碰撞、攻击范围、寻路区域、触发区域不要写在这里。
 
@@ -64,9 +57,9 @@
 - `crates/ecs/src/systems` 定义玩家位置等 ECS 数据如何被规则改变。
 - `external_runtime` 读取 input/local、input/device、input/ai 等控制来源；网络是双向通信层，v2 单独设计。
 - `intent` 表达 Entity 想做什么。
-- `prefab` 把 render_2d 的表现 bundle 组合进完整对象模板。
+- `prefab` 把 `render_2d` 的高层表现 bundle 组合进完整对象模板。
 - `gameplay` 负责状态流、gameplay session 生命周期和 system 调度。
-- `render_2d` 只负责玩家看起来是什么样。
+- `render_2d` 只负责对象看起来是什么样。
 
 ## 渲染实体
 

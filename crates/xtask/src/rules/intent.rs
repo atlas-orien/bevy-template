@@ -91,7 +91,8 @@ fn reject_world_mutation(errors: &mut Vec<String>) {
             "Commands",
             "Transform",
             "PhysicsRigidBody",
-            "PhysicsCollider",
+            "PhysicsCollider2d",
+            "PhysicsCollider3d",
         ] {
             if source.contains(forbidden) {
                 errors.push(format!(

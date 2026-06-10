@@ -12,7 +12,10 @@
 - `PhysicsDebugPlugin`: 物理调试显示插件入口。
 - `PhysicsConfig`: 项目自己的物理配置数据。
 - `PhysicsRigidBody`: 项目自己的刚体语义。
-- `PhysicsCollider`: 项目自己的碰撞体语义。
+- `PhysicsLockedAxes`、`PhysicsGravityScale`、`PhysicsDamping`、`PhysicsCcd`、`PhysicsSoftCcd`、`PhysicsSleeping`、`PhysicsRigidBodyDisabled`、`PhysicsAdditionalSolverIterations`: 项目自己的刚体控制语义。
+- `PhysicsCollider2d/PhysicsCollider3d`: 项目自己的碰撞体语义。
+- `PhysicsColliderDisabled`、`PhysicsContactSkin`、`PhysicsContactForceEventThreshold`: 项目自己的碰撞体控制语义。
+- `PhysicsCollisionGroups`、`PhysicsSolverGroups`、`PhysicsActiveEvents`、`PhysicsActiveCollisionTypes`: 项目自己的碰撞体过滤和事件开关语义。
 - `PhysicsSensor`: 项目自己的传感器标记。
 - `PhysicsLayer`: 项目自己的碰撞层语义。
 - `PhysicsMaterial`: 项目自己的物理材质语义。
@@ -32,7 +35,7 @@
 用户使用物理时，应该在 prefab 或 gameplay 代码里引用这里的类型：
 
 ```rust
-use physics::{PhysicsCollider, PhysicsMaterial, PhysicsRigidBody};
+use physics::{PhysicsCollider2d, PhysicsMaterial, PhysicsRigidBody};
 ```
 
 然后把它们组合到具体对象上。比如角色、道具、地形、触发器这些具体内容，应该写在 `prefab` 或更上层的游戏逻辑里。
@@ -48,26 +51,30 @@ use physics::{PhysicsCollider, PhysicsMaterial, PhysicsRigidBody};
 Rapier 2D 第一版映射：
 
 - `PhysicsRigidBody` -> Rapier2D `RigidBody`
-- `PhysicsCollider::Circle` / `Rectangle` -> Rapier2D `Collider`
-- `PhysicsCollider::Polyline2d` -> Rapier2D line-segment `Collider`
-- `PhysicsCollider::ConvexPolygon2d` -> Rapier2D convex-hull `Collider`
+- `PhysicsCollider2d::Circle` / `Rectangle` -> Rapier2D `Collider`
+- `PhysicsCollider2d::Polyline` -> Rapier2D line-segment `Collider`
+- `PhysicsCollider2d::ConvexPolygon` -> Rapier2D convex-hull `Collider`
 - `PhysicsSensor` -> Rapier2D `Sensor`
 - `PhysicsMaterial` -> Rapier2D `Friction` + `Restitution`
 - `PhysicsMass` -> Rapier2D `AdditionalMassProperties`
 - `PhysicsVelocity2d` + `PhysicsAngularVelocity2d` -> Rapier2D `Velocity`
+- `PhysicsForce2d` -> Rapier2D `ExternalForce`
+- `PhysicsImpulse2d` -> Rapier2D `ExternalImpulse`
 
 Rapier 3D 第一版映射：
 
 - `PhysicsRigidBody` -> Rapier3D `RigidBody`
-- `PhysicsCollider::Sphere` / `Cuboid` -> Rapier3D `Collider`
+- `PhysicsCollider3d::Sphere` / `Cuboid` -> Rapier3D `Collider`
 - `PhysicsSensor` -> Rapier3D `Sensor`
 - `PhysicsMaterial` -> Rapier3D `Friction` + `Restitution`
 - `PhysicsMass` -> Rapier3D `AdditionalMassProperties`
 - `PhysicsVelocity3d` + `PhysicsAngularVelocity3d` -> Rapier3D `Velocity`
+- `PhysicsForce3d` -> Rapier3D `ExternalForce`
+- `PhysicsImpulse3d` -> Rapier3D `ExternalImpulse`
 
-2D / 3D 归属由 `PhysicsCollider` 的形状决定。`Circle`、`Rectangle`、`Polyline2d`、`ConvexPolygon2d` 属于 2D，`Sphere` 和 `Cuboid` 属于 3D。
+2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
 
-`Polyline2d` 是线段碰撞体，适合地形边缘、平台边缘、墙体轮廓。`ConvexPolygon2d` 是凸多边形实体碰撞体，不表示任意凹多边形。
+`PhysicsCollider2d::Polyline` 是线段碰撞体，适合地形边缘、平台边缘、墙体轮廓。`PhysicsCollider2d::ConvexPolygon` 是凸多边形实体碰撞体，不表示任意凹多边形。
 
 ## 边界
 

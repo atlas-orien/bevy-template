@@ -11,8 +11,15 @@ mod motion;
 mod plugin;
 mod sensor;
 
-pub use body::PhysicsRigidBody;
-pub use collider::PhysicsCollider;
+pub use body::{
+    PhysicsAdditionalSolverIterations, PhysicsCcd, PhysicsDamping, PhysicsGravityScale,
+    PhysicsLockedAxes, PhysicsRigidBody, PhysicsRigidBodyDisabled, PhysicsSleeping, PhysicsSoftCcd,
+};
+pub use collider::{
+    PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsCollider3d,
+    PhysicsColliderDisabled, PhysicsCollisionGroups, PhysicsContactForceEventThreshold,
+    PhysicsContactSkin, PhysicsSolverGroups,
+};
 pub use config::PhysicsConfig;
 pub use error::Result;
 pub use events::{PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsSensorTriggered};

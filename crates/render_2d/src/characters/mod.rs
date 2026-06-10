@@ -2,7 +2,7 @@ pub mod character;
 
 use bevy::prelude::*;
 
-pub use character::{Character2dRender, Character2dRenderBundle, Character2dSprite};
+pub use character::{Character2dRender, Character2dRenderBundle};
 
 pub struct CharacterRenderPlugin;
 

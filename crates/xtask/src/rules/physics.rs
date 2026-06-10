@@ -14,8 +14,11 @@ pub fn check() -> CheckStatus {
     require_path(PHYSICS_PROTOCOL, &mut errors);
     for path in [
         "crates/physics/src/body/kind.rs",
+        "crates/physics/src/body/control.rs",
         "crates/physics/src/config/settings.rs",
         "crates/physics/src/collider/shape.rs",
+        "crates/physics/src/collider/control.rs",
+        "crates/physics/src/collider/filter.rs",
         "crates/physics/src/layer/collision_layer.rs",
         "crates/physics/src/sensor/marker.rs",
         "crates/physics/src/material/surface.rs",
@@ -36,6 +39,9 @@ pub fn check() -> CheckStatus {
     for obsolete in [
         "crates/physics/src/body.rs",
         "crates/physics/src/body/body.rs",
+        "crates/physics/src/body/body_control.rs",
+        "crates/physics/src/collider/collider.rs",
+        "crates/physics/src/collider/collider_control.rs",
         "crates/physics/src/rigid_body",
         "crates/physics/src/rigid_body/rigid_body.rs",
         "crates/physics/src/config.rs",

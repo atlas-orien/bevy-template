@@ -14,12 +14,7 @@ pub fn check() -> CheckStatus {
     require_path("crates/render_2d/src/animation", &mut errors);
     require_path("crates/render_2d/src/camera", &mut errors);
     require_path("crates/render_2d/src/characters", &mut errors);
-    require_path("crates/render_2d/src/appearance", &mut errors);
-    require_path("crates/render_2d/src/geometry", &mut errors);
-    require_path("crates/render_2d/src/ordering", &mut errors);
     require_path("crates/render_2d/src/screens", &mut errors);
-    require_path("crates/render_2d/src/sprite", &mut errors);
-    require_path("crates/render_2d/src/transform", &mut errors);
     require_path("crates/render_2d/src/ui", &mut errors);
     require_path("crates/render_2d/src/animation/frame", &mut errors);
     require_path("crates/render_2d/src/animation/skeletal", &mut errors);
@@ -47,37 +42,32 @@ pub fn check() -> CheckStatus {
     require_path("crates/render_2d/src/camera/main_camera.rs", &mut errors);
     require_path("crates/render_2d/src/camera/systems.rs", &mut errors);
     require_path("crates/render_2d/src/characters/character.rs", &mut errors);
-    require_path("crates/render_2d/src/appearance/color.rs", &mut errors);
-    require_path("crates/render_2d/src/appearance/opacity.rs", &mut errors);
-    require_path("crates/render_2d/src/appearance/visibility.rs", &mut errors);
-    require_path("crates/render_2d/src/geometry/shape.rs", &mut errors);
-    require_path("crates/render_2d/src/geometry/size.rs", &mut errors);
-    require_path("crates/render_2d/src/geometry/anchor.rs", &mut errors);
-    require_path("crates/render_2d/src/transform/offset.rs", &mut errors);
-    require_path("crates/render_2d/src/transform/scale.rs", &mut errors);
-    require_path("crates/render_2d/src/transform/rotation.rs", &mut errors);
-    require_path("crates/render_2d/src/ordering/z_index.rs", &mut errors);
-    require_path("crates/render_2d/src/sprite/flip.rs", &mut errors);
     require_path("crates/render_2d/src/screens/clear_color.rs", &mut errors);
     require_path("crates/render_2d/src/ui/theme.rs", &mut errors);
     require_path("crates/render_2d/src/ui/markers.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/color.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/opacity.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/visibility.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/offset.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/scale.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/rotation.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/z_index.rs", &mut errors);
-    reject_path("crates/render_2d/src/geometry/flip.rs", &mut errors);
+    reject_mirror_facade_paths(&mut errors);
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);
     reject_world_rule_references(&mut errors);
+    reject_bevy_mirror_components(&mut errors);
     reject_ambiguous_files(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_mirror_facade_paths(errors: &mut Vec<String>) {
+    for path in [
+        "crates/render_2d/src/appearance",
+        "crates/render_2d/src/geometry",
+        "crates/render_2d/src/ordering",
+        "crates/render_2d/src/sprite",
+        "crates/render_2d/src/transform",
+    ] {
+        reject_path(path, errors);
     }
 }
 
@@ -100,6 +90,34 @@ fn reject_dependencies(errors: &mut Vec<String>) {
                 "{} depends on `{dependency}`; render_2d should stay presentation-only",
                 manifest.display()
             ));
+        }
+    }
+}
+
+fn reject_bevy_mirror_components(errors: &mut Vec<String>) {
+    for file in rust_files(&Path::new(RENDER_2D_CRATE).join("src")) {
+        let Ok(source) = fs::read_to_string(&file) else {
+            continue;
+        };
+
+        for forbidden in [
+            "RenderColor2d",
+            "RenderSize2d",
+            "RenderFlip2d",
+            "RenderVisibility2d",
+            "RenderZIndex2d",
+            "RenderAnchor2d",
+            "RenderOffset2d",
+            "RenderScale2d",
+            "RenderRotation2d",
+            "RenderShape2d",
+        ] {
+            if source.contains(forbidden) {
+                errors.push(format!(
+                    "{} references `{forbidden}`; render_2d should configure Bevy components directly instead of mirroring them",
+                    file.display()
+                ));
+            }
         }
     }
 }
@@ -130,7 +148,8 @@ fn reject_world_rule_references(errors: &mut Vec<String>) {
         for forbidden in [
             "set_movement_intent",
             "PhysicsRigidBody",
-            "PhysicsCollider",
+            "PhysicsCollider2d",
+            "PhysicsCollider3d",
             "Hitbox",
             "Hurtbox",
             "Combo",

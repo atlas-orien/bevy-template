@@ -59,11 +59,14 @@ bevy_rapier3d
 - 具体文件名不能和所在目录同名，避免 Rust module inception。
 - `config/settings.rs` 只定义物理配置。
 - `body/kind.rs` 当前只定义刚体语义，例如 `PhysicsRigidBody::Dynamic`、`Static`、`Kinematic`。
+- `body/control.rs` 只定义刚体控制语义，例如 locked axes、gravity scale、damping、CCD、sleeping、disabled、solver iterations。
 - `body` 目录可以作为物理主体分类目录；但第一版 Rapier 后端只承诺 rigid body。
 - 不要提前添加 soft body、fluid body、particle body 等 facade 类型，除非后端能力和项目用法已经明确。
 - `collider/shape.rs` 只定义碰撞体形状，不定义 sensor、material 或 hitbox。
-- `PhysicsCollider::Polyline2d` 表示用户自定义线段碰撞体，不表示有面积的多边形。
-- `PhysicsCollider::ConvexPolygon2d` 表示用户自定义凸多边形碰撞体；不要用 `Polygon` 命名承诺任意凹多边形。
+- `collider/control.rs` 只定义碰撞体控制语义，例如 disabled、contact skin、contact force threshold。
+- `collider/filter.rs` 只定义碰撞体过滤和事件开关语义，例如 collision groups、solver groups、active events、active collision types。
+- `PhysicsCollider2d::Polyline` 表示用户自定义线段碰撞体，不表示有面积的多边形。
+- `PhysicsCollider2d::ConvexPolygon` 表示用户自定义凸多边形碰撞体；不要用 `Polygon` 命名承诺任意凹多边形。
 - `layer/collision_layer.rs` 只定义物理碰撞层。
 - `sensor/marker.rs` 只定义传感器标记。
 - `material/surface.rs` 只定义物理材质，例如 friction、restitution。
@@ -77,7 +80,7 @@ bevy_rapier3d
 
 ## Rapier 适配规则
 
-- 项目自己的基础组件是 facade，例如 `PhysicsRigidBody`、`PhysicsCollider`、`PhysicsMaterial`。
+- 项目自己的基础组件是 facade，例如 `PhysicsRigidBody`、`PhysicsCollider2d/PhysicsCollider3d`、`PhysicsMaterial`。
 - Rapier 自己的组件只允许在 backend 目录内部使用，例如 Rapier 的 `RigidBody`、`Collider`、`Sensor`。
 - `backend/rapier/mod.rs` 只负责注册 2D / 3D Rapier 子适配。
 - `backend/rapier/dim2/mod.rs` 只负责注册 `bevy_rapier2d` 插件和 2D adapter systems。
@@ -85,14 +88,17 @@ bevy_rapier3d
 - `backend/rapier/dim*/convert.rs` 只负责把项目 facade 类型转换成 Rapier 类型。
 - `backend/rapier/dim*/systems.rs` 只负责监听项目 facade component 的 `Added` / `Changed`，并向同一个 Bevy entity 插入 Rapier component。
 - 不要在 prefab、gameplay、ecs 或 render crate 里直接插入 Rapier component。
-- 第一版 Rapier adapter 覆盖 rigid_body、collider、sensor、material、mass、velocity；力、冲量和碰撞事件以后按明确语义再接入。
-- `PhysicsCollider::Circle`、`Rectangle`、`Polyline2d`、`ConvexPolygon2d` 属于 2D Rapier。
-- `PhysicsCollider::Sphere` 和 `PhysicsCollider::Cuboid` 属于 3D Rapier。
-- 2D / 3D 归属由 collider 形状决定，不由 `PhysicsRigidBody` 决定。
+- 第一版 Rapier adapter 覆盖 rigid_body、rigid body control、collider、collider control、collider filtering、sensor、material、mass、velocity、force、impulse。
+- `PhysicsCollider2d::Circle`、`Rectangle`、`Polyline`、`ConvexPolygon` 属于 2D Rapier。
+- `PhysicsCollider3d::Sphere` 和 `PhysicsCollider3d::Cuboid` 属于 3D Rapier。
+- 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
+- 维度相关 facade 类型必须显式带 `2d` 或 `3d` 后缀；维度无关类型才使用通用命名。
 - Rapier 的 rectangle / cuboid collider 使用半尺寸，转换逻辑必须留在 `convert.rs`。
-- Rapier 的 `ConvexPolygon2d` 使用 `Collider::convex_hull`，转换可能失败；失败时不要插入 Rapier collider。
-- Rapier 的 `Polyline2d` 使用 `Collider::polyline(points, None)`，用于地形边缘、平台边缘、墙体轮廓等线段碰撞。
+- Rapier 的 `PhysicsCollider2d::ConvexPolygon` 使用 `Collider::convex_hull`，转换可能失败；失败时不要插入 Rapier collider。
+- Rapier 的 `PhysicsCollider2d::Polyline` 使用 `Collider::polyline(points, None)`，用于地形边缘、平台边缘、墙体轮廓等线段碰撞。
 - Rapier 的线速度和角速度共享同一个 `Velocity` component，更新其中一个时必须保留另一个。
+- `PhysicsForce2d/3d` 映射到 Rapier `ExternalForce`，第一版只表达作用在质心的线性力，torque 默认为 0。
+- `PhysicsImpulse2d/3d` 映射到 Rapier `ExternalImpulse`，第一版只表达作用在质心的线性冲量，torque impulse 默认为 0。
 
 ## Cargo 规则
 

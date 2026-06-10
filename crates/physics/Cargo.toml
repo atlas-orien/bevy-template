@@ -10,12 +10,12 @@ publish = false
 
 [dependencies]
 bevy.workspace = true
-bevy_rapier2d = { version = "0.34", default-features = false, features = [
+bevy_rapier2d = { version = "0.34.0", default-features = false, features = [
     "dim2",
     "parallel",
     "debug-render-2d",
 ] }
-bevy_rapier3d = { version = "0.34", default-features = false, features = [
+bevy_rapier3d = { version = "0.34.0", default-features = false, features = [
     "dim3",
     "parallel",
     "debug-render-3d",

@@ -1,8 +1,8 @@
-pub mod character;
+pub mod example;
+
+pub use example::{ExampleCharacter2d, ExampleCharacter2dBundle};
 
 use bevy::prelude::*;
-
-pub use character::{Character2dRender, Character2dRenderBundle, Character2dSprite};
 
 pub struct CharacterRenderPlugin;
 

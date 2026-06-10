@@ -2,95 +2,91 @@
 
 这个文件是 `crates/render_2d` 的 AI 规则。
 
-`crates/render_2d` 是 2D 表现层。
+`crates/render_2d` 是项目 2D 表现内容层。
 
-它读取 ECS 世界数据，把游戏显示成 2D 画面。
+它不是 `bevy_render` 的二次封装，也不是像 `physics` 那样默认不让用户修改的基础 facade。用户可以在这里写已经配置好的具体 2D 表现内容，`prefab` 直接组合这些高层表现 bundle、component、marker 或 plugin。
 
 ## 核心职责
 
-- 2D 相机。
-- 2D sprite、纹理图集、动画状态和表现专用 marker。
-- 2D 场景背景、屏幕表现、HUD、菜单、界面。
-- 根据 ECS 数据更新 2D 表现。
+- 用户配置的 2D 相机、屏幕、HUD、菜单、界面。
+- 用户配置的 sprite、texture atlas、tilemap、2D mesh、2D material、视觉动画。
+- 角色、物品、静物、背景、环境、特效、粒子、覆盖层、世界文字等具体项目表现。
+- 读取 `ecs` 数据，把游戏世界显示成 2D 画面。
+- 创建渲染专用 Entity、Component、Bundle、Resource 和视觉 system。
+
+## Bevy 边界
+
+- 绝对不要重写一次 `bevy_render`。
+- 能直接使用 Bevy 类型时，直接使用 Bevy 类型。
+- `Sprite`、`TextureAtlas`、`SpriteImageMode` 直接用 Bevy。
+- `Transform`、`Visibility`、`Anchor` 直接用 Bevy。
+- `Text2d`、`Text`、`Node`、`ImageNode` 直接用 Bevy。
+- UI 的 `ZIndex`、`GlobalZIndex` 直接用 Bevy。
+- 可以把 Bevy 类型组合进项目自己的高层表现 bundle，例如角色表现 bundle、道具表现 bundle、tile layer bundle。
+- 不新增只镜像 Bevy 字段的 facade，例如纯粹复制颜色、透明度、缩放、旋转、z-index 的 wrapper。
+
+## 和 prefab 的关系
+
+- `render_2d` 提供已经配置好的具体表现内容。
+- `prefab` 直接使用 `render_2d` 提供的 bundle、component、marker 或 helper。
+- `prefab` 不应该为了 2D 表现再重复配置一遍 sprite、动画、材质、tilemap、覆盖层等细节。
+- 如果某个表现内容只属于某个具体游戏对象，可以先写在 `render_2d` 的对应分类目录，再由 `prefab` 组合。
 
 ## 代码落点
 
-- 2D 相机：写到 `crates/render_2d/src/camera`。
-- 2D 表现层动画：写到 `crates/render_2d/src/animation`。
-- 2D 外观属性：写到 `crates/render_2d/src/appearance`。
-- 2D 表现层几何：写到 `crates/render_2d/src/geometry`。
-- 2D 视觉 transform：写到 `crates/render_2d/src/transform`。
-- 2D 视觉排序：写到 `crates/render_2d/src/ordering`。
-- 2D sprite 专用属性：写到 `crates/render_2d/src/sprite`。
-- 角色表现：写到 `crates/render_2d/src/characters`。
-- 屏幕和背景表现：写到 `crates/render_2d/src/screens`。
-- 2D UI 表现：写到 `crates/render_2d/src/ui`。
-
-当前目录是模板默认结构，可以按具体游戏调整，但必须保持表现层边界清楚。
+- `animation/frame`: sprite sheet、texture atlas、逐帧动画。
+- `animation/skeletal`: 2D bone、skeleton、骨骼动画边界。
+- `atlases`: 共享 texture atlas、sprite sheet layout、tileset layout。
+- `background`: 背景、远景、视差背景层。
+- `camera`: 2D 相机、pixel-perfect camera、跟随相机、相机切换。
+- `characters`: 角色 2D 表现。
+- `debug`: 渲染调试显示，例如 gizmo、边界、坐标轴、可视化标记。
+- `effects`: 命中特效、技能特效、纯视觉生命周期效果。
+- `environment`: 天气、雾、环境氛围、非背景类环境装饰。
+- `items`: 物品、掉落物、可拾取物的 2D 表现。
+- `lighting`: 2D 光照感、发光层、假阴影、bloom 相关表现配置。
+- `materials`: 自定义 2D material、shader、特殊 sprite material。
+- `mesh`: 自定义 2D mesh、程序化形状、非 sprite 几何表现。
+- `overlays`: 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示。
+- `particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
+- `pixel`: pixel art、pixel-perfect、pixel grid snap 相关表现策略。
+- `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
+- `screens`: 标题画面、过场屏、加载屏等屏幕级表现。
+- `text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
+- `tilemap`: tile map、tile layer、tile chunk、tileset 表现。
+- `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
+- `ui`: 2D UI 表现。
 
 ## 文件组织规则
 
 - 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
-- 不要把具体 Component、Bundle 或 system 全部写进 `mod.rs`。
-- `camera/main_camera.rs` 定义主 2D 相机 marker 和 bundle。
-- `camera/systems.rs` 定义相机生成和同步 system。
-- `animation/frame` 定义帧动画、sprite sheet、atlas animation 数据，例如 `sprite_frame.rs`、`clip.rs`、`playback.rs`。
-- `animation/skeletal` 定义 2D 骨骼动画数据。
-- `appearance/color.rs` 定义表现层颜色 component，例如 `RenderColor2d`。
-- `appearance/opacity.rs` 定义表现层透明度，例如 `RenderOpacity2d`。
-- `appearance/visibility.rs` 定义表现层可见性，例如 `RenderVisibility2d`。
-- `geometry/shape.rs` 定义视觉形状，例如 `RenderShape2d`。
-- `geometry/size.rs` 定义视觉尺寸，例如 `RenderSize2d`。
-- `geometry/anchor.rs` 定义视觉锚点，例如 `RenderAnchor2d`。
-- `transform/offset.rs` 定义视觉偏移，例如 `RenderOffset2d`。
-- `transform/scale.rs` 定义视觉缩放，例如 `RenderScale2d`。
-- `transform/rotation.rs` 定义视觉旋转，例如 `RenderRotation2d`。
-- `ordering/z_index.rs` 定义视觉排序，例如 `RenderZIndex2d`。
-- `sprite/flip.rs` 定义 sprite 翻转，例如 `RenderFlip2d`。
-- `characters/character.rs` 定义角色 2D 表现 marker、表现配置和 bundle。
-- `screens/clear_color.rs` 定义屏幕背景色等屏幕级表现 system。
-- `ui/theme.rs` 定义 2D UI/表现层颜色常量。
-- `ui/markers.rs` 定义 2D UI marker。
-- 新增表现类型时，先判断它属于 camera、characters、screens 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
+- 具体 Component、Bundle、Resource、system 拆到语义明确的文件里。
+- 模板阶段每个目录可以只保留可删除的 `example.rs`。
+- 用户开始真实项目后，可以直接删除或替换 example 文件。
+- 不新增 `common.rs`、`misc.rs`、`utils.rs` 这类含义模糊的文件。
+- 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `animation/frame`。
 
 ## 边界规则
 
-- 可以生成相机、sprite、UI 节点和渲染专用子实体。
+- 可以生成相机、sprite、UI 节点、渲染专用子实体和视觉效果实体。
 - 可以定义渲染专用 `Component`，例如 sprite marker、animation state、camera marker。
 - 可以读取 ECS 组件来决定显示方式。
-- 不定义核心玩法组件、bundle、resource、event。
+- 不定义核心玩法组件、核心玩法 bundle、玩法 resource、玩法 event。
 - 不读取键盘、鼠标、手柄、外设、AI、网络或脚本输入。
 - 不写入 `intent`。
 - 不执行移动、战斗、物品、碰撞等世界规则。
 - 不依赖 `prefab`。
 - 不依赖 `physics`。
 - 不依赖 `external_runtime`。
-- 不放 3D 网格、3D 灯光、3D 相机。
-
-## 表现属性规则
-
-- `geometry` 只定义 2D 表现层几何，例如形状、尺寸、锚点。
-- `appearance` 只定义 2D 外观属性，例如颜色、透明度、可见性。
-- `transform` 只定义 2D 视觉 transform，例如表现偏移、缩放、旋转。
-- `ordering` 只定义 2D 视觉排序。
-- `sprite` 只定义 sprite 专用表现属性。
-- 这些目录都不定义物理碰撞、攻击范围或 gameplay 区域。
-- `RenderShape2d::Circle` 不等于 `PhysicsCollider2d::Circle`。
-- `RenderSize2d` 不等于 hitbox 或 hurtbox。
-- `RenderOffset2d`、`RenderScale2d`、`RenderRotation2d` 只影响视觉表现，不改变 gameplay Transform 或物理状态。
-- `RenderZIndex2d` 只表达视觉排序，不表达 ECS parent/child 关系或 gameplay 优先级。
-- `RenderVisibility2d` 和 `RenderOpacity2d` 只控制显示，不表示实体是否存在、死亡或可交互。
-- 如果几何数据会影响碰撞、寻路、攻击判定或世界规则，放到 `physics`、`ecs` 或 gameplay，不放到 `render_2d/geometry`。
+- 不依赖 `intent`。
+- 不放 3D mesh、3D light、3D camera；这些属于 `render_3d`。
 
 ## Animation 规则
 
 - `animation` 只定义 2D 表现层动画。
-- `animation/frame` 放帧动画、sprite sheet、texture atlas animation。
-- `animation/skeletal` 放 2D 骨骼动画、bone、skeleton、骨骼播放状态。
-- 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `animation/frame`。
-- 第一版不实现复杂骨骼 runtime，只保留清楚的数据边界。
 - animation 可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。
 - animation 不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
+- 第一版不实现复杂骨骼 runtime，只保留清楚的数据边界。
 
 ## 渲染实体规则
 
@@ -109,19 +105,14 @@ Gameplay Entity
 
 `Render Entity` 的 sprite、scale、atlas、动画由 `render_2d` 维护。
 
-## 相机规则
+## 不应该放这里
 
-- 默认 2D 主相机由 `render_2d::camera` 在 startup 注册生成。
-- prefab 不生成主相机。
-- gameplay 不生成主相机。
-- 如果某个游戏需要多相机、跟随相机或相机切换，类型和 system 仍然写在 `render_2d/src/camera`，调度入口由 `Camera2dPlugin` 组装。
-
-## 和 prefab 的 render 边界
-
-- `render_2d` 可以提供挂在 Main World Entity 上的表现组件、marker 或 bundle，供 `prefab` 组合。
-- `prefab` 只组合这些 Main World 表现数据，不直接操作 RenderApp、Render World、render graph、pipeline 或 GPU resource。
-- Render SubApp 的 extract、prepare、queue、draw 等流程属于 Bevy/render 层。
-- 如果表现逻辑需要 system 同步、动画推进、材质更新或渲染子实体维护，放在 `render_2d`，不要放在 `prefab`。
+- 物理碰撞体、传感器、joint、raycast、shape query。
+- 寻路网格、寻路查询、路径规划。
+- hitbox、hurtbox、攻击范围、技能范围。
+- 输入源读取和 intent 写入。
+- AI、网络、脚本外部运行时。
+- 3D 表现内容。
 
 ## 依赖规则
 
@@ -132,6 +123,7 @@ Gameplay Entity
 - `render_2d` 不依赖 `intent`。
 - `render_2d` 不依赖 `prefab`。
 - `render_2d` 不依赖 `physics`。
+- `render_2d` 不依赖 `render_3d`。
 
 ## 验证要求
 

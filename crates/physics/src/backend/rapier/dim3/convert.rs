@@ -1,13 +1,31 @@
 use bevy::prelude::Vec3;
 use bevy_rapier3d::prelude::{
-    AdditionalMassProperties as RapierMass, Collider as RapierCollider,
-    ExternalForce as RapierForce, ExternalImpulse as RapierImpulse, Friction as RapierFriction,
-    Restitution as RapierRestitution, RigidBody as RapierRigidBody, Velocity as RapierVelocity,
+    ActiveCollisionTypes as RapierActiveCollisionTypes, ActiveEvents as RapierActiveEvents,
+    AdditionalMassProperties as RapierMass, AdditionalSolverIterations as RapierSolverIterations,
+    Ccd as RapierCcd, Collider as RapierCollider, CollisionGroups as RapierCollisionGroups,
+    ContactForceEventThreshold as RapierContactForceEventThreshold,
+    ContactSkin as RapierContactSkin, Damping as RapierDamping, ExternalForce as RapierForce,
+    ExternalImpulse as RapierImpulse, FixedJoint as RapierFixedJoint, Friction as RapierFriction,
+    GravityScale as RapierGravityScale, Group as RapierGroup, ImpulseJoint as RapierImpulseJoint,
+    KinematicCharacterController as RapierCharacterController,
+    KinematicCharacterControllerOutput as RapierCharacterControllerOutput,
+    LockedAxes as RapierLockedAxes, PrismaticJoint as RapierPrismaticJoint,
+    QueryFilterFlags as RapierQueryFilterFlags, Restitution as RapierRestitution,
+    RevoluteJoint as RapierRevoluteJoint, RigidBody as RapierRigidBody,
+    RigidBodyDisabled as RapierRigidBodyDisabled, RopeJoint as RapierRopeJoint,
+    Sleeping as RapierSleeping, SoftCcd as RapierSoftCcd, SolverGroups as RapierSolverGroups,
+    SpringJoint as RapierSpringJoint, TypedJoint as RapierTypedJoint, Velocity as RapierVelocity,
 };
+use bevy_rapier3d::rapier::control::CharacterLength as RapierCharacterLength;
 
 use crate::{
-    PhysicsAngularVelocity3d, PhysicsCollider3d, PhysicsForce3d, PhysicsImpulse3d, PhysicsMass,
-    PhysicsMaterial, PhysicsRigidBody, PhysicsVelocity3d,
+    PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsAdditionalSolverIterations,
+    PhysicsAngularVelocity3d, PhysicsCcd, PhysicsCharacterCollision3d,
+    PhysicsCharacterController3d, PhysicsCharacterControllerOutput3d, PhysicsCollider3d,
+    PhysicsCollisionGroups, PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping,
+    PhysicsForce3d, PhysicsGravityScale, PhysicsImpulse3d, PhysicsImpulseJoint3d,
+    PhysicsJointKind3d, PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody,
+    PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity3d,
 };
 
 pub fn rigid_body(rigid_body: PhysicsRigidBody) -> RapierRigidBody {
@@ -44,6 +62,69 @@ pub fn mass(mass: PhysicsMass) -> RapierMass {
     RapierMass::Mass(mass.0)
 }
 
+pub fn locked_axes(locked_axes: PhysicsLockedAxes) -> RapierLockedAxes {
+    let mut axes = RapierLockedAxes::empty();
+
+    if locked_axes.translation_x {
+        axes |= RapierLockedAxes::TRANSLATION_LOCKED_X;
+    }
+    if locked_axes.translation_y {
+        axes |= RapierLockedAxes::TRANSLATION_LOCKED_Y;
+    }
+    if locked_axes.translation_z {
+        axes |= RapierLockedAxes::TRANSLATION_LOCKED_Z;
+    }
+    if locked_axes.rotation_x {
+        axes |= RapierLockedAxes::ROTATION_LOCKED_X;
+    }
+    if locked_axes.rotation_y {
+        axes |= RapierLockedAxes::ROTATION_LOCKED_Y;
+    }
+    if locked_axes.rotation_z {
+        axes |= RapierLockedAxes::ROTATION_LOCKED_Z;
+    }
+
+    axes
+}
+
+pub fn gravity_scale(gravity_scale: PhysicsGravityScale) -> RapierGravityScale {
+    RapierGravityScale(gravity_scale.0)
+}
+
+pub fn damping(damping: PhysicsDamping) -> RapierDamping {
+    RapierDamping {
+        linear_damping: damping.linear,
+        angular_damping: damping.angular,
+    }
+}
+
+pub fn ccd(ccd: PhysicsCcd) -> RapierCcd {
+    RapierCcd {
+        enabled: ccd.enabled,
+    }
+}
+
+pub fn soft_ccd(soft_ccd: PhysicsSoftCcd) -> RapierSoftCcd {
+    RapierSoftCcd {
+        prediction: soft_ccd.prediction,
+    }
+}
+
+pub fn sleeping(sleeping: PhysicsSleeping) -> RapierSleeping {
+    if sleeping.enabled {
+        RapierSleeping {
+            sleeping: sleeping.sleeping,
+            ..Default::default()
+        }
+    } else {
+        RapierSleeping::disabled()
+    }
+}
+
+pub fn solver_iterations(iterations: PhysicsAdditionalSolverIterations) -> RapierSolverIterations {
+    RapierSolverIterations(iterations.0)
+}
+
 pub fn linear_velocity(velocity: PhysicsVelocity3d) -> RapierVelocity {
     RapierVelocity::linear(velocity.0)
 }
@@ -66,5 +147,183 @@ pub fn impulse(impulse: PhysicsImpulse3d) -> RapierImpulse {
     RapierImpulse {
         impulse: impulse.0,
         torque_impulse: Vec3::ZERO,
+    }
+}
+
+pub fn collision_groups(groups: PhysicsCollisionGroups) -> Option<RapierCollisionGroups> {
+    Some(RapierCollisionGroups::new(
+        RapierGroup::from_bits(groups.memberships)?,
+        RapierGroup::from_bits(groups.filters)?,
+    ))
+}
+
+pub fn solver_groups(groups: PhysicsSolverGroups) -> Option<RapierSolverGroups> {
+    Some(RapierSolverGroups::new(
+        RapierGroup::from_bits(groups.memberships)?,
+        RapierGroup::from_bits(groups.filters)?,
+    ))
+}
+
+pub fn active_events(events: PhysicsActiveEvents) -> RapierActiveEvents {
+    let mut active_events = RapierActiveEvents::empty();
+
+    if events.collision {
+        active_events |= RapierActiveEvents::COLLISION_EVENTS;
+    }
+    if events.contact_force {
+        active_events |= RapierActiveEvents::CONTACT_FORCE_EVENTS;
+    }
+
+    active_events
+}
+
+pub fn active_collision_types(types: PhysicsActiveCollisionTypes) -> RapierActiveCollisionTypes {
+    let mut active_types = RapierActiveCollisionTypes::empty();
+
+    if types.dynamic_dynamic {
+        active_types |= RapierActiveCollisionTypes::DYNAMIC_DYNAMIC;
+    }
+    if types.dynamic_kinematic {
+        active_types |= RapierActiveCollisionTypes::DYNAMIC_KINEMATIC;
+    }
+    if types.dynamic_static {
+        active_types |= RapierActiveCollisionTypes::DYNAMIC_STATIC;
+    }
+    if types.kinematic_kinematic {
+        active_types |= RapierActiveCollisionTypes::KINEMATIC_KINEMATIC;
+    }
+    if types.kinematic_static {
+        active_types |= RapierActiveCollisionTypes::KINEMATIC_STATIC;
+    }
+    if types.static_static {
+        active_types |= RapierActiveCollisionTypes::STATIC_STATIC;
+    }
+
+    active_types
+}
+
+pub fn contact_skin(contact_skin: PhysicsContactSkin) -> RapierContactSkin {
+    RapierContactSkin(contact_skin.0)
+}
+
+pub fn contact_force_threshold(
+    threshold: PhysicsContactForceEventThreshold,
+) -> RapierContactForceEventThreshold {
+    RapierContactForceEventThreshold(threshold.0)
+}
+
+pub fn rigid_body_disabled() -> RapierRigidBodyDisabled {
+    RapierRigidBodyDisabled
+}
+
+pub fn impulse_joint(joint: PhysicsImpulseJoint3d) -> RapierImpulseJoint {
+    let mut data: RapierTypedJoint = match joint.kind {
+        PhysicsJointKind3d::Fixed {
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierFixedJoint::new();
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Revolute {
+            axis,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierRevoluteJoint::new(axis);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Prismatic {
+            axis,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierPrismaticJoint::new(axis);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Rope {
+            max_distance,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierRopeJoint::new(max_distance);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+        PhysicsJointKind3d::Spring {
+            rest_length,
+            stiffness,
+            damping,
+            local_anchor1,
+            local_anchor2,
+        } => {
+            let mut joint = RapierSpringJoint::new(rest_length, stiffness, damping);
+            joint
+                .set_local_anchor1(local_anchor1)
+                .set_local_anchor2(local_anchor2);
+            joint.into()
+        }
+    };
+
+    data.as_mut().set_contacts_enabled(joint.contacts_enabled);
+    RapierImpulseJoint::new(joint.parent, data)
+}
+
+pub fn character_controller(controller: PhysicsCharacterController3d) -> RapierCharacterController {
+    let mut filter_flags = RapierQueryFilterFlags::empty();
+    if controller.exclude_sensors {
+        filter_flags |= RapierQueryFilterFlags::EXCLUDE_SENSORS;
+    }
+
+    RapierCharacterController {
+        translation: controller.translation,
+        custom_shape: None,
+        custom_mass: None,
+        up: controller.up,
+        offset: RapierCharacterLength::Absolute(controller.offset),
+        slide: controller.slide,
+        autostep: None,
+        max_slope_climb_angle: controller.max_slope_climb_angle,
+        min_slope_slide_angle: controller.min_slope_slide_angle,
+        apply_impulse_to_dynamic_bodies: controller.apply_impulse_to_dynamic_bodies,
+        snap_to_ground: controller
+            .snap_to_ground
+            .map(RapierCharacterLength::Absolute),
+        filter_flags,
+        filter_groups: controller.filter_groups.and_then(collision_groups),
+        normal_nudge_factor: RapierCharacterController::default().normal_nudge_factor,
+    }
+}
+
+pub fn character_controller_output(
+    output: &RapierCharacterControllerOutput,
+) -> PhysicsCharacterControllerOutput3d {
+    PhysicsCharacterControllerOutput3d {
+        grounded: output.grounded,
+        desired_translation: output.desired_translation,
+        effective_translation: output.effective_translation,
+        is_sliding_down_slope: output.is_sliding_down_slope,
+        collisions: output
+            .collisions
+            .iter()
+            .map(|collision| PhysicsCharacterCollision3d {
+                entity: collision.entity,
+                character_translation: collision.character_translation,
+                character_rotation: collision.character_rotation,
+                translation_applied: collision.translation_applied,
+                translation_remaining: collision.translation_remaining,
+            })
+            .collect(),
     }
 }

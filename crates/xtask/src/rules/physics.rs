@@ -34,6 +34,7 @@ pub fn check() -> CheckStatus {
         &mut errors,
         "Rapier is the only current backend and should live under backend/rapier",
     );
+    require_core_layout(&mut errors);
     require_mod_rs_in_subdirs(Path::new(PHYSICS_CRATE).join("src"), &mut errors);
     reject_dir_named_files(Path::new(PHYSICS_CRATE).join("src"), &mut errors);
     reject_obsolete_backend_layout(&mut errors);
@@ -51,8 +52,72 @@ pub fn check() -> CheckStatus {
     }
 }
 
+fn require_core_layout(errors: &mut Vec<String>) {
+    for path in [
+        "crates/physics/src/body/kind.rs",
+        "crates/physics/src/body/control.rs",
+        "crates/physics/src/controller/character.rs",
+        "crates/physics/src/config/settings.rs",
+        "crates/physics/src/collider/shape.rs",
+        "crates/physics/src/collider/control.rs",
+        "crates/physics/src/collider/filter.rs",
+        "crates/physics/src/layer/collision_layer.rs",
+        "crates/physics/src/sensor/marker.rs",
+        "crates/physics/src/material/surface.rs",
+        "crates/physics/src/mass/properties.rs",
+        "crates/physics/src/motion/velocity.rs",
+        "crates/physics/src/force/linear.rs",
+        "crates/physics/src/joint/impulse.rs",
+        "crates/physics/src/events/collision.rs",
+        "crates/physics/src/events/contact_force.rs",
+        "crates/physics/src/query/filter.rs",
+        "crates/physics/src/query/point.rs",
+        "crates/physics/src/query/raycast.rs",
+        "crates/physics/src/query/shape.rs",
+        "crates/physics/src/backend/rapier/mod.rs",
+        "crates/physics/src/backend/rapier/dim2/mod.rs",
+        "crates/physics/src/backend/rapier/dim2/convert.rs",
+        "crates/physics/src/backend/rapier/dim2/events.rs",
+        "crates/physics/src/backend/rapier/dim2/query.rs",
+        "crates/physics/src/backend/rapier/dim2/systems.rs",
+        "crates/physics/src/backend/rapier/dim3/mod.rs",
+        "crates/physics/src/backend/rapier/dim3/convert.rs",
+        "crates/physics/src/backend/rapier/dim3/events.rs",
+        "crates/physics/src/backend/rapier/dim3/query.rs",
+        "crates/physics/src/backend/rapier/dim3/systems.rs",
+    ] {
+        require_path(
+            path,
+            errors,
+            "physics facade/backend capabilities should keep their documented semantic files",
+        );
+    }
+}
+
 fn reject_obsolete_backend_layout(errors: &mut Vec<String>) {
     for obsolete in [
+        "crates/physics/src/body.rs",
+        "crates/physics/src/body/body.rs",
+        "crates/physics/src/body/body_control.rs",
+        "crates/physics/src/collider.rs",
+        "crates/physics/src/collider/collider.rs",
+        "crates/physics/src/collider/collider_control.rs",
+        "crates/physics/src/config.rs",
+        "crates/physics/src/config/config.rs",
+        "crates/physics/src/events.rs",
+        "crates/physics/src/force.rs",
+        "crates/physics/src/force/force.rs",
+        "crates/physics/src/layer.rs",
+        "crates/physics/src/layer/layer.rs",
+        "crates/physics/src/mass.rs",
+        "crates/physics/src/mass/mass.rs",
+        "crates/physics/src/material.rs",
+        "crates/physics/src/material/material.rs",
+        "crates/physics/src/motion.rs",
+        "crates/physics/src/rigid_body",
+        "crates/physics/src/rigid_body/rigid_body.rs",
+        "crates/physics/src/sensor.rs",
+        "crates/physics/src/sensor/sensor.rs",
         "crates/physics/src/backend/avian2d",
         "crates/physics/src/backend/avian2d.rs",
         "crates/physics/src/backend/avian3d",

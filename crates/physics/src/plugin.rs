@@ -2,7 +2,8 @@ use bevy::prelude::*;
 
 use crate::backend;
 use crate::{
-    PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsConfig, PhysicsSensorTriggered,
+    PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsConfig, PhysicsContactForce2d,
+    PhysicsContactForce3d, PhysicsSensorTriggered,
 };
 
 pub struct PhysicsPlugin;
@@ -12,7 +13,9 @@ impl Plugin for PhysicsPlugin {
         app.init_resource::<PhysicsConfig>();
         app.add_message::<PhysicsCollisionStarted>()
             .add_message::<PhysicsCollisionEnded>()
-            .add_message::<PhysicsSensorTriggered>();
+            .add_message::<PhysicsSensorTriggered>()
+            .add_message::<PhysicsContactForce2d>()
+            .add_message::<PhysicsContactForce3d>();
         backend::add_physics_backend(app);
     }
 }

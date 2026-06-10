@@ -100,7 +100,13 @@ fn reject_world_mutation(errors: &mut Vec<String>) {
             continue;
         };
 
-        for forbidden in ["Commands", "Transform", "PhysicsBody", "PhysicsCollider"] {
+        for forbidden in [
+            "Commands",
+            "Transform",
+            "PhysicsRigidBody",
+            "PhysicsCollider2d",
+            "PhysicsCollider3d",
+        ] {
             if source.contains(forbidden) {
                 errors.push(format!(
                     "{} references `{forbidden}`; intent should not mutate world results directly, so express the desired action through intent data",

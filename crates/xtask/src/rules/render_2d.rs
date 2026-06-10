@@ -27,26 +27,9 @@ pub fn check() -> CheckStatus {
         &mut errors,
         "render_2d needs a crate root that exports presentation plugins/types",
     );
-    for dir in [
-        "crates/render_2d/src/animation",
-        "crates/render_2d/src/camera",
-        "crates/render_2d/src/characters",
-        "crates/render_2d/src/appearance",
-        "crates/render_2d/src/geometry",
-        "crates/render_2d/src/ordering",
-        "crates/render_2d/src/screens",
-        "crates/render_2d/src/sprite",
-        "crates/render_2d/src/transform",
-        "crates/render_2d/src/ui",
-    ] {
-        require_path(
-            dir,
-            &mut errors,
-            "2D presentation concepts should stay grouped by semantic directories",
-        );
-    }
+    require_content_dirs(&mut errors);
     require_mod_rs_in_subdirs(Path::new(RENDER_2D_CRATE).join("src"), &mut errors);
-    reject_obsolete_geometry_mix(&mut errors);
+    reject_obsolete_facade_layout(&mut errors);
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);
     reject_world_rule_references(&mut errors);
@@ -59,21 +42,71 @@ pub fn check() -> CheckStatus {
     }
 }
 
-fn reject_obsolete_geometry_mix(errors: &mut Vec<String>) {
+fn require_content_dirs(errors: &mut Vec<String>) {
+    for dir in [
+        "crates/render_2d/src/animation",
+        "crates/render_2d/src/animation/frame",
+        "crates/render_2d/src/animation/skeletal",
+        "crates/render_2d/src/atlases",
+        "crates/render_2d/src/background",
+        "crates/render_2d/src/camera",
+        "crates/render_2d/src/characters",
+        "crates/render_2d/src/debug",
+        "crates/render_2d/src/effects",
+        "crates/render_2d/src/environment",
+        "crates/render_2d/src/items",
+        "crates/render_2d/src/lighting",
+        "crates/render_2d/src/materials",
+        "crates/render_2d/src/mesh",
+        "crates/render_2d/src/overlays",
+        "crates/render_2d/src/particles",
+        "crates/render_2d/src/pixel",
+        "crates/render_2d/src/props",
+        "crates/render_2d/src/screens",
+        "crates/render_2d/src/text",
+        "crates/render_2d/src/tilemap",
+        "crates/render_2d/src/transitions",
+        "crates/render_2d/src/ui",
+    ] {
+        require_path(
+            dir,
+            errors,
+            "render_2d is a user-editable 2D presentation content crate; keep the agreed content category directories",
+        );
+    }
+}
+
+fn reject_obsolete_facade_layout(errors: &mut Vec<String>) {
     for obsolete in [
+        "crates/render_2d/src/appearance",
+        "crates/render_2d/src/appearance/color.rs",
+        "crates/render_2d/src/appearance/opacity.rs",
+        "crates/render_2d/src/appearance/visibility.rs",
+        "crates/render_2d/src/geometry",
+        "crates/render_2d/src/geometry/anchor.rs",
         "crates/render_2d/src/geometry/color.rs",
         "crates/render_2d/src/geometry/opacity.rs",
+        "crates/render_2d/src/geometry/shape.rs",
+        "crates/render_2d/src/geometry/size.rs",
         "crates/render_2d/src/geometry/visibility.rs",
         "crates/render_2d/src/geometry/offset.rs",
         "crates/render_2d/src/geometry/scale.rs",
         "crates/render_2d/src/geometry/rotation.rs",
         "crates/render_2d/src/geometry/z_index.rs",
         "crates/render_2d/src/geometry/flip.rs",
+        "crates/render_2d/src/ordering",
+        "crates/render_2d/src/ordering/z_index.rs",
+        "crates/render_2d/src/sprite",
+        "crates/render_2d/src/sprite/flip.rs",
+        "crates/render_2d/src/transform",
+        "crates/render_2d/src/transform/offset.rs",
+        "crates/render_2d/src/transform/rotation.rs",
+        "crates/render_2d/src/transform/scale.rs",
     ] {
         reject_path(
             obsolete,
             errors,
-            "geometry should only contain 2D shape/size/anchor concepts; move appearance/transform/ordering/sprite data to the matching directory",
+            "render_2d should not recreate Bevy facade directories; put concrete game presentation code in the content category directories",
         );
     }
 }

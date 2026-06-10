@@ -35,10 +35,19 @@ pub struct PhysicsSoftCcd {
     pub prediction: f32,
 }
 
-#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+#[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct PhysicsSleeping {
     pub enabled: bool,
     pub sleeping: bool,
+}
+
+impl Default for PhysicsSleeping {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            sleeping: false,
+        }
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]

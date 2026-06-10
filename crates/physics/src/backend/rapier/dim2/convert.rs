@@ -7,21 +7,25 @@ use bevy_rapier2d::prelude::{
     ContactSkin as RapierContactSkin, Damping as RapierDamping, ExternalForce as RapierForce,
     ExternalImpulse as RapierImpulse, FixedJoint as RapierFixedJoint, Friction as RapierFriction,
     GravityScale as RapierGravityScale, Group as RapierGroup, ImpulseJoint as RapierImpulseJoint,
+    KinematicCharacterController as RapierCharacterController,
+    KinematicCharacterControllerOutput as RapierCharacterControllerOutput,
     LockedAxes as RapierLockedAxes, PrismaticJoint as RapierPrismaticJoint,
-    Restitution as RapierRestitution, RevoluteJoint as RapierRevoluteJoint,
-    RigidBody as RapierRigidBody, RigidBodyDisabled as RapierRigidBodyDisabled,
-    RopeJoint as RapierRopeJoint, Sleeping as RapierSleeping, SoftCcd as RapierSoftCcd,
-    SolverGroups as RapierSolverGroups, SpringJoint as RapierSpringJoint,
-    TypedJoint as RapierTypedJoint, Velocity as RapierVelocity,
+    QueryFilterFlags as RapierQueryFilterFlags, Restitution as RapierRestitution,
+    RevoluteJoint as RapierRevoluteJoint, RigidBody as RapierRigidBody,
+    RigidBodyDisabled as RapierRigidBodyDisabled, RopeJoint as RapierRopeJoint,
+    Sleeping as RapierSleeping, SoftCcd as RapierSoftCcd, SolverGroups as RapierSolverGroups,
+    SpringJoint as RapierSpringJoint, TypedJoint as RapierTypedJoint, Velocity as RapierVelocity,
 };
+use bevy_rapier2d::rapier::control::CharacterLength as RapierCharacterLength;
 
 use crate::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsAdditionalSolverIterations,
-    PhysicsAngularVelocity2d, PhysicsCcd, PhysicsCollider2d, PhysicsCollisionGroups,
-    PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping, PhysicsForce2d,
-    PhysicsGravityScale, PhysicsImpulse2d, PhysicsImpulseJoint2d, PhysicsJointKind2d,
-    PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody, PhysicsSleeping,
-    PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity2d,
+    PhysicsAngularVelocity2d, PhysicsCcd, PhysicsCharacterCollision2d,
+    PhysicsCharacterController2d, PhysicsCharacterControllerOutput2d, PhysicsCollider2d,
+    PhysicsCollisionGroups, PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping,
+    PhysicsForce2d, PhysicsGravityScale, PhysicsImpulse2d, PhysicsImpulseJoint2d,
+    PhysicsJointKind2d, PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody,
+    PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity2d,
 };
 
 pub fn rigid_body(rigid_body: PhysicsRigidBody) -> RapierRigidBody {
@@ -262,4 +266,52 @@ pub fn impulse_joint(joint: PhysicsImpulseJoint2d) -> RapierImpulseJoint {
 
     data.as_mut().set_contacts_enabled(joint.contacts_enabled);
     RapierImpulseJoint::new(joint.parent, data)
+}
+
+pub fn character_controller(controller: PhysicsCharacterController2d) -> RapierCharacterController {
+    let mut filter_flags = RapierQueryFilterFlags::empty();
+    if controller.exclude_sensors {
+        filter_flags |= RapierQueryFilterFlags::EXCLUDE_SENSORS;
+    }
+
+    RapierCharacterController {
+        translation: controller.translation,
+        custom_shape: None,
+        custom_mass: None,
+        up: controller.up,
+        offset: RapierCharacterLength::Absolute(controller.offset),
+        slide: controller.slide,
+        autostep: None,
+        max_slope_climb_angle: controller.max_slope_climb_angle,
+        min_slope_slide_angle: controller.min_slope_slide_angle,
+        apply_impulse_to_dynamic_bodies: controller.apply_impulse_to_dynamic_bodies,
+        snap_to_ground: controller
+            .snap_to_ground
+            .map(RapierCharacterLength::Absolute),
+        filter_flags,
+        filter_groups: controller.filter_groups.and_then(collision_groups),
+        normal_nudge_factor: RapierCharacterController::default().normal_nudge_factor,
+    }
+}
+
+pub fn character_controller_output(
+    output: &RapierCharacterControllerOutput,
+) -> PhysicsCharacterControllerOutput2d {
+    PhysicsCharacterControllerOutput2d {
+        grounded: output.grounded,
+        desired_translation: output.desired_translation,
+        effective_translation: output.effective_translation,
+        is_sliding_down_slope: output.is_sliding_down_slope,
+        collisions: output
+            .collisions
+            .iter()
+            .map(|collision| PhysicsCharacterCollision2d {
+                entity: collision.entity,
+                character_translation: collision.character_translation,
+                character_rotation: collision.character_rotation,
+                translation_applied: collision.translation_applied,
+                translation_remaining: collision.translation_remaining,
+            })
+            .collect(),
+    }
 }

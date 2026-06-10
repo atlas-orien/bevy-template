@@ -2,6 +2,7 @@ mod backend;
 mod body;
 mod collider;
 mod config;
+mod controller;
 mod events;
 mod force;
 mod joint;
@@ -23,6 +24,11 @@ pub use collider::{
     PhysicsContactSkin, PhysicsSolverGroups,
 };
 pub use config::PhysicsConfig;
+pub use controller::{
+    PhysicsCharacterCollision2d, PhysicsCharacterCollision3d, PhysicsCharacterController2d,
+    PhysicsCharacterController3d, PhysicsCharacterControllerOutput2d,
+    PhysicsCharacterControllerOutput3d,
+};
 pub use error::Result;
 pub use events::{
     PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsContactForce2d, PhysicsContactForce3d,

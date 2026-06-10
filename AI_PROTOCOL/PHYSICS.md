@@ -26,6 +26,7 @@ bevy_rapier3d
 - 物理插件入口：写到 `crates/physics/src/plugin.rs`。
 - 物理配置：写到 `crates/physics/src/config`。
 - 项目统一刚体语义：写到 `crates/physics/src/body`。
+- 项目统一角色控制器语义：写到 `crates/physics/src/controller`。
 - 项目统一碰撞体语义：写到 `crates/physics/src/collider`。
 - 项目统一碰撞层语义：写到 `crates/physics/src/layer`。
 - 项目统一物理材质语义：写到 `crates/physics/src/material`。
@@ -63,6 +64,7 @@ bevy_rapier3d
 - `body/kind.rs` 当前只定义刚体语义，例如 `PhysicsRigidBody::Dynamic`、`Static`、`Kinematic`。
 - `body/control.rs` 只定义刚体控制语义，例如 locked axes、gravity scale、damping、CCD、sleeping、disabled、solver iterations。
 - `body` 目录可以作为物理主体分类目录；但第一版 Rapier 后端只承诺 rigid body。
+- `controller/character.rs` 只定义项目自己的 kinematic character controller facade 和 output，不定义具体游戏移动规则。
 - 不要提前添加 soft body、fluid body、particle body 等 facade 类型，除非后端能力和项目用法已经明确。
 - `collider/shape.rs` 只定义碰撞体形状，不定义 sensor、material 或 hitbox。
 - `collider/control.rs` 只定义碰撞体控制语义，例如 disabled、contact skin、contact force threshold。
@@ -101,6 +103,7 @@ bevy_rapier3d
 - 第一版 Rapier adapter 覆盖 rigid_body、rigid body control、collider、collider control、collider filtering、sensor、material、mass、velocity、force、impulse。
 - 第二阶段 Rapier adapter 覆盖 collision started、collision ended、sensor triggered、2D / 3D contact force event 转发，以及 2D / 3D raycast、point query、shape query、shapecast。
 - 第二阶段 Rapier adapter 覆盖第一版 impulse joint facade：fixed、revolute、prismatic、rope、spring。
+- 第二阶段 Rapier adapter 覆盖第一版 kinematic character controller facade 和 output 映射。
 - `PhysicsCollider2d::Circle`、`Rectangle`、`Polyline`、`ConvexPolygon` 属于 2D Rapier。
 - `PhysicsCollider3d::Sphere` 和 `PhysicsCollider3d::Cuboid` 属于 3D Rapier。
 - 2D / 3D 归属由用户选择的 collider component 类型决定：`PhysicsCollider2d` 进入 Rapier 2D，`PhysicsCollider3d` 进入 Rapier 3D。
@@ -114,6 +117,10 @@ bevy_rapier3d
 - `PhysicsImpulseJoint2d/3d` 映射到 Rapier `ImpulseJoint`，第一版只表达 fixed、revolute、prismatic、rope、spring。
 - `PhysicsImpulseJoint2d/3d::parent` 是 joint 的第一个刚体 entity，挂载该 component 的 entity 是第二个刚体。
 - 第一版 joint 不做 multibody joint，不做 motor facade，不做 limit facade。未来需要时先更新本文件和 README。
+- `PhysicsCharacterController2d/3d` 映射到 Rapier `KinematicCharacterController`。
+- `PhysicsCharacterControllerOutput2d/3d` 来自 Rapier controller output，但不暴露 Rapier output 类型。
+- 第一版 character controller 只表达 translation、up、offset、slide、slope、snap、dynamic impulse、filter groups、exclude sensors。
+- 第一版 character controller 不做 autostep、custom shape、custom mass；具体玩家移动输入和状态机仍然放在 gameplay / ecs。
 - `PhysicsCollisionStarted` / `PhysicsCollisionEnded` 来自 Rapier collision event，但不暴露 Rapier event 类型。
 - `PhysicsSensorTriggered` 来自 Rapier sensor collision started event；第一版只表达进入/触发，不表达退出。
 - `PhysicsContactForce2d/3d` 来自 Rapier contact force event；用户需要在 collider 上启用 `PhysicsActiveEvents` 和 `PhysicsContactForceEventThreshold` 才能收到。

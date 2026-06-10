@@ -1,15 +1,18 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{
-    ColliderDisabled as RapierColliderDisabled, Sensor as RapierSensor, Velocity as RapierVelocity,
+    ColliderDisabled as RapierColliderDisabled,
+    KinematicCharacterControllerOutput as RapierCharacterControllerOutput, Sensor as RapierSensor,
+    Velocity as RapierVelocity,
 };
 
 use crate::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsAdditionalSolverIterations,
-    PhysicsAngularVelocity2d, PhysicsCcd, PhysicsCollider2d, PhysicsColliderDisabled,
-    PhysicsCollisionGroups, PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping,
-    PhysicsForce2d, PhysicsGravityScale, PhysicsImpulse2d, PhysicsImpulseJoint2d,
-    PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody, PhysicsRigidBodyDisabled,
-    PhysicsSensor, PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups, PhysicsVelocity2d,
+    PhysicsAngularVelocity2d, PhysicsCcd, PhysicsCharacterController2d, PhysicsCollider2d,
+    PhysicsColliderDisabled, PhysicsCollisionGroups, PhysicsContactForceEventThreshold,
+    PhysicsContactSkin, PhysicsDamping, PhysicsForce2d, PhysicsGravityScale, PhysicsImpulse2d,
+    PhysicsImpulseJoint2d, PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody,
+    PhysicsRigidBodyDisabled, PhysicsSensor, PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups,
+    PhysicsVelocity2d,
 };
 
 use super::convert;
@@ -242,6 +245,34 @@ pub fn sync_physics_impulse_joints(
         commands
             .entity(entity)
             .insert(convert::impulse_joint(*joint));
+    }
+}
+
+pub fn sync_physics_character_controllers(
+    mut commands: Commands,
+    controllers: Query<
+        (Entity, &PhysicsCharacterController2d),
+        Synced<PhysicsCharacterController2d>,
+    >,
+) {
+    for (entity, controller) in &controllers {
+        commands
+            .entity(entity)
+            .insert(convert::character_controller(*controller));
+    }
+}
+
+pub fn sync_physics_character_controller_outputs(
+    mut commands: Commands,
+    outputs: Query<
+        (Entity, &RapierCharacterControllerOutput),
+        Changed<RapierCharacterControllerOutput>,
+    >,
+) {
+    for (entity, output) in &outputs {
+        commands
+            .entity(entity)
+            .insert(convert::character_controller_output(output));
     }
 }
 

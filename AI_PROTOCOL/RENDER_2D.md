@@ -20,6 +20,7 @@
 
 - 2D 相机：写到 `crates/render_2d/src/camera`。
 - 2D 表现层动画：写到 `crates/render_2d/src/animation`。
+- 共享 texture atlas、sprite sheet layout、tileset layout 表现资源配置：写到 `crates/render_2d/src/atlases`。
 - 背景、远景、视差背景层：写到 `crates/render_2d/src/background`。
 - 角色表现：写到 `crates/render_2d/src/characters`。
 - 渲染调试显示，例如边界、坐标轴、可视化标记：写到 `crates/render_2d/src/debug`。
@@ -29,6 +30,7 @@
 - 自定义 2D mesh、程序化形状、非 sprite 几何表现：写到 `crates/render_2d/src/mesh`。
 - 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示：写到 `crates/render_2d/src/overlays`。
 - 静物、装饰物、可见但不负责玩法规则的场景物件：写到 `crates/render_2d/src/props`。
+- pixel art、pixel-perfect camera、pixel grid snap 相关表现策略：写到 `crates/render_2d/src/pixel`。
 - tile map、tile layer、tile chunk 和 tileset 表现：写到 `crates/render_2d/src/tilemap`。
 - 天气、雾、环境氛围、非背景类环境装饰：写到 `crates/render_2d/src/environment`。
 - 命中特效、粒子替代 sprite、纯视觉生命周期效果：写到 `crates/render_2d/src/effects`。
@@ -47,7 +49,7 @@
 - 每个默认目录保留可删除的 `example.rs`，示范该目录里应该写什么。
 - `animation` 必须继续拆成 `frame` 和 `skeletal` 两个子目录，各自保留 `example.rs`。
 - 用户开始具体项目后，可以删除或替换 `example.rs`。
-- 新增表现类型时，先判断它属于 animation、background、camera、characters、debug、lighting、items、materials、mesh、overlays、props、tilemap、environment、effects、particles、screens、text、transitions 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
+- 新增表现类型时，先判断它属于 animation、atlases、background、camera、characters、debug、lighting、items、materials、mesh、overlays、props、pixel、tilemap、environment、effects、particles、screens、text、transitions 还是 ui；不要新增含义模糊的 `common.rs`、`misc.rs`。
 
 ## 边界规则
 

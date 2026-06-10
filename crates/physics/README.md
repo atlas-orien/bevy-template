@@ -12,6 +12,8 @@
 - `PhysicsDebugPlugin`: 物理调试显示插件入口。
 - `PhysicsConfig`: 项目自己的物理配置数据。
 - `PhysicsRigidBody`: 项目自己的刚体语义。
+- `PhysicsCharacterController2d`、`PhysicsCharacterController3d`: 项目自己的 2D / 3D kinematic character controller。
+- `PhysicsCharacterControllerOutput2d`、`PhysicsCharacterControllerOutput3d`: 项目自己的 character controller 输出。
 - `PhysicsLockedAxes`、`PhysicsGravityScale`、`PhysicsDamping`、`PhysicsCcd`、`PhysicsSoftCcd`、`PhysicsSleeping`、`PhysicsRigidBodyDisabled`、`PhysicsAdditionalSolverIterations`: 项目自己的刚体控制语义。
 - `PhysicsCollider2d/PhysicsCollider3d`: 项目自己的碰撞体语义。
 - `PhysicsColliderDisabled`、`PhysicsContactSkin`、`PhysicsContactForceEventThreshold`: 项目自己的碰撞体控制语义。
@@ -69,6 +71,8 @@ Rapier 2D 第一版映射：
 - `PhysicsForce2d` -> Rapier2D `ExternalForce`
 - `PhysicsImpulse2d` -> Rapier2D `ExternalImpulse`
 - `PhysicsImpulseJoint2d` -> Rapier2D `ImpulseJoint`
+- `PhysicsCharacterController2d` -> Rapier2D `KinematicCharacterController`
+- Rapier2D `KinematicCharacterControllerOutput` -> `PhysicsCharacterControllerOutput2d`
 - Rapier2D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
 - Rapier2D `ContactForceEvent` -> `PhysicsContactForce2d`
 - Rapier2D raycast query -> `PhysicsQuery2d::cast_ray` / `intersect_ray`
@@ -86,6 +90,8 @@ Rapier 3D 第一版映射：
 - `PhysicsForce3d` -> Rapier3D `ExternalForce`
 - `PhysicsImpulse3d` -> Rapier3D `ExternalImpulse`
 - `PhysicsImpulseJoint3d` -> Rapier3D `ImpulseJoint`
+- `PhysicsCharacterController3d` -> Rapier3D `KinematicCharacterController`
+- Rapier3D `KinematicCharacterControllerOutput` -> `PhysicsCharacterControllerOutput3d`
 - Rapier3D `CollisionEvent` -> `PhysicsCollisionStarted` / `PhysicsCollisionEnded` / `PhysicsSensorTriggered`
 - Rapier3D `ContactForceEvent` -> `PhysicsContactForce3d`
 - Rapier3D raycast query -> `PhysicsQuery3d::cast_ray` / `intersect_ray`
@@ -111,6 +117,7 @@ Rapier 3D 第一版映射：
 - 具体文件名不能和所在目录同名，避免 Rust module inception。
 - `config/settings.rs`: 物理配置。
 - `body/kind.rs`: 当前只放刚体语义，例如 `PhysicsRigidBody`。
+- `controller/character.rs`: kinematic character controller。
 - `collider/shape.rs`: 碰撞体形状。
 - `layer/collision_layer.rs`: 碰撞层。
 - `sensor/marker.rs`: 传感器标记。

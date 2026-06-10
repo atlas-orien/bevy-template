@@ -21,6 +21,7 @@
 
 - `camera`: 2D 相机表现。
 - `animation`: 2D 表现层动画。
+- `atlases`: 共享 texture atlas、sprite sheet layout、tileset layout 表现资源配置。
 - `background`: 背景、远景、视差背景层。
 - `characters`: 角色 2D 表现。
 - `debug`: 渲染调试显示，例如边界、坐标轴、可视化标记。
@@ -30,6 +31,7 @@
 - `mesh`: 自定义 2D mesh、程序化形状、非 sprite 几何表现。
 - `overlays`: 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示。
 - `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
+- `pixel`: pixel art、pixel-perfect camera、pixel grid snap 相关表现策略。
 - `tilemap`: tile map、tile layer、tile chunk 和 tileset 表现。
 - `environment`: 天气、雾、环境氛围、非背景类环境装饰。
 - `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。

@@ -15,6 +15,7 @@ pub fn check() -> CheckStatus {
     for path in [
         "crates/physics/src/body/kind.rs",
         "crates/physics/src/body/control.rs",
+        "crates/physics/src/controller/character.rs",
         "crates/physics/src/config/settings.rs",
         "crates/physics/src/collider/shape.rs",
         "crates/physics/src/collider/control.rs",

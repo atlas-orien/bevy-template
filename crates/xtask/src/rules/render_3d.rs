@@ -42,7 +42,6 @@ pub fn check() -> CheckStatus {
         "crates/render_3d/src/particles",
         "crates/render_3d/src/props",
         "crates/render_3d/src/scenes",
-        "crates/render_3d/src/ui",
     ] {
         require_path(
             dir,

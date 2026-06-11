@@ -33,7 +33,6 @@
 - `particles`: 3D 粒子发射器、粒子配置、纯视觉粒子生命周期。
 - `overlays`: 世界空间血条、名字、选中框、交互提示。
 - `debug`: 3D 渲染调试显示，例如包围盒、坐标轴、骨骼可视化。
-- `ui`: 3D 专用 UI 或和 3D 视图绑定的 UI。
 
 ## assets 配合
 
@@ -93,6 +92,8 @@ Render2dPlugin
 - 不写入 intent。
 - 不写世界模拟、移动、战斗、碰撞或物品结算。
 - 不依赖 external_runtime、intent、prefab、physics、gameplay、render_2d。
-- 不放 2D 精灵、2D HUD、2D tilemap 或 2D 相机。
+- 不放 2D 精灵、2D HUD、普通菜单、按钮、背包、tilemap 或 2D 相机。
+
+普通 UI 不属于 `render_3d`。贴在 3D 世界对象上的名字、血条、选中框、交互提示放到 `overlays`。真正存在于 3D 世界里的屏幕、广告牌、全息面板，按语义放到 `props`、`effects` 或具体对象目录。
 
 `render_2d` 和 `render_3d` 应该保持独立。

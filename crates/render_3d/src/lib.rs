@@ -12,7 +12,6 @@ pub mod overlays;
 pub mod particles;
 pub mod props;
 pub mod scenes;
-pub mod ui;
 
 pub use error::Result;
 
@@ -32,7 +31,6 @@ use self::overlays::Overlays3dPlugin;
 use self::particles::Particles3dPlugin;
 use self::props::Props3dPlugin;
 use self::scenes::Scenes3dPlugin;
-use self::ui::Ui3dPlugin;
 
 pub struct Render3dPlugin;
 
@@ -51,7 +49,6 @@ impl Plugin for Render3dPlugin {
             .add_plugins(Effects3dPlugin)
             .add_plugins(Particles3dPlugin)
             .add_plugins(Overlays3dPlugin)
-            .add_plugins(Debug3dPlugin)
-            .add_plugins(Ui3dPlugin);
+            .add_plugins(Debug3dPlugin);
     }
 }

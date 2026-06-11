@@ -11,7 +11,6 @@
 - 3D 相机。
 - 3D model、mesh、材质、灯光、环境、场景表现和表现专用 marker。
 - 3D 动画、特效、粒子、覆盖表现。
-- 3D UI 或 3D 空间中的表现连接代码。
 - 根据 ECS 数据更新 3D 表现。
 - 提供 `prefab` 可以直接组合的高层表现 bundle、marker、component 或 plugin。
 
@@ -31,7 +30,6 @@
 - 3D 粒子发射器和粒子配置：写到 `crates/render_3d/src/particles`。
 - 世界空间血条、名字、选中框、交互提示：写到 `crates/render_3d/src/overlays`。
 - 3D 渲染调试显示：写到 `crates/render_3d/src/debug`。
-- 3D UI 表现：写到 `crates/render_3d/src/ui`。
 
 当前目录是模板默认结构，可以按具体游戏调整，但必须保持表现层边界清楚。
 
@@ -72,7 +70,7 @@ prefab 应该使用 `render_3d` 暴露的高层表现结构，不应该自己散
 ## 边界规则
 
 - 可以直接使用 Bevy 的 `Camera3d`、`SceneRoot`、`Mesh3d`、`MeshMaterial3d`、`StandardMaterial`、`DirectionalLight`、`PointLight`、`SpotLight`、`AnimationPlayer`、`Transform`、`Visibility` 等类型。
-- 可以生成相机、model、mesh、材质、灯光、UI 节点和渲染专用子实体。
+- 可以生成相机、model、mesh、材质、灯光和渲染专用子实体。
 - 可以定义渲染专用 `Component`，例如 camera marker、scene marker、animation state、material marker。
 - 可以读取 ECS 组件来决定显示方式。
 - 可以把 Bevy 类型组合进项目自己的表现 bundle，例如 `Character3dRenderBundle`。
@@ -85,6 +83,9 @@ prefab 应该使用 `render_3d` 暴露的高层表现结构，不应该自己散
 - 不依赖 `physics`。
 - 不依赖 `external_runtime`。
 - 不放 2D sprite、2D HUD 或 2D 相机。
+- 不放普通 UI、菜单、按钮、背包、HUD 等界面逻辑。
+
+普通 UI 不属于 `render_3d`。贴在 3D 世界对象上的名字、血条、选中框、交互提示放到 `overlays`。真正存在于 3D 世界里的屏幕、广告牌、全息面板，按语义放到 `props`、`effects` 或具体对象目录。
 
 ## 渲染实体规则
 

@@ -71,14 +71,7 @@ fn reject_dependencies(errors: &mut Vec<String>) {
         return;
     };
 
-    for dependency in [
-        "ecs",
-        "audio",
-        "external_runtime",
-        "physics",
-        "render_2d",
-        "render_3d",
-    ] {
+    for dependency in ["ecs", "audio", "external_runtime", "physics", "render_3d"] {
         if manifest_has_workspace_dependency(&source, dependency) {
             errors.push(format!(
                 "{} depends on `{dependency}`; gameplay should not depend on that crate, so reach lower-level behavior through prefab/intent APIs",

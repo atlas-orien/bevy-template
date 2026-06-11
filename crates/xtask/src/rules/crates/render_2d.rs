@@ -33,12 +33,52 @@ pub fn check() -> CheckStatus {
     reject_dependencies(&mut errors);
     reject_direct_input(&mut errors);
     reject_world_rule_references(&mut errors);
+    reject_runtime_camera_targets(&mut errors);
+    reject_ui_free_bundle_functions(&mut errors);
     reject_ambiguous_files(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_ui_free_bundle_functions(errors: &mut Vec<String>) {
+    let ui_dir = Path::new(RENDER_2D_CRATE).join("src/ui");
+
+    for file in rust_files(ui_dir) {
+        let Some(source) = read_file_if_exists(&file) else {
+            continue;
+        };
+
+        for signature in ["pub fn ", "fn "] {
+            if source.lines().map(str::trim).any(|line| {
+                line.starts_with(signature)
+                    && (line.contains("-> impl Bundle") || line.contains("-> Node"))
+            }) {
+                errors.push(format!(
+                    "{} exposes UI presentation as free functions returning `Node` or `impl Bundle`; render_2d/src/ui should define named Component/Bundle structs for reusable UI presentation",
+                    file.display()
+                ));
+                break;
+            }
+        }
+    }
+}
+
+fn reject_runtime_camera_targets(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(RENDER_2D_CRATE).join("src")) {
+        let Some(source) = read_file_if_exists(&file) else {
+            continue;
+        };
+
+        if source.contains("UiCameraTarget") {
+            errors.push(format!(
+                "{} defines or references `UiCameraTarget`; render_2d should expose static camera components/bundles only, while runtime camera-to-UI binding belongs in gameplay spawn code",
+                file.display()
+            ));
+        }
     }
 }
 

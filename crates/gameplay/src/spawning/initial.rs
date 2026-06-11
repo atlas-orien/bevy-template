@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use prefab::Prefab;
-use prefab::ui::{DemoMenuPrefab, UiCameraPrefab};
+use prefab::ui::DemoMenuPrefab;
+use render_2d::camera::UiCamera;
 
 use super::plan::GameplaySpawnPlan;
 
@@ -13,8 +14,9 @@ pub fn spawn_initial_gameplay_plan_system(mut commands: Commands) {
         prefab.spawn_boxed(&mut commands);
     }
 
-    let ui_camera = UiCameraPrefab.spawn(&mut commands);
-    DemoMenuPrefab { ui_camera }.spawn(&mut commands);
+    let ui_camera = commands.spawn(UiCamera::default()).id();
+    let menu = DemoMenuPrefab.spawn(&mut commands);
+    commands.entity(menu).insert(UiTargetCamera(ui_camera));
 
     info!("Initial gameplay spawn plan completed.");
 }

@@ -22,11 +22,61 @@ pub fn check() -> CheckStatus {
     reject_direct_input(&mut errors);
     reject_nested_prefab_spawn(&mut errors);
     reject_ui_presentation_details(&mut errors);
+    reject_ui_camera_prefab(&mut errors);
+    reject_public_entity_fields(&mut errors);
+    reject_runtime_camera_targets(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_runtime_camera_targets(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(PREFAB_CRATE).join("src")) {
+        let Some(source) = read_file_if_exists(&file) else {
+            continue;
+        };
+
+        if source.contains("UiCameraTarget") {
+            errors.push(format!(
+                "{} references `UiCameraTarget`; UI prefab should not accept runtime camera handles, so gameplay must attach UiTargetCamera after spawning the UI prefab root",
+                file.display()
+            ));
+        }
+    }
+}
+
+fn reject_public_entity_fields(errors: &mut Vec<String>) {
+    for file in rust_files(Path::new(PREFAB_CRATE).join("src")) {
+        let Some(source) = read_file_if_exists(&file) else {
+            continue;
+        };
+
+        if contains_public_entity_field(&source) {
+            errors.push(format!(
+                "{} exposes a public `Entity` field; prefab public API should use semantic handles such as UiCameraTarget instead of raw Bevy entity ids",
+                file.display()
+            ));
+        }
+    }
+}
+
+fn contains_public_entity_field(source: &str) -> bool {
+    source
+        .lines()
+        .map(str::trim)
+        .any(|line| line.starts_with("pub ") && line.contains(": Entity"))
+}
+
+fn reject_ui_camera_prefab(errors: &mut Vec<String>) {
+    let camera_prefab = Path::new(PREFAB_CRATE).join("src/ui/camera.rs");
+    if camera_prefab.exists() {
+        errors.push(format!(
+            "{} exists; UI camera belongs in render_2d camera configuration and should be spawned by gameplay, while prefab/src/ui should contain concrete UI screens such as menu.rs",
+            camera_prefab.display()
+        ));
     }
 }
 
@@ -119,7 +169,9 @@ fn reject_direct_input(errors: &mut Vec<String>) {
 
 #[cfg(test)]
 mod tests {
-    use super::{contains_nested_prefab_spawn, contains_ui_presentation_detail};
+    use super::{
+        contains_nested_prefab_spawn, contains_public_entity_field, contains_ui_presentation_detail,
+    };
 
     #[test]
     fn detects_prefab_spawn_with_commands_reference() {
@@ -154,5 +206,19 @@ mod tests {
         let source = "Button, InteractionAction::new(action), menu_button_bundle(label)";
 
         assert!(!contains_ui_presentation_detail(source));
+    }
+
+    #[test]
+    fn detects_public_entity_fields() {
+        let source = "pub struct DemoMenuPrefab {\n    pub ui_camera: Entity,\n}";
+
+        assert!(contains_public_entity_field(source));
+    }
+
+    #[test]
+    fn allows_semantic_camera_targets() {
+        let source = "pub struct DemoMenuPrefab {\n    pub ui_camera: UiCameraTarget,\n}";
+
+        assert!(!contains_public_entity_field(source));
     }
 }

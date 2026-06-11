@@ -15,3 +15,4 @@ helper.workspace = true
 interaction.workspace = true
 intent.workspace = true
 prefab.workspace = true
+render_2d.workspace = true

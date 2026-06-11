@@ -8,24 +8,42 @@ pub enum UiLayer {
     Root,
 }
 
-pub fn ui_root_node_bundle(camera: Entity) -> impl Bundle {
-    (ui_root_target_bundle(camera), full_screen_ui_node())
+#[derive(Bundle)]
+pub struct UiRootBundle {
+    pub marker: UiRoot,
+    pub z_index: ZIndex,
 }
 
-pub fn ui_root_target_bundle(camera: Entity) -> impl Bundle {
-    (
-        UiRoot,
-        UiTargetCamera(camera),
-        ui_layer_z_index(UiLayer::Root),
-    )
-}
-
-pub fn full_screen_ui_node() -> Node {
-    Node {
-        width: percent(100),
-        height: percent(100),
-        ..default()
+impl Default for UiRootBundle {
+    fn default() -> Self {
+        Self {
+            marker: UiRoot,
+            z_index: ui_layer_z_index(UiLayer::Root),
+        }
     }
+}
+
+#[derive(Bundle)]
+pub struct FullScreenUiNodeBundle {
+    pub node: Node,
+}
+
+impl Default for FullScreenUiNodeBundle {
+    fn default() -> Self {
+        Self {
+            node: Node {
+                width: percent(100),
+                height: percent(100),
+                ..default()
+            },
+        }
+    }
+}
+
+#[derive(Bundle, Default)]
+pub struct UiRootNodeBundle {
+    pub root: UiRootBundle,
+    pub node: FullScreenUiNodeBundle,
 }
 
 fn ui_layer_z_index(layer: UiLayer) -> ZIndex {

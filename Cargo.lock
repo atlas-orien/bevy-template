@@ -2659,6 +2659,7 @@ dependencies = [
  "intent",
  "interaction",
  "prefab",
+ "render_2d",
 ]
 
 [[package]]

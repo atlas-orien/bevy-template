@@ -52,8 +52,8 @@
 ## Manager 规则
 
 - 用户和外部模块优先通过 manager API 操作 gameplay。
-- `RuntimeRequest` 是 external runtime 到 world 的内部请求，不应该被普通用户代码到处构造。
-- `RuntimeUpdate` 是 world 到 external runtime 的内部消息，不应该被普通用户代码到处构造。
+- `RuntimeRequestMessage` 是 external runtime 到 world 的内部请求，不应该被普通用户代码到处构造。
+- `RuntimeUpdateMessage` 是 world 到 external runtime 的内部消息，不应该被普通用户代码到处构造。
 - manager API 不向用户暴露 Bevy `Entity`。
 - manager 必须有状态，可以维护 gameplay-facing id 的 registry，并允许用户按公开 id 查询。
 - manager 不向用户暴露 Bevy `Entity`。

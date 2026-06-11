@@ -48,13 +48,13 @@
 - `api` 的消息类型和提交函数只表达“希望 gameplay 做什么”，不直接修改 Bevy `World`。
 - `api` 的消息类型和提交函数不直接调用 `Commands`、`World` 或 `Prefab::spawn`。
 - `api/systems.rs` 是 API 边界的 Bevy-side 消费执行层，可以使用 `Commands` 执行请求。
-- object-safe spawn adapter 可以调用 `Prefab::spawn`，但只能作为 `RuntimeRequest::SpawnPrefab` 的内部执行细节。
+- object-safe spawn adapter 可以调用 `Prefab::spawn`，但只能作为 `RuntimeRequestMessage::SpawnPrefab` 的内部执行细节。
 - `api` 不暴露 Bevy `Entity` 给外部来源；外部请求必须使用 gameplay-facing id。
 - gameplay 内部负责把 gameplay-facing id 映射成 Bevy `Entity`。
 - `api` 可以注册 Bevy `Message`，作为外部系统和 gameplay 内部系统之间的连接。
 - `api` 的消费和执行必须放在 gameplay 内部 system 中，并注册到明确的 Bevy schedule。
 - `api` 可以定义 request/update 消息语义，并使用 `helper` 的 channel 机制让 external runtime 和 Bevy App 双向通信。
-- `RuntimeRequest` / `RuntimeUpdate` 的底层 transport 类型放在 `api/runtime_channel`。
+- `RuntimeRequestMessage` / `RuntimeUpdateMessage` 的底层 transport 类型放在 `api/runtime_channel`。
 - manager 不属于 `gameplay`，必须放在 `external_runtime`。
 - gameplay 不依赖 manager，也不调用 manager；gameplay 只向 update channel 发消息。
 - channel 机制属于 `helper`，不属于 `gameplay`。

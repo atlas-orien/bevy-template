@@ -1,6 +1,8 @@
 use std::sync::{Arc, Mutex};
 
-use gameplay::api::{RuntimeRequest, RuntimeRequestSender, RuntimeUpdate, RuntimeUpdateInbox};
+use gameplay::api::{
+    RuntimeRequestMessage, RuntimeRequestSender, RuntimeUpdateInbox, RuntimeUpdateMessage,
+};
 
 use super::state::ManagerState;
 
@@ -24,7 +26,7 @@ impl RuntimeTransport {
         }
     }
 
-    pub fn send_request(&self, request: RuntimeRequest) -> bool {
+    pub fn send_request(&self, request: RuntimeRequestMessage) -> bool {
         self.requests.send(request)
     }
 
@@ -35,11 +37,11 @@ impl RuntimeTransport {
             };
 
             match update {
-                RuntimeUpdate::EntityRegistered { id } => {
-                    state.register_entity(id);
+                RuntimeUpdateMessage::EntityRegistered(registration) => {
+                    state.register_entity(registration.gameplay_entity_id);
                 }
-                RuntimeUpdate::EntityUnregistered { id } => {
-                    state.unregister_entity(id);
+                RuntimeUpdateMessage::EntityUnregistered { gameplay_entity_id } => {
+                    state.unregister_entity(gameplay_entity_id);
                 }
             }
         }

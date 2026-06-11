@@ -2,7 +2,7 @@
 
 ## 目标
 
-方向键/WASD 产生移动意图请求。本地键盘必须走架构规定的路：**在 `external_runtime` 内读输入 → 发 `RuntimeRequest::SetMovementIntent` → channel**，绝不在 Bevy App 内直接写 intent。
+方向键/WASD 产生移动意图请求。本地键盘必须走架构规定的路：**在 `external_runtime` 内读输入 → 发 `RuntimeRequestMessage::SetMovementIntent` → channel**，绝不在 Bevy App 内直接写 intent。
 
 ## 现状
 

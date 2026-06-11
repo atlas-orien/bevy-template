@@ -6,5 +6,5 @@ pub use channel::{
     ManagerUpdateChannel, RuntimeRequestChannel, RuntimeRequestInbox, RuntimeRequestSender,
     RuntimeUpdateInbox, RuntimeUpdateSender, drain_runtime_requests_into,
 };
-pub use message::{RuntimeRequest, RuntimeUpdate};
+pub use message::{RuntimeRequestMessage, RuntimeUpdateMessage};
 pub use spawn::SpawnItem;

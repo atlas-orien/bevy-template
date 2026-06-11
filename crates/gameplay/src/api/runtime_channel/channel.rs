@@ -2,12 +2,12 @@ use bevy::prelude::*;
 
 use helper::channel::{self, ChannelInbox, ChannelSender};
 
-use super::message::{RuntimeRequest, RuntimeUpdate};
+use super::message::{RuntimeRequestMessage, RuntimeUpdateMessage};
 
-pub type RuntimeRequestSender = ChannelSender<RuntimeRequest>;
-pub type RuntimeRequestInbox = ChannelInbox<RuntimeRequest>;
-pub type RuntimeUpdateSender = ChannelSender<RuntimeUpdate>;
-pub type RuntimeUpdateInbox = ChannelInbox<RuntimeUpdate>;
+pub type RuntimeRequestSender = ChannelSender<RuntimeRequestMessage>;
+pub type RuntimeRequestInbox = ChannelInbox<RuntimeRequestMessage>;
+pub type RuntimeUpdateSender = ChannelSender<RuntimeUpdateMessage>;
+pub type RuntimeUpdateInbox = ChannelInbox<RuntimeUpdateMessage>;
 
 #[derive(Clone)]
 pub struct RuntimeRequestChannel {
@@ -65,7 +65,7 @@ impl Default for ManagerUpdateChannel {
 
 pub fn drain_runtime_requests_into(
     inbox: &RuntimeRequestInbox,
-    requests: &mut MessageWriter<RuntimeRequest>,
+    requests: &mut MessageWriter<RuntimeRequestMessage>,
 ) {
     for request in inbox.drain() {
         requests.write(request);

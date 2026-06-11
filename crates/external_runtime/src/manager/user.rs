@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 
-use gameplay::api::{RuntimeRequest, RuntimeRequestSender, RuntimeUpdateInbox};
+use gameplay::api::{RuntimeRequestMessage, RuntimeRequestSender, RuntimeUpdateInbox};
 use gameplay::state::AppState;
 use intent::movement::MovementTarget;
 use prefab::Prefab;
@@ -45,13 +45,13 @@ where
 {
     manager
         .runtime
-        .send_request(RuntimeRequest::spawn_prefab(prefab))
+        .send_request(RuntimeRequestMessage::spawn_prefab(prefab))
 }
 
 pub fn despawn_entity(manager: &ExternalRuntimeManager, id: GameplayEntityId) -> bool {
     manager
         .runtime
-        .send_request(RuntimeRequest::despawn_entity(id))
+        .send_request(RuntimeRequestMessage::despawn_entity(id))
 }
 
 pub fn clear_session(manager: &ExternalRuntimeManager) -> bool {
@@ -61,13 +61,13 @@ pub fn clear_session(manager: &ExternalRuntimeManager) -> bool {
 
     manager
         .runtime
-        .send_request(RuntimeRequest::clear_session())
+        .send_request(RuntimeRequestMessage::clear_session())
 }
 
 pub fn change_state(manager: &ExternalRuntimeManager, state: AppState) -> bool {
     manager
         .runtime
-        .send_request(RuntimeRequest::change_state(state))
+        .send_request(RuntimeRequestMessage::change_state(state))
 }
 
 pub fn set_movement_intent(
@@ -77,7 +77,7 @@ pub fn set_movement_intent(
 ) -> bool {
     manager
         .runtime
-        .send_request(RuntimeRequest::set_movement_intent(id, target))
+        .send_request(RuntimeRequestMessage::set_movement_intent(id, target))
 }
 
 pub fn has_entity(manager: &ExternalRuntimeManager, id: GameplayEntityId) -> bool {

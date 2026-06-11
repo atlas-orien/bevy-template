@@ -8,7 +8,7 @@ same ownership boundaries when adding new features.
 ```text
 external source
 -> external_runtime::manager::set_movement_intent(id, target)
--> gameplay::api::RuntimeRequest::SetMovementIntent
+-> gameplay::api::RuntimeRequestMessage::SetMovementIntent
 -> gameplay::api::systems::forward_manager_requests_system
 -> gameplay::api::systems::consume_gameplay_requests_system
 -> prefab::identity::find_gameplay_entity(id)
@@ -38,7 +38,7 @@ external source
 ## Adding A Similar Feature
 
 1. Put external source polling or decision logic in `external_runtime::input`.
-2. Add or reuse a manager API function that submits a `RuntimeRequest`.
+2. Add or reuse a manager API function that submits a `RuntimeRequestMessage`.
 3. Define request message data in `gameplay::api::runtime_channel::message`.
 4. Consume and execute the request in `gameplay::api::systems`.
 5. If the request targets an entity, use gameplay-facing ids, not raw `Entity`.

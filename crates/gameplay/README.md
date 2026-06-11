@@ -27,10 +27,10 @@ src/
 当前文件：
 
 - `channel.rs`: 定义 gameplay request sender 和 Bevy App 内部的 request inbox。
-- `mod.rs`: 注册 `GameplayApiPlugin`，并注册 `RuntimeRequest` message。
+- `mod.rs`: 注册 `GameplayApiPlugin`，并注册 `RuntimeRequestMessage` message。
 - runtime/world 消息类型定义在 `gameplay::api::runtime_channel`，底层 channel 机制来自 `helper`。
 - `submit.rs`: 提供提交 gameplay request 的窄函数。
-- `systems.rs`: 消费 `RuntimeRequest`，并调用 gameplay 内部能力。
+- `systems.rs`: 消费 `RuntimeRequestMessage`，并调用 gameplay 内部能力。
 
 API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-facing id，gameplay 内部负责映射到 Bevy `Entity`。
 
@@ -39,7 +39,7 @@ API 不暴露 Bevy `Entity` 给外部来源。外部请求必须使用 gameplay-
 - `RuntimeRequestChannel`: gameplay/Bevy App 接收请求，所以它的 inbox 交给 `GameplayPlugin`，sender 交给 `ExternalRuntimeManager`。
 - `ManagerUpdateChannel`: external runtime manager 接收 world 更新，所以它的 inbox 交给 `ExternalRuntimeManager`，sender 交给 `GameplayPlugin`。
 
-Bevy App 在 `Update` 中把 request inbox 转发为 `RuntimeRequest` message，再由 gameplay 内部 system 消费。
+Bevy App 在 `Update` 中把 request inbox 转发为 `RuntimeRequestMessage` message，再由 gameplay 内部 system 消费。
 
 当前最小请求：
 
@@ -135,7 +135,7 @@ gameplay 内部“生成流程”的标准落点。
 
 运行中 spawn：
 
-- 外部请求仍然走 `RuntimeRequest::SpawnPrefab`。
+- 外部请求仍然走 `RuntimeRequestMessage::SpawnPrefab`。
 - 请求消费逻辑写在 `api/systems.rs`。
 - 具体执行入口放在 `spawning/runtime.rs`。
 - 不要把运行中 spawn 写进 `initial.rs`。
@@ -153,7 +153,7 @@ gameplay 内部“生成流程”的标准落点。
 新增清理策略时：
 
 - 如果是状态退出清理，优先使用 `OnExit(...)`。
-- 如果是外部请求触发清理，优先走 `RuntimeRequest::ClearSession`。
+- 如果是外部请求触发清理，优先走 `RuntimeRequestMessage::ClearSession`。
 - 不要在 cleanup 中散装组件查询逻辑；需要底层能力时通过 `prefab` 暴露的窄 facade。
 
 ## lifecycle

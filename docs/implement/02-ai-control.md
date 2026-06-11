@@ -2,11 +2,11 @@
 
 ## 目标
 
-让 AI 作为一个外部控制源，通过和键盘**完全相同**的 `RuntimeRequest` 管道驱动游戏：移动、生成、销毁、切状态。证明「把游戏交给 AI 来玩/来做」的闭环成立。
+让 AI 作为一个外部控制源，通过和键盘**完全相同**的 `RuntimeRequestMessage` 管道驱动游戏：移动、生成、销毁、切状态。证明「把游戏交给 AI 来玩/来做」的闭环成立。
 
 ## 现状
 
-`crates/external_runtime/src/input/ai/mod.rs` 是 1 行占位（`// AI control adapters belong here.`）。管道已就绪，缺的只是「AI 决策 → RuntimeRequest」这个生产者。
+`crates/external_runtime/src/input/ai/mod.rs` 是 1 行占位（`// AI control adapters belong here.`）。管道已就绪，缺的只是「AI 决策 → RuntimeRequestMessage」这个生产者。
 
 ## 入口（与步骤 1 相同）
 
@@ -19,7 +19,7 @@
 
 ## 步骤
 
-1. 在 `crates/external_runtime/src/input/ai/mod.rs` 定义一个 AI 源类型，持有 AI 需要的内部状态（目标点、决策计时器等），并提供一个 `poll(&self, &ExternalRuntimeManager)`（或返回若干 `RuntimeRequest` 的方法）。
+1. 在 `crates/external_runtime/src/input/ai/mod.rs` 定义一个 AI 源类型，持有 AI 需要的内部状态（目标点、决策计时器等），并提供一个 `poll(&self, &ExternalRuntimeManager)`（或返回若干 `RuntimeRequestMessage` 的方法）。
 2. 先实现一个**最小可观察策略**证明闭环，例如：
    - 用 `entity_ids` 读到玩家 id；
    - 周期性朝某个目标点发 `set_movement_intent(id, MovementTarget::Position(target))`；
@@ -29,7 +29,7 @@
 
 ## 边界
 
-- AI 源只产出 `RuntimeRequest`，**不直接修改 Bevy `World`**，不接触 `Entity`、`Component`。
+- AI 源只产出 `RuntimeRequestMessage`，**不直接修改 Bevy `World`**，不接触 `Entity`、`Component`。
 - 不在 `input/ai` 里放渲染、物理、ECS 数据定义。
 - 真正接入大模型/外部 AI 进程的传输细节，后续可放 `crates/external_runtime/src/bridge`；本步骤先用进程内策略打通闭环即可。
 

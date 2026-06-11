@@ -9,13 +9,13 @@ pub use self::channel::{
     ManagerUpdateChannel, RuntimeRequestChannel, RuntimeRequestInbox, RuntimeRequestSender,
     RuntimeUpdateInbox, RuntimeUpdateSender, drain_runtime_requests_into,
 };
-pub use self::runtime_channel::{RuntimeRequest, RuntimeUpdate, SpawnItem};
+pub use self::runtime_channel::{RuntimeRequestMessage, RuntimeUpdateMessage, SpawnItem};
 pub use self::submit::submit_gameplay_request;
 
 pub struct GameplayApiPlugin;
 
 impl Plugin for GameplayApiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_message::<RuntimeRequest>();
+        app.add_message::<RuntimeRequestMessage>();
     }
 }

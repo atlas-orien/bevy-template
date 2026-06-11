@@ -3,8 +3,8 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct Scene3dEntity;
 
-pub struct Scene3dPlugin;
+pub struct Scenes3dPlugin;
 
-impl Plugin for Scene3dPlugin {
+impl Plugin for Scenes3dPlugin {
     fn build(&self, _app: &mut App) {}
 }

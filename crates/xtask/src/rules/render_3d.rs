@@ -28,8 +28,20 @@ pub fn check() -> CheckStatus {
         "render_3d needs a crate root that exports presentation plugins/types",
     );
     for dir in [
+        "crates/render_3d/src/animation",
         "crates/render_3d/src/camera",
-        "crates/render_3d/src/scene",
+        "crates/render_3d/src/characters",
+        "crates/render_3d/src/debug",
+        "crates/render_3d/src/effects",
+        "crates/render_3d/src/environment",
+        "crates/render_3d/src/items",
+        "crates/render_3d/src/lighting",
+        "crates/render_3d/src/materials",
+        "crates/render_3d/src/models",
+        "crates/render_3d/src/overlays",
+        "crates/render_3d/src/particles",
+        "crates/render_3d/src/props",
+        "crates/render_3d/src/scenes",
         "crates/render_3d/src/ui",
     ] {
         require_path(

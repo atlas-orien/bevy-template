@@ -76,7 +76,7 @@
 
 - `crates/ecs/src/components` 定义玩家是什么。
 - `crates/ecs/src/systems` 定义玩家位置等 ECS 数据如何被规则改变。
-- `external_runtime` 读取 input/local、input/device、input/ai 等控制来源；网络是双向通信层，v2 单独设计。
+- `peripherals` 读取本机键盘、鼠标、手柄和 UI interaction；`external_runtime` 读取 AI、脚本、回放等 Bevy App 外部来源。网络是双向通信层，v2 单独设计。
 - `intent` 表达 Entity 想做什么。
 - `prefab` 把 `render_2d` 的高层表现 bundle 组合进完整对象模板。
 - `gameplay` 负责状态流、gameplay session 生命周期和 system 调度。

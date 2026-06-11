@@ -80,7 +80,8 @@ cargo run -p xtask -- pack-frame effects/slash --once
 
 - `crates/external_runtime` 必须存在。
 - `AI_PROTOCOL/EXTERNAL_RUNTIME.md` 必须存在。
-- 必须有输入来源域目录：`input/local`、`input/device`、`input/ai`。
+- `external_runtime` 只保留 Bevy App 外部来源域，例如 `input/ai`。
+- 本机键盘、鼠标、手柄和 UI interaction 必须放在 `crates/peripherals`。
 - 不允许有 `crates/external_runtime/src/network`；网络是双向通信层，v2 单独设计。
 - 必须有 external runtime、manager 和 bridge 目录：`runtime`、`manager`、`bridge`。
 - `manager` 必须分成用户 API 和内部 channel transport：`manager/user.rs`、`manager/transport.rs`。

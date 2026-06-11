@@ -16,7 +16,9 @@ GameplayPlugin::new(runtime_requests.inbox(), manager_updates.sender())
 
 `GameplayPlugin` 是游戏玩法入口，内部负责 gameplay 状态、spawn、API 消费和 intent 能力。
 
-`external_runtime` 不作为 Bevy plugin 注册到 app。外设、AI 等外部来源由 external runtime 持有 `ExternalRuntimeManager` 进入 gameplay。网络是双向通信层，v2 单独设计。
+`external_runtime` 不作为 Bevy plugin 注册到 app。AI、脚本、回放等 Bevy App 外部来源由 external runtime 持有 `ExternalRuntimeManager` 进入 gameplay。网络是双向通信层，v2 单独设计。
+
+本机键盘、鼠标、手柄和 UI interaction 由 `peripherals` 作为 Bevy App 内部 plugin 接入。
 
 顶层 `main` 创建两个具体 channel：
 

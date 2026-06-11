@@ -11,13 +11,13 @@ External Runtime
 
 Bevy App 负责 `World`、`Schedule`、render、physics、gameplay。
 
-External Runtime 负责 Bevy App 外部的来源模块，例如 input/local、input/device、input/ai、script、replay，以及未来 v2 单独设计的 network。
+External Runtime 负责 Bevy App 外部的来源模块，例如 input/ai、script、replay，以及未来 v2 单独设计的 network。
 
 ## 职责
 
 - 启动和停止 Bevy App 外部的 runtime loop。
 - 持有 `external_runtime::manager::ExternalRuntimeManager`。
-- 运行 input/local、input/device、input/ai、script/replay 等外部来源模块。
+- 运行 input/ai、script/replay 等外部来源模块。
 - 把外部来源转换成 manager API 调用。
 - 不直接操作 Bevy `World`。
 
@@ -27,9 +27,9 @@ External Runtime 负责 Bevy App 外部的来源模块，例如 input/local、in
 - `manager`: 有状态的 manager，分为用户 API、内部 transport 和状态 registry，不暴露 Bevy `Entity`。
 - `bridge`: external runtime 和 Bevy App/gameplay channel 之间的通道组装。
 - `input`: 输入来源域。
-- `input/local`: 本地输入来源，例如键盘、鼠标、手柄。
-- `input/device`: 外设输入来源。
 - `input/ai`: AI 输入来源。
+
+本机键盘、鼠标、手柄和 UI interaction 属于 `crates/peripherals`，不属于 external runtime。
 
 网络不是 v1 子模块。网络是双向通信层，v2 单独设计。
 

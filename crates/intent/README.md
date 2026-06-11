@@ -4,7 +4,7 @@
 
 它只描述一个 Entity “想做什么”，不描述这个想法来自哪里。
 
-键盘、手柄、AI、脚本、网络都不是 `intent` 本身。它们属于外部来源边界层，转换成 intent 后再写入可控制 Entity 的意图数据。
+键盘、鼠标、手柄、UI、AI、脚本、网络都不是 `intent` 本身。它们属于来源边界层，转换成 intent 后再写入可控制 Entity 的意图数据。
 
 ## 职责
 
@@ -18,7 +18,7 @@
 
 - `movement`: 移动意图，例如“这个 Entity 想往某个方向移动”或“想移动到某个位置”。
 
-`external_runtime` v1 负责 input/local、input/device、input/ai 等控制来源。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。网络是双向通信层，v2 单独设计。
+本机键盘、鼠标、手柄和 UI interaction 属于 `peripherals`。AI、脚本、回放和未来网络等 Bevy App 外部来源属于 `external_runtime`。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。
 
 ## 和 gameplay 的区别
 

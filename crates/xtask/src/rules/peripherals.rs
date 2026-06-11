@@ -123,7 +123,14 @@ fn reject_network_details(errors: &mut Vec<String>) {
             continue;
         };
 
-        for forbidden in ["protobuf", "prost", "socket", "TcpStream", "UdpSocket", "WebSocket"] {
+        for forbidden in [
+            "protobuf",
+            "prost",
+            "socket",
+            "TcpStream",
+            "UdpSocket",
+            "WebSocket",
+        ] {
             if source.contains(forbidden) {
                 errors.push(format!(
                     "{} references `{forbidden}`; peripherals should emit semantic actions and leave network transport to a dedicated outbound bridge",

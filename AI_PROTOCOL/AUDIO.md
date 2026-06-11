@@ -6,6 +6,8 @@
 
 它定义声音来源、空间音频数据、播放设置、音频分组和播放请求。它不定义具体游戏对象使用哪些声音。
 
+第一阶段必须优先保证固定音频资源可以播放：外部发送 `PlayAudioRequest::sample("audio/sfx/hit.ogg")`，`AudioFoundationPlugin` 负责通过 Bevy 的 `AssetServer` 和 `AudioPlayer` 播放 `assets/` 下已有文件。
+
 ## 代码落点
 
 - 声音来源：写到 `crates/audio/src/source`。
@@ -18,6 +20,7 @@
 - 音频分组：写到 `crates/audio/src/bus.rs`。
 - 音量和静音：写到 `crates/audio/src/volume.rs`。
 - 播放/停止请求：写到 `crates/audio/src/request.rs`。
+- request 到 Bevy 音频实体的最小播放 system：写到 `crates/audio/src/lib.rs`，以后复杂后再拆到专用模块。
 
 ## Source 规则
 
@@ -25,6 +28,19 @@
 - `source/procedural.rs` 表示程序生成声音，例如发动机、风、噪声、纯音。
 - 具体资源名和具体对象声音配置不放在 `audio`。
 - 复杂 DSP 或合成器 runtime 以后可以接第三方库；第一版只定义边界。
+
+## 固定资源播放规则
+
+- 固定资源播放使用 `PlayAudioRequest::sample(path)`。
+- `path` 必须是相对 `assets/` 的路径，例如 `audio/sfx/hit.ogg`。
+- `AudioFoundationPlugin` 必须注册 `PlayAudioRequest` 和 `StopAudioRequest` message。
+- `AudioFoundationPlugin` 必须消费 sample 请求，并生成 Bevy 音频播放实体。
+- sample 播放使用 Bevy 的 `AudioPlayer`、`PlaybackSettings` 和 `AssetServer`，不要自己实现解码器。
+- 一次性音效默认使用 Bevy 的 despawn 播放模式，避免播放结束后残留实体。
+- 循环音频使用 `AudioPlaybackSettings::looping()`。
+- 播放实体必须带 `AudioPlaybackId` 和 `AudioPlaybackBus`，方便以后停止、调音量、做 bus 管理。
+- `ProceduralAudioSource` 可以保留类型边界，但第一阶段不需要真正播放。
+- `AudioBus` 可以保留分组语义，但第一阶段不需要实现完整 mixer。
 
 ## Spatial 规则
 

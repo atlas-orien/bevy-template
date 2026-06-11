@@ -2,13 +2,14 @@
 
 `prefab` 放可生成的游戏对象模板和面向 gameplay 的对象组合入口。
 
-它负责把 `crates/ecs` 的游戏语义数据、`crates/physics` 的物理能力、`crates/navigation` 的导航能力、`crates/render_2d` 的表现数据和 `crates/audio` 的音频数据组合成可以直接生成的完整对象模板。
+它负责把 `crates/ecs` 的游戏语义数据、`crates/physics` 的物理能力、`crates/navigation` 的导航能力、`crates/render_2d` 的表现数据和 `crates/audio` 的播放能力组合成可以直接生成的完整对象模板。
 外部 gameplay 层不直接使用 `ecs`、`physics`、`navigation`、`render_2d`、`audio` 这些基础库，而是通过这里提供的封装入口使用它们。
 
 ## 职责
 
 - 定义可生成对象的组合 Bundle。
-- 组合 ECS、physics、render、audio bundle 或配置。
+- 组合 ECS、physics、render bundle 或配置。
+- 注册音频基础插件，并把 ECS 音频槽位事件桥接成播放请求。
 - 提供最小 `Prefab` trait，表达 prefab 实例可以生成主 Entity。
 - 给 gameplay setup 提供稳定的对象生成入口。
 - 给 gameplay 提供必要的窄 facade，让 gameplay 不直接依赖底层 crate。
@@ -43,6 +44,8 @@
 
 ## audio 边界
 
-`prefab` 可以组合 `audio` 暴露的 sample/procedural 声音来源、播放设置、空间音频等基础数据。
+`prefab` 可以组合 `ecs` 暴露的 `AudioClips`，表达某个对象有哪些可用音频资源。
+
+`PrefabPlugin` 注册 `AudioFoundationPlugin`，并提供窄桥接系统：当实体生命周期事件发生时，读取实体的 `AudioClips`，发送 `PlayAudioRequest`。
 
 具体对象使用哪些声音属于 prefab 或未来 content；音频播放 runtime 和复杂声音合成不放在 prefab。

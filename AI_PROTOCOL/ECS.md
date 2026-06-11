@@ -46,7 +46,7 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - 不要新增 `game_` 前缀的 ECS 模块名。
 - `components/base` 按最小语义组拆文件，不按“一类型一文件”机械拆分。
 - 一个 base 文件只能放同一语义组的基础组件和强绑定辅助类型。
-- 推荐语义组示例：`identity.rs` 放 `DisplayName`、`PublicEntityId`；`health.rs` 放 `Health`、`MaxHealth`；`movement.rs` 放 `Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`；`affiliation.rs` 放 `Faction`、`Team`。
+- 推荐语义组示例：`identity.rs` 放 `DisplayName`、`PublicEntityId`；`health.rs` 放 `Health`、`MaxHealth`；`movement.rs` 放 `Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`；`affiliation.rs` 放 `Faction`、`Team`；`audio.rs` 放 `AudioClip`、`AudioClips`。
 - `ecs` 不按 2D / 3D 创建目录分类。2D / 3D 只是同一语义组里的数据形状变体，例如 `Velocity2d` 和 `Velocity3d` 都放在 `base/movement.rs`。
 - 如果 2D / 3D 差异属于渲染、物理后端或 prefab 组合，放到 `render_2d`、`render_3d`、`physics` 或 `prefab/world_2d`、`prefab/world_3d`，不要放到 `ecs` 目录结构里。
 - 不要把无关基础组件混在一个文件里，例如不要在 `movement.rs` 写血量、攻击、背包、AI 或 gameplay manager 数据。
@@ -65,7 +65,7 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 
 当前模板只保留 ECS 基础结构和基础组件命名，不携带默认内容资源。
 
-- `crates/ecs/src/components/base`: 定义 `DisplayName`、`PublicEntityId`、`Health`、`MaxHealth`、`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`、`Faction`、`Team`。
+- `crates/ecs/src/components/base`: 定义 `DisplayName`、`PublicEntityId`、`Health`、`MaxHealth`、`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`、`Faction`、`Team`、`AudioClip`、`AudioClips`。
 - `crates/ecs/src/components/characters`: 定义 `Character` 等通用角色身份 marker。
 - `crates/ecs/src/components/items`: 定义基础物品身份数据。
 - `crates/ecs/src/components/ui`: 保留 UI 相关 ECS 数据命名空间。

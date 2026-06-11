@@ -4388,6 +4388,7 @@ dependencies = [
 name = "prefab"
 version = "0.1.0"
 dependencies = [
+ "audio",
  "bevy",
  "ecs",
  "error",

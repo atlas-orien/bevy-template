@@ -11,6 +11,7 @@ pub use error::Result;
 pub use prefab::Prefab;
 
 use ::navigation::NavigationPlugin;
+use audio::AudioFoundationPlugin;
 use bevy::prelude::*;
 use ecs::EcsPlugin;
 use physics::PhysicsPlugin;
@@ -20,6 +21,19 @@ pub struct PrefabPlugin;
 
 impl Plugin for PrefabPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((EcsPlugin, PhysicsPlugin, NavigationPlugin, Render2dPlugin));
+        app.add_plugins((
+            EcsPlugin,
+            PhysicsPlugin,
+            NavigationPlugin,
+            AudioFoundationPlugin,
+            Render2dPlugin,
+        ))
+        .add_systems(
+            Update,
+            (
+                lifecycle::play_spawn_audio_system,
+                lifecycle::play_despawn_audio_system,
+            ),
+        );
     }
 }

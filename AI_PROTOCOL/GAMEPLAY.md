@@ -108,7 +108,7 @@
 - `gameplay` 可以依赖 `intent`，用于注册和调度 Entity 意图相关能力。
 - `gameplay` 必须依赖 `error`。
 - `gameplay` 不依赖 `external_runtime`；external runtime 持有 gameplay manager。
-- `gameplay` 不依赖 `audio`。
+- `gameplay` 不依赖 `audio`；音频基础插件和 ECS 音频槽位桥接通过 `prefab` 组合。
 - `gameplay` 不依赖 `ecs`。
 - `gameplay` 不依赖 `render_2d` 或 `render_3d`。
 - `gameplay` 不直接依赖 `physics`；对象组合通过 `prefab` 完成，并由 `gameplay` 注册 `PrefabPlugin`。

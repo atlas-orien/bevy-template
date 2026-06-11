@@ -1,58 +1,50 @@
-# Golden Path: Entity Movement Request
+# 黄金路径：实体移动请求
 
-This is the canonical rule chain for adding movement-like behavior. Follow the
-same ownership boundaries when adding new features.
+这是添加“移动类行为”时应遵循的标准规则链路。新增功能时，优先沿用同样的归属边界。
 
-## Flow
+## 流程
 
 ```text
-external source
+外部来源
 -> external_runtime::manager::set_movement_intent(id, target)
 -> gameplay::api::RuntimeRequestMessage::SetMovementIntent
 -> gameplay::api::systems::forward_manager_requests_system
 -> gameplay::api::systems::consume_gameplay_requests_system
 -> prefab::identity::find_gameplay_entity(id)
 -> intent::movement::set_movement_intent(entity, target, query)
--> optional navigation target/path/follower systems
+-> 可选 navigation target/path/follower systems
 -> ecs::systems::movement::movement_system
--> Transform changes
--> render_2d displays the entity
+-> Transform 发生变化
+-> render_2d 显示实体
 ```
 
-## Rules
+## 规则
 
-- The template does not spawn a default object.
-- Concrete projects decide which prefab owns which `GameplayEntityId`.
-- Local input is polled in `external_runtime::input::local`.
-- AI, scripts, replay, network, and device input are external sources.
-- External sources submit requests through `external_runtime::manager`; they do
-  not touch Bevy `Entity`, `Commands`, ECS components, physics, or render types.
-- `gameplay::api` receives requests and is the only place that maps a public id
-  back to a Bevy entity for execution.
-- `intent` only writes intent data.
-- `navigation` owns path/query/follower data when an object needs path-based
-  movement.
-- `ecs::systems` performs the world rule that moves `Transform`.
-- `render_2d` reads world state and presents it.
+- 模板本身不生成默认对象。
+- 具体项目决定哪个 prefab 拥有哪些 `GameplayEntityId`。
+- 本地输入在 `external_runtime::input::local` 中轮询。
+- AI、脚本、回放、网络和外设输入都属于外部来源。
+- 外部来源通过 `external_runtime::manager` 提交请求；它们不直接接触 Bevy `Entity`、`Commands`、ECS component、physics 类型或 render 类型。
+- `gameplay::api` 接收请求，并且只有这里可以把公开 id 映射回 Bevy entity 来执行。
+- `intent` 只写入意图数据。
+- 当对象需要基于路径移动时，`navigation` 拥有路径查询、路径目标和跟随数据。
+- `ecs::systems` 执行真正改变 `Transform` 的世界规则。
+- `render_2d` 读取世界状态并负责表现。
 
-## Adding A Similar Feature
+## 添加类似功能
 
-1. Put external source polling or decision logic in `external_runtime::input`.
-2. Add or reuse a manager API function that submits a `RuntimeRequestMessage`.
-3. Define request message data in `gameplay::api::runtime_channel::message`.
-4. Consume and execute the request in `gameplay::api::systems`.
-5. If the request targets an entity, use gameplay-facing ids, not raw `Entity`.
-6. Put concrete object composition in `prefab`.
-7. Put ECS data in `ecs::components`, global state in `ecs::resources`, and world
-   rules in `ecs::systems`.
-8. Keep render, physics, and navigation as presentation/foundation layers, not control
-   sources.
+1. 外部来源轮询或决策逻辑放到 `external_runtime::input`。
+2. 新增或复用 manager API 函数，由它提交 `RuntimeRequestMessage`。
+3. 请求消息数据定义在 `gameplay::api::runtime_channel::message`。
+4. 请求消费和执行放在 `gameplay::api::systems`。
+5. 如果请求目标是某个实体，使用 gameplay-facing id，不要暴露裸 `Entity`。
+6. 具体对象组合放到 `prefab`。
+7. ECS 数据放到 `ecs::components`，全局状态放到 `ecs::resources`，世界规则放到 `ecs::systems`。
+8. render、physics 和 navigation 是表现层或基础能力层，不是控制来源。
 
-## Do Not Do This
+## 不要这样做
 
-- Do not read keyboard, mouse, gamepad, AI, script, replay, or network sources in
-  `gameplay`, `intent`, `ecs`, `prefab`, `render_2d`, or `render_3d`.
-- Do not spawn gameplay entities by assembling loose component tuples outside
-  `prefab`.
-- Do not expose raw Bevy `Entity` through external runtime manager APIs.
-- Do not import Rapier directly outside `crates/physics`.
+- 不要在 `gameplay`、`intent`、`ecs`、`prefab`、`render_2d` 或 `render_3d` 中读取键盘、鼠标、手柄、AI、脚本、回放或网络来源。
+- 不要在 `prefab` 之外通过散装 component tuple 生成 gameplay entity。
+- 不要通过 external runtime manager API 暴露裸 Bevy `Entity`。
+- 不要在 `crates/physics` 之外直接 import Rapier。

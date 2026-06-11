@@ -14,6 +14,7 @@
 
 ## 边界规则
 
+- `assets/README.md` 面向用户，只保留目录索引和最少规则；AI 必须以本协议的详细规则为准。
 - `assets/` 只放 runtime-ready 文件。
 - 原始素材、下载参考、用户说明、AI 输入和工具输入放到 `workbench/`。
 - runtime 代码不要通过 `AssetServer` 加载 `workbench/` 下的文件。
@@ -33,11 +34,32 @@ assets/
     animated/
     static/
   3d/
+    models/
+    textures/
+    materials/
+    animations/
+    rigs/
+    skeletons/
+    scenes/
+    environment-maps/
+    lightmaps/
+    irradiance-volumes/
+    volumes/
   ui/
   audio/
   fonts/
+  shaders/
+    2d/
+    3d/
+    ui/
+    post-process/
+    includes/
+  cursors/
+  branding/
+  data/
   levels/
   scenes/
+  platform/
 ```
 
 `assets/2d/animated` 和 `assets/2d/static` 下按游戏对象语义继续分类：
@@ -108,9 +130,63 @@ assets/ui/themes/
 
 ## 3D 规则
 
-`assets/3d` 放 runtime 使用的 3D 模型、材质、贴图和动画。
+`assets/3d` 放 runtime 使用的 3D 模型、材质、贴图、骨骼和动画。
 
-项目开始使用 3D 后，再按具体语义增加子目录。
+3D 资源不按角色、物品、场景这类业务对象做顶层分类。顶层目录必须按资源类型划分。
+
+业务对象如何组合 model、material、texture、animation、rig，属于代码、`render_3d` 配置或 prefab 层，不属于 `assets/3d` 的目录职责。
+
+优先使用 `.glb` 作为 runtime 3D 模型/场景文件格式。`.blend`、`.fbx`、`.obj` 等源文件或交换文件放到 `workbench/`，不要直接放进 `assets/`。
+
+顶层目录：
+
+```text
+assets/3d/
+  models/
+  textures/
+  materials/
+  animations/
+  rigs/
+  skeletons/
+  scenes/
+  environment-maps/
+  lightmaps/
+  irradiance-volumes/
+  volumes/
+```
+
+`models/` 放可实例化的 3D 模型主体。模型通常包含 mesh，也可能包含材质、贴图、骨骼和动画。
+
+```text
+assets/3d/models/{name}/
+  {name}.glb
+```
+
+`textures/` 放 3D 材质使用的贴图，例如：
+
+```text
+albedo.png
+base-color.png
+normal.png
+roughness.png
+metallic.png
+ao.png
+emissive.png
+```
+
+- `materials/`: 材质配置文件或材质相关 runtime 数据。
+- `animations/`: 可复用的 3D 动画资源。
+- `rigs/`: rig/avatar 映射、重定向配置或控制骨架的 runtime 数据。
+- `skeletons/`: 独立骨架或 skeleton 描述。
+- `scenes/`: 完整 3D scene、场景模型或环境组合。
+- `environment-maps/`: 天空盒、反射贴图、HDRI、irradiance/specular 环境贴图。
+- `lightmaps/`: 烘焙光照贴图。
+- `irradiance-volumes/`: irradiance volume、probe volume 等全局光照相关体积数据。
+- `volumes/`: 雾体积、体素数据或其它 runtime 体积纹理。
+
+贴图、材质、骨骼和动画如果已经打包进 `.glb`，不需要额外拆出来。只有需要复用、替换或单独管理时才拆到对应目录。
+
+`assets/3d` 不创建 `prefabs/` 或 `render/` 目录。
 
 ## Audio 规则
 
@@ -131,6 +207,38 @@ assets/audio/ambience/
 - `assets/scenes`: runtime 加载的场景数据。
 
 设计说明、草稿和参考资料不要放在这里，放到 `workbench/`。
+
+## 其它 runtime 资源规则
+
+- `assets/cursors`: 鼠标光标图片和光标相关 runtime 资源。
+- `assets/branding`: 图标、启动图、logo 等品牌资源。
+- `assets/data`: 表格、配置、规则数据等 runtime 数据文件。
+- `assets/platform`: 平台特定 runtime 资源，例如 Android 图标资源。
+
+不要照搬 Bevy 示例仓库里的 `docs/`、`external/` 这类维护目录。模板的 `assets/` 只保存 runtime 会加载的资源。
+
+## Shader 规则
+
+`assets/shaders` 放 WGSL、shader include 或 shader 配置。
+
+shader 是 GPU 程序，也是 Bevy runtime 可以加载的资源文件。第一版不要求项目写自定义 shader；这里只预留高级表现目录。
+
+标准目录：
+
+```text
+assets/shaders/
+  2d/
+  3d/
+  ui/
+  post-process/
+  includes/
+```
+
+- `2d/`: sprite、2D material、tilemap、2D 特效用 shader。
+- `3d/`: mesh、PBR 扩展、toon、water、foliage 等 3D shader。
+- `ui/`: UI material、特殊按钮、面板效果等屏幕空间 UI shader。
+- `post-process/`: 全屏后处理，例如描边、调色、bloom mask、CRT 效果。
+- `includes/`: 公共 WGSL 片段，被其它 shader 引用，不直接作为效果使用。
 
 ## 验证要求
 

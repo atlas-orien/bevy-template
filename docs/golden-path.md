@@ -7,8 +7,9 @@
 ## 流程
 
 ```text
-外部来源
--> external_runtime::manager::set_movement_intent(id, target)
+来源适配
+-> peripherals 或 external_runtime 转成语义移动请求
+-> manager::set_user_movement_intent(user, target) 或等价 gameplay request
 -> gameplay::api::RuntimeRequestMessage::SetMovementIntent
 -> gameplay::api::systems::forward_manager_requests_system
 -> gameplay::api::systems::consume_gameplay_requests_system
@@ -24,9 +25,9 @@
 
 - 模板本身不生成默认对象。
 - 具体项目决定哪个 prefab 拥有哪些 `GameplayEntityId`。
-- 本地输入在 `external_runtime::input::local` 中轮询。
-- AI、脚本、回放、网络和外设输入都属于外部来源。
-- 当前链路中，外部来源通过 `external_runtime::manager` 提交请求；不会直接接触 Bevy `Entity`、`Commands`、ECS component、physics 类型或 render 类型。
+- 本机键盘、鼠标、手柄和 UI interaction 属于 `peripherals`。
+- AI、脚本、回放和未来网络属于 `external_runtime`。
+- 当前链路中，来源适配层提交语义请求；不会直接接触 Bevy `Entity`、Commands、ECS component、physics 类型或 render 类型。
 - `gameplay::api` 接收请求，并在这里把公开 id 映射回 Bevy entity 来执行。
 - `intent` 只写入意图数据。
 - 当对象需要基于路径移动时，`navigation` 拥有路径查询、路径目标和跟随数据。
@@ -35,11 +36,11 @@
 
 ## 添加类似功能时的参考流程
 
-1. 外部来源轮询或决策逻辑放到 `external_runtime::input`。
-2. 新增或复用 manager API 函数，由它提交 `RuntimeRequestMessage`。
+1. 本机外设适配放到 `peripherals`；AI、脚本、回放等外部来源放到 `external_runtime::input`。
+2. 新增或复用语义请求 API，由它提交 `RuntimeRequestMessage` 或等价 gameplay request。
 3. 请求消息数据定义在 `gameplay::api::runtime_channel::message`。
 4. 请求消费和执行放在 `gameplay::api::systems`。
-5. 如果请求目标是某个实体，当前公开 API 使用 gameplay-facing id，而不是裸 `Entity`。
+5. 如果请求目标是某个实体，用户侧使用 runtime-facing id；内部再映射到 gameplay-facing id，不暴露裸 `Entity`。
 6. 具体对象组合放到 `prefab`。
 7. ECS 数据放到 `ecs::components`，全局状态放到 `ecs::resources`，世界规则放到 `ecs::systems`。
 8. render、physics 和 navigation 是表现层或基础能力层，不是控制来源。

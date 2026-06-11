@@ -1,18 +1,5 @@
-mod app;
-mod audio;
-mod ecs;
-mod error;
-mod external_runtime;
-mod gameplay;
-mod helper;
-mod intent;
-mod interaction;
-mod navigation;
-mod peripherals;
-mod physics;
-mod prefab;
-mod render_2d;
-mod render_3d;
+mod base;
+mod crates;
 mod util;
 
 pub enum CheckStatus {
@@ -23,63 +10,63 @@ pub enum CheckStatus {
 pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
 
-    if let CheckStatus::Failed(mut rule_errors) = app::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::app::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = audio::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::audio::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = intent::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::intent::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = external_runtime::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::external_runtime::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = helper::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::helper::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = interaction::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::interaction::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = ecs::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::ecs::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = error::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::error::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = physics::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::physics::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = navigation::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::navigation::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = peripherals::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::peripherals::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = prefab::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::prefab::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = render_2d::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::render_2d::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = render_3d::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::render_3d::check() {
         errors.append(&mut rule_errors);
     }
 
-    if let CheckStatus::Failed(mut rule_errors) = gameplay::check() {
+    if let CheckStatus::Failed(mut rule_errors) = crates::gameplay::check() {
         errors.append(&mut rule_errors);
     }
 

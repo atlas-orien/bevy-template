@@ -22,6 +22,8 @@
 - `world_2d`: 2D 世界对象 prefab，例如角色、物品、地图物件。
 - `world_3d`: 3D 世界对象 prefab，当前只保留命名空间。
 - `ui`: 屏幕 UI prefab，2D 和 3D 游戏都可以复用。
+  - `ui/camera.rs`: 生成 UI 专用 camera。
+  - `ui/menu.rs`: 多按钮 UI 菜单 prefab 示例。
 - `identity`: gameplay-facing id 和 Bevy `Entity` 的查询 facade。
 - `lifecycle`: 面向 gameplay 的生命周期窄 facade。
 - `navigation`: 面向 gameplay 的导航能力组合和窄 facade。
@@ -33,12 +35,15 @@
 - 不读取输入。
 - 不写底层 ECS system 函数；可以封装并导出 gameplay-facing spawn API 或窄 facade。
 - 不负责状态流、关卡流程或生成时机。
+- 不在一个 prefab 的 `spawn` 内部生成另一个 prefab；多个 prefab 的生成顺序由 gameplay 编排。
 
 `gameplay` 决定具体 gameplay session 使用哪些 prefab，以及什么时候进入或退出这些 session。
 
 ## render 边界
 
 `prefab` 可以组合 `render_2d` 暴露的 Main World 表现组件、marker 或 bundle，例如角色 sprite 表现 bundle。
+
+屏幕 UI prefab 使用 `render_2d::ui` 的 UI camera/root bundle。UI camera 和菜单等多个 prefab 的生成顺序由 gameplay 编排。UI root 应显式绑定 `UiTargetCamera(ui_camera)`，按钮等子节点只声明 `InteractionAction`，点击后的业务放在 `gameplay/src/interaction`。
 
 但 `prefab` 不直接操作 Bevy RenderApp、Render World、render graph、pipeline、GPU resource 或 `wgpu`。Render SubApp 如何抽取和绘制这些数据，属于 Bevy/render 层。
 

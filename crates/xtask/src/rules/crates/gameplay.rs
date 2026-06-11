@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use super::CheckStatus;
-use super::util::{
+use crate::rules::CheckStatus;
+use crate::rules::util::{
     derived_names, manifest_has_workspace_dependency, parse_rust_file, read_file_if_exists,
     require_mod_rs_in_subdirs, require_path, rust_files,
 };
@@ -27,6 +27,7 @@ pub fn check() -> CheckStatus {
         GAMEPLAY_API,
         "crates/gameplay/src/lifecycle",
         "crates/gameplay/src/schedule",
+        "crates/gameplay/src/interaction",
     ] {
         require_path(
             path,

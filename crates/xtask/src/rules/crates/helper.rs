@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use super::CheckStatus;
-use super::util::{manifest_has_workspace_dependency, read_file_if_exists, require_path};
+use crate::rules::CheckStatus;
+use crate::rules::util::{manifest_has_workspace_dependency, read_file_if_exists, require_path};
 
 const HELPER_CRATE: &str = "crates/helper";
 const HELPER_PROTOCOL: &str = "AI_PROTOCOL/HELPER.md";

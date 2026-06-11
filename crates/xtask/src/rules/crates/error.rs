@@ -1,8 +1,10 @@
 use std::fs;
 use std::path::Path;
 
-use super::CheckStatus;
-use super::util::{derived_names, parse_rust_file, read_file_if_exists, require_path, rust_files};
+use crate::rules::CheckStatus;
+use crate::rules::util::{
+    derived_names, parse_rust_file, read_file_if_exists, require_path, rust_files,
+};
 use syn::visit::Visit;
 
 const ERROR_CRATE: &str = "crates/error";

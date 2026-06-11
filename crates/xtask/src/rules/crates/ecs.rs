@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use super::CheckStatus;
-use super::util::{
+use crate::rules::CheckStatus;
+use crate::rules::util::{
     derived_names, files_named_below, parse_rust_file, reject_path, require_mod_rs_in_subdirs,
     require_path, rust_files,
 };

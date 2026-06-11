@@ -23,6 +23,7 @@
 - gameplay session 进入调度：写到 `crates/gameplay/src/spawning`。
 - 清理策略：写到 `crates/gameplay/src/cleanup`。
 - 关卡、回合、gameplay session 生命周期：写到 `crates/gameplay/src/lifecycle`。
+- UI 和世界对象被点击、hover 后的具体业务处理：写到 `crates/gameplay/src/interaction`。
 
 当前旧目录可以逐步迁移，不需要保留旧名字。
 
@@ -99,7 +100,7 @@
 - 不封装物理后端；这些放到 `crates/physics`。
 - 不读取外部来源；外部 AI、脚本、回放和未来网络放到 `external_runtime`，并通过 manager 进入 gameplay。
 - 不读取本机外设；键盘、鼠标和手柄放到 `peripherals`，再转换成语义请求。
-- 不读取 Bevy interaction；UI 和世界对象 hover/click 等交互放到 `interaction`，再转换成语义 message。
+- 不直接读取 Bevy 底层 interaction 状态；UI 和世界对象 hover/click 等交互由 `interaction` 转换成语义 message，gameplay 只消费这些 message 并执行业务。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
 - 不直接散装实体组件；生成对象时优先调用 `crates/prefab`。
 - 外部来源不要直接调用 gameplay 内部执行函数；应该通过 `api` 提交请求，由 gameplay system 统一消费。
@@ -108,6 +109,7 @@
 
 - `gameplay` 可以依赖 `prefab`，用于 gameplay setup 中使用封装好的对象模板、spawn API 和窄 facade。
 - `gameplay` 可以依赖 `intent`，用于注册和调度 Entity 意图相关能力。
+- `gameplay` 可以依赖 `interaction`，用于消费 UI 和世界对象交互 message。
 - `gameplay` 必须依赖 `error`。
 - `gameplay` 不依赖 `external_runtime`；external runtime 持有 gameplay manager。
 - `gameplay` 不依赖 `audio`；音频基础插件和 ECS 音频槽位桥接通过 `prefab` 组合。

@@ -1,5 +1,6 @@
 pub mod api;
 pub mod cleanup;
+pub mod interaction;
 pub mod lifecycle;
 pub mod schedule;
 pub mod spawning;

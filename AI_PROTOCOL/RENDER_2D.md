@@ -22,6 +22,9 @@
 - `Transform`、`Visibility`、`Anchor` 直接用 Bevy。
 - `Text2d`、`Text`、`Node`、`ImageNode` 直接用 Bevy。
 - UI 的 `ZIndex`、`GlobalZIndex` 直接用 Bevy。
+- Bevy UI root 通过 `UiTargetCamera` 绑定到具体 UI camera；默认 UI camera 使用 `IsDefaultUiCamera`。
+- UI 节点本身不靠 `RenderLayers` 分层；世界 sprite、mesh、Text2d 等世界表现才使用 `RenderLayers`。
+- 多 camera 叠加时使用 `Camera.order`，UI camera 的 order 必须高于默认 world camera。
 - 可以把 Bevy 类型组合进项目自己的高层表现 bundle，例如角色表现 bundle、道具表现 bundle、tile layer bundle。
 - 不新增只镜像 Bevy 字段的 facade，例如纯粹复制颜色、透明度、缩放、旋转、z-index 的 wrapper。
 
@@ -56,6 +59,9 @@
 - `tilemap`: tile map、tile layer、tile chunk、tileset 表现。
 - `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
 - `ui`: 2D UI 表现。
+- `camera/ui_camera.rs`: UI 专用 camera 配置。
+- `ui`: UI root target、UI 层级 marker 和 UI node 基础 bundle。
+- `ui/menu.rs`: 菜单 UI 的具体视觉表现，例如颜色、字体、尺寸、边距、按钮样式。
 
 ## 文件组织规则
 

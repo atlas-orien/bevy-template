@@ -2657,6 +2657,7 @@ dependencies = [
  "error",
  "helper",
  "intent",
+ "interaction",
  "prefab",
 ]
 
@@ -4387,6 +4388,7 @@ dependencies = [
  "bevy",
  "ecs",
  "error",
+ "interaction",
  "navigation",
  "physics",
  "render_2d",

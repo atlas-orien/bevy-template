@@ -13,6 +13,7 @@ audio.workspace = true
 bevy.workspace = true
 ecs.workspace = true
 error.workspace = true
+interaction.workspace = true
 navigation.workspace = true
 physics.workspace = true
 render_2d.workspace = true

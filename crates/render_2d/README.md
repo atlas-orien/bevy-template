@@ -20,6 +20,7 @@
 ## 当前结构
 
 - `camera`: 2D 相机表现。
+  - `camera/ui_camera.rs`: UI 专用 camera 配置。
 - `animation`: 2D 表现层动画。
 - `atlases`: 共享 texture atlas、sprite sheet layout、tileset layout 表现资源配置。
 - `background`: 背景、远景、视差背景层。
@@ -39,7 +40,8 @@
 - `screens`: 屏幕级表现，例如标题画面、过场屏、加载屏。
 - `text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
 - `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
-- `ui`: 2D UI 表现。
+- `ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
+  - `ui/menu.rs`: 菜单 UI 的具体视觉表现，例如颜色、字体、尺寸、边距、按钮样式。
 
 每个目录都可以保留一个可删除的占位模块。`animation` 继续拆成 `frame` 和 `skeletal`，分别表达帧动画和骨骼动画的边界。用户开始真实项目后，可以直接删除或替换这些占位文件。
 
@@ -59,6 +61,9 @@
 - `Transform`、`Visibility`、`Anchor` 直接用 Bevy。
 - `Text2d`、`Text`、`Node`、`ImageNode` 直接用 Bevy。
 - UI 的 `ZIndex`、`GlobalZIndex` 直接用 Bevy。
+- UI root 用 Bevy `UiTargetCamera` 显式绑定到 UI camera。`IsDefaultUiCamera` 只作为默认 fallback。
+- UI 节点本身不使用 `RenderLayers`；世界 sprite、mesh、`Text2d` 等世界表现才用 `RenderLayers`。
+- 多 camera 叠加时用 `Camera.order`。UI camera order 应高于 world camera，确保屏幕 UI 在世界画面之上。
 
 `render_2d` 可以把这些 Bevy 类型放进项目自己的表现 bundle，例如 `Character2dRenderBundle`。但不要新增只镜像 Bevy 字段的 facade。
 

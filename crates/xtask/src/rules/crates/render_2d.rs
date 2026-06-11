@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use super::CheckStatus;
-use super::util::{
+use crate::rules::CheckStatus;
+use crate::rules::util::{
     manifest_has_workspace_dependency, read_file_if_exists, reject_path, require_mod_rs_in_subdirs,
     require_path, rust_files,
 };

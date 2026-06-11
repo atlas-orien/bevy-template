@@ -12,5 +12,6 @@ publish = false
 bevy.workspace = true
 error.workspace = true
 helper.workspace = true
+interaction.workspace = true
 intent.workspace = true
 prefab.workspace = true

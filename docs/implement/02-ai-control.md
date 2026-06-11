@@ -25,19 +25,19 @@
    - 周期性朝某个目标点发 `set_movement_intent(id, MovementTarget::Position(target))`；
    - 到达后换下一个目标点。
 3. 在 `poll_external_sources` 中调用 AI 源的 poll。
-4. 把「读什么决策、何时决策」与「怎么发请求」分清楚：决策逻辑写在 `input/ai`，发请求统一用 manager 自由函数，不要在这里直接碰 channel 类型。
+4. 把「读什么决策、何时决策」与「怎么发请求」分清楚：决策逻辑写在 `input/ai`，发请求统一用 manager 自由函数；当前实现不在这里直接碰 channel 类型。
 
-## 边界
+## 当前边界说明
 
-- AI 源只产出 `RuntimeRequestMessage`，**不直接修改 Bevy `World`**，不接触 `Entity`、`Component`。
-- 不在 `input/ai` 里放渲染、物理、ECS 数据定义。
+- AI 源只产出 `RuntimeRequestMessage`，当前链路不会直接修改 Bevy `World`，也不接触 `Entity`、`Component`。
+- `input/ai` 当前只承载控制源逻辑，不放渲染、物理、ECS 数据定义。
 - 真正接入大模型/外部 AI 进程的传输细节，后续可放 `crates/external_runtime/src/bridge`；本步骤先用进程内策略打通闭环即可。
 
-## 落点约束
+## 参考落点
 
-- 只动 `crates/external_runtime/`（`input/ai/`、`runtime/task.rs`，必要时 `bridge/`）。
-- 遵守 `AI_PROTOCOL/EXTERNAL_RUNTIME.md` 的边界规则。
+- 主要变更通常集中在 `crates/external_runtime/`（`input/ai/`、`runtime/task.rs`，必要时 `bridge/`）。
+- 具体边界以 `AI_PROTOCOL/EXTERNAL_RUNTIME.md` 和 xtask 规则为准。
 
 ## 验收
 
-按 README 通用验收全绿，且 `cargo run` 后无需人工输入，AI 源能让玩家自动按策略移动（或执行 spawn/despawn 等可观察行为）。
+参考 README 通用验收，且 `cargo run` 后无需人工输入，AI 源能让玩家自动按策略移动（或执行 spawn/despawn 等可观察行为）。

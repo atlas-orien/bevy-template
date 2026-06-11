@@ -10,8 +10,8 @@
 
 相关文档：
 
-- 目录规则：`assets/README.md`
-- 完整 AI 规则：`AI_PROTOCOL/ASSETS.md`
+- 资源目录说明：`assets/README.md`
+- AI 协议边界：`AI_PROTOCOL/ASSETS.md`
 - 第三方来源/许可证记录：`docs/assets.md`
 - 3D 表现层代码：`crates/render_3d/README.md`
 
@@ -181,9 +181,9 @@ Animation 是一段**随时间变化的骨头姿势记录**，专业叫 **keyfra
 
 一个角色的 `character.glb` 里可能已经包含了：形状、所有贴图、骨架、绑定、以及 idle/walk/run 等所有动画。
 
-**本项目规则：runtime 3D 模型优先用 `.glb`。**
+当前模板的 runtime 3D 模型优先使用 `.glb`。
 
-这就解释了 AI 规则里那句关键的话：
+这就对应了 AI 协议里的资源边界：
 
 > 贴图、材质、骨骼和动画如果已经打包进 `.glb`，不需要额外拆出来。只有需要复用、替换或单独管理时才拆到对应目录。
 
@@ -280,7 +280,7 @@ Animation 是一段**随时间变化的骨头姿势记录**，专业叫 **keyfra
 
 ---
 
-## 7. 本项目的特殊规则（很重要）
+## 7. 本项目的资源组织方式
 
 这一节解释为什么 `assets/3d/` 是**按资源类型分目录**，而不是按角色/道具/敌人分。
 
@@ -301,12 +301,12 @@ assets/  ->  只放 runtime 直接加载的成品（主要是 .glb 和贴图）
 workbench/  ->  放 .blend / .fbx / .obj 源文件、参考图、离线工具输入输出
 ```
 
-`.blend`、`.fbx`、`.obj` 这些**源文件 / 中间交换格式不要放进 `assets/`**，它们属于 `workbench/`。runtime 代码也不要去加载 `workbench/`。
+`.blend`、`.fbx`、`.obj` 这些**源文件 / 中间交换格式通常放在 `workbench/`**，`assets/` 只放 runtime 直接加载的成品。runtime 代码也只加载 `assets/`。
 
 ### 7.3 命名与稳定性
 
 - 文件和目录用 **lowercase kebab-case**（小写 + 连字符）。
-- 路径要稳定，不要无意义重命名——因为 Bevy 的 asset handle 和代码里写死的路径都依赖它。
+- 路径保持稳定，减少无意义重命名——因为 Bevy 的 asset handle 和代码里写死的路径都依赖它。
 
 ```rust
 // 代码里这样引用，路径相对 assets/
@@ -315,7 +315,7 @@ asset_server.load("3d/models/character/character.glb");
 
 ### 7.4 第三方资源要登记
 
-从网上下载的免费/付费模型，**来源 URL、许可证、用途**必须记录到 `docs/assets.md`。3D 资源的授权比较容易踩坑（很多“免费”模型禁止商用），这一步不能省。
+从网上下载的免费/付费模型，建议把**来源 URL、许可证、用途**记录到 `docs/assets.md`。3D 资源的授权比较容易踩坑（很多“免费”模型禁止商用），这一步很值得保留。
 
 ### 7.5 当前模板状态
 

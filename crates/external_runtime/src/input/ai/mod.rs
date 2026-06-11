@@ -1,10 +1,11 @@
 use bevy::prelude::Vec2;
 use intent::movement::MovementTarget;
-use prefab::identity::GameplayEntityId;
 
-use crate::manager::{ExternalRuntimeManager, has_entity, set_movement_intent};
+use crate::manager::{
+    ExternalRuntimeManager, RuntimeUserId, has_user_entity, set_user_movement_intent,
+};
 
-const DEFAULT_PLAYER_ID: GameplayEntityId = GameplayEntityId(1);
+const DEFAULT_AI_USER_ID: RuntimeUserId = RuntimeUserId(1);
 const DECISION_INTERVAL_TICKS: u32 = 240;
 const WAYPOINTS: [Vec2; 4] = [
     Vec2::new(180.0, 0.0),
@@ -28,7 +29,7 @@ impl AiControlSource {
     }
 
     pub fn poll(&mut self, manager: &ExternalRuntimeManager) {
-        if !has_entity(manager, DEFAULT_PLAYER_ID) {
+        if !has_user_entity(manager, DEFAULT_AI_USER_ID) {
             return;
         }
 
@@ -39,7 +40,7 @@ impl AiControlSource {
         }
 
         let target = MovementTarget::Position(WAYPOINTS[self.waypoint_index]);
-        let _ = set_movement_intent(manager, DEFAULT_PLAYER_ID, target);
+        let _ = set_user_movement_intent(manager, DEFAULT_AI_USER_ID, target);
     }
 }
 

@@ -1,18 +1,15 @@
 [package]
-name = "external_runtime"
+name = "peripherals"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "External runtime and manager-side adapters for Bevy gameplay."
+description = "Bevy App internal adapters for local keyboard, mouse, gamepad, and UI peripherals."
 publish = false
 
 [dependencies]
 bevy.workspace = true
 error.workspace = true
 gameplay.workspace = true
-helper.workspace = true
 intent.workspace = true
-prefab.workspace = true
-tokio.workspace = true

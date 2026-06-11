@@ -18,9 +18,9 @@
 
 - 移动意图：写到 `crates/intent/src/movement`。
 
-输入、AI、脚本、网络等来源不属于 `intent`。外部来源应该先经过对应边界层，再调用 `intent` 提供的 API 写入 ECS intent 数据。
+键盘、鼠标、手柄、UI、AI、脚本、网络等来源不属于 `intent`。来源应该先经过对应边界层，再调用 `intent` 提供的 API 写入 ECS intent 数据。
 
-`external_runtime` v1 负责 input/local、input/device、input/ai 等控制来源。网络是双向通信层，v2 单独设计。
+本机键盘、鼠标、手柄和 UI interaction 属于 `peripherals`。AI、脚本、回放和未来网络等 Bevy App 外部来源属于 `external_runtime`。
 
 ## 边界规则
 

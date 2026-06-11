@@ -1,0 +1,50 @@
+# PERIPHERALS
+
+这个文件是 `crates/peripherals` 的 AI 规则。
+
+`peripherals` 是 Bevy App 内部的本机外设适配层。
+
+它不替代 Bevy 的输入系统。Bevy/winit 已经负责接收键盘、鼠标、手柄和 UI interaction；`peripherals` 只把这些 Bevy 原始输入转换成项目语义动作。
+
+## 核心职责
+
+- 读取 Bevy App 内部的本机外设输入，例如键盘、鼠标、手柄和 UI interaction。
+- 把设备细节转换成项目语义动作，例如移动、交互、UI action 或 outbound network action。
+- 作为 Bevy `Plugin` 注册到 App。
+- 不直接读取或修改底层 ECS 结果。
+- 不处理 protobuf、socket、远端连接、AI、脚本或回放。
+
+## 代码落点
+
+- 键盘适配：写到 `crates/peripherals/src/keyboard`。
+- 鼠标适配：写到 `crates/peripherals/src/mouse`。
+- 手柄适配：写到 `crates/peripherals/src/gamepad`。
+- UI interaction 适配：写到 `crates/peripherals/src/ui`。
+
+## 边界规则
+
+- `peripherals` 可以读取 Bevy 输入资源，例如 `ButtonInput<KeyCode>`、`ButtonInput<MouseButton>`、gamepad 输入和 UI `Interaction`。
+- `peripherals` 不直接使用 `Commands` 生成 gameplay entity。
+- `peripherals` 不直接修改 `Transform`、速度、生命值、背包或物理组件。
+- `peripherals` 不定义核心 `Component`、`Bundle`、`Resource`、`Event`。
+- `peripherals` 不依赖 `ecs`、`physics`、`prefab`、`render_2d`、`render_3d` 或 `external_runtime`。
+- `peripherals` 不构造 protobuf，不直接发送网络消息。
+- `peripherals` 不承担 AI、脚本、回放或网络来源适配。
+- 设备细节不能进入 `gameplay`、`intent`、`ecs`、`prefab` 或 render crate。
+
+## 依赖规则
+
+- `peripherals` 可以依赖 `bevy`。
+- `peripherals` 可以依赖 `gameplay`，用于提交 Bevy App 内部的语义 gameplay 请求。
+- `peripherals` 可以依赖 `intent`，用于共享 intent 语义类型。
+- `peripherals` 必须依赖 `error`。
+- `peripherals` 不依赖 `external_runtime`。
+
+## 验证要求
+
+修改 `crates/peripherals` 后必须运行：
+
+```sh
+cargo run -p xtask -- check
+cargo check --workspace
+```

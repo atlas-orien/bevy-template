@@ -23,9 +23,6 @@ pub fn check() -> CheckStatus {
         "AI_PROTOCOL/EXTERNAL_RUNTIME.md documents the external runtime boundary rules",
     );
     for path in [
-        "crates/external_runtime/src/input",
-        "crates/external_runtime/src/input/local",
-        "crates/external_runtime/src/input/device",
         "crates/external_runtime/src/input/ai",
         "crates/external_runtime/src/runtime",
         "crates/external_runtime/src/manager",
@@ -38,7 +35,7 @@ pub fn check() -> CheckStatus {
         );
     }
     require_mod_rs_in_subdirs(Path::new(EXTERNAL_RUNTIME_CRATE).join("src"), &mut errors);
-    reject_root_input_domains(&mut errors);
+    reject_local_peripheral_domains(&mut errors);
     reject_dependencies(&mut errors);
     reject_network_module(&mut errors);
     reject_data_definitions(&mut errors);
@@ -46,6 +43,7 @@ pub fn check() -> CheckStatus {
     reject_bevy_input_access(&mut errors);
     reject_runtime_world_access(&mut errors);
     reject_world_mutation(&mut errors);
+    reject_gameplay_id_user_api(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
@@ -54,16 +52,36 @@ pub fn check() -> CheckStatus {
     }
 }
 
-fn reject_root_input_domains(errors: &mut Vec<String>) {
+fn reject_gameplay_id_user_api(errors: &mut Vec<String>) {
     for path in [
+        Path::new(EXTERNAL_RUNTIME_CRATE).join("src/manager/user.rs"),
+        Path::new(EXTERNAL_RUNTIME_CRATE).join("src/manager/mod.rs"),
+    ] {
+        let Some(source) = read_file_if_exists(&path) else {
+            continue;
+        };
+
+        if source.contains("GameplayEntityId") {
+            errors.push(format!(
+                "{} references `GameplayEntityId`; manager user API must use RuntimeUserId/RuntimeObjectId and keep gameplay-facing ids internal",
+                path.display()
+            ));
+        }
+    }
+}
+
+fn reject_local_peripheral_domains(errors: &mut Vec<String>) {
+    for path in [
+        "crates/external_runtime/src/input/local",
+        "crates/external_runtime/src/input/device",
         "crates/external_runtime/src/local",
         "crates/external_runtime/src/device",
-        "crates/external_runtime/src/ai",
+        "crates/external_runtime/src/peripherals",
     ] {
         reject_path(
             path,
             errors,
-            "input source domains must live under crates/external_runtime/src/input",
+            "local keyboard/mouse/gamepad/UI adapters belong in crates/peripherals, not external_runtime",
         );
     }
 }
@@ -161,7 +179,7 @@ fn reject_bevy_input_access(errors: &mut Vec<String>) {
         for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; local input should be polled as an external source and submitted through manager requests",
+                    "{} references `{forbidden}`; local keyboard/mouse/gamepad/UI input belongs in crates/peripherals, not external_runtime",
                     file.display()
                 ));
             }

@@ -30,6 +30,7 @@ external_runtime = { path = "crates/external_runtime" }
 helper = { path = "crates/helper" }
 intent = { path = "crates/intent" }
 navigation = { path = "crates/navigation" }
+peripherals = { path = "crates/peripherals" }
 physics = { path = "crates/physics" }
 prefab = { path = "crates/prefab" }
 render_2d = { path = "crates/render_2d" }

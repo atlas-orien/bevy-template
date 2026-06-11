@@ -4,7 +4,7 @@
 
 `crates/navigation` 是项目导航基础层，负责 Bevy World 内的路径、导航代理和路径跟随能力。
 
-它不是外部输入层，也不是 Bevy App 入口层。用户点击地面、AI 选择目标、脚本请求移动到某处，属于 `external_runtime` 的来源适配；navigation 只处理进入 World 后“如何从当前位置走向目标”。
+它不是输入来源层，也不是 Bevy App 入口层。用户点击地面属于 `peripherals` 的本机外设适配；AI 选择目标、脚本请求移动到某处属于 `external_runtime` 的来源适配；navigation 只处理进入 World 后“如何从当前位置走向目标”。
 
 ## 代码落点
 
@@ -35,7 +35,7 @@
 
 ## 和现有移动链路
 
-`external_runtime` 可以提交移动目标。
+`peripherals` 和 `external_runtime` 可以通过对应边界提交移动目标。
 
 `intent` 只表达 Entity 想移动到哪里。
 

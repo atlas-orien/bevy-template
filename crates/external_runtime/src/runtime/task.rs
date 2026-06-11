@@ -2,12 +2,7 @@ use tokio::sync::watch;
 use tokio::task::JoinHandle;
 
 use crate::input::ai::AiControlSource;
-use crate::input::local::LocalKeyboardInput;
 use crate::manager::ExternalRuntimeManager;
-use crate::manager::set_movement_intent;
-
-use intent::movement::MovementTarget;
-use prefab::identity::GameplayEntityId;
 
 #[derive(Debug, Clone, Copy)]
 pub struct ExternalRuntimeConfig {
@@ -67,26 +62,10 @@ async fn run_external_runtime_loop(
 #[derive(Default)]
 struct ExternalSources {
     ai_control: AiControlSource,
-    local_keyboard: LocalKeyboardInput,
-    keyboard_active: bool,
 }
 
 impl ExternalSources {
     async fn poll(&mut self, manager: &ExternalRuntimeManager) {
-        if !self.poll_local_keyboard(manager) {
-            self.ai_control.poll(manager);
-        }
-    }
-
-    fn poll_local_keyboard(&mut self, manager: &ExternalRuntimeManager) -> bool {
-        let target = self.local_keyboard.movement_target();
-        let active = !matches!(target, MovementTarget::None);
-
-        if active || self.keyboard_active {
-            let _ = set_movement_intent(manager, GameplayEntityId(1), target);
-        }
-
-        self.keyboard_active = active;
-        active
+        self.ai_control.poll(manager);
     }
 }

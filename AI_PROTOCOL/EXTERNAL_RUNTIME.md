@@ -7,7 +7,7 @@
 项目运行时有两套系统：
 
 - Bevy App：运行 Bevy `World`、`Schedule`、render、physics、gameplay。
-- External Runtime：运行 Bevy App 外部的本地输入、外设、AI、脚本、回放，以及未来网络等外部系统。
+- External Runtime：运行 Bevy App 外部的 AI、脚本、回放，以及未来网络等外部系统。
 
 `external_runtime` 通过 `external_runtime::manager` 持有 gameplay transport，并通过双向 channel 和 Bevy App 通信。
 
@@ -15,20 +15,18 @@
 
 - 启动和停止 Bevy App 外部的 runtime loop。
 - 持有 manager，作为外部系统进入 gameplay 的唯一入口。
-- 管理 input/local、input/device、input/ai、script、replay 等外部来源模块。
+- 管理 input/ai、script、replay 等 Bevy App 外部来源模块。
 - 把外部来源转换成 manager API 调用。
 - 不直接读取或修改 Bevy `World`。
-- 本地键盘/鼠标也作为 external runtime 来源处理；v1 通过 OS 设备状态轮询转成 manager API 请求。
+- 本机键盘、鼠标、手柄和 UI interaction 属于 `crates/peripherals`，不属于 `external_runtime`。
 
 ## 代码落点
 
 - runtime loop：写到 `crates/external_runtime/src/runtime`。
 - Bevy App 外部到 gameplay 的通道组装：写到 `crates/external_runtime/src/bridge`。
 - manager API：写到 `crates/external_runtime/src/manager`。
-- 输入域总入口：写到 `crates/external_runtime/src/input`。
-- 本地输入来源：写到 `crates/external_runtime/src/input/local`。
-- 外设输入来源：写到 `crates/external_runtime/src/input/device`。
-- AI 输入来源：写到 `crates/external_runtime/src/input/ai`。
+- App 外部来源总入口：写到 `crates/external_runtime/src/input`。
+- AI 来源：写到 `crates/external_runtime/src/input/ai`。
 
 网络不是 v1 的子模块。网络是双向通信层，v2 单独设计。
 
@@ -41,21 +39,24 @@
 - 不做成 Bevy `Plugin` 注册到 `App` 里。
 - 必须通过 `external_runtime::manager` 和 request/update channel 进入 gameplay。
 
-## Input adapter 规则
+## External source adapter 规则
 
-- `input/local` 读取本地 OS 设备状态，例如键盘、鼠标、手柄。
-- `input/local` 不读取 Bevy `ButtonInput`、`KeyCode`、`MouseButton` 或 `Gamepad` 资源。
-- input adapter 只把外部来源转换成 manager API 调用，不直接生成实体。
-- input adapter 不直接使用裸 `ecs`，通过 manager API 提交 gameplay 请求或 intent 请求。
-- input adapter 不直接使用 `Commands`、`Query`、`Res`、`ResMut`、`Transform` 或物理组件。
+- external source adapter 只处理 Bevy App 外部来源，例如 AI、脚本、回放和未来网络。
+- external source adapter 不读取本机键盘、鼠标、手柄或 UI interaction。
+- external source adapter 只把外部来源转换成 manager API 调用，不直接生成实体。
+- external source adapter 不直接使用裸 `ecs`，通过 manager API 提交 gameplay 请求或 intent 请求。
+- external source adapter 不直接使用 `Commands`、`Query`、`Res`、`ResMut`、`Transform` 或物理组件。
 
 ## Manager 规则
 
 - 用户和外部模块优先通过 manager API 操作 gameplay。
+- 普通用户 API 使用 `RuntimeUserId` 或 `RuntimeObjectId` 表达外部可见对象身份。
+- `GameplayEntityId` 是 manager 到 gameplay 的内部路由 id，只用于 manager state、runtime request/update message 和 gameplay 内部查找，不作为普通用户 API 参数。
+- manager 负责把 `RuntimeUserId` / `RuntimeObjectId` 解析成内部 `GameplayEntityId`，再提交 `RuntimeRequestMessage`。
 - `RuntimeRequestMessage` 是 external runtime 到 world 的内部请求，不应该被普通用户代码到处构造。
 - `RuntimeUpdateMessage` 是 world 到 external runtime 的内部消息，不应该被普通用户代码到处构造。
 - manager API 不向用户暴露 Bevy `Entity`。
-- manager 必须有状态，可以维护 gameplay-facing id 的 registry，并允许用户按公开 id 查询。
+- manager 必须有状态，可以维护 runtime-facing id 到 gameplay-facing id 的 registry，并允许用户按公开 id 查询。
 - manager 不向用户暴露 Bevy `Entity`。
 - manager 属于 `external_runtime`，不属于 `gameplay`。
 - `manager/user.rs` 定义给用户和外部模块使用的高层 API；用户 API 优先写成纯函数式门面，内部接收 manager 并调用 manager 状态和 bridge。

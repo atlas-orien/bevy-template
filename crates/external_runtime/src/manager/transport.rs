@@ -38,7 +38,7 @@ impl RuntimeTransport {
 
             match update {
                 RuntimeUpdateMessage::EntityRegistered(registration) => {
-                    state.register_entity(registration.gameplay_entity_id);
+                    state.register_entity(registration);
                 }
                 RuntimeUpdateMessage::EntityUnregistered { gameplay_entity_id } => {
                     state.unregister_entity(gameplay_entity_id);

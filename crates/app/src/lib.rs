@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
 use gameplay::GameplayPlugin;
 use gameplay::api::{RuntimeRequestInbox, RuntimeUpdateSender};
+use peripherals::PeripheralsPlugin;
 
 pub use error::Result;
 
@@ -19,6 +20,7 @@ pub fn run(requests: RuntimeRequestInbox, updates: RuntimeUpdateSender) {
                     ..default()
                 }),
         )
+        .add_plugins(PeripheralsPlugin)
         .add_plugins(GameplayPlugin::new(requests, updates))
         .run();
 }

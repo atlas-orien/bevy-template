@@ -97,7 +97,8 @@
 - `Message` 只允许用于 `api` 边界类型；不要把 gameplay 内部状态伪装成 message。
 - 不写底层 ECS 规则函数；需要调度底层规则时使用 `crates/prefab` 暴露的窄 facade。
 - 不封装物理后端；这些放到 `crates/physics`。
-- 不读取外部来源；外部来源放到 `external_runtime`，并通过 manager 进入 gameplay。
+- 不读取外部来源；外部 AI、脚本、回放和未来网络放到 `external_runtime`，并通过 manager 进入 gameplay。
+- 不读取本机外设；键盘、鼠标、手柄和 UI interaction 放到 `peripherals`，再转换成语义请求。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
 - 不直接散装实体组件；生成对象时优先调用 `crates/prefab`。
 - 外部来源不要直接调用 gameplay 内部执行函数；应该通过 `api` 提交请求，由 gameplay system 统一消费。

@@ -30,9 +30,17 @@ pub fn consume_gameplay_requests_system(
 ) {
     for request in requests.read() {
         match request {
-            RuntimeRequestMessage::SpawnPrefab(prefab) => {
-                if let Some(prefab) = prefab.take() {
-                    spawn_runtime_prefab(&mut commands, prefab);
+            RuntimeRequestMessage::SpawnPrefab(request) => {
+                if let Some(prefab) = request.prefab.take() {
+                    let registration = request.registration;
+                    let entity = spawn_runtime_prefab(&mut commands, prefab);
+                    commands
+                        .entity(entity)
+                        .insert(registration.gameplay_entity_id);
+                    submit_update(
+                        &update_sender,
+                        RuntimeUpdateMessage::EntityRegistered(registration),
+                    );
                 }
             }
             RuntimeRequestMessage::DespawnEntity(id) => {

@@ -35,12 +35,23 @@ pub fn check() -> CheckStatus {
     reject_world_rule_references(&mut errors);
     reject_runtime_camera_targets(&mut errors);
     reject_ui_free_bundle_functions(&mut errors);
+    reject_ui_camera_file(&mut errors);
     reject_ambiguous_files(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_ui_camera_file(errors: &mut Vec<String>) {
+    let ui_camera_file = Path::new(RENDER_2D_CRATE).join("src/ui/camera.rs");
+    if ui_camera_file.exists() {
+        errors.push(format!(
+            "{} exists; camera-specific render_2d code belongs in render_2d/src/camera, while render_2d/src/ui should contain UI presentation files such as root.rs and menu.rs",
+            ui_camera_file.display()
+        ));
     }
 }
 

@@ -62,6 +62,7 @@
 - `ui`: 2D UI 表现。
 - `camera/ui_camera.rs`: UI 专用 camera 配置。
 - `ui`: UI root target、UI 层级 marker 和 UI node 基础 bundle。
+- `ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。
 - `ui/menu.rs`: 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
 
 ## 文件组织规则

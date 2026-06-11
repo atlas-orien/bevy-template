@@ -1,10 +1,10 @@
-pub mod camera;
 pub mod menu;
+pub mod root;
 
 use bevy::prelude::*;
 
-pub use camera::{FullScreenUiNodeBundle, UiLayer, UiRoot, UiRootBundle, UiRootNodeBundle};
 pub use menu::{DemoMenuButtonBundle, DemoMenuButtonTextBundle, DemoMenuRootBundle};
+pub use root::{FullScreenUiNodeBundle, UiLayer, UiRoot, UiRootBundle, UiRootNodeBundle};
 
 pub struct UiPlugin;
 

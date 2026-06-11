@@ -36,12 +36,23 @@ pub fn check() -> CheckStatus {
     reject_runtime_camera_targets(&mut errors);
     reject_ui_free_bundle_functions(&mut errors);
     reject_ui_camera_file(&mut errors);
+    reject_generic_ui_menu_file(&mut errors);
     reject_ambiguous_files(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_generic_ui_menu_file(errors: &mut Vec<String>) {
+    let menu_file = Path::new(RENDER_2D_CRATE).join("src/ui/menu.rs");
+    if menu_file.exists() {
+        errors.push(format!(
+            "{} exists; demo UI presentation should use explicit names such as demo_menu.rs so future games can delete demo scaffolding without touching real UI modules",
+            menu_file.display()
+        ));
     }
 }
 

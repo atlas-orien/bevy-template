@@ -22,7 +22,7 @@
 - `world_2d`: 2D 世界对象 prefab，例如角色、物品、地图物件。
 - `world_3d`: 3D 世界对象 prefab，当前只保留命名空间。
 - `ui`: 屏幕 UI prefab，2D 和 3D 游戏都可以复用。
-  - `ui/menu.rs`: 多按钮 UI 菜单 prefab 示例。
+  - `ui/demo_menu.rs`: 多按钮 UI 菜单 prefab 示例，可在真实项目中删除。
 - `identity`: gameplay-facing id 和 Bevy `Entity` 的查询 facade。
 - `lifecycle`: 面向 gameplay 的生命周期窄 facade。
 - `navigation`: 面向 gameplay 的导航能力组合和窄 facade。

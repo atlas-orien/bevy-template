@@ -19,19 +19,21 @@ impl Prefab for DemoMenuPrefab {
                 UiRootBundle::default(),
                 DemoMenuRootBundle::default(),
                 children![
-                    demo_menu_button("Start", DEMO_START_ACTION),
-                    demo_menu_button("Options", DEMO_OPTIONS_ACTION),
-                    demo_menu_button("Quit", DEMO_QUIT_ACTION),
+                    Self::button("Start", DEMO_START_ACTION),
+                    Self::button("Options", DEMO_OPTIONS_ACTION),
+                    Self::button("Quit", DEMO_QUIT_ACTION),
                 ],
             ))
             .id()
     }
 }
 
-fn demo_menu_button(label: &'static str, action: &'static str) -> impl Bundle {
-    (
-        DemoMenuButtonBundle::default(),
-        InteractionAction::new(action),
-        children![DemoMenuButtonTextBundle::new(label)],
-    )
+impl DemoMenuPrefab {
+    fn button(label: &'static str, action: &'static str) -> impl Bundle {
+        (
+            DemoMenuButtonBundle::default(),
+            InteractionAction::new(action),
+            children![DemoMenuButtonTextBundle::new(label)],
+        )
+    }
 }

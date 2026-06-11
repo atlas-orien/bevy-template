@@ -40,11 +40,76 @@ pub fn check() -> CheckStatus {
     reject_data_definitions(&mut errors);
     reject_direct_input(&mut errors);
     reject_manager_definitions(&mut errors);
+    reject_interaction_logic_in_mod_rs(&mut errors);
+    require_interaction_category_dirs(&mut errors);
+    reject_unknown_interaction_layout(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_unknown_interaction_layout(errors: &mut Vec<String>) {
+    let interaction_dir = Path::new(GAMEPLAY_CRATE).join("src/interaction");
+    let Ok(entries) = std::fs::read_dir(&interaction_dir) else {
+        return;
+    };
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+            continue;
+        };
+
+        if path.is_file() {
+            if name != "mod.rs" {
+                errors.push(format!(
+                    "{} is a root interaction file; put concrete gameplay interaction logic under a category directory such as interaction/ui",
+                    path.display()
+                ));
+            }
+            continue;
+        }
+
+        if path.is_dir() && !ALLOWED_INTERACTION_CATEGORIES.contains(&name) {
+            errors.push(format!(
+                "{} is not an allowed gameplay interaction category; update xtask rules before adding a new interaction domain",
+                path.display()
+            ));
+        }
+    }
+}
+
+const ALLOWED_INTERACTION_CATEGORIES: &[&str] = &["ui"];
+
+fn require_interaction_category_dirs(errors: &mut Vec<String>) {
+    require_path(
+        "crates/gameplay/src/interaction/ui",
+        errors,
+        "gameplay interaction handlers should be grouped by source/domain, starting with interaction/ui for UI action handlers",
+    );
+}
+
+fn reject_interaction_logic_in_mod_rs(errors: &mut Vec<String>) {
+    let mod_rs = Path::new(GAMEPLAY_CRATE).join("src/interaction/mod.rs");
+    let Some(source) = read_file_if_exists(&mod_rs) else {
+        return;
+    };
+
+    for forbidden in [
+        "MessageReader",
+        "InteractionEventMessage",
+        "match ",
+        "info!(",
+    ] {
+        if source.contains(forbidden) {
+            errors.push(format!(
+                "{} references `{forbidden}`; gameplay interaction mod.rs should only declare modules and re-export entry points, while concrete interaction logic belongs in files such as demo_menu.rs",
+                mod_rs.display()
+            ));
+        }
     }
 }
 

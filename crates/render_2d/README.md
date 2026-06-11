@@ -42,7 +42,7 @@
 - `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
 - `ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
   - `ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。
-  - `ui/menu.rs`: 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
+  - `ui/demo_menu.rs`: demo 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
 
 每个目录都可以保留一个可删除的占位模块。`animation` 继续拆成 `frame` 和 `skeletal`，分别表达帧动画和骨骼动画的边界。用户开始真实项目后，可以直接删除或替换这些占位文件。
 

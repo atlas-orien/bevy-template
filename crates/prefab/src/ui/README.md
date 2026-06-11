@@ -11,7 +11,7 @@ gameplay
   -> 生成 DemoMenuPrefab
   -> 给 menu root 插入 UiTargetCamera(ui_camera)
 
-DemoMenuPrefab
+DemoMenuPrefab (`demo_menu.rs`)
   -> 生成 root UI node
   -> 组合 render_2d::ui::DemoMenuRootBundle
   -> root 下挂 Start / Options / Quit 三个按钮
@@ -33,6 +33,6 @@ gameplay/src/interaction
 - 生成顺序由 gameplay 编排；prefab 不在内部生成其它 prefab。
 - UI root 必须在 gameplay spawn 编排里显式绑定 `UiTargetCamera(ui_camera)`。
 - UI 节点本身不靠 `RenderLayers` 分层。
-- UI 颜色、字体、尺寸、边距等视觉表现写在 `render_2d/src/ui/menu.rs`。
+- UI 颜色、字体、尺寸、边距等视觉表现写在 `render_2d/src/ui/demo_menu.rs`。
 - 多个按钮通过不同 `InteractionAction` 区分。
 - 点击后做什么不写在 prefab，写在 `gameplay/src/interaction`。

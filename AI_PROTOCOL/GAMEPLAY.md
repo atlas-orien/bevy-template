@@ -23,7 +23,8 @@
 - gameplay session 进入调度：写到 `crates/gameplay/src/spawning`。
 - 清理策略：写到 `crates/gameplay/src/cleanup`。
 - 关卡、回合、gameplay session 生命周期：写到 `crates/gameplay/src/lifecycle`。
-- UI 和世界对象被点击、hover 后的具体业务处理：写到 `crates/gameplay/src/interaction`。
+- UI 和世界对象被点击、hover 后的具体业务处理：写到 `crates/gameplay/src/interaction` 下的分类目录。
+- UI 交互业务处理：写到 `crates/gameplay/src/interaction/ui`，demo 菜单逻辑写到 `ui/demo_menu.rs`。
 
 当前旧目录可以逐步迁移，不需要保留旧名字。
 

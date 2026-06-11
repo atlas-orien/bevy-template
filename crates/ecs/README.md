@@ -46,6 +46,7 @@ ECS 是 Entity Component System 的缩写，是 Bevy 使用的核心架构。
 - `MaxHealth`: 最大生命值
 - `Speed`: 移动速度
 - `MovementIntent`: 想往哪个方向移动，或想移动到哪个位置
+- `AudioClips`: 这个实体有哪些可播放音频槽位
 - `Character`: 角色标记
 - `Enemy`: 敌人标记
 - `Faction`: 阵营

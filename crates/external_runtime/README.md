@@ -29,7 +29,7 @@ External Runtime 负责 Bevy App 外部的来源模块，例如 input/ai、scrip
 - `input`: 输入来源域。
 - `input/ai`: AI 输入来源。
 
-本机键盘、鼠标、手柄和 UI interaction 属于 `crates/peripherals`，不属于 external runtime。
+本机键盘、鼠标和手柄属于 `crates/peripherals`。UI 和世界对象 hover/click 等 Bevy interaction 属于 `crates/interaction`。它们都不属于 external runtime。
 
 网络不是 v1 子模块。网络是双向通信层，v2 单独设计。
 

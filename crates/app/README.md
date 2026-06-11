@@ -18,7 +18,7 @@ GameplayPlugin::new(runtime_requests.inbox(), manager_updates.sender())
 
 `external_runtime` 不作为 Bevy plugin 注册到 app。AI、脚本、回放等 Bevy App 外部来源由 external runtime 持有 `ExternalRuntimeManager` 进入 gameplay。网络是双向通信层，v2 单独设计。
 
-本机键盘、鼠标、手柄和 UI interaction 由 `peripherals` 作为 Bevy App 内部 plugin 接入。
+本机键盘、鼠标和手柄由 `peripherals` 作为 Bevy App 内部 plugin 接入。UI 和世界对象 hover/click 等 Bevy interaction 由 `interaction` 作为 Bevy App 内部 plugin 接入。
 
 顶层 `main` 创建两个具体 channel：
 

@@ -25,7 +25,8 @@
 
 - 模板本身不生成默认对象。
 - 具体项目决定哪个 prefab 拥有哪些 `GameplayEntityId`。
-- 本机键盘、鼠标、手柄和 UI interaction 属于 `peripherals`。
+- 本机键盘、鼠标和手柄属于 `peripherals`。
+- UI 和世界对象 hover/click 等 Bevy interaction 属于 `interaction`。
 - AI、脚本、回放和未来网络属于 `external_runtime`。
 - 当前链路中，来源适配层提交语义请求；不会直接接触 Bevy `Entity`、Commands、ECS component、physics 类型或 render 类型。
 - `gameplay::api` 接收请求，并在这里把公开 id 映射回 Bevy entity 来执行。

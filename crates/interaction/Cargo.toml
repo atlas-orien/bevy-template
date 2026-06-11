@@ -1,17 +1,13 @@
 [package]
-name = "app"
+name = "interaction"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Runnable Bevy application crate."
+description = "Bevy interaction event bridge for UI and world entities."
 publish = false
 
 [dependencies]
 bevy.workspace = true
 error.workspace = true
-gameplay.workspace = true
-helper.workspace = true
-interaction.workspace = true
-peripherals.workspace = true

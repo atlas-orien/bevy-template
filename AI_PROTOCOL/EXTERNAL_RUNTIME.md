@@ -18,7 +18,7 @@
 - 管理 input/ai、script、replay 等 Bevy App 外部来源模块。
 - 把外部来源转换成 manager API 调用。
 - 不直接读取或修改 Bevy `World`。
-- 本机键盘、鼠标、手柄和 UI interaction 属于 `crates/peripherals`，不属于 `external_runtime`。
+- 本机键盘、鼠标和手柄属于 `crates/peripherals`；UI 和世界对象 hover/click 等 Bevy interaction 属于 `crates/interaction`。它们都不属于 `external_runtime`。
 
 ## 代码落点
 
@@ -42,7 +42,7 @@
 ## External source adapter 规则
 
 - external source adapter 只处理 Bevy App 外部来源，例如 AI、脚本、回放和未来网络。
-- external source adapter 不读取本机键盘、鼠标、手柄或 UI interaction。
+- external source adapter 不读取本机键盘、鼠标、手柄或 Bevy interaction。
 - external source adapter 只把外部来源转换成 manager API 调用，不直接生成实体。
 - external source adapter 不直接使用裸 `ecs`，通过 manager API 提交 gameplay 请求或 intent 请求。
 - external source adapter 不直接使用 `Commands`、`Query`、`Res`、`ResMut`、`Transform` 或物理组件。

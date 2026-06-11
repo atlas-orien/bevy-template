@@ -15,7 +15,7 @@ pub fn check() -> CheckStatus {
     require_path(
         PERIPHERALS_CRATE,
         &mut errors,
-        "peripherals is the Bevy-App-internal local keyboard/mouse/gamepad/UI adapter layer",
+        "peripherals is the Bevy-App-internal local keyboard/mouse/gamepad adapter layer",
     );
     require_path(
         PERIPHERALS_PROTOCOL,
@@ -26,12 +26,11 @@ pub fn check() -> CheckStatus {
         "crates/peripherals/src/keyboard",
         "crates/peripherals/src/mouse",
         "crates/peripherals/src/gamepad",
-        "crates/peripherals/src/ui",
     ] {
         require_path(
             path,
             &mut errors,
-            "local peripheral adapters should stay grouped by keyboard/mouse/gamepad/ui directories",
+            "local peripheral adapters should stay grouped by keyboard/mouse/gamepad directories",
         );
     }
 
@@ -40,11 +39,22 @@ pub fn check() -> CheckStatus {
     reject_core_data_definitions(&mut errors);
     reject_world_mutation(&mut errors);
     reject_network_details(&mut errors);
+    reject_interaction_module(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_interaction_module(errors: &mut Vec<String>) {
+    let path = Path::new(PERIPHERALS_CRATE).join("src/ui");
+    if path.exists() {
+        errors.push(format!(
+            "{} exists; Bevy interaction events belong in crates/interaction, not peripherals",
+            path.display()
+        ));
     }
 }
 

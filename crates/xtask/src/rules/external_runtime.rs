@@ -81,7 +81,7 @@ fn reject_local_peripheral_domains(errors: &mut Vec<String>) {
         reject_path(
             path,
             errors,
-            "local keyboard/mouse/gamepad/UI adapters belong in crates/peripherals, not external_runtime",
+            "local keyboard/mouse/gamepad adapters belong in crates/peripherals, and Bevy interaction belongs in crates/interaction, not external_runtime",
         );
     }
 }
@@ -179,7 +179,7 @@ fn reject_bevy_input_access(errors: &mut Vec<String>) {
         for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
             if source.contains(forbidden) {
                 errors.push(format!(
-                    "{} references `{forbidden}`; local keyboard/mouse/gamepad/UI input belongs in crates/peripherals, not external_runtime",
+                    "{} references `{forbidden}`; local keyboard/mouse/gamepad input belongs in crates/peripherals, not external_runtime",
                     file.display()
                 ));
             }

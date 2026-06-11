@@ -186,6 +186,7 @@ dependencies = [
  "error",
  "gameplay",
  "helper",
+ "interaction",
  "peripherals",
 ]
 
@@ -3182,6 +3183,14 @@ dependencies = [
  "bevy",
  "error",
  "prefab",
+]
+
+[[package]]
+name = "interaction"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
 ]
 
 [[package]]

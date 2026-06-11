@@ -18,7 +18,7 @@
 
 - `movement`: 移动意图，例如“这个 Entity 想往某个方向移动”或“想移动到某个位置”。
 
-本机键盘、鼠标、手柄和 UI interaction 属于 `peripherals`。AI、脚本、回放和未来网络等 Bevy App 外部来源属于 `external_runtime`。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。
+本机键盘、鼠标和手柄属于 `peripherals`。UI 和世界对象 hover/click 等 Bevy interaction 属于 `interaction`。AI、脚本、回放和未来网络等 Bevy App 外部来源属于 `external_runtime`。持续性 Entity 行为转换成 intent；一次性高层玩法请求转换成 gameplay API 请求。
 
 ## 和 gameplay 的区别
 

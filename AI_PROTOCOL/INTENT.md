@@ -20,7 +20,7 @@
 
 键盘、鼠标、手柄、UI、AI、脚本、网络等来源不属于 `intent`。来源应该先经过对应边界层，再调用 `intent` 提供的 API 写入 ECS intent 数据。
 
-本机键盘、鼠标、手柄和 UI interaction 属于 `peripherals`。AI、脚本、回放和未来网络等 Bevy App 外部来源属于 `external_runtime`。
+本机键盘、鼠标和手柄属于 `peripherals`。UI 和世界对象 hover/click 等 Bevy interaction 属于 `interaction`。AI、脚本、回放和未来网络等 Bevy App 外部来源属于 `external_runtime`。
 
 ## 边界规则
 

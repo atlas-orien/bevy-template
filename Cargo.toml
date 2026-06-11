@@ -28,6 +28,7 @@ ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
 external_runtime = { path = "crates/external_runtime" }
 helper = { path = "crates/helper" }
+interaction = { path = "crates/interaction" }
 intent = { path = "crates/intent" }
 navigation = { path = "crates/navigation" }
 peripherals = { path = "crates/peripherals" }

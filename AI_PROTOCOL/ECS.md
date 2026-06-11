@@ -35,7 +35,8 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - `crates/ecs/src/events` 只描述发生了什么，不处理后果。
 - `crates/ecs/src/systems` 负责根据 ECS 数据执行世界规则。
 - 不读取键盘、鼠标、手柄、AI、脚本、网络等来源。
-- 本机键盘、鼠标、手柄和 UI interaction 由 `peripherals` 转换成语义请求。
+- 本机键盘、鼠标和手柄由 `peripherals` 转换成语义请求。
+- UI 和世界对象 hover/click 等 Bevy interaction 由 `interaction` 转换成语义 message。
 - AI、脚本、回放和未来网络等 Bevy App 外部来源由 `external_runtime` 转换成 manager API 请求。
 - 网络是双向通信层，v2 单独设计。
 - 不写 sprite、动画、相机、UI 布局、材质、光照；这些放到渲染层。

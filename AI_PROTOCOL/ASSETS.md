@@ -12,6 +12,31 @@
 - 保存离线工具输出后的 sprite sheet、frame manifest、模型、音频、字体、关卡和场景数据。
 - 提供稳定路径，供 `render_2d`、`render_3d`、`audio`、`prefab` 或具体项目代码引用。
 
+## 设计思想
+
+整个 `assets/` 的目录划分遵循三条分类原则。AI 在新增、移动或命名资源前，必须先用这三条判断该放哪里，而不是凭直觉建目录。
+
+1. **按资源类型 / 游戏语义分类，不按文件格式分类。**
+   - 目录名表达「这是什么角色」（mesh、贴图、动画、音乐、字体），不表达「这是什么文件」（`.glb`、`.png`、`.wav`）。
+   - 不允许出现 `gltf/`、`png/`、`wav/` 这种按扩展名或容器格式命名的目录。
+   - 特别是 `.glb`：它是**容器格式，不是资源类型**，一个 `.glb` 可以同时打包 mesh、材质、贴图、骨架、动画，所以它没有专属目录，按它装的「主体是什么」归类。
+
+2. **资源是「原料」，业务对象是「成品」；成品在代码层组合，不在目录层组合。**
+   - 目录只负责把原料按类型码放整齐。
+   - 「玩家 = 哪个模型 + 哪套动画 + 哪个材质」这种组合关系，由代码 / `prefab` / `render_*` 决定，**不靠目录路径表达**。
+   - 所以 `assets/` 顶层不出现 `player/`、`enemy/`、`sword/` 这类单个业务对象目录。
+
+3. **复用单位决定分组键。**
+   - 被单个实例独享的资源，按实例分组（一个模型一个目录）。
+   - 被一类实例共享的资源，按「类 / family」分组（一套人形骨架给所有人形角色共用）。
+
+2D 与 3D 的分组差异源于上面的原则，AI 要理解原因，不要混用：
+
+- **2D**：一个游戏对象通常就是**一个成品文件**（sprite sheet）。所以 `2d/` 可以直接按对象语义（`characters/`、`props/` …）分组——这仍是「按语义分类」，不是「按业务对象组合」。
+- **3D**：一个游戏对象由**多种资源类型组合**而成（mesh + 贴图 + 动画 + 骨架），且这些类型会跨对象共享。所以 3D **必须先按资源类型拆分**，对象的组合关系留到代码层。
+
+通用边界：`assets/` 只放 runtime 成品；原始素材、源文件、工具中间产物、以及「拆分前」的资源，一律放 `workbench/`。
+
 ## 边界规则
 
 - `assets/README.md` 面向用户，只保留目录索引和最少规则；AI 必须以本协议的详细规则为准。
@@ -130,13 +155,15 @@ assets/ui/themes/
 
 ## 3D 规则
 
-`assets/3d` 放 runtime 使用的 3D 模型、材质、贴图、骨骼和动画。
+`assets/3d` 放 runtime 使用的 3D 模型、材质、贴图、骨架和动画。
 
-3D 资源不按角色、物品、场景这类业务对象做顶层分类。顶层目录必须按资源类型划分。
+面向用户的背景教学版在 `docs/3d-assets.md`；本节是 AI 必须遵守的规则版。
 
-业务对象如何组合 model、material、texture、animation、rig，属于代码、`render_3d` 配置或 prefab 层，不属于 `assets/3d` 的目录职责。
+### 分类原则
 
-优先使用 `.glb` 作为 runtime 3D 模型/场景文件格式。`.blend`、`.fbx`、`.obj` 等源文件或交换文件放到 `workbench/`，不要直接放进 `assets/`。
+`assets/3d` 顶层**必须按资源类型分目录**，禁止按业务对象（`player/`、`enemy/`、`sword/`）或文件格式（`gltf/`、`glb/`）建顶层目录。
+
+原因见「设计思想」第 1、2 条：一个 3D 对象由 mesh + 材质 + 贴图 + 骨架 + 动画多种类型组合而成，且这些类型跨对象共享，所以必须先按类型拆分，组合关系交给代码 / `prefab` / `render_3d`。
 
 顶层目录：
 
@@ -155,38 +182,83 @@ assets/3d/
   volumes/
 ```
 
-`models/` 放可实例化的 3D 模型主体。模型通常包含 mesh，也可能包含材质、贴图、骨骼和动画。
+### 文件格式
 
-```text
-assets/3d/models/{name}/
-  {name}.glb
-```
+- runtime 3D 模型 / 场景优先 `.glb`。
+- `.glb` 是容器格式不是资源类型，所以没有 `gltf/` 目录；按它打包的主体归类到 `models/` 或 `scenes/`。
+- `.blend`、`.fbx`、`.obj` 等源文件 / 交换文件放 `workbench/`，不进 `assets/`。
+- 即使打包在一起，Bevy 也能用子资源标签引用 glb 内部单项：`model.glb#Scene0`、`#Mesh0/Primitive0`、`#Material0`、`#Animation0`、`#Skin0`。所以「打包」不等于「失去对内部单项的引用能力」。
 
-`textures/` 放 3D 材质使用的贴图，例如：
+### 各目录职责
 
-```text
-albedo.png
-base-color.png
-normal.png
-roughness.png
-metallic.png
-ao.png
-emissive.png
-```
-
+- `models/`: 可实例化的「一个 3D 对象主体」。一个对象一个子目录，路径 `assets/3d/models/{name}/{name}.glb`。glb 可以只含 mesh + 骨架（body），也可以打包贴图 / 动画。
+- `scenes/`: 「一组对象 + 灯光 + 相机」的组合 glb 或场景数据（一个房间、一关、一个环境）。注意与 `assets/scenes`（通用 runtime 场景数据）区分。
+- `textures/`: 3D 材质用的贴图，例如 `albedo.png` / `base-color.png` / `normal.png` / `roughness.png` / `metallic.png` / `ao.png` / `emissive.png`（`albedo` 与 `base-color` 同义）。
 - `materials/`: 材质配置文件或材质相关 runtime 数据。
 - `animations/`: 可复用的 3D 动画资源。
 - `rigs/`: rig/avatar 映射、重定向配置或控制骨架的 runtime 数据。
-- `skeletons/`: 独立骨架或 skeleton 描述。
-- `scenes/`: 完整 3D scene、场景模型或环境组合。
+- `skeletons/`: 独立骨架或 skeleton 描述（一套骨骼命名标准的参考 / 契约）。
 - `environment-maps/`: 天空盒、反射贴图、HDRI、irradiance/specular 环境贴图。
 - `lightmaps/`: 烘焙光照贴图。
 - `irradiance-volumes/`: irradiance volume、probe volume 等全局光照相关体积数据。
 - `volumes/`: 雾体积、体素数据或其它 runtime 体积纹理。
 
-贴图、材质、骨骼和动画如果已经打包进 `.glb`，不需要额外拆出来。只有需要复用、替换或单独管理时才拆到对应目录。
-
 `assets/3d` 不创建 `prefabs/` 或 `render/` 目录。
+
+### mesh 与骨架是耦合单元
+
+蒙皮（skin）把 mesh 顶点绑定到具体骨骼，所以 **mesh + 骨架在 runtime 不可分**，它俩作为「body」整体留在 `models/{name}/`。
+
+可以干净拆分并单独替换的只有：贴图（`textures/`）、材质（`materials/`）、动画（`animations/`）。不要试图在 `assets/` 层把 mesh 和骨架拆成两个可任意重组的文件。
+
+### 共享骨架 / 动画：按 rig family 分组
+
+一套骨架 + 一套动画通常服务「一类」模型而非单个模型，所以分组键不同：
+
+- `models/` 按**单个对象**分组（`hero/`、`goblin/`）。
+- `skeletons/`、`rigs/`、`animations/` 按 **rig family** 分组（`humanoid/`、`quadruped/`）。
+
+```text
+assets/3d/
+  models/
+    hero/hero.glb        # 蒙皮到 humanoid
+    goblin/goblin.glb    # 蒙皮到 humanoid
+    wolf/wolf.glb        # 蒙皮到 quadruped
+  skeletons/
+    humanoid/
+    quadruped/
+  animations/
+    humanoid/
+      idle.glb
+      walk.glb
+      attack.glb
+    quadruped/
+      walk.glb
+```
+
+**骨骼命名契约**：Bevy 的 `AnimationClip` 按「骨骼名字的层级路径」定位目标骨骼。所以同一套动画要能套到一类模型上，这类模型必须 rig 到**同名、同层级**的骨架。同一 rig family 内的所有模型与动画必须遵守同一套骨骼命名，否则动画无法复用。
+
+### 打包形态 vs 模块化形态
+
+两种形态都允许，按是否需要部分替换来选：
+
+- **整体打包**：一个 glb 含一切 → 放 `models/`（单对象）或 `scenes/`（组合）。最省事，但部分替换只能靠 runtime 覆盖，且 mesh / 骨架无法单换。
+- **模块化（本项目偏好，便于部分替换）**：body 留 `models/`，贴图进 `textures/`，动画进 `animations/`，材质进 `materials/`，在代码 / `prefab` 组合。换皮、换动作、换材质这类「部分替换」需求，**优先用模块化形态实现**。
+
+判定规则：贴图 / 材质 / 骨架 / 动画如果已打包进 glb 且无需跨对象复用，不必拆出来；一旦需要跨对象共享或部分替换，就按下面的流水线拆分。
+
+### 拆分流水线
+
+拿到「全部打包」的 glb 且需要模块化时，**拆分在 `workbench/` 完成，拆好的成品才进 `assets/`**：
+
+1. packed glb 先放 `workbench/`（属于原始素材，不是成品）。
+2. 用离线工具（Blender / gltf-transform）拆：
+   - body：去掉内嵌动画，只留 mesh + 骨架 → `{name}.glb`
+   - 每段动画 → 单独 glb（保留同名骨架，可不含 mesh）
+   - 内嵌贴图 → 独立图片文件
+3. 成品分别进 `assets/3d/` 对应类型目录，遵守 rig family 分组与骨骼命名契约。
+
+不要把 `workbench/` 里的拆分中间产物或 packed 源文件直接写进 `assets/`。
 
 ## Audio 规则
 

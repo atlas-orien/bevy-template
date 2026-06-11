@@ -1,28 +1,19 @@
-# Asset Guidelines
+# 资源记录
 
-- Use lowercase kebab-case file names.
-- Keep runtime assets under `assets/`.
-- Prefer stable paths, because Bevy asset handles and AI-generated code often refer to them directly.
-- `assets/` contains only runtime-ready files loaded by Bevy.
-- Source files used by offline tools belong in `workbench/`.
-- Document imported asset packs and licenses here when a project adds real assets.
+`docs/assets.md` 只记录项目真实引入的第三方资源来源和许可证。
 
-## Runtime Layout
+资源目录规则写在：
 
-- `assets/2d/static`: static 2D images.
-- `assets/2d/animated`: packed frame animation outputs.
-- `assets/3d`: runtime 3D models and materials.
-- `assets/ui`: UI images and UI-specific visual assets.
-- `assets/audio`: runtime audio files.
-- `assets/fonts`: runtime font files.
-- `assets/levels`: runtime level data.
-- `assets/scenes`: runtime scene data.
+- `assets/README.md`
+- `AI_PROTOCOL/ASSETS.md`
 
-## Imported Asset Records
+## 记录格式
 
-When importing third-party assets, add a project-specific record with:
+引入第三方资源时，按项目需要添加记录：
 
-- runtime path
-- source URL or local source path
-- license
-- intended use
+- runtime 路径
+- 来源 URL 或本地来源路径
+- 许可证
+- 用途
+
+当前模板不携带默认资源。

@@ -1,3 +1,5 @@
+此文件是项目约束来源。AI 不得为通过检查而修改本文件；规则变更必须由人发起。
+
 # PREFAB
 
 这个文件是 `crates/prefab` 的 AI 规则。
@@ -14,6 +16,32 @@
 - 2D 世界对象 prefab：写到 `crates/prefab/src/world_2d`。
 - 3D 世界对象 prefab：未来写到 `crates/prefab/src/world_3d`。
 - 屏幕 UI prefab：写到 `crates/prefab/src/ui`。
+
+## 骨架
+
+```rust
+use bevy::prelude::*;
+use crate::Prefab;
+
+pub struct YourObjectPrefab {
+    pub position: Vec2,
+}
+
+#[derive(Bundle)]
+pub struct YourObjectBundle {
+    pub transform: Transform,
+    pub visibility: Visibility,
+}
+
+impl Prefab for YourObjectPrefab {
+    fn spawn(self, commands: &mut Commands) -> Entity {
+        commands.spawn(YourObjectBundle {
+            transform: Transform::from_xyz(self.position.x, self.position.y, 0.0),
+            visibility: Visibility::default(),
+        }).id()
+    }
+}
+```
 
 ## 边界规则
 

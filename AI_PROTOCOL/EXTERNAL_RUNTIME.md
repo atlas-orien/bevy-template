@@ -1,3 +1,5 @@
+此文件是项目约束来源。AI 不得为通过检查而修改本文件；规则变更必须由人发起。
+
 # EXTERNAL_RUNTIME
 
 这个文件是 `crates/external_runtime` 的 AI 规则。

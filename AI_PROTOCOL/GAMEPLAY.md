@@ -1,3 +1,5 @@
+此文件是项目约束来源。AI 不得为通过检查而修改本文件；规则变更必须由人发起。
+
 # GAMEPLAY
 
 这个文件是 `crates/gameplay` 的 AI 规则。
@@ -28,6 +30,27 @@
 - UI 键盘导航进入 `gameplay` 时必须已经是 `interaction::UiNavigationInputMessage`；焦点切换和 Enter 激活的 demo 业务处理写到 `interaction/ui/demo_menu.rs`。
 
 当前旧目录可以逐步迁移，不需要保留旧名字。
+
+## 骨架
+
+```rust
+// api/systems.rs
+pub fn consume_your_requests_system(
+    mut requests: MessageReader<YourRequestMessage>,
+    mut next_state: ResMut<NextState<AppState>>,
+) {
+    for request in requests.read() {
+        if matches!(request, YourRequestMessage::Start) {
+            next_state.set(AppState::Playing);
+        }
+    }
+}
+
+// schedule/update.rs
+pub fn register_update_schedules(app: &mut App) {
+    app.add_systems(Update, consume_your_requests_system);
+}
+```
 
 ## Spawning 目录规则
 

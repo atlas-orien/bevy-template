@@ -7,7 +7,7 @@ use crate::rules::base::paths::{
 };
 use crate::rules::base::source::{
     reject_direct_input_access, reject_terms_in_file, reject_terms_in_rust_files,
-    require_file_contains_all_terms,
+    reject_type_paths_in_rust_files, require_file_contains_all_terms,
 };
 use crate::rules::util::require_path;
 
@@ -52,7 +52,7 @@ pub fn check_intent(rules: IntentRules<'_>, errors: &mut Vec<String>) {
         errors,
         "input sources must be converted before intent, so move source handling to peripherals/external_runtime",
     );
-    reject_terms_in_rust_files(
+    reject_type_paths_in_rust_files(
         rules.crate_path,
         rules.world_mutation_terms,
         errors,

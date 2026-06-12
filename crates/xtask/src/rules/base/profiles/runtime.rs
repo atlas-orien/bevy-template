@@ -6,8 +6,8 @@ use crate::rules::base::dependencies::{
 use crate::rules::base::derives::reject_derived_types;
 use crate::rules::base::paths::{reject_paths, require_mod_rs_under_src, require_paths};
 use crate::rules::base::source::{
-    WORLD_MUTATION_TERMS, reject_bevy_world_access, reject_direct_input_access,
-    reject_network_transport_terms, reject_terms_in_file, reject_terms_in_rust_files,
+    reject_bevy_world_access, reject_direct_input_access, reject_network_transport_terms,
+    reject_terms_in_file, reject_terms_in_rust_files, reject_type_paths_in_rust_files,
     reject_world_mutation_terms, require_file_contains_all_terms,
 };
 use crate::rules::util::require_path;
@@ -43,7 +43,7 @@ pub fn check_interaction(rules: InteractionRules<'_>, errors: &mut Vec<String>) 
         errors,
         "interaction should translate Bevy interaction state into semantic messages without owning rendering, prefab, world, or external runtime concerns",
     );
-    reject_terms_in_rust_files(
+    reject_type_paths_in_rust_files(
         rules.crate_path,
         rules.world_mutation_terms,
         errors,
@@ -183,9 +183,8 @@ pub fn check_external_runtime(rules: ExternalRuntimeRules<'_>, errors: &mut Vec<
         errors,
         "external_runtime must communicate through manager/bridge, not Bevy World",
     );
-    reject_terms_in_rust_files(
+    reject_world_mutation_terms(
         rules.crate_path,
-        &[WORLD_MUTATION_TERMS, &["Query<", "Res<", "ResMut<"]].concat(),
         errors,
         "external_runtime should use manager request/update channels instead of mutating world results",
     );

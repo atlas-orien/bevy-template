@@ -13,13 +13,7 @@ const FORBIDDEN_DEPENDENCIES: &[&str] = &[
     "audio",
 ];
 
-const WORLD_MUTATION_TERMS: &[&str] = &[
-    "Commands",
-    "Query<(&mut Transform",
-    "Query<&mut Transform",
-    "PhysicsBody",
-    "PhysicsCollider",
-];
+const WORLD_MUTATION_TERMS: &[&str] = &["Commands", "Transform", "PhysicsBody", "PhysicsCollider"];
 
 const UI_NAVIGATION_TERMS: &[&str] = &[
     "UiNavigationInputMessage",

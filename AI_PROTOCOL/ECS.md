@@ -1,3 +1,5 @@
+此文件是项目约束来源。AI 不得为通过检查而修改本文件；规则变更必须由人发起。
+
 # ECS
 
 这个文件是 `crates/ecs` 的 AI 规则。
@@ -27,6 +29,24 @@ AI 可以根据具体游戏需求添加、修改或删除 `crates/ecs` 下的目
 - 新 `Resource`：写到 `crates/ecs/src/resources`。
 - 新 `Event`：写到 `crates/ecs/src/events`。
 - 新 ECS system 函数：写到 `crates/ecs/src/systems`。
+
+## 骨架
+
+```rust
+use bevy::prelude::*;
+
+#[derive(Component, Debug, Clone, Copy, PartialEq)]
+pub struct YourValue(pub f32);
+
+pub fn your_rule_system(
+    time: Res<Time>,
+    mut items: Query<(&YourValue, &mut Transform)>,
+) {
+    for (value, mut transform) in &mut items {
+        transform.translation.x += value.0 * time.delta_secs();
+    }
+}
+```
 
 ## 边界规则
 

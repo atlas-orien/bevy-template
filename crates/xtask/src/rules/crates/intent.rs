@@ -6,13 +6,7 @@ const INTENT_PROTOCOL: &str = "AI_PROTOCOL/INTENT.md";
 
 const FORBIDDEN_DEPENDENCIES: &[&str] = &["ecs", "audio", "physics", "render_2d", "render_3d"];
 
-const WORLD_MUTATION_TERMS: &[&str] = &[
-    "Commands",
-    "Transform",
-    "PhysicsRigidBody",
-    "PhysicsCollider2d",
-    "PhysicsCollider3d",
-];
+const WORLD_MUTATION_TERMS: &[&str] = &["Commands", "Transform", "PhysicsBody", "PhysicsCollider"];
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();

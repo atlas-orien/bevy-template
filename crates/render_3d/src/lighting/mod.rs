@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct Lighting3dPlugin;
-
-impl Plugin for Lighting3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Lighting3dPlugin;

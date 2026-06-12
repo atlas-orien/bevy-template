@@ -1,10 +1,5 @@
-use bevy::prelude::*;
+mod marker;
+mod plugin;
 
-#[derive(Component)]
-pub struct Main3dCamera;
-
-pub struct Camera3dPlugin;
-
-impl Plugin for Camera3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use marker::Main3dCamera;
+pub use plugin::Camera3dPlugin;

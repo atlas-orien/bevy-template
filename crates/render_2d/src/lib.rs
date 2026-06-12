@@ -1,3 +1,5 @@
+//! User-editable 2D presentation content, cameras, UI, and render systems.
+
 pub mod animation;
 pub mod atlases;
 pub mod background;

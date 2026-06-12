@@ -1,9 +1,4 @@
 pub mod example;
+mod plugin;
 
-use bevy::prelude::*;
-
-pub struct Materials2dPlugin;
-
-impl Plugin for Materials2dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Materials2dPlugin;

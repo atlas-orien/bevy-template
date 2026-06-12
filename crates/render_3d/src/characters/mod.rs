@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct Characters3dPlugin;
-
-impl Plugin for Characters3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Characters3dPlugin;

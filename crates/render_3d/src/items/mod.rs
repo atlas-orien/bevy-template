@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct Items3dPlugin;
-
-impl Plugin for Items3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Items3dPlugin;

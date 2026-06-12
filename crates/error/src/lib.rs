@@ -1,3 +1,5 @@
+//! Shared project error and result types.
+
 pub mod game_error;
 pub mod kind;
 pub mod result;

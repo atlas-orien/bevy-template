@@ -2,17 +2,15 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::{
     ColliderDisabled as RapierColliderDisabled,
     KinematicCharacterControllerOutput as RapierCharacterControllerOutput, Sensor as RapierSensor,
-    Velocity as RapierVelocity,
 };
 
 use crate::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsAdditionalSolverIterations,
-    PhysicsAngularVelocity3d, PhysicsCcd, PhysicsCharacterController3d, PhysicsCollider3d,
-    PhysicsColliderDisabled, PhysicsCollisionGroups, PhysicsContactForceEventThreshold,
-    PhysicsContactSkin, PhysicsDamping, PhysicsForce3d, PhysicsGravityScale, PhysicsImpulse3d,
-    PhysicsImpulseJoint3d, PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody,
-    PhysicsRigidBodyDisabled, PhysicsSensor, PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups,
-    PhysicsVelocity3d,
+    PhysicsCcd, PhysicsCharacterController3d, PhysicsCollider3d, PhysicsColliderDisabled,
+    PhysicsCollisionGroups, PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping,
+    PhysicsForce3d, PhysicsGravityScale, PhysicsImpulse3d, PhysicsImpulseJoint3d,
+    PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody, PhysicsRigidBodyDisabled,
+    PhysicsSensor, PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups,
 };
 
 use super::convert;
@@ -371,37 +369,5 @@ pub fn sync_physics_contact_force_threshold(
         commands
             .entity(entity)
             .insert(convert::contact_force_threshold(*threshold));
-    }
-}
-
-pub fn sync_physics_velocities(
-    mut commands: Commands,
-    velocities: Query<
-        (Entity, &PhysicsVelocity3d, Option<&RapierVelocity>),
-        Synced<PhysicsVelocity3d>,
-    >,
-) {
-    for (entity, velocity, current) in &velocities {
-        let mut next = current
-            .copied()
-            .unwrap_or_else(|| convert::linear_velocity(*velocity));
-        next.linear = velocity.0;
-        commands.entity(entity).insert(next);
-    }
-}
-
-pub fn sync_physics_angular_velocities(
-    mut commands: Commands,
-    angular_velocities: Query<
-        (Entity, &PhysicsAngularVelocity3d, Option<&RapierVelocity>),
-        Synced<PhysicsAngularVelocity3d>,
-    >,
-) {
-    for (entity, velocity, current) in &angular_velocities {
-        let mut next = current
-            .copied()
-            .unwrap_or_else(|| convert::angular_velocity(*velocity));
-        next.angular = velocity.0;
-        commands.entity(entity).insert(next);
     }
 }

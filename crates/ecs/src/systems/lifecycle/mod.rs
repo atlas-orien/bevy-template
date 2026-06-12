@@ -2,15 +2,6 @@
 //!
 //! 这里放出生、死亡、销毁、重生、状态转换等 ECS 系统函数。
 
-use bevy::prelude::*;
+mod systems;
 
-use crate::components::world::gameplay::GameplaySessionEntity;
-
-pub fn despawn_gameplay_entities_system(
-    mut commands: Commands,
-    entities: Query<Entity, With<GameplaySessionEntity>>,
-) {
-    for entity in &entities {
-        commands.entity(entity).despawn();
-    }
-}
+pub use systems::despawn_gameplay_entities_system;

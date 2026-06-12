@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct LifecyclePlugin;
-
-impl Plugin for LifecyclePlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::LifecyclePlugin;

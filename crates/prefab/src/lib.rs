@@ -1,3 +1,5 @@
+//! Object prefab templates and gameplay-facing composition facades.
+
 pub mod control;
 pub mod demo_events;
 pub mod health;

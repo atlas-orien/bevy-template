@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct Animation3dPlugin;
-
-impl Plugin for Animation3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Animation3dPlugin;

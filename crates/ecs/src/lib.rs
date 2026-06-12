@@ -1,3 +1,5 @@
+//! Core ECS data, resources, events, and world-rule systems.
+
 pub mod components;
 pub mod events;
 pub mod resources;

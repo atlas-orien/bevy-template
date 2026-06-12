@@ -1,9 +1,4 @@
 pub mod example;
+mod plugin;
 
-use bevy::prelude::*;
-
-pub struct DebugRenderPlugin;
-
-impl Plugin for DebugRenderPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::DebugRenderPlugin;

@@ -8,4 +8,5 @@ pub mod derives;
 pub mod functions;
 pub mod paths;
 pub mod profiles;
+pub mod readability;
 pub mod source;

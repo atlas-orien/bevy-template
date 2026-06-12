@@ -151,7 +151,10 @@ fn reject_system_functions(root: &Path, errors: &mut Vec<String>, hint: &str) {
 
 fn require_message_derive_for_event_files(root: &Path, errors: &mut Vec<String>) {
     for file in rust_files(root) {
-        if file.file_name().is_some_and(|name| name == "mod.rs") {
+        if file
+            .file_name()
+            .is_some_and(|name| name == "mod.rs" || name == "plugin.rs")
+        {
             continue;
         }
 

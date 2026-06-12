@@ -1,3 +1,5 @@
+//! Gameplay state flow, scheduling, and public request API.
+
 pub mod api;
 pub mod cleanup;
 pub mod control;

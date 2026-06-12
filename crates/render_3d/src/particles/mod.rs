@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct Particles3dPlugin;
-
-impl Plugin for Particles3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Particles3dPlugin;

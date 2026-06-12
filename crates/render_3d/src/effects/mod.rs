@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct Effects3dPlugin;
-
-impl Plugin for Effects3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Effects3dPlugin;

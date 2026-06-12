@@ -1,9 +1,4 @@
 pub mod example;
+mod plugin;
 
-use bevy::prelude::*;
-
-pub struct Text2dContentPlugin;
-
-impl Plugin for Text2dContentPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Text2dContentPlugin;

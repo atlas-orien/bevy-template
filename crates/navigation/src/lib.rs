@@ -1,3 +1,5 @@
+//! Navigation facade types, path state, queries, and navigation systems.
+
 pub mod agent;
 pub mod path;
 pub mod plugin;

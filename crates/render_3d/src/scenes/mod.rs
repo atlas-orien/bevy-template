@@ -1,10 +1,5 @@
-use bevy::prelude::*;
+mod marker;
+mod plugin;
 
-#[derive(Component)]
-pub struct Scene3dEntity;
-
-pub struct Scenes3dPlugin;
-
-impl Plugin for Scenes3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use marker::Scene3dEntity;
+pub use plugin::Scenes3dPlugin;

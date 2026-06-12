@@ -1,12 +1,5 @@
-use bevy::prelude::*;
+mod item;
+mod plugin;
 
-#[derive(Component, Debug, Clone)]
-pub struct Item {
-    pub id: String,
-}
-
-pub struct ItemsPlugin;
-
-impl Plugin for ItemsPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use item::Item;
+pub use plugin::ItemsPlugin;

@@ -1,3 +1,5 @@
+//! Bevy interaction state to project semantic message bridge.
+
 pub mod action;
 pub mod message;
 pub mod ui;

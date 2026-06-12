@@ -1,19 +1,8 @@
 pub mod base;
 pub mod characters;
 pub mod items;
+mod plugin;
 pub mod ui;
 pub mod world;
 
-use bevy::prelude::*;
-
-use self::characters::CharactersPlugin;
-use self::items::ItemsPlugin;
-use self::world::WorldPlugin;
-
-pub struct ComponentsPlugin;
-
-impl Plugin for ComponentsPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugins((WorldPlugin, CharactersPlugin, ItemsPlugin));
-    }
-}
+pub use plugin::ComponentsPlugin;

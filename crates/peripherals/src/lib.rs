@@ -1,3 +1,5 @@
+//! Local keyboard, mouse, and gamepad adapters for semantic input messages.
+
 pub mod gamepad;
 pub mod keyboard;
 pub mod local_input;

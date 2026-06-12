@@ -1,15 +1,4 @@
-use bevy::prelude::*;
+mod api;
 
+pub use api::{GameplayEntityIdEntities, find_gameplay_entity};
 pub use ecs::components::world::gameplay::GameplayEntityId;
-
-pub type GameplayEntityIdEntities<'world, 'state> =
-    Query<'world, 'state, (Entity, &'static GameplayEntityId)>;
-
-pub fn find_gameplay_entity(
-    id: GameplayEntityId,
-    entities: &GameplayEntityIdEntities<'_, '_>,
-) -> Option<Entity> {
-    entities
-        .iter()
-        .find_map(|(entity, entity_id)| (*entity_id == id).then_some(entity))
-}

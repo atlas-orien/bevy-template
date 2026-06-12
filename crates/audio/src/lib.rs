@@ -1,3 +1,5 @@
+//! Audio foundation types, playback requests, and Bevy audio bridge systems.
+
 pub mod bus;
 pub mod playback;
 pub mod request;

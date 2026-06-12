@@ -1,7 +1,3 @@
-use bevy::prelude::*;
+mod plugin;
 
-pub struct Debug3dPlugin;
-
-impl Plugin for Debug3dPlugin {
-    fn build(&self, _app: &mut App) {}
-}
+pub use plugin::Debug3dPlugin;

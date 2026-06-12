@@ -1,3 +1,5 @@
+//! Project physics facade and backend integration.
+
 mod backend;
 mod body;
 mod collider;

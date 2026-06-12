@@ -1,3 +1,5 @@
+//! User-editable 3D presentation content, cameras, scenes, and render systems.
+
 pub mod animation;
 pub mod camera;
 pub mod characters;

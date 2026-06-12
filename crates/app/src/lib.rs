@@ -1,3 +1,5 @@
+//! Runnable Bevy application assembly.
+
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
 use gameplay::GameplayPlugin;

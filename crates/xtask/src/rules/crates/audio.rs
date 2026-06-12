@@ -1,88 +1,40 @@
-use std::path::Path;
-
-use crate::rules::CheckStatus;
-use crate::rules::util::{
-    manifest_has_workspace_dependency, read_file_if_exists, require_mod_rs_in_subdirs,
-    require_path, rust_files,
-};
+use crate::rules::base::profiles::{SimpleCrateRules, check_simple_crate};
+use crate::rules::{CheckStatus, finish};
 
 const AUDIO_CRATE: &str = "crates/audio";
 const AUDIO_PROTOCOL: &str = "AI_PROTOCOL/AUDIO.md";
 
+const REQUIRED_PATHS: &[&str] = &["crates/audio/src/source", "crates/audio/src/spatial"];
+
+const FORBIDDEN_DEPENDENCIES: &[&str] = &[
+    "ecs",
+    "external_runtime",
+    "gameplay",
+    "intent",
+    "physics",
+    "prefab",
+    "render_2d",
+    "render_3d",
+];
+
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
-
-    require_path(
-        AUDIO_CRATE,
+    check_simple_crate(
+        SimpleCrateRules {
+            crate_path: AUDIO_CRATE,
+            protocol_path: AUDIO_PROTOCOL,
+            anchor_hint: "audio is the foundation layer for sound data and playback requests",
+            protocol_hint: "AI_PROTOCOL/AUDIO.md documents the audio boundary rules",
+            lib_hint: "audio needs a crate root that exports its public facade",
+            required_paths: REQUIRED_PATHS,
+            required_paths_hint: "audio source/spatial concepts should stay grouped by directory",
+            forbidden_dependencies: FORBIDDEN_DEPENDENCIES,
+            dependency_hint: "audio should stay a foundation layer, so move gameplay/content decisions outside audio",
+            reject_direct_input: Some(
+                "audio must not read input, so convert external sources before playback requests",
+            ),
+        },
         &mut errors,
-        "audio is the foundation layer for sound data and playback requests",
     );
-    require_path(
-        AUDIO_PROTOCOL,
-        &mut errors,
-        "AI_PROTOCOL/AUDIO.md documents the audio boundary rules",
-    );
-    require_path(
-        "crates/audio/src/lib.rs",
-        &mut errors,
-        "audio needs a crate root that exports its public facade",
-    );
-    for dir in ["crates/audio/src/source", "crates/audio/src/spatial"] {
-        require_path(
-            dir,
-            &mut errors,
-            "audio source/spatial concepts should stay grouped by directory",
-        );
-    }
-    require_mod_rs_in_subdirs(Path::new(AUDIO_CRATE).join("src"), &mut errors);
-    reject_direct_input(&mut errors);
-    reject_dependencies(&mut errors);
-
-    if errors.is_empty() {
-        CheckStatus::Passed
-    } else {
-        CheckStatus::Failed(errors)
-    }
-}
-
-fn reject_dependencies(errors: &mut Vec<String>) {
-    let manifest = Path::new(AUDIO_CRATE).join("Cargo.toml");
-    let Some(source) = read_file_if_exists(&manifest) else {
-        return;
-    };
-
-    for dependency in [
-        "ecs",
-        "external_runtime",
-        "gameplay",
-        "intent",
-        "physics",
-        "prefab",
-        "render_2d",
-        "render_3d",
-    ] {
-        if manifest_has_workspace_dependency(&source, dependency) {
-            errors.push(format!(
-                "{} depends on `{dependency}`; audio should stay a foundation layer, so move gameplay/content decisions outside audio",
-                manifest.display()
-            ));
-        }
-    }
-}
-
-fn reject_direct_input(errors: &mut Vec<String>) {
-    for file in rust_files(AUDIO_CRATE) {
-        let Some(source) = read_file_if_exists(&file) else {
-            continue;
-        };
-
-        for forbidden in ["ButtonInput", "KeyCode", "MouseButton", "Gamepad"] {
-            if source.contains(forbidden) {
-                errors.push(format!(
-                    "{} references `{forbidden}`; audio must not read input, so convert external sources before playback requests",
-                    file.display()
-                ));
-            }
-        }
-    }
+    finish(errors)
 }

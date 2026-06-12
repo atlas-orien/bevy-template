@@ -7,6 +7,14 @@ pub enum CheckStatus {
     Failed(Vec<String>),
 }
 
+pub fn finish(errors: Vec<String>) -> CheckStatus {
+    if errors.is_empty() {
+        CheckStatus::Passed
+    } else {
+        CheckStatus::Failed(errors)
+    }
+}
+
 pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
 

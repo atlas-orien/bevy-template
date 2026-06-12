@@ -1,60 +1,37 @@
-use std::path::Path;
-
-use crate::rules::CheckStatus;
-use crate::rules::util::{manifest_has_workspace_dependency, read_file_if_exists, require_path};
+use crate::rules::base::profiles::{SimpleCrateRules, check_simple_crate};
+use crate::rules::{CheckStatus, finish};
 
 const HELPER_CRATE: &str = "crates/helper";
 const HELPER_PROTOCOL: &str = "AI_PROTOCOL/HELPER.md";
 
+const FORBIDDEN_DEPENDENCIES: &[&str] = &[
+    "ecs",
+    "audio",
+    "external_runtime",
+    "gameplay",
+    "intent",
+    "physics",
+    "prefab",
+    "render_2d",
+    "render_3d",
+];
+
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
-
-    require_path(
-        HELPER_CRATE,
+    check_simple_crate(
+        SimpleCrateRules {
+            crate_path: HELPER_CRATE,
+            protocol_path: HELPER_PROTOCOL,
+            anchor_hint: "helper is the shared infrastructure crate and must remain present",
+            protocol_hint: "AI_PROTOCOL/HELPER.md documents the helper boundary rules",
+            lib_hint: "helper needs a crate root that exports reusable infrastructure",
+            required_paths: &[],
+            required_paths_hint: "",
+            forbidden_dependencies: FORBIDDEN_DEPENDENCIES,
+            dependency_hint: "helper should stay shared infrastructure, so move game-specific logic to the owning crate",
+            reject_direct_input: None,
+        },
         &mut errors,
-        "helper is the shared infrastructure crate and must remain present",
     );
-    require_path(
-        HELPER_PROTOCOL,
-        &mut errors,
-        "AI_PROTOCOL/HELPER.md documents the helper boundary rules",
-    );
-    require_path(
-        "crates/helper/src/lib.rs",
-        &mut errors,
-        "helper needs a crate root that exports reusable infrastructure",
-    );
-    reject_forbidden_dependencies(&mut errors);
-
-    if errors.is_empty() {
-        CheckStatus::Passed
-    } else {
-        CheckStatus::Failed(errors)
-    }
-}
-
-fn reject_forbidden_dependencies(errors: &mut Vec<String>) {
-    let manifest = Path::new(HELPER_CRATE).join("Cargo.toml");
-    let Some(source) = read_file_if_exists(&manifest) else {
-        return;
-    };
-
-    for dependency in [
-        "ecs",
-        "audio",
-        "external_runtime",
-        "gameplay",
-        "intent",
-        "physics",
-        "prefab",
-        "render_2d",
-        "render_3d",
-    ] {
-        if manifest_has_workspace_dependency(&source, dependency) {
-            errors.push(format!(
-                "{} depends on `{dependency}`; helper should stay shared infrastructure, so move game-specific logic to the owning crate",
-                manifest.display()
-            ));
-        }
-    }
+    finish(errors)
 }

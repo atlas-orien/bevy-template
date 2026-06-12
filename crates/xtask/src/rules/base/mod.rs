@@ -4,4 +4,8 @@
 //! rule modules can compose.
 
 pub mod dependencies;
+pub mod derives;
+pub mod functions;
 pub mod paths;
+pub mod profiles;
+pub mod source;

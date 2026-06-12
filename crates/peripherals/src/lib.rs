@@ -1,8 +1,10 @@
 pub mod gamepad;
 pub mod keyboard;
+pub mod local_input;
 pub mod mouse;
 
 pub use error::Result;
+pub use local_input::{LocalInputAction, LocalInputContext};
 
 use bevy::prelude::*;
 

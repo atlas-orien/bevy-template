@@ -10,6 +10,8 @@
 
 - 读取 Bevy App 内部的本机外设输入，例如键盘、鼠标和手柄。
 - 把设备细节转换成项目语义动作，例如移动、交互、UI action 或 outbound network action。
+- 输入适配必须区分“物理输入”和“语义动作”。`KeyCode`、`MouseButton`、gamepad button 只是设备事实；`LocalInputAction` 才表示项目语义。
+- 同一个物理输入在不同 `LocalInputContext` 下可以有不同含义，例如菜单中的方向键是 UI 焦点移动，角色场景中的方向键或 WASD 可以是移动意图。
 - 键盘方向键和 Enter 这类 UI 操作要转换成 `interaction::UiNavigationInputMessage`，不要把 `KeyCode` 传给 `gameplay`。
 - 作为 Bevy `Plugin` 注册到 App。
 - 不直接读取或修改底层 ECS 结果。
@@ -17,6 +19,7 @@
 
 ## 代码落点
 
+- 本机输入上下文和语义动作：写到 `crates/peripherals/src/local_input.rs`。
 - 键盘适配：写到 `crates/peripherals/src/keyboard`。
 - 鼠标适配：写到 `crates/peripherals/src/mouse`。
 - 手柄适配：写到 `crates/peripherals/src/gamepad`。
@@ -25,6 +28,8 @@
 
 - `peripherals` 可以读取 Bevy 输入资源，例如 `ButtonInput<KeyCode>`、`ButtonInput<MouseButton>` 和 gamepad 输入。
 - `peripherals` 可以写入 interaction crate 定义的语义 message，例如 `UiNavigationInputMessage`。
+- `peripherals` 可以定义普通 Rust 语义类型，例如 `LocalInputContext`、`LocalInputAction` 和本机 key binding 表；不要把这些类型派生成 Bevy `Resource`、`Event`、`Component` 或 `Bundle`。
+- `peripherals` 不拥有游戏流程状态。当前是菜单、角色场景、背包、对话还是文本输入，应由 gameplay/app 侧通过明确边界决定，再由 `peripherals` 按上下文解释输入。
 - `peripherals` 不直接使用 `Commands` 生成 gameplay entity。
 - `peripherals` 不直接修改 `Transform`、速度、生命值、背包或物理组件。
 - `peripherals` 不定义核心 `Component`、`Bundle`、`Resource`、`Event`。

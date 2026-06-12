@@ -3,6 +3,10 @@ use bevy::prelude::*;
 
 use super::DemoCameraFollow;
 
+const DEMO_WORLD_CAMERA_ORDER: isize = 0;
+const DEMO_WORLD_CAMERA_LAYER: usize = 0;
+const DEMO_WORLD_CAMERA_Z: f32 = 1000.0;
+
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoWorldCamera2d;
 
@@ -21,13 +25,13 @@ impl Default for DemoWorldCamera2dBundle {
         Self {
             camera_2d: Camera2d,
             camera: Camera {
-                order: 0,
+                order: DEMO_WORLD_CAMERA_ORDER,
                 ..default()
             },
-            render_layers: RenderLayers::layer(0),
+            render_layers: RenderLayers::layer(DEMO_WORLD_CAMERA_LAYER),
             marker: DemoWorldCamera2d,
             follow: DemoCameraFollow::default(),
-            transform: Transform::from_xyz(0.0, 0.0, 1000.0),
+            transform: Transform::from_xyz(0.0, 0.0, DEMO_WORLD_CAMERA_Z),
         }
     }
 }

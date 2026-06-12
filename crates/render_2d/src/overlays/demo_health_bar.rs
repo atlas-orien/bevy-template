@@ -1,6 +1,15 @@
 use bevy::prelude::*;
 use ecs::components::base::{Health, MaxHealth};
 
+const DEMO_HEALTH_BAR_WIDTH: f32 = 46.0;
+const DEMO_HEALTH_BAR_HEIGHT: f32 = 5.0;
+const DEMO_HEALTH_BAR_BACKGROUND_SIZE: Vec2 = Vec2::new(50.0, 9.0);
+const DEMO_HEALTH_BAR_TRANSLATION: Vec3 = Vec3::new(0.0, 54.0, 5.0);
+const DEMO_HEALTH_BAR_BACKGROUND_COLOR: Color = Color::srgba(0.08, 0.08, 0.08, 0.82);
+const DEMO_HEALTH_BAR_FILL_COLOR: Color = Color::srgb(0.18, 0.86, 0.36);
+const DEMO_HEALTH_BAR_BACKGROUND_Z: f32 = 0.0;
+const DEMO_HEALTH_BAR_FILL_Z: f32 = 0.1;
+
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct DemoHealthBarOverlay2d {
     pub width: f32,
@@ -19,8 +28,10 @@ pub struct DemoHealthBarOverlay2dBundle {
 impl Default for DemoHealthBarOverlay2dBundle {
     fn default() -> Self {
         Self {
-            marker: DemoHealthBarOverlay2d { width: 46.0 },
-            transform: Transform::from_xyz(0.0, 54.0, 5.0),
+            marker: DemoHealthBarOverlay2d {
+                width: DEMO_HEALTH_BAR_WIDTH,
+            },
+            transform: Transform::from_translation(DEMO_HEALTH_BAR_TRANSLATION),
             visibility: Visibility::default(),
         }
     }
@@ -46,7 +57,7 @@ pub fn demo_health_bar_system(
                 continue;
             };
             let width = overlay.width * ratio;
-            sprite.custom_size = Some(Vec2::new(width, 5.0));
+            sprite.custom_size = Some(Vec2::new(width, DEMO_HEALTH_BAR_HEIGHT));
             transform.translation.x = -(overlay.width - width) * 0.5;
         }
     }
@@ -62,11 +73,11 @@ impl Default for DemoHealthBarBackground2dBundle {
     fn default() -> Self {
         Self {
             sprite: Sprite {
-                color: Color::srgba(0.08, 0.08, 0.08, 0.82),
-                custom_size: Some(Vec2::new(50.0, 9.0)),
+                color: DEMO_HEALTH_BAR_BACKGROUND_COLOR,
+                custom_size: Some(DEMO_HEALTH_BAR_BACKGROUND_SIZE),
                 ..default()
             },
-            transform: Transform::from_xyz(0.0, 0.0, 0.0),
+            transform: Transform::from_xyz(0.0, 0.0, DEMO_HEALTH_BAR_BACKGROUND_Z),
         }
     }
 }
@@ -83,11 +94,11 @@ impl Default for DemoHealthBarFill2dBundle {
         Self {
             marker: DemoHealthBarFill2d,
             sprite: Sprite {
-                color: Color::srgb(0.18, 0.86, 0.36),
-                custom_size: Some(Vec2::new(46.0, 5.0)),
+                color: DEMO_HEALTH_BAR_FILL_COLOR,
+                custom_size: Some(Vec2::new(DEMO_HEALTH_BAR_WIDTH, DEMO_HEALTH_BAR_HEIGHT)),
                 ..default()
             },
-            transform: Transform::from_xyz(0.0, 0.0, 0.1),
+            transform: Transform::from_xyz(0.0, 0.0, DEMO_HEALTH_BAR_FILL_Z),
         }
     }
 }

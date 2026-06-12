@@ -2,6 +2,12 @@ use bevy::prelude::*;
 
 use crate::animation::frame::{DemoFrameAnimation2d, DemoPlayerAnimation2d};
 
+const DEMO_PLAYER_SPRITE_SIZE: Vec2 = Vec2::new(48.0, 48.0);
+const DEMO_PLAYER_SPRITE_TRANSLATION: Vec3 = Vec3::new(0.0, 18.0, 4.0);
+const DEMO_NPC_SPRITE_COLOR: Color = Color::srgb(0.65, 0.42, 0.95);
+const DEMO_NPC_SPRITE_SIZE: Vec2 = Vec2::new(30.0, 38.0);
+const DEMO_NPC_SPRITE_TRANSLATION: Vec3 = Vec3::new(0.0, 18.0, 4.0);
+
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoPlayerSprite2d;
 
@@ -29,10 +35,10 @@ impl DemoPlayerSprite2dBundle {
                     layout: atlas_layout,
                     index: 0,
                 }),
-                custom_size: Some(Vec2::new(48.0, 48.0)),
+                custom_size: Some(DEMO_PLAYER_SPRITE_SIZE),
                 ..default()
             },
-            transform: Transform::from_xyz(0.0, 18.0, 4.0),
+            transform: Transform::from_translation(DEMO_PLAYER_SPRITE_TRANSLATION),
         }
     }
 }
@@ -49,11 +55,11 @@ impl Default for DemoNpcSprite2dBundle {
         Self {
             marker: DemoNpcSprite2d,
             sprite: Sprite {
-                color: Color::srgb(0.65, 0.42, 0.95),
-                custom_size: Some(Vec2::new(30.0, 38.0)),
+                color: DEMO_NPC_SPRITE_COLOR,
+                custom_size: Some(DEMO_NPC_SPRITE_SIZE),
                 ..default()
             },
-            transform: Transform::from_xyz(0.0, 18.0, 4.0),
+            transform: Transform::from_translation(DEMO_NPC_SPRITE_TRANSLATION),
         }
     }
 }

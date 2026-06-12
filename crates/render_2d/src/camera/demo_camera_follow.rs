@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 use super::DemoWorldCamera2d;
 
+const DEMO_CAMERA_FOLLOW_SMOOTHNESS: f32 = 12.0;
+
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct DemoCameraFollow {
     pub smoothness: f32,
@@ -9,7 +11,9 @@ pub struct DemoCameraFollow {
 
 impl Default for DemoCameraFollow {
     fn default() -> Self {
-        Self { smoothness: 12.0 }
+        Self {
+            smoothness: DEMO_CAMERA_FOLLOW_SMOOTHNESS,
+        }
     }
 }
 

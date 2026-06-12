@@ -6,14 +6,18 @@ use ecs::components::characters::DemoPlayerControlled;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
 use ecs::events::demo_session::DemoSessionStartedEvent;
 
+const DEMO_BGM_AUDIO: &str = "audio/demo_bgm.ogg";
+const DEMO_BGM_VOLUME: f32 = 0.35;
+const DEMO_FOOTSTEP_INTERVAL_SECONDS: f32 = 0.28;
+
 pub fn demo_bgm_audio_system(
     mut events: MessageReader<DemoSessionStartedEvent>,
     mut audio_requests: MessageWriter<PlayAudioRequest>,
 ) {
     for _ in events.read() {
         audio_requests.write(
-            PlayAudioRequest::sample("audio/demo_bgm.ogg")
-                .with_settings(AudioPlaybackSettings::looping().with_volume(0.35)),
+            PlayAudioRequest::sample(DEMO_BGM_AUDIO)
+                .with_settings(AudioPlaybackSettings::looping().with_volume(DEMO_BGM_VOLUME)),
         );
     }
 }
@@ -41,7 +45,9 @@ pub fn demo_footstep_audio_system(
     players: Query<(&MovementIntent, &AudioClips), With<DemoPlayerControlled>>,
     mut audio_requests: MessageWriter<PlayAudioRequest>,
 ) {
-    let timer = timer.get_or_insert_with(|| Timer::from_seconds(0.28, TimerMode::Repeating));
+    let timer = timer.get_or_insert_with(|| {
+        Timer::from_seconds(DEMO_FOOTSTEP_INTERVAL_SECONDS, TimerMode::Repeating)
+    });
     timer.tick(time.delta());
 
     if !timer.just_finished() {

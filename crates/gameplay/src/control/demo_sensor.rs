@@ -5,6 +5,8 @@ use prefab::health::{HealthQuery, damage_entity};
 
 use crate::state::AppState;
 
+const DEMO_SENSOR_DAMAGE: f32 = 10.0;
+
 pub fn handle_demo_sensor_triggered_system(
     mut events: MessageReader<DemoSensorTriggeredEvent>,
     controlled: LocallyControlledQuery,
@@ -21,7 +23,7 @@ pub fn handle_demo_sensor_triggered_system(
             continue;
         }
 
-        let Some(health) = damage_entity(event.target, 10.0, &mut health) else {
+        let Some(health) = damage_entity(event.target, DEMO_SENSOR_DAMAGE, &mut health) else {
             continue;
         };
         if health.is_empty() {

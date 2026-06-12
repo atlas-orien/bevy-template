@@ -4,6 +4,9 @@ use render_2d::props::{DemoLandmark2dBundle, DemoRock2dBundle};
 
 use crate::Prefab;
 
+const DEMO_ROCK_Z: f32 = 1.0;
+const DEMO_LANDMARK_Z: f32 = -2.0;
+
 pub struct DemoRockPrefab {
     position: Vec2,
 }
@@ -19,7 +22,7 @@ impl Prefab for DemoRockPrefab {
         commands
             .spawn((
                 GameplaySessionEntity,
-                DemoRock2dBundle::new(Vec3::new(self.position.x, self.position.y, 1.0)),
+                DemoRock2dBundle::new(Vec3::new(self.position.x, self.position.y, DEMO_ROCK_Z)),
             ))
             .id()
     }
@@ -42,7 +45,7 @@ impl Prefab for DemoLandmarkPrefab {
             .spawn((
                 GameplaySessionEntity,
                 DemoLandmark2dBundle::new(
-                    Vec3::new(self.position.x, self.position.y, -2.0),
+                    Vec3::new(self.position.x, self.position.y, DEMO_LANDMARK_Z),
                     self.color,
                 ),
             ))

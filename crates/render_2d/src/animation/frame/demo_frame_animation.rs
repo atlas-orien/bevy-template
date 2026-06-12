@@ -1,6 +1,12 @@
 use bevy::prelude::*;
 use ecs::components::base::{Facing, MovementIntent};
 
+const DEMO_IDLE_FIRST_FRAME: usize = 0;
+const DEMO_IDLE_LAST_FRAME: usize = 0;
+const DEMO_WALK_FIRST_FRAME: usize = 1;
+const DEMO_WALK_LAST_FRAME: usize = 6;
+const DEMO_FRAME_SECONDS: f32 = 0.12;
+
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct DemoFrameAnimation2d {
     pub first_frame: usize,
@@ -12,9 +18,9 @@ pub struct DemoFrameAnimation2d {
 impl DemoFrameAnimation2d {
     pub fn idle() -> Self {
         Self {
-            first_frame: 0,
-            last_frame: 0,
-            frame_seconds: 0.12,
+            first_frame: DEMO_IDLE_FIRST_FRAME,
+            last_frame: DEMO_IDLE_LAST_FRAME,
+            frame_seconds: DEMO_FRAME_SECONDS,
             elapsed_seconds: 0.0,
         }
     }
@@ -46,9 +52,9 @@ pub fn demo_player_animation_state_system(
         };
 
         if movement.is_moving() {
-            animation.set_range(1, 6);
+            animation.set_range(DEMO_WALK_FIRST_FRAME, DEMO_WALK_LAST_FRAME);
         } else {
-            animation.set_range(0, 0);
+            animation.set_range(DEMO_IDLE_FIRST_FRAME, DEMO_IDLE_LAST_FRAME);
         }
 
         if let Some(facing) = facing {

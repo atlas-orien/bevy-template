@@ -10,11 +10,13 @@ use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
     PhysicsSensor,
 };
-use render_2d::props::DemoSensorZone2dBundle;
+use render_2d::props::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2dBundle};
 
 use crate::Prefab;
 
 pub const DEMO_SENSOR_ENTITY_ID: GameplayEntityId = GameplayEntityId(2);
+const DEMO_SENSOR_AUDIO: &str = "audio/demo_pickup.ogg";
+const DEMO_SENSOR_Z: f32 = 1.5;
 
 pub struct DemoSensorZonePrefab {
     position: Vec2,
@@ -34,11 +36,11 @@ impl Prefab for DemoSensorZonePrefab {
                 GameplayEntity,
                 GameplaySessionEntity,
                 DEMO_SENSOR_ENTITY_ID,
-                AudioClips::default().with_interact("audio/demo_pickup.ogg"),
+                AudioClips::default().with_interact(DEMO_SENSOR_AUDIO),
                 PhysicsRigidBody::Static,
                 PhysicsCollider2d::Rectangle {
-                    width: 72.0,
-                    height: 44.0,
+                    width: DEMO_SENSOR_ZONE_SIZE.x,
+                    height: DEMO_SENSOR_ZONE_SIZE.y,
                 },
                 PhysicsSensor,
                 PhysicsActiveEvents {
@@ -53,7 +55,7 @@ impl Prefab for DemoSensorZonePrefab {
                     kinematic_static: true,
                     static_static: true,
                 },
-                Transform::from_xyz(self.position.x, self.position.y, 1.5),
+                Transform::from_xyz(self.position.x, self.position.y, DEMO_SENSOR_Z),
                 Visibility::default(),
                 children![DemoSensorZone2dBundle::default()],
             ))

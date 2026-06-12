@@ -5,6 +5,13 @@ const DEMO_MENU_FOCUSED_BACKGROUND: Color = Color::srgb(0.18, 0.30, 0.48);
 const DEMO_MENU_NORMAL_BORDER: Color = Color::srgb(0.42, 0.46, 0.52);
 const DEMO_MENU_FOCUSED_BORDER: Color = Color::srgb(0.98, 0.82, 0.32);
 const DEMO_MENU_TEXT: Color = Color::srgb(0.95, 0.96, 0.98);
+const DEMO_MENU_GRID_COLUMNS: u16 = 2;
+const DEMO_MENU_GRID_ROWS: u16 = 2;
+const DEMO_MENU_GRID_GAP_PX: f32 = 14.0;
+const DEMO_MENU_BUTTON_WIDTH_PX: f32 = 220.0;
+const DEMO_MENU_BUTTON_HEIGHT_PX: f32 = 56.0;
+const DEMO_MENU_BUTTON_BORDER_PX: f32 = 2.0;
+const DEMO_MENU_BUTTON_FONT_SIZE: f32 = 22.0;
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
 pub struct DemoMenuButtonIndex(pub usize);
@@ -42,10 +49,10 @@ impl Default for DemoMenuRootBundle {
                 height: percent(100),
                 align_items: AlignItems::Center,
                 display: Display::Grid,
-                grid_template_columns: RepeatedGridTrack::auto(2),
-                grid_template_rows: RepeatedGridTrack::auto(2),
-                row_gap: px(14),
-                column_gap: px(14),
+                grid_template_columns: RepeatedGridTrack::auto(DEMO_MENU_GRID_COLUMNS),
+                grid_template_rows: RepeatedGridTrack::auto(DEMO_MENU_GRID_ROWS),
+                row_gap: px(DEMO_MENU_GRID_GAP_PX),
+                column_gap: px(DEMO_MENU_GRID_GAP_PX),
                 justify_content: JustifyContent::Center,
                 justify_items: JustifyItems::Center,
                 ..default()
@@ -67,9 +74,9 @@ impl Default for DemoMenuButtonBundle {
         Self {
             button: Button,
             node: Node {
-                width: px(220),
-                height: px(56),
-                border: UiRect::all(px(2)),
+                width: px(DEMO_MENU_BUTTON_WIDTH_PX),
+                height: px(DEMO_MENU_BUTTON_HEIGHT_PX),
+                border: UiRect::all(px(DEMO_MENU_BUTTON_BORDER_PX)),
                 align_items: AlignItems::Center,
                 justify_content: JustifyContent::Center,
                 align_self: AlignSelf::Center,
@@ -94,7 +101,7 @@ impl DemoMenuButtonTextBundle {
         Self {
             text: Text::new(label),
             font: TextFont {
-                font_size: 22.0,
+                font_size: DEMO_MENU_BUTTON_FONT_SIZE,
                 ..default()
             },
             color: TextColor(DEMO_MENU_TEXT),

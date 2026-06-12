@@ -4,12 +4,10 @@ use interaction::{
     InteractionAction, InteractionEventKind, InteractionEventMessage, UiNavigationInputKind,
     UiNavigationInputMessage,
 };
-use prefab::ui::{DEMO_BACK_ACTION, DEMO_OPTIONS_ACTION, DEMO_QUIT_ACTION, DEMO_START_ACTION};
+use prefab::ui::{DEMO_MENU_ITEMS, DemoMenuAction};
 use render_2d::ui::{DemoMenuButtonIndex, DemoMenuFocused};
 
 use crate::state::AppState;
-
-pub const DEMO_MENU_BUTTON_COUNT: usize = 4;
 
 pub type DemoMenuButtonQuery<'world, 'state> = Query<
     'world,
@@ -86,14 +84,14 @@ fn set_demo_menu_focus(focused_index: usize, buttons: &mut DemoMenuButtonQuery) 
 
 fn previous_demo_menu_index(current: usize) -> usize {
     if current == 0 {
-        DEMO_MENU_BUTTON_COUNT - 1
+        DEMO_MENU_ITEMS.len() - 1
     } else {
         current - 1
     }
 }
 
 fn next_demo_menu_index(current: usize) -> usize {
-    (current + 1) % DEMO_MENU_BUTTON_COUNT
+    (current + 1) % DEMO_MENU_ITEMS.len()
 }
 
 fn run_demo_menu_action(
@@ -102,23 +100,23 @@ fn run_demo_menu_action(
     next_state: &mut NextState<AppState>,
     app_exit: &mut MessageWriter<AppExit>,
 ) {
-    match action.id.as_str() {
-        DEMO_START_ACTION => {
+    match DemoMenuAction::from_id(action.id.as_str()) {
+        Some(DemoMenuAction::Start) => {
             next_state.set(AppState::Playing);
         }
-        DEMO_OPTIONS_ACTION => {
+        Some(DemoMenuAction::Options) => {
             info!("Demo UI options clicked: gameplay would open the options flow.");
         }
-        DEMO_QUIT_ACTION => {
+        Some(DemoMenuAction::Quit) => {
             app_exit.write(AppExit::Success);
         }
-        DEMO_BACK_ACTION => {
+        Some(DemoMenuAction::Back) => {
             if state.get() == &AppState::Paused {
                 next_state.set(AppState::Playing);
             } else {
                 info!("Demo UI back clicked: no previous screen is active.");
             }
         }
-        _ => {}
+        None => {}
     }
 }

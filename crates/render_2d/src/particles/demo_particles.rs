@@ -2,6 +2,21 @@ use bevy::prelude::*;
 use ecs::components::base::MovementIntent;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
 
+const DEMO_DUST_PARTICLES_PER_SECOND: f32 = 24.0;
+const DEMO_DUST_PARTICLE_LIFETIME_SECONDS: f32 = 0.35;
+const DEMO_DUST_MAX_LIVE_PARTICLES: usize = 256;
+const DEMO_DUST_EMITTER_TRANSLATION: Vec3 = Vec3::new(0.0, 2.0, 3.0);
+const DEMO_DUST_PARTICLE_COLOR: Color = Color::srgba(0.88, 0.82, 0.66, 0.72);
+const DEMO_DUST_PARTICLE_SIZE: Vec2 = Vec2::splat(6.0);
+const DEMO_DUST_PARTICLE_Z: f32 = 3.0;
+const DEMO_DUST_PARTICLE_VELOCITY: Vec2 = Vec2::new(-18.0, 18.0);
+const DEMO_PARTICLE_EMIT_THRESHOLD: f32 = 1.0;
+const DEMO_BURST_PARTICLE_COLOR: Color = Color::srgba(0.28, 0.86, 1.0, 0.86);
+const DEMO_BURST_PARTICLE_SIZE: Vec2 = Vec2::splat(8.0);
+const DEMO_BURST_PARTICLE_Z: f32 = 4.0;
+const DEMO_BURST_PARTICLE_LIFETIME_SECONDS: f32 = 0.45;
+const DEMO_BURST_PARTICLE_SPEED: f32 = 90.0;
+
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct DemoParticleEmitter2d {
     pub enabled: bool,
@@ -16,6 +31,8 @@ pub struct DemoParticle2d {
     pub remaining_seconds: f32,
     pub lifetime_seconds: f32,
     pub velocity: Vec2,
+    /// 生成时 sprite 颜色的 alpha；淡出按剩余寿命比例向 0 衰减到它。
+    pub initial_alpha: f32,
 }
 
 #[derive(Bundle)]
@@ -29,12 +46,12 @@ impl Default for DemoParticleEmitter2dBundle {
         Self {
             emitter: DemoParticleEmitter2d {
                 enabled: false,
-                particles_per_second: 24.0,
-                particle_lifetime_seconds: 0.35,
+                particles_per_second: DEMO_DUST_PARTICLES_PER_SECOND,
+                particle_lifetime_seconds: DEMO_DUST_PARTICLE_LIFETIME_SECONDS,
                 emission_accumulator: 0.0,
-                max_live_particles: 256,
+                max_live_particles: DEMO_DUST_MAX_LIVE_PARTICLES,
             },
-            transform: Transform::from_xyz(0.0, 2.0, 3.0),
+            transform: Transform::from_translation(DEMO_DUST_EMITTER_TRANSLATION),
         }
     }
 }
@@ -67,20 +84,21 @@ pub fn demo_particle_emission_system(
         }
 
         emitter.emission_accumulator += emitter.particles_per_second * time.delta_secs();
-        while emitter.emission_accumulator >= 1.0 {
-            emitter.emission_accumulator -= 1.0;
+        while emitter.emission_accumulator >= DEMO_PARTICLE_EMIT_THRESHOLD {
+            emitter.emission_accumulator -= DEMO_PARTICLE_EMIT_THRESHOLD;
             let position = transform.translation();
             commands.spawn((
                 Sprite {
-                    color: Color::srgba(0.88, 0.82, 0.66, 0.72),
-                    custom_size: Some(Vec2::splat(6.0)),
+                    color: DEMO_DUST_PARTICLE_COLOR,
+                    custom_size: Some(DEMO_DUST_PARTICLE_SIZE),
                     ..default()
                 },
-                Transform::from_xyz(position.x, position.y, 3.0),
+                Transform::from_xyz(position.x, position.y, DEMO_DUST_PARTICLE_Z),
                 DemoParticle2d {
                     remaining_seconds: emitter.particle_lifetime_seconds,
                     lifetime_seconds: emitter.particle_lifetime_seconds,
-                    velocity: Vec2::new(-18.0, 18.0),
+                    velocity: DEMO_DUST_PARTICLE_VELOCITY,
+                    initial_alpha: DEMO_DUST_PARTICLE_COLOR.alpha(),
                 },
             ));
         }
@@ -102,8 +120,11 @@ pub fn demo_particle_update_system(
         transform.translation.x += particle.velocity.x * time.delta_secs();
         transform.translation.y += particle.velocity.y * time.delta_secs();
 
-        let alpha = (particle.remaining_seconds / particle.lifetime_seconds).clamp(0.0, 1.0);
-        sprite.color.set_alpha(alpha * 0.72);
+        let life_fraction =
+            (particle.remaining_seconds / particle.lifetime_seconds).clamp(0.0, 1.0);
+        sprite
+            .color
+            .set_alpha(life_fraction * particle.initial_alpha);
     }
 }
 
@@ -132,15 +153,16 @@ pub fn demo_sensor_particle_burst_system(
         for direction in DIRECTIONS {
             commands.spawn((
                 Sprite {
-                    color: Color::srgba(0.28, 0.86, 1.0, 0.86),
-                    custom_size: Some(Vec2::splat(8.0)),
+                    color: DEMO_BURST_PARTICLE_COLOR,
+                    custom_size: Some(DEMO_BURST_PARTICLE_SIZE),
                     ..default()
                 },
-                Transform::from_xyz(position.x, position.y, 4.0),
+                Transform::from_xyz(position.x, position.y, DEMO_BURST_PARTICLE_Z),
                 DemoParticle2d {
-                    remaining_seconds: 0.45,
-                    lifetime_seconds: 0.45,
-                    velocity: direction.normalize_or_zero() * 90.0,
+                    remaining_seconds: DEMO_BURST_PARTICLE_LIFETIME_SECONDS,
+                    lifetime_seconds: DEMO_BURST_PARTICLE_LIFETIME_SECONDS,
+                    velocity: direction.normalize_or_zero() * DEMO_BURST_PARTICLE_SPEED,
+                    initial_alpha: DEMO_BURST_PARTICLE_COLOR.alpha(),
                 },
             ));
         }

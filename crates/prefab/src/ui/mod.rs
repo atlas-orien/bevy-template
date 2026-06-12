@@ -5,5 +5,6 @@
 pub mod demo_menu;
 
 pub use demo_menu::{
-    DEMO_BACK_ACTION, DEMO_OPTIONS_ACTION, DEMO_QUIT_ACTION, DEMO_START_ACTION, DemoMenuPrefab,
+    DEMO_BACK_ACTION, DEMO_MENU_ITEMS, DEMO_OPTIONS_ACTION, DEMO_QUIT_ACTION, DEMO_START_ACTION,
+    DemoMenuAction, DemoMenuItem, DemoMenuPrefab,
 };

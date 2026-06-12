@@ -18,6 +18,13 @@ use render_2d::particles::DemoParticleEmitter2dBundle;
 use crate::Prefab;
 
 pub const DEMO_PLAYER_ENTITY_ID: GameplayEntityId = GameplayEntityId(1);
+const DEMO_CHARACTER_Z: f32 = 2.0;
+const DEMO_NPC_SPEED: f32 = 120.0;
+const DEMO_NPC_STOPPING_DISTANCE: f32 = 3.0;
+const DEMO_PLAYER_HEALTH: f32 = 100.0;
+const DEMO_PLAYER_COLLIDER_WIDTH: f32 = 24.0;
+const DEMO_PLAYER_COLLIDER_HEIGHT: f32 = 32.0;
+const DEMO_PLAYER_FOOTSTEP_AUDIO: &str = "audio/demo_footstep.ogg";
 
 pub struct DemoPlayerPrefab {
     position: Vec2,
@@ -43,15 +50,15 @@ impl Prefab for DemoNpcPrefab {
                 GameplayEntity,
                 GameplaySessionEntity,
                 MovementIntent::default(),
-                Speed(120.0),
+                Speed(DEMO_NPC_SPEED),
                 Facing::default(),
                 navigation::NavigationAgent2d {
-                    speed: 120.0,
-                    stopping_distance: 3.0,
+                    speed: DEMO_NPC_SPEED,
+                    stopping_distance: DEMO_NPC_STOPPING_DISTANCE,
                 },
                 navigation::NavigationTarget2d::default(),
                 navigation::NavigationPath2d::default(),
-                Transform::from_xyz(self.position.x, self.position.y, 2.0),
+                Transform::from_xyz(self.position.x, self.position.y, DEMO_CHARACTER_Z),
                 Visibility::default(),
                 children![DemoNpcSprite2dBundle::default()],
             ))
@@ -86,9 +93,9 @@ impl Prefab for DemoPlayerPrefab {
                 MovementIntent::default(),
                 Speed::default(),
                 Facing::default(),
-                Health(100.0),
-                MaxHealth(100.0),
-                Transform::from_xyz(self.position.x, self.position.y, 2.0),
+                Health(DEMO_PLAYER_HEALTH),
+                MaxHealth(DEMO_PLAYER_HEALTH),
+                Transform::from_xyz(self.position.x, self.position.y, DEMO_CHARACTER_Z),
                 Visibility::default(),
                 children![
                     DemoPlayerSprite2dBundle::new(self.image, self.atlas_layout),
@@ -103,11 +110,11 @@ impl Prefab for DemoPlayerPrefab {
                 ],
             ))
             .insert((
-                AudioClips::default().with_interact("audio/demo_footstep.ogg"),
+                AudioClips::default().with_interact(DEMO_PLAYER_FOOTSTEP_AUDIO),
                 PhysicsRigidBody::Kinematic,
                 PhysicsCollider2d::Rectangle {
-                    width: 24.0,
-                    height: 32.0,
+                    width: DEMO_PLAYER_COLLIDER_WIDTH,
+                    height: DEMO_PLAYER_COLLIDER_HEIGHT,
                 },
                 PhysicsActiveEvents {
                     collision: true,

@@ -5,6 +5,8 @@ use crate::Prefab;
 
 use super::demo_layout::{DEMO_GROUND, DEMO_GROUND_HEIGHT, DEMO_GROUND_WIDTH};
 
+const DEMO_TILE_SIZE: u32 = 32;
+
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoGroundRoot;
 
@@ -27,7 +29,7 @@ impl Prefab for DemoGroundPrefab {
                 DemoGroundRoot,
                 DemoTilemapLayer2dBundle::new(
                     UVec2::new(DEMO_GROUND_WIDTH as u32, DEMO_GROUND_HEIGHT as u32),
-                    UVec2::splat(32),
+                    UVec2::splat(DEMO_TILE_SIZE),
                     self.tileset,
                     tile_indices,
                 ),

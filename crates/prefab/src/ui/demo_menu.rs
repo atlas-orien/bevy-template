@@ -12,27 +12,73 @@ pub const DEMO_OPTIONS_ACTION: &str = "ui.demo.options";
 pub const DEMO_QUIT_ACTION: &str = "ui.demo.quit";
 pub const DEMO_BACK_ACTION: &str = "ui.demo.back";
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum DemoMenuAction {
+    Start,
+    Options,
+    Quit,
+    Back,
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub struct DemoMenuItem {
+    pub label: &'static str,
+    pub action: DemoMenuAction,
+}
+
+impl DemoMenuAction {
+    pub const fn id(self) -> &'static str {
+        match self {
+            Self::Start => DEMO_START_ACTION,
+            Self::Options => DEMO_OPTIONS_ACTION,
+            Self::Quit => DEMO_QUIT_ACTION,
+            Self::Back => DEMO_BACK_ACTION,
+        }
+    }
+
+    pub fn from_id(id: &str) -> Option<Self> {
+        DEMO_MENU_ITEMS
+            .iter()
+            .find_map(|item| (item.action.id() == id).then_some(item.action))
+    }
+}
+
+pub const DEMO_MENU_ITEMS: &[DemoMenuItem] = &[
+    DemoMenuItem {
+        label: "Start",
+        action: DemoMenuAction::Start,
+    },
+    DemoMenuItem {
+        label: "Options",
+        action: DemoMenuAction::Options,
+    },
+    DemoMenuItem {
+        label: "Quit",
+        action: DemoMenuAction::Quit,
+    },
+    DemoMenuItem {
+        label: "Back",
+        action: DemoMenuAction::Back,
+    },
+];
+
 pub struct DemoMenuPrefab;
 
 impl Prefab for DemoMenuPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn((
-                UiRootBundle::default(),
-                DemoMenuRootBundle::default(),
-                children![
-                    Self::button(0, "Start", DEMO_START_ACTION),
-                    Self::button(1, "Options", DEMO_OPTIONS_ACTION),
-                    Self::button(2, "Quit", DEMO_QUIT_ACTION),
-                    Self::button(3, "Back", DEMO_BACK_ACTION),
-                ],
-            ))
+            .spawn((UiRootBundle::default(), DemoMenuRootBundle::default()))
+            .with_children(|parent| {
+                for (index, item) in DEMO_MENU_ITEMS.iter().enumerate() {
+                    parent.spawn(Self::button(index, *item));
+                }
+            })
             .id()
     }
 }
 
 impl DemoMenuPrefab {
-    fn button(index: usize, label: &'static str, action: &'static str) -> impl Bundle {
+    fn button(index: usize, item: DemoMenuItem) -> impl Bundle {
         (
             DemoMenuButtonBundle::default(),
             DemoMenuButtonIndex(index),
@@ -41,8 +87,8 @@ impl DemoMenuPrefab {
             } else {
                 DemoMenuFocused::unfocused()
             },
-            InteractionAction::new(action),
-            children![DemoMenuButtonTextBundle::new(label)],
+            InteractionAction::new(item.action.id()),
+            children![DemoMenuButtonTextBundle::new(item.label)],
         )
     }
 }

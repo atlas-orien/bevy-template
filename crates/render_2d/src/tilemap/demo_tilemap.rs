@@ -3,6 +3,8 @@ use bevy::{
     sprite_render::{TileData, TilemapChunk, TilemapChunkTileData},
 };
 
+const DEMO_TILEMAP_ORIGIN: Vec3 = Vec3::new(-1536.0, -192.0, 0.0);
+
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoTilemapLayer2d;
 
@@ -35,7 +37,7 @@ impl DemoTilemapLayer2dBundle {
                 ..default()
             },
             tiles: TilemapChunkTileData(tile_data),
-            transform: Transform::from_xyz(-1536.0, -192.0, 0.0),
+            transform: Transform::from_translation(DEMO_TILEMAP_ORIGIN),
         }
     }
 }

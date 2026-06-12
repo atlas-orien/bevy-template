@@ -1,6 +1,9 @@
+pub mod demo_props;
 pub mod example;
 
 use bevy::prelude::*;
+
+pub use demo_props::{DemoRock2d, DemoRock2dBundle, DemoSensorZone2d, DemoSensorZone2dBundle};
 
 pub struct PropsPlugin;
 

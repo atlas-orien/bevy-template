@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 use ecs::components::{
-    base::{Facing, Health, MaxHealth, MovementIntent, Speed},
+    base::{AudioClips, Facing, Health, MaxHealth, MovementIntent, Speed},
     characters::{Character, DemoPlayerControlled},
     world::gameplay::{GameplayEntity, GameplayEntityId, GameplaySessionEntity},
+};
+use physics::{
+    PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
 use render_2d::camera::DemoCameraFollowTarget;
 use render_2d::characters::DemoPlayerSprite2dBundle;
@@ -53,6 +56,26 @@ impl Prefab for DemoPlayerPrefab {
                     DemoPlayerSprite2dBundle::new(self.image, self.atlas_layout),
                     DemoParticleEmitter2dBundle::default(),
                 ],
+            ))
+            .insert((
+                AudioClips::default().with_interact("audio/demo_footstep.ogg"),
+                PhysicsRigidBody::Kinematic,
+                PhysicsCollider2d::Rectangle {
+                    width: 24.0,
+                    height: 32.0,
+                },
+                PhysicsActiveEvents {
+                    collision: true,
+                    contact_force: false,
+                },
+                PhysicsActiveCollisionTypes {
+                    dynamic_dynamic: true,
+                    dynamic_kinematic: true,
+                    dynamic_static: true,
+                    kinematic_kinematic: true,
+                    kinematic_static: true,
+                    static_static: false,
+                },
             ))
             .id()
     }

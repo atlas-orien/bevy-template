@@ -1,4 +1,5 @@
 pub mod control;
+pub mod demo_events;
 pub mod identity;
 pub mod intent;
 pub mod lifecycle;
@@ -35,6 +36,9 @@ impl Plugin for PrefabPlugin {
             (
                 lifecycle::play_spawn_audio_system,
                 lifecycle::play_despawn_audio_system,
+                world_2d::demo_level::demo_sensor_bridge_system,
+                world_2d::demo_level::demo_sensor_audio_system,
+                world_2d::demo_level::demo_footstep_audio_system,
             ),
         );
     }

@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use ecs::components::base::MovementIntent;
+use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct DemoParticleEmitter2d {
@@ -103,5 +104,45 @@ pub fn demo_particle_update_system(
 
         let alpha = (particle.remaining_seconds / particle.lifetime_seconds).clamp(0.0, 1.0);
         sprite.color.set_alpha(alpha * 0.72);
+    }
+}
+
+pub fn demo_sensor_particle_burst_system(
+    mut commands: Commands,
+    mut events: MessageReader<DemoSensorTriggeredEvent>,
+    transforms: Query<&GlobalTransform>,
+) {
+    const DIRECTIONS: [Vec2; 8] = [
+        Vec2::new(1.0, 0.0),
+        Vec2::new(0.7, 0.7),
+        Vec2::new(0.0, 1.0),
+        Vec2::new(-0.7, 0.7),
+        Vec2::new(-1.0, 0.0),
+        Vec2::new(-0.7, -0.7),
+        Vec2::new(0.0, -1.0),
+        Vec2::new(0.7, -0.7),
+    ];
+
+    for event in events.read() {
+        let Ok(transform) = transforms.get(event.sensor) else {
+            continue;
+        };
+        let position = transform.translation();
+
+        for direction in DIRECTIONS {
+            commands.spawn((
+                Sprite {
+                    color: Color::srgba(0.28, 0.86, 1.0, 0.86),
+                    custom_size: Some(Vec2::splat(8.0)),
+                    ..default()
+                },
+                Transform::from_xyz(position.x, position.y, 4.0),
+                DemoParticle2d {
+                    remaining_seconds: 0.45,
+                    lifetime_seconds: 0.45,
+                    velocity: direction.normalize_or_zero() * 90.0,
+                },
+            ));
+        }
     }
 }

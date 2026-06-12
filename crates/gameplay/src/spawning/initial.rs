@@ -4,7 +4,9 @@ use bevy::{
 };
 use prefab::lifecycle::{GameplaySessionEntities, GameplaySessionEntity};
 use prefab::world_2d::characters::DemoPlayerPrefab;
-use prefab::world_2d::demo_level::{DemoBackgroundPrefab, DemoGroundPrefab};
+use prefab::world_2d::demo_level::{
+    DemoBackgroundPrefab, DemoGroundPrefab, DemoRockPrefab, DemoSensorZonePrefab,
+};
 use render_2d::atlases::demo_player_atlas_layout;
 use render_2d::camera::DemoWorldCamera2dBundle;
 
@@ -29,6 +31,9 @@ pub fn default_gameplay_spawn_plan(
             asset_server.load("2d/animated/characters/demo_player.png"),
             player_atlas_layout,
         ))
+        .with(DemoRockPrefab::new(Vec2::new(-220.0, 94.0)))
+        .with(DemoRockPrefab::new(Vec2::new(260.0, 94.0)))
+        .with(DemoSensorZonePrefab::new(Vec2::new(140.0, 98.0)))
 }
 
 pub fn spawn_initial_gameplay_plan_system(

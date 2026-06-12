@@ -1,3 +1,4 @@
+use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 
 pub const UI_CAMERA_ORDER: isize = 100;
@@ -19,6 +20,7 @@ impl Default for UiCameraConfig {
 pub struct UiCamera {
     pub camera_2d: Camera2d,
     pub camera: Camera,
+    pub render_layers: RenderLayers,
     pub default_ui_camera: IsDefaultUiCamera,
     pub config: UiCameraConfig,
 }
@@ -34,6 +36,7 @@ impl Default for UiCamera {
                 clear_color: ClearColorConfig::None,
                 ..default()
             },
+            render_layers: RenderLayers::layer(1),
             default_ui_camera: IsDefaultUiCamera,
             config,
         }

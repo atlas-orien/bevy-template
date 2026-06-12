@@ -9,7 +9,7 @@ pub struct DemoCameraFollow {
 
 impl Default for DemoCameraFollow {
     fn default() -> Self {
-        Self { smoothness: 7.0 }
+        Self { smoothness: 12.0 }
     }
 }
 

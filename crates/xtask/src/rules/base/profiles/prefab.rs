@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::base::dependencies::reject_workspace_dependencies;
+use crate::rules::base::dependencies::reject_dependencies;
 use crate::rules::base::paths::{reject_paths, require_crate_anchor, require_mod_rs_under_src};
 use crate::rules::base::source::{
     reject_direct_input_access, reject_lines_containing_all_terms, reject_terms_in_rust_files,
@@ -22,7 +22,7 @@ pub fn check_prefab(rules: PrefabRules<'_>, errors: &mut Vec<String>) {
         "prefab needs a crate root that exports spawn/template facades",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,

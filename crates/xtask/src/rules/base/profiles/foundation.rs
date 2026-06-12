@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::base::dependencies::reject_workspace_dependencies;
+use crate::rules::base::dependencies::reject_dependencies;
 use crate::rules::base::paths::{require_mod_rs_under_src, require_paths};
 use crate::rules::base::source::reject_direct_input_access;
 use crate::rules::util::require_path;
@@ -28,7 +28,7 @@ pub fn check_simple_crate(rules: SimpleCrateRules<'_>, errors: &mut Vec<String>)
     );
     require_paths(rules.required_paths, errors, rules.required_paths_hint);
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,

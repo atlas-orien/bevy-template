@@ -1,8 +1,6 @@
 use std::path::Path;
 
-use crate::rules::base::dependencies::{
-    reject_workspace_dependencies, require_workspace_dependency,
-};
+use crate::rules::base::dependencies::{reject_dependencies, require_workspace_dependency};
 use crate::rules::base::derives::reject_derived_types;
 use crate::rules::base::paths::{reject_paths, require_mod_rs_under_src, require_paths};
 use crate::rules::base::source::{
@@ -37,7 +35,7 @@ pub fn check_interaction(rules: InteractionRules<'_>, errors: &mut Vec<String>) 
         "interaction semantic messages such as UI press and UI navigation input should stay in the interaction message boundary",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,
@@ -88,7 +86,7 @@ pub fn check_peripherals(rules: PeripheralsRules<'_>, errors: &mut Vec<String>) 
         "local peripheral adapters should stay grouped by keyboard/mouse/gamepad directories",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,
@@ -155,7 +153,7 @@ pub fn check_external_runtime(rules: ExternalRuntimeRules<'_>, errors: &mut Vec<
         errors,
         "local keyboard/mouse/gamepad adapters belong in crates/peripherals, Bevy interaction belongs in crates/interaction, and network is outside external_runtime v1",
     );
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,

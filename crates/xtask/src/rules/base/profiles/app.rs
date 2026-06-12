@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::base::dependencies::reject_workspace_dependencies;
+use crate::rules::base::dependencies::reject_dependencies;
 use crate::rules::base::source::reject_terms_in_rust_files;
 use crate::rules::util::require_path;
 
@@ -21,7 +21,7 @@ pub fn check_app(rules: AppRules<'_>, errors: &mut Vec<String>) {
         errors,
         "app needs a stable crate entry point for application assembly",
     );
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,

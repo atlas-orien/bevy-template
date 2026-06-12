@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::base::dependencies::reject_workspace_dependencies;
+use crate::rules::base::dependencies::reject_dependencies;
 use crate::rules::base::derives::{reject_derived_types, reject_derived_types_except_under};
 use crate::rules::base::paths::{
     reject_files_under_dir_except, reject_subdirs_except, require_mod_rs_under_src, require_paths,
@@ -35,7 +35,7 @@ pub fn check_intent(rules: IntentRules<'_>, errors: &mut Vec<String>) {
         "intent needs a crate root that exports semantic intent APIs",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,
@@ -86,7 +86,7 @@ pub fn check_navigation(rules: NavigationRules<'_>, errors: &mut Vec<String>) {
         "navigation must keep semantic module directories for agents, targets, paths, queries, and systems",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,
@@ -137,7 +137,7 @@ pub fn check_gameplay(rules: GameplayRules<'_>, errors: &mut Vec<String>) {
         "gameplay API, lifecycle, and schedule boundaries should stay explicit directories",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,

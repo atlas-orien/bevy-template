@@ -33,15 +33,6 @@ pub fn reject_dependencies(
     }
 }
 
-pub fn reject_workspace_dependencies(
-    crate_path: &str,
-    dependencies: &[&str],
-    errors: &mut Vec<String>,
-    hint: &str,
-) {
-    reject_dependencies(crate_path, dependencies, errors, hint);
-}
-
 pub fn require_workspace_dependency(
     crate_path: &str,
     dependency: &str,

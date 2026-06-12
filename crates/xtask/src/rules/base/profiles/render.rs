@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::base::dependencies::reject_workspace_dependencies;
+use crate::rules::base::dependencies::reject_dependencies;
 use crate::rules::base::functions::reject_free_functions_returning_any;
 use crate::rules::base::paths::{
     reject_file_names, reject_paths, require_mod_rs_under_src, require_paths,
@@ -40,7 +40,7 @@ pub fn check_render_3d(rules: Render3dRules<'_>, errors: &mut Vec<String>) {
         "3D presentation concepts should stay grouped by semantic directories",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,
@@ -95,7 +95,7 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         errors,
         "render_2d should not recreate Bevy facade directories; put concrete game presentation code in the content category directories",
     );
-    reject_workspace_dependencies(
+    reject_dependencies(
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,

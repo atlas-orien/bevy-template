@@ -1,8 +1,22 @@
+use audio::playback::AudioPlaybackSettings;
 use audio::request::PlayAudioRequest;
 use bevy::prelude::*;
 use ecs::components::base::{AudioClips, MovementIntent};
 use ecs::components::characters::DemoPlayerControlled;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
+use ecs::events::demo_session::DemoSessionStartedEvent;
+
+pub fn demo_bgm_audio_system(
+    mut events: MessageReader<DemoSessionStartedEvent>,
+    mut audio_requests: MessageWriter<PlayAudioRequest>,
+) {
+    for _ in events.read() {
+        audio_requests.write(
+            PlayAudioRequest::sample("audio/demo_bgm.ogg")
+                .with_settings(AudioPlaybackSettings::looping().with_volume(0.35)),
+        );
+    }
+}
 
 pub fn demo_sensor_audio_system(
     mut events: MessageReader<DemoSensorTriggeredEvent>,

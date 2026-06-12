@@ -17,7 +17,8 @@ pub fn register_enter_schedules(app: &mut App) {
             )
                 .chain(),
         )
-        .add_systems(OnEnter(AppState::Paused), enter_paused);
+        .add_systems(OnEnter(AppState::Paused), enter_paused)
+        .add_systems(OnEnter(AppState::GameOver), enter_game_over);
 }
 
 fn enter_main_menu(
@@ -52,4 +53,21 @@ fn enter_paused(
     commands.entity(menu).insert(UiTargetCamera(ui_camera));
 
     info!("Demo paused.");
+}
+
+fn enter_game_over(
+    mut commands: Commands,
+    mut input_context: MessageWriter<LocalInputContextMessage>,
+    ui_cameras: Query<Entity, With<UiCameraConfig>>,
+) {
+    input_context.write(LocalInputContextMessage(LocalInputContext::UiNavigation));
+
+    let ui_camera = ui_cameras
+        .iter()
+        .next()
+        .unwrap_or_else(|| commands.spawn(UiCamera::default()).id());
+    let menu = DemoMenuPrefab.spawn(&mut commands);
+    commands.entity(menu).insert(UiTargetCamera(ui_camera));
+
+    info!("Demo game over.");
 }

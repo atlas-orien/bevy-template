@@ -6,7 +6,9 @@ pub mod demo_props;
 pub mod demo_sensor_bridge;
 pub mod demo_sensor_zone;
 
-pub use demo_audio_bridge::{demo_footstep_audio_system, demo_sensor_audio_system};
+pub use demo_audio_bridge::{
+    demo_bgm_audio_system, demo_footstep_audio_system, demo_sensor_audio_system,
+};
 pub use demo_background::DemoBackgroundPrefab;
 pub use demo_ground::DemoGroundPrefab;
 pub use demo_props::DemoRockPrefab;

@@ -5,12 +5,14 @@
 
 pub mod combat;
 pub mod demo_sensor;
+pub mod demo_session;
 pub mod lifecycle;
 
 use bevy::prelude::*;
 
 use self::combat::{DamageEvent, HealEvent};
 use self::demo_sensor::DemoSensorTriggeredEvent;
+use self::demo_session::DemoSessionStartedEvent;
 use self::lifecycle::{DiedEvent, SpawnedEvent};
 
 pub struct EventsPlugin;
@@ -20,6 +22,7 @@ impl Plugin for EventsPlugin {
         app.add_message::<DamageEvent>()
             .add_message::<HealEvent>()
             .add_message::<DemoSensorTriggeredEvent>()
+            .add_message::<DemoSessionStartedEvent>()
             .add_message::<SpawnedEvent>()
             .add_message::<DiedEvent>();
     }

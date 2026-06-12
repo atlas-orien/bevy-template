@@ -543,6 +543,7 @@ grep -rli demo crates/ assets/ | sort   # 列出全部 demo 文件
 |---|---|---|---|---|---|
 | 0 | M4 | PERIPHERALS.md：peripherals 不拥有流程状态 | `LocalInputContext` 放 peripherals 导致上下文切换无主 | 枚举搬到 gameplay::api，peripherals 读取 gameplay 的 `ActiveLocalInputContext` | 协议同步更新代码落点 |
 | 1 | M4 | GAMEPLAY.md：状态退出调度承载 session 清理 | `Paused` 是独立 `AppState` 时，Playing → Paused 会触发 `OnExit(Playing)`，若在这里清理 gameplay session 会把暂停中的世界删掉 | 暂时移除 `OnExit(Playing)` 的 session 清理；暂停只生成/清理 demo 菜单，恢复时跳过重复 spawn | 明确 session lifecycle 与 flow state 的边界；候选方案是新增独立 pause substate，或改为显式 `ClearSession` 请求清理 session |
+| 2 | M9 | 资产建议：BGM 体积控制在 1MB 内 | Bevy 示例 BGM `Windless Slopes.ogg` 复制后约 1.4MB | 暂用 Bevy 示例资源，保持 `demo_bgm.ogg` 命名便于替换/删除 | 后续压缩或换更短的 CC0 循环音频 |
 
 **已预见、实现时需要确认的摩擦点：**
 

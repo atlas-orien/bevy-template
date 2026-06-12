@@ -41,6 +41,7 @@ pub fn spawn_initial_gameplay_plan_system(
     asset_server: Res<AssetServer>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     session_entities: GameplaySessionEntities,
+    mut demo_session_started: MessageWriter<prefab::demo_events::DemoSessionStartedEvent>,
 ) {
     if !session_entities.is_empty() {
         info!("Initial gameplay spawn plan skipped; session already exists.");
@@ -52,6 +53,8 @@ pub fn spawn_initial_gameplay_plan_system(
     for prefab in default_gameplay_spawn_plan(&asset_server, &mut atlas_layouts).into_prefabs() {
         prefab.spawn_boxed(&mut commands);
     }
+
+    demo_session_started.write(prefab::demo_events::DemoSessionStartedEvent);
 
     info!("Initial gameplay spawn plan completed.");
 }

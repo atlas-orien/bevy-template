@@ -9,6 +9,9 @@ use physics::{
 };
 use render_2d::camera::DemoCameraFollowTarget;
 use render_2d::characters::DemoPlayerSprite2dBundle;
+use render_2d::overlays::{
+    DemoHealthBarBackground2dBundle, DemoHealthBarFill2dBundle, DemoHealthBarOverlay2dBundle,
+};
 use render_2d::particles::DemoParticleEmitter2dBundle;
 
 use crate::Prefab;
@@ -55,6 +58,13 @@ impl Prefab for DemoPlayerPrefab {
                 children![
                     DemoPlayerSprite2dBundle::new(self.image, self.atlas_layout),
                     DemoParticleEmitter2dBundle::default(),
+                    (
+                        DemoHealthBarOverlay2dBundle::default(),
+                        children![
+                            DemoHealthBarBackground2dBundle::default(),
+                            DemoHealthBarFill2dBundle::default(),
+                        ],
+                    ),
                 ],
             ))
             .insert((

@@ -22,16 +22,44 @@ pub fn check() -> CheckStatus {
         &mut errors,
         "AI_PROTOCOL/INTERACTION.md documents the interaction boundary rules",
     );
+    require_path(
+        "crates/interaction/src/message.rs",
+        &mut errors,
+        "interaction semantic messages such as UI press and UI navigation input should stay in the interaction message boundary",
+    );
 
     require_mod_rs_in_subdirs(Path::new(INTERACTION_CRATE).join("src"), &mut errors);
     reject_dependencies(&mut errors);
     reject_world_mutation(&mut errors);
     reject_network_details(&mut errors);
+    require_ui_navigation_message(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn require_ui_navigation_message(errors: &mut Vec<String>) {
+    let message_file = Path::new(INTERACTION_CRATE).join("src/message.rs");
+    let Some(source) = read_file_if_exists(&message_file) else {
+        return;
+    };
+
+    for required in [
+        "UiNavigationInputMessage",
+        "UiNavigationInputKind",
+        "Previous",
+        "Next",
+        "Activate",
+    ] {
+        if !source.contains(required) {
+            errors.push(format!(
+                "{} does not define `{required}`; keyboard/gamepad UI navigation should be converted into semantic interaction messages before gameplay consumes it",
+                message_file.display()
+            ));
+        }
     }
 }
 

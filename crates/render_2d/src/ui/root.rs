@@ -40,10 +40,31 @@ impl Default for FullScreenUiNodeBundle {
     }
 }
 
-#[derive(Bundle, Default)]
+#[derive(Bundle)]
 pub struct UiRootNodeBundle {
-    pub root: UiRootBundle,
-    pub node: FullScreenUiNodeBundle,
+    pub marker: UiRoot,
+    pub z_index: ZIndex,
+    pub node: Node,
+}
+
+impl Default for UiRootNodeBundle {
+    fn default() -> Self {
+        Self::new(UiLayer::Root)
+    }
+}
+
+impl UiRootNodeBundle {
+    pub fn new(layer: UiLayer) -> Self {
+        Self {
+            marker: UiRoot,
+            z_index: ui_layer_z_index(layer),
+            node: Node {
+                width: percent(100),
+                height: percent(100),
+                ..default()
+            },
+        }
+    }
 }
 
 fn ui_layer_z_index(layer: UiLayer) -> ZIndex {

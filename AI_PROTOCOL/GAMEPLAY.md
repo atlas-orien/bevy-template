@@ -25,6 +25,7 @@
 - 关卡、回合、gameplay session 生命周期：写到 `crates/gameplay/src/lifecycle`。
 - UI 和世界对象被点击、hover 后的具体业务处理：写到 `crates/gameplay/src/interaction` 下的分类目录。
 - UI 交互业务处理：写到 `crates/gameplay/src/interaction/ui`，demo 菜单逻辑写到 `ui/demo_menu.rs`。
+- UI 键盘导航进入 `gameplay` 时必须已经是 `interaction::UiNavigationInputMessage`；焦点切换和 Enter 激活的 demo 业务处理写到 `interaction/ui/demo_menu.rs`。
 
 当前旧目录可以逐步迁移，不需要保留旧名字。
 
@@ -102,6 +103,7 @@
 - 不读取外部来源；外部 AI、脚本、回放和未来网络放到 `external_runtime`，并通过 manager 进入 gameplay。
 - 不读取本机外设；键盘、鼠标和手柄放到 `peripherals`，再转换成语义请求。
 - 不直接读取 Bevy 底层 interaction 状态；UI 和世界对象 hover/click 等交互由 `interaction` 转换成语义 message，gameplay 只消费这些 message 并执行业务。
+- `gameplay` 可以维护具体 UI demo 的焦点状态，但只能修改 render/prefab 暴露的语义组件，不直接读取 `KeyCode` 或写视觉颜色细节。
 - 不写渲染、动画、UI、相机；这些放到渲染层。
 - 不直接散装实体组件；生成对象时优先调用 `crates/prefab`。
 - 外部来源不要直接调用 gameplay 内部执行函数；应该通过 `api` 提交请求，由 gameplay system 统一消费。

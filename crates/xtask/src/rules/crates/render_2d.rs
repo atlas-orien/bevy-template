@@ -35,6 +35,7 @@ pub fn check() -> CheckStatus {
     reject_world_rule_references(&mut errors);
     reject_runtime_camera_targets(&mut errors);
     reject_ui_free_bundle_functions(&mut errors);
+    reject_ui_duplicate_node_bundles(&mut errors);
     reject_ui_camera_file(&mut errors);
     reject_generic_ui_menu_file(&mut errors);
     reject_ambiguous_files(&mut errors);
@@ -43,6 +44,32 @@ pub fn check() -> CheckStatus {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn reject_ui_duplicate_node_bundles(errors: &mut Vec<String>) {
+    let ui_dir = Path::new(RENDER_2D_CRATE).join("src/ui");
+
+    for file in rust_files(ui_dir) {
+        let Some(source) = read_file_if_exists(&file) else {
+            continue;
+        };
+
+        let has_full_screen_node_field = source
+            .lines()
+            .map(str::trim)
+            .any(|line| line.contains(": FullScreenUiNodeBundle"));
+        let has_node_field = source
+            .lines()
+            .map(str::trim)
+            .any(|line| line.contains(": Node"));
+
+        if has_full_screen_node_field && has_node_field {
+            errors.push(format!(
+                "{} combines `FullScreenUiNodeBundle` with another `Node`; Bevy entities may only receive one Node component, so UI root/layout bundles must expose a single composed Node",
+                file.display()
+            ));
+        }
     }
 }
 

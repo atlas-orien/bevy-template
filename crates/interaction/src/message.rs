@@ -15,3 +15,15 @@ pub struct InteractionEventMessage {
     pub action: InteractionAction,
     pub kind: InteractionEventKind,
 }
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum UiNavigationInputKind {
+    Previous,
+    Next,
+    Activate,
+}
+
+#[derive(Message, Debug, Clone, Copy, Eq, PartialEq)]
+pub struct UiNavigationInputMessage {
+    pub kind: UiNavigationInputKind,
+}

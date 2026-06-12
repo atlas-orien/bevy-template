@@ -6,8 +6,12 @@ pub use error::Result;
 
 use bevy::prelude::*;
 
+use self::keyboard::emit_keyboard_ui_navigation_system;
+
 pub struct PeripheralsPlugin;
 
 impl Plugin for PeripheralsPlugin {
-    fn build(&self, _app: &mut App) {}
+    fn build(&self, app: &mut App) {
+        app.add_systems(PreUpdate, emit_keyboard_ui_navigation_system);
+    }
 }

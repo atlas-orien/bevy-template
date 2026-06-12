@@ -20,6 +20,7 @@
 
 - 交互语义数据：写到 `crates/interaction/src/action.rs`。
 - 交互事件 message：写到 `crates/interaction/src/message.rs`。
+- UI 导航语义 message：写到 `crates/interaction/src/message.rs`，例如 `UiNavigationInputMessage`。
 - UI Button interaction 桥接：写到 `crates/interaction/src/ui.rs`。
 
 ## 边界规则
@@ -27,6 +28,7 @@
 - `interaction` 可以读取 Bevy UI 的 `Button` 和 `Interaction`。
 - `interaction` 可以定义交互语义 `Component`，例如 `InteractionAction`。
 - `interaction` 可以定义交互 message，例如 `InteractionEventMessage`。
+- `interaction` 可以定义 UI 导航 message，例如 `UiNavigationInputMessage`，供 `peripherals` 写入、`gameplay` 消费。
 - `interaction` 不定义核心玩法 Bundle、Resource 或底层 ECS system。
 - `interaction` 不直接修改 `Transform`、速度、生命值、背包或物理组件。
 - `interaction` 不生成 gameplay entity。

@@ -80,6 +80,13 @@ fn reject_dependencies(errors: &mut Vec<String>) {
             ));
         }
     }
+
+    if !manifest_has_workspace_dependency(&source, "interaction") {
+        errors.push(format!(
+            "{} does not depend on `interaction`; peripherals should publish semantic local input such as UI navigation through the shared interaction message boundary",
+            manifest.display()
+        ));
+    }
 }
 
 fn reject_core_data_definitions(errors: &mut Vec<String>) {

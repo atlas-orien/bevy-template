@@ -10,6 +10,7 @@
 
 - 读取 Bevy App 内部的本机外设输入，例如键盘、鼠标和手柄。
 - 把设备细节转换成项目语义动作，例如移动、交互、UI action 或 outbound network action。
+- 键盘方向键和 Enter 这类 UI 操作要转换成 `interaction::UiNavigationInputMessage`，不要把 `KeyCode` 传给 `gameplay`。
 - 作为 Bevy `Plugin` 注册到 App。
 - 不直接读取或修改底层 ECS 结果。
 - 不处理 protobuf、socket、远端连接、AI、脚本或回放。
@@ -23,6 +24,7 @@
 ## 边界规则
 
 - `peripherals` 可以读取 Bevy 输入资源，例如 `ButtonInput<KeyCode>`、`ButtonInput<MouseButton>` 和 gamepad 输入。
+- `peripherals` 可以写入 interaction crate 定义的语义 message，例如 `UiNavigationInputMessage`。
 - `peripherals` 不直接使用 `Commands` 生成 gameplay entity。
 - `peripherals` 不直接修改 `Transform`、速度、生命值、背包或物理组件。
 - `peripherals` 不定义核心 `Component`、`Bundle`、`Resource`、`Event`。
@@ -35,6 +37,7 @@
 
 - `peripherals` 可以依赖 `bevy`。
 - `peripherals` 可以依赖 `gameplay`，用于提交 Bevy App 内部的语义 gameplay 请求。
+- `peripherals` 可以依赖 `interaction`，用于发布 UI 导航等本机交互语义 message。
 - `peripherals` 可以依赖 `intent`，用于共享 intent 语义类型。
 - `peripherals` 必须依赖 `error`。
 - `peripherals` 不依赖 `external_runtime`。

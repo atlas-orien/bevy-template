@@ -43,11 +43,38 @@ pub fn check() -> CheckStatus {
     reject_interaction_logic_in_mod_rs(&mut errors);
     require_interaction_category_dirs(&mut errors);
     reject_unknown_interaction_layout(&mut errors);
+    require_demo_menu_interaction_handler(&mut errors);
 
     if errors.is_empty() {
         CheckStatus::Passed
     } else {
         CheckStatus::Failed(errors)
+    }
+}
+
+fn require_demo_menu_interaction_handler(errors: &mut Vec<String>) {
+    let demo_menu = Path::new(GAMEPLAY_CRATE).join("src/interaction/ui/demo_menu.rs");
+    require_path(
+        &demo_menu,
+        errors,
+        "demo menu UI focus, keyboard activation, and click handling should stay together in gameplay/src/interaction/ui/demo_menu.rs",
+    );
+
+    let Some(source) = read_file_if_exists(&demo_menu) else {
+        return;
+    };
+
+    for required in [
+        "UiNavigationInputMessage",
+        "handle_demo_ui_navigation_system",
+        "DemoMenuFocused",
+    ] {
+        if !source.contains(required) {
+            errors.push(format!(
+                "{} does not contain `{required}`; the demo menu needs an explicit gameplay-side focus/navigation handler instead of scattering UI keyboard logic",
+                demo_menu.display()
+            ));
+        }
     }
 }
 

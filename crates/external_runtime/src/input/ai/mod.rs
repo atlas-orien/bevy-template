@@ -1,17 +1,19 @@
 use bevy::prelude::Vec2;
 use intent::movement::MovementTarget;
+use prefab::world_2d::characters::DemoNpcPrefab;
 
 use crate::manager::{
-    ExternalRuntimeManager, RuntimeUserId, has_user_entity, set_user_movement_intent,
+    ExternalRuntimeManager, RuntimeObjectId, has_object_entity, set_object_movement_intent,
+    spawn_prefab_for_object,
 };
 
-const DEFAULT_AI_USER_ID: RuntimeUserId = RuntimeUserId(1);
+const DEMO_AI_NPC_OBJECT_ID: RuntimeObjectId = RuntimeObjectId(1);
 const DECISION_INTERVAL_TICKS: u32 = 240;
 const WAYPOINTS: [Vec2; 4] = [
-    Vec2::new(180.0, 0.0),
-    Vec2::new(180.0, 120.0),
-    Vec2::new(-180.0, 120.0),
-    Vec2::new(-180.0, 0.0),
+    Vec2::new(220.0, 96.0),
+    Vec2::new(220.0, 180.0),
+    Vec2::new(-220.0, 180.0),
+    Vec2::new(-220.0, 96.0),
 ];
 
 #[derive(Debug, Clone)]
@@ -29,7 +31,16 @@ impl AiControlSource {
     }
 
     pub fn poll(&mut self, manager: &ExternalRuntimeManager) {
-        if !has_user_entity(manager, DEFAULT_AI_USER_ID) {
+        if manager.entities().is_empty() {
+            return;
+        }
+
+        if !has_object_entity(manager, DEMO_AI_NPC_OBJECT_ID) {
+            let _ = spawn_prefab_for_object(
+                manager,
+                DEMO_AI_NPC_OBJECT_ID,
+                DemoNpcPrefab::new(Vec2::new(-120.0, 96.0)),
+            );
             return;
         }
 
@@ -40,7 +51,7 @@ impl AiControlSource {
         }
 
         let target = MovementTarget::Position(WAYPOINTS[self.waypoint_index]);
-        let _ = set_user_movement_intent(manager, DEFAULT_AI_USER_ID, target);
+        let _ = set_object_movement_intent(manager, DEMO_AI_NPC_OBJECT_ID, target);
     }
 }
 

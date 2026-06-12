@@ -8,6 +8,7 @@ use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
 use render_2d::camera::DemoCameraFollowTarget;
+use render_2d::characters::DemoNpcSprite2dBundle;
 use render_2d::characters::DemoPlayerSprite2dBundle;
 use render_2d::overlays::{
     DemoHealthBarBackground2dBundle, DemoHealthBarFill2dBundle, DemoHealthBarOverlay2dBundle,
@@ -22,6 +23,40 @@ pub struct DemoPlayerPrefab {
     position: Vec2,
     image: Handle<Image>,
     atlas_layout: Handle<TextureAtlasLayout>,
+}
+
+pub struct DemoNpcPrefab {
+    position: Vec2,
+}
+
+impl DemoNpcPrefab {
+    pub fn new(position: Vec2) -> Self {
+        Self { position }
+    }
+}
+
+impl Prefab for DemoNpcPrefab {
+    fn spawn(self, commands: &mut Commands) -> Entity {
+        commands
+            .spawn((
+                Character,
+                GameplayEntity,
+                GameplaySessionEntity,
+                MovementIntent::default(),
+                Speed(120.0),
+                Facing::default(),
+                navigation::NavigationAgent2d {
+                    speed: 120.0,
+                    stopping_distance: 3.0,
+                },
+                navigation::NavigationTarget2d::default(),
+                navigation::NavigationPath2d::default(),
+                Transform::from_xyz(self.position.x, self.position.y, 2.0),
+                Visibility::default(),
+                children![DemoNpcSprite2dBundle::default()],
+            ))
+            .id()
+    }
 }
 
 impl DemoPlayerPrefab {

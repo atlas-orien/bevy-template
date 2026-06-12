@@ -41,6 +41,7 @@ impl Plugin for PrefabPlugin {
                 world_2d::demo_level::demo_bgm_audio_system,
                 world_2d::demo_level::demo_sensor_audio_system,
                 world_2d::demo_level::demo_footstep_audio_system,
+                navigation::sync_demo_navigation_targets_from_intent_system,
             ),
         );
     }

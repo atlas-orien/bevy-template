@@ -3,6 +3,7 @@ pub use ::navigation::{
     NavigationTarget3d,
 };
 use bevy::prelude::*;
+use ecs::components::base::{MovementIntent, MovementTarget};
 
 pub type NavigationTarget2dQuery<'w, 's> =
     Query<'w, 's, &'static mut NavigationTarget2d, With<NavigationAgent2d>>;
@@ -39,4 +40,17 @@ pub fn set_navigation_target_3d(
     *target = position
         .into()
         .map_or(NavigationTarget3d::None, NavigationTarget3d::Position);
+}
+
+pub fn sync_demo_navigation_targets_from_intent_system(
+    mut agents: Query<(&mut MovementIntent, &mut NavigationTarget2d), With<NavigationAgent2d>>,
+) {
+    for (mut movement, mut target) in &mut agents {
+        let MovementTarget::Position(position) = movement.target else {
+            continue;
+        };
+
+        set_navigation_target_2d(&mut target, position);
+        movement.target = MovementTarget::None;
+    }
 }

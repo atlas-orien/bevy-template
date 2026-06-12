@@ -14,6 +14,9 @@ pub struct DemoMenuFocused {
     pub focused: bool,
 }
 
+#[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
+pub struct DemoMenuRoot;
+
 impl DemoMenuFocused {
     pub const fn focused() -> Self {
         Self { focused: true }
@@ -26,12 +29,14 @@ impl DemoMenuFocused {
 
 #[derive(Bundle)]
 pub struct DemoMenuRootBundle {
+    pub marker: DemoMenuRoot,
     pub node: Node,
 }
 
 impl Default for DemoMenuRootBundle {
     fn default() -> Self {
         Self {
+            marker: DemoMenuRoot,
             node: Node {
                 width: percent(100),
                 height: percent(100),

@@ -26,6 +26,10 @@ pub fn check_architecture() -> CheckStatus {
         errors.append(&mut rule_errors);
     }
 
+    if let CheckStatus::Failed(mut rule_errors) = crates::dev_preview::check() {
+        errors.append(&mut rule_errors);
+    }
+
     if let CheckStatus::Failed(mut rule_errors) = crates::intent::check() {
         errors.append(&mut rule_errors);
     }

@@ -14,5 +14,5 @@ impl Plugin for StatePlugin {
 }
 
 fn enter_loading(mut next_state: ResMut<NextState<AppState>>) {
-    next_state.set(AppState::Playing);
+    next_state.set(AppState::MainMenu);
 }

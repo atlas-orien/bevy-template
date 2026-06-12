@@ -1,6 +1,8 @@
+pub mod control;
 pub mod identity;
 pub mod intent;
 pub mod lifecycle;
+pub mod movement;
 pub mod navigation;
 pub mod prefab;
 pub mod ui;

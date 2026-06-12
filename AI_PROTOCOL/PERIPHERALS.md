@@ -21,6 +21,7 @@
 
 - 本机输入上下文和语义动作：写到 `crates/peripherals/src/local_input.rs`。
 - 键盘适配：写到 `crates/peripherals/src/keyboard`。
+- 键盘按键绑定按功能拆到 `crates/peripherals/src/keyboard/bindings/*.rs`，例如 `ui.rs`、`gameplay.rs`、未来的 `inventory.rs`、`dialog.rs` 或 `debug.rs`。
 - 鼠标适配：写到 `crates/peripherals/src/mouse`。
 - 手柄适配：写到 `crates/peripherals/src/gamepad`。
 
@@ -29,6 +30,7 @@
 - `peripherals` 可以读取 Bevy 输入资源，例如 `ButtonInput<KeyCode>`、`ButtonInput<MouseButton>` 和 gamepad 输入。
 - `peripherals` 可以写入 interaction crate 定义的语义 message，例如 `UiNavigationInputMessage`。
 - `peripherals` 可以定义普通 Rust 语义类型，例如 `LocalInputContext`、`LocalInputAction` 和本机 key binding 表；不要把这些类型派生成 Bevy `Resource`、`Event`、`Component` 或 `Bundle`。
+- 新增键盘功能时，优先新增或扩展 `keyboard/bindings/{feature}.rs`，再在路由层把 `LocalInputAction` 投递到 interaction、gameplay 或 intent 边界；不要在一个系统里散写大量 `KeyCode` 判断。
 - `peripherals` 不拥有游戏流程状态。当前是菜单、角色场景、背包、对话还是文本输入，应由 gameplay/app 侧通过明确边界决定，再由 `peripherals` 按上下文解释输入。
 - `peripherals` 不直接使用 `Commands` 生成 gameplay entity。
 - `peripherals` 不直接修改 `Transform`、速度、生命值、背包或物理组件。

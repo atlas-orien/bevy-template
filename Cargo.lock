@@ -2272,6 +2272,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dev_preview"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+ "gameplay",
+ "interaction",
+ "peripherals",
+]
+
+[[package]]
 name = "dispatch"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

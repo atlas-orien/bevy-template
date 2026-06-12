@@ -1,22 +1,41 @@
-use bevy::prelude::*;
-use prefab::Prefab;
-use prefab::ui::DemoMenuPrefab;
-use render_2d::camera::UiCamera;
+use bevy::{
+    image::{ImageArrayLayout, ImageLoaderSettings},
+    prelude::*,
+};
+use prefab::lifecycle::{GameplaySessionEntities, GameplaySessionEntity};
+use prefab::world_2d::characters::DemoPlayerPrefab;
+use prefab::world_2d::demo_level::{DemoBackgroundPrefab, DemoGroundPrefab};
+use render_2d::camera::DemoWorldCamera2dBundle;
 
 use super::plan::GameplaySpawnPlan;
 
-pub fn default_gameplay_spawn_plan() -> GameplaySpawnPlan {
+pub fn default_gameplay_spawn_plan(asset_server: &AssetServer) -> GameplaySpawnPlan {
     GameplaySpawnPlan::new()
+        .with(DemoBackgroundPrefab)
+        .with(DemoGroundPrefab::new(asset_server.load_with_settings(
+            "2d/static/tilemaps/demo_tileset.png",
+            |settings: &mut ImageLoaderSettings| {
+                settings.array_layout = Some(ImageArrayLayout::RowCount { rows: 4 });
+            },
+        )))
+        .with(DemoPlayerPrefab::new(Vec2::new(0.0, 96.0)))
 }
 
-pub fn spawn_initial_gameplay_plan_system(mut commands: Commands) {
-    for prefab in default_gameplay_spawn_plan().into_prefabs() {
-        prefab.spawn_boxed(&mut commands);
+pub fn spawn_initial_gameplay_plan_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    session_entities: GameplaySessionEntities,
+) {
+    if !session_entities.is_empty() {
+        info!("Initial gameplay spawn plan skipped; session already exists.");
+        return;
     }
 
-    let ui_camera = commands.spawn(UiCamera::default()).id();
-    let menu = DemoMenuPrefab.spawn(&mut commands);
-    commands.entity(menu).insert(UiTargetCamera(ui_camera));
+    commands.spawn((DemoWorldCamera2dBundle::default(), GameplaySessionEntity));
+
+    for prefab in default_gameplay_spawn_plan(&asset_server).into_prefabs() {
+        prefab.spawn_boxed(&mut commands);
+    }
 
     info!("Initial gameplay spawn plan completed.");
 }

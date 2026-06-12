@@ -1,5 +1,6 @@
 pub mod app;
 pub mod audio;
+pub mod dev_preview;
 pub mod ecs;
 pub mod error;
 pub mod external_runtime;

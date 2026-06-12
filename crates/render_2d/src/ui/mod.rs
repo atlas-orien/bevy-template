@@ -7,7 +7,7 @@ use self::demo_menu::apply_demo_menu_focus_system;
 
 pub use demo_menu::{
     DemoMenuButtonBundle, DemoMenuButtonIndex, DemoMenuButtonTextBundle, DemoMenuFocused,
-    DemoMenuRootBundle,
+    DemoMenuRoot, DemoMenuRootBundle,
 };
 pub use root::{FullScreenUiNodeBundle, UiLayer, UiRoot, UiRootBundle, UiRootNodeBundle};
 

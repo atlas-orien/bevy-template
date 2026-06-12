@@ -24,6 +24,7 @@ repository = "https://github.com/atlas-orien/bevy-template"
 bevy = "0.18"
 audio = { path = "crates/audio" }
 app = { path = "crates/app" }
+dev_preview = { path = "crates/dev_preview" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
 external_runtime = { path = "crates/external_runtime" }

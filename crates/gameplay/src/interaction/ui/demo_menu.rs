@@ -1,3 +1,4 @@
+use bevy::app::AppExit;
 use bevy::prelude::*;
 use interaction::{
     InteractionAction, InteractionEventKind, InteractionEventMessage, UiNavigationInputKind,
@@ -5,6 +6,8 @@ use interaction::{
 };
 use prefab::ui::{DEMO_BACK_ACTION, DEMO_OPTIONS_ACTION, DEMO_QUIT_ACTION, DEMO_START_ACTION};
 use render_2d::ui::{DemoMenuButtonIndex, DemoMenuFocused};
+
+use crate::state::AppState;
 
 pub const DEMO_MENU_BUTTON_COUNT: usize = 4;
 
@@ -20,19 +23,25 @@ pub type DemoMenuButtonQuery<'world, 'state> = Query<
 
 pub fn handle_demo_ui_interactions_system(
     mut interactions: MessageReader<InteractionEventMessage>,
+    state: Res<State<AppState>>,
+    mut next_state: ResMut<NextState<AppState>>,
+    mut app_exit: MessageWriter<AppExit>,
 ) {
     for interaction in interactions.read() {
         if interaction.kind != InteractionEventKind::Pressed {
             continue;
         }
 
-        run_demo_menu_action(&interaction.action);
+        run_demo_menu_action(&interaction.action, &state, &mut next_state, &mut app_exit);
     }
 }
 
 pub fn handle_demo_ui_navigation_system(
     mut navigation_inputs: MessageReader<UiNavigationInputMessage>,
     mut buttons: DemoMenuButtonQuery,
+    state: Res<State<AppState>>,
+    mut next_state: ResMut<NextState<AppState>>,
+    mut app_exit: MessageWriter<AppExit>,
 ) {
     for navigation_input in navigation_inputs.read() {
         let focused_index = focused_demo_menu_index(&buttons);
@@ -46,7 +55,7 @@ pub fn handle_demo_ui_navigation_system(
             }
             UiNavigationInputKind::Activate => {
                 if let Some(action) = focused_demo_menu_action(focused_index, &buttons) {
-                    run_demo_menu_action(&action);
+                    run_demo_menu_action(&action, &state, &mut next_state, &mut app_exit);
                 }
             }
         }
@@ -87,19 +96,28 @@ fn next_demo_menu_index(current: usize) -> usize {
     (current + 1) % DEMO_MENU_BUTTON_COUNT
 }
 
-fn run_demo_menu_action(action: &InteractionAction) {
+fn run_demo_menu_action(
+    action: &InteractionAction,
+    state: &State<AppState>,
+    next_state: &mut NextState<AppState>,
+    app_exit: &mut MessageWriter<AppExit>,
+) {
     match action.id.as_str() {
         DEMO_START_ACTION => {
-            info!("Demo UI start clicked: gameplay would start or resume the game.");
+            next_state.set(AppState::Playing);
         }
         DEMO_OPTIONS_ACTION => {
             info!("Demo UI options clicked: gameplay would open the options flow.");
         }
         DEMO_QUIT_ACTION => {
-            info!("Demo UI quit clicked: gameplay would request a quit or return flow.");
+            app_exit.write(AppExit::Success);
         }
         DEMO_BACK_ACTION => {
-            info!("Demo UI back clicked: gameplay would return to the previous screen.");
+            if state.get() == &AppState::Paused {
+                next_state.set(AppState::Playing);
+            } else {
+                info!("Demo UI back clicked: no previous screen is active.");
+            }
         }
         _ => {}
     }

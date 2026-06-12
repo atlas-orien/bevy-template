@@ -1,9 +1,9 @@
 use audio::request::PlayAudioRequest;
 use bevy::prelude::*;
 use ecs::components::base::AudioClips;
-use ecs::components::world::gameplay::GameplaySessionEntity;
 use ecs::events::lifecycle::{DiedEvent, SpawnedEvent};
 
+pub use ecs::components::world::gameplay::GameplaySessionEntity;
 pub use ecs::systems::lifecycle::despawn_gameplay_entities_system as despawn_gameplay_prefabs_system;
 
 pub type GameplaySessionEntities<'world, 'state> =

@@ -1,3 +1,5 @@
+//! Demo 感应区 prefab：sensor collider 与 gameplay 身份组合。
+
 use bevy::prelude::*;
 use ecs::components::{
     base::AudioClips,

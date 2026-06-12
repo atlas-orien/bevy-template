@@ -1,3 +1,5 @@
+//! 把 demo 生命周期与移动状态桥接成音频播放请求。
+
 use audio::playback::AudioPlaybackSettings;
 use audio::request::PlayAudioRequest;
 use bevy::prelude::*;

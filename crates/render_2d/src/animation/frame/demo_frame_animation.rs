@@ -1,3 +1,5 @@
+//! Demo 角色的逐帧动画状态与推进系统。
+
 use bevy::prelude::*;
 use ecs::components::base::{Facing, MovementIntent};
 

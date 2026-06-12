@@ -1,3 +1,5 @@
+//! Demo 菜单的 UI 节点 bundle、颜色样式与焦点视觉系统。
+
 use bevy::prelude::*;
 
 const DEMO_MENU_NORMAL_BACKGROUND: Color = Color::srgb(0.12, 0.14, 0.18);

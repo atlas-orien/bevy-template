@@ -1,3 +1,5 @@
+//! Demo 粒子：脚下扬尘发射与感应区爆发的纯视觉生命周期。
+
 use bevy::prelude::*;
 use ecs::components::base::MovementIntent;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;

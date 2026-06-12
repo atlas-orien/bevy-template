@@ -1,3 +1,5 @@
+//! 角色头顶血条覆盖层与血量同步系统。
+
 use bevy::prelude::*;
 use ecs::components::base::{Health, MaxHealth};
 

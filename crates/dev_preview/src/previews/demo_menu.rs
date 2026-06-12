@@ -1,3 +1,5 @@
+//! Demo 菜单的开发预览入口。
+
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
 use gameplay::GameplayPlugin;

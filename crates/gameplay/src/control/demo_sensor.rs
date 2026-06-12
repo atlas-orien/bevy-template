@@ -1,3 +1,5 @@
+//! 消费 demo 感应区事件：扣血、触发表现与 GameOver 判定。
+
 use bevy::prelude::*;
 use prefab::control::LocallyControlledQuery;
 use prefab::demo_events::DemoSensorTriggeredEvent;

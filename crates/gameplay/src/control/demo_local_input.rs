@@ -1,3 +1,5 @@
+//! 消费本机语义输入，把移动和暂停落到受控实体与 PauseState。
+
 use bevy::prelude::*;
 use intent::movement::{MovementIntentQuery, MovementTarget, set_movement_intent};
 use prefab::control::{LocallyControlledQuery, find_locally_controlled_entity};

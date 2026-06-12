@@ -1,3 +1,5 @@
+//! Demo 菜单的焦点导航与按钮动作分发。
+
 use bevy::app::AppExit;
 use bevy::prelude::*;
 use interaction::{

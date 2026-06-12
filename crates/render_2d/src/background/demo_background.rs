@@ -1,3 +1,5 @@
+//! Demo 视差背景层 bundle 与视差偏移系统。
+
 use bevy::prelude::*;
 
 use crate::camera::DemoWorldCamera2d;

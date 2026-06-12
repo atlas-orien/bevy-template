@@ -1,3 +1,5 @@
+//! Demo 静物的 sprite 表现 bundle。
+
 use bevy::prelude::*;
 
 const DEMO_ROCK_COLOR: Color = Color::srgb(0.45, 0.48, 0.52);

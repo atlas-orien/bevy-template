@@ -1,3 +1,5 @@
+//! Demo 世界相机 bundle 配置。
+
 use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 

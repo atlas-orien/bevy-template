@@ -1,3 +1,5 @@
+//! Demo 视差背景 prefab。
+
 use bevy::prelude::*;
 use render_2d::background::DemoBackgroundLayer2dBundle;
 

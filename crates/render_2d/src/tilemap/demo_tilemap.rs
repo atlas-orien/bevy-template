@@ -1,3 +1,5 @@
+//! Demo tile 地面层 bundle，基于 bevy 内置 TilemapChunk。
+
 use bevy::{
     prelude::*,
     sprite_render::{TileData, TilemapChunk, TilemapChunkTileData},

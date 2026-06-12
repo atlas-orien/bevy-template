@@ -1,3 +1,5 @@
+//! Demo player 与 NPC prefab：组合 ecs、physics、navigation 与 render 数据。
+
 use bevy::prelude::*;
 use ecs::components::{
     base::{AudioClips, Facing, Health, MaxHealth, MovementIntent, Speed},

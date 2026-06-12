@@ -1,3 +1,5 @@
+//! Demo 角色的 sprite 表现 bundle。
+
 use bevy::prelude::*;
 
 use crate::animation::frame::{DemoFrameAnimation2d, DemoPlayerAnimation2d};

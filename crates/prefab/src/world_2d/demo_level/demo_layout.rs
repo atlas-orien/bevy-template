@@ -1,3 +1,5 @@
+//! Demo 关卡的 tile 布局常量数据。
+
 pub const DEMO_GROUND_WIDTH: usize = 96;
 pub const DEMO_GROUND_HEIGHT: usize = 16;
 

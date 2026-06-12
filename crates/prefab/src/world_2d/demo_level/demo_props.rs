@@ -1,3 +1,5 @@
+//! Demo 静物装饰 prefab。
+
 use bevy::prelude::*;
 use ecs::components::world::gameplay::GameplaySessionEntity;
 use render_2d::props::{DemoLandmark2dBundle, DemoRock2dBundle};

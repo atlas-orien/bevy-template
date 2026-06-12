@@ -1,3 +1,5 @@
+//! 把 physics 传感器事件过滤转发为 demo 感应区事件。
+
 use bevy::prelude::*;
 use ecs::components::world::DemoSensorZone;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;

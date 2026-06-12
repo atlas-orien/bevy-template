@@ -1,3 +1,5 @@
+//! 世界相机平滑跟随目标的系统。
+
 use bevy::prelude::*;
 
 use super::DemoWorldCamera2d;

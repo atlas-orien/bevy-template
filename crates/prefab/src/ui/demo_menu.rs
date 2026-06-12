@@ -1,3 +1,5 @@
+//! Demo 菜单 prefab：菜单项表是按钮 label、action 与数量的单一来源。
+
 use bevy::prelude::*;
 use interaction::InteractionAction;
 use render_2d::ui::{

@@ -35,7 +35,7 @@ impl DemoTilemapLayer2dBundle {
                 ..default()
             },
             tiles: TilemapChunkTileData(tile_data),
-            transform: Transform::from_xyz(-512.0, -192.0, 0.0),
+            transform: Transform::from_xyz(-1536.0, -192.0, 0.0),
         }
     }
 }

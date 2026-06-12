@@ -5,7 +5,8 @@ use bevy::{
 use prefab::lifecycle::{GameplaySessionEntities, GameplaySessionEntity};
 use prefab::world_2d::characters::DemoPlayerPrefab;
 use prefab::world_2d::demo_level::{
-    DemoBackgroundPrefab, DemoGroundPrefab, DemoRockPrefab, DemoSensorZonePrefab,
+    DemoBackgroundPrefab, DemoGroundPrefab, DemoLandmarkPrefab, DemoRockPrefab,
+    DemoSensorZonePrefab,
 };
 use render_2d::atlases::demo_player_atlas_layout;
 use render_2d::camera::DemoWorldCamera2dBundle;
@@ -33,6 +34,18 @@ pub fn default_gameplay_spawn_plan(
         ))
         .with(DemoRockPrefab::new(Vec2::new(-220.0, 94.0)))
         .with(DemoRockPrefab::new(Vec2::new(260.0, 94.0)))
+        .with(DemoLandmarkPrefab::new(
+            Vec2::new(-900.0, 156.0),
+            Color::srgb(0.95, 0.22, 0.18),
+        ))
+        .with(DemoLandmarkPrefab::new(
+            Vec2::new(0.0, 156.0),
+            Color::srgb(0.95, 0.82, 0.18),
+        ))
+        .with(DemoLandmarkPrefab::new(
+            Vec2::new(900.0, 156.0),
+            Color::srgb(0.18, 0.72, 0.95),
+        ))
         .with(DemoSensorZonePrefab::new(Vec2::new(140.0, 98.0)))
 }
 

@@ -45,3 +45,27 @@ impl Default for DemoSensorZone2dBundle {
         }
     }
 }
+
+#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+pub struct DemoLandmark2d;
+
+#[derive(Bundle)]
+pub struct DemoLandmark2dBundle {
+    pub marker: DemoLandmark2d,
+    pub sprite: Sprite,
+    pub transform: Transform,
+}
+
+impl DemoLandmark2dBundle {
+    pub fn new(translation: Vec3, color: Color) -> Self {
+        Self {
+            marker: DemoLandmark2d,
+            sprite: Sprite {
+                color,
+                custom_size: Some(Vec2::new(28.0, 150.0)),
+                ..default()
+            },
+            transform: Transform::from_translation(translation),
+        }
+    }
+}

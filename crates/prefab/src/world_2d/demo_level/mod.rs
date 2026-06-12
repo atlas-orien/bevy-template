@@ -11,6 +11,6 @@ pub use demo_audio_bridge::{
 };
 pub use demo_background::DemoBackgroundPrefab;
 pub use demo_ground::DemoGroundPrefab;
-pub use demo_props::DemoRockPrefab;
+pub use demo_props::{DemoLandmarkPrefab, DemoRockPrefab};
 pub use demo_sensor_bridge::demo_sensor_bridge_system;
 pub use demo_sensor_zone::DemoSensorZonePrefab;

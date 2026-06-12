@@ -5,7 +5,7 @@ use render_2d::camera::{UiCamera, UiCameraConfig};
 
 use crate::api::{LocalInputContext, LocalInputContextMessage};
 use crate::spawning::initial::spawn_initial_gameplay_plan_system;
-use crate::state::AppState;
+use crate::state::{AppState, PauseState};
 
 pub fn register_enter_schedules(app: &mut App) {
     app.add_systems(OnEnter(AppState::MainMenu), enter_main_menu)
@@ -17,7 +17,8 @@ pub fn register_enter_schedules(app: &mut App) {
             )
                 .chain(),
         )
-        .add_systems(OnEnter(AppState::Paused), enter_paused)
+        .add_systems(OnEnter(PauseState::Running), set_gameplay_input_context)
+        .add_systems(OnEnter(PauseState::Paused), enter_paused)
         .add_systems(OnEnter(AppState::GameOver), enter_game_over);
 }
 

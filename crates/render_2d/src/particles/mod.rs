@@ -1,5 +1,4 @@
 pub mod demo_particles;
-pub mod example;
 mod plugin;
 
 pub use demo_particles::{

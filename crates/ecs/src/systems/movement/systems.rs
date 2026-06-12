@@ -43,3 +43,124 @@ pub fn movement_system(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::time::Duration;
+
+    use super::*;
+
+    const TEST_SPEED: f32 = 60.0;
+    const ONE_FRAME_DELTA: f32 = 1.0 / 60.0;
+
+    fn movement_app() -> App {
+        let mut app = App::new();
+        let mut time = Time::<()>::default();
+        time.advance_by(Duration::from_secs_f32(ONE_FRAME_DELTA));
+        app.insert_resource(time)
+            .add_systems(Update, movement_system);
+        app
+    }
+
+    #[test]
+    fn direction_movement_uses_speed_and_delta() {
+        let mut app = movement_app();
+        let entity = app
+            .world_mut()
+            .spawn((
+                MovementIntent {
+                    target: MovementTarget::Direction(Vec2::X),
+                },
+                Speed(TEST_SPEED),
+                Transform::default(),
+            ))
+            .id();
+
+        app.update();
+
+        let transform = app.world().get::<Transform>(entity).unwrap();
+        assert!((transform.translation.x - TEST_SPEED * ONE_FRAME_DELTA).abs() < f32::EPSILON);
+        assert_eq!(transform.translation.y, 0.0);
+    }
+
+    #[test]
+    fn diagonal_direction_is_normalized() {
+        let mut app = movement_app();
+        let entity = app
+            .world_mut()
+            .spawn((
+                MovementIntent {
+                    target: MovementTarget::Direction(Vec2::ONE),
+                },
+                Speed(TEST_SPEED),
+                Transform::default(),
+            ))
+            .id();
+
+        app.update();
+
+        let transform = app.world().get::<Transform>(entity).unwrap();
+        let distance = transform.translation.truncate().length();
+        assert!((distance - TEST_SPEED * ONE_FRAME_DELTA).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn position_target_inside_epsilon_stops_movement() {
+        let mut app = movement_app();
+        let entity = app
+            .world_mut()
+            .spawn((
+                MovementIntent {
+                    target: MovementTarget::Position(Vec2::new(0.5, 0.0)),
+                },
+                Speed(TEST_SPEED),
+                Transform::default(),
+            ))
+            .id();
+
+        app.update();
+
+        let movement = app.world().get::<MovementIntent>(entity).unwrap();
+        assert!(matches!(movement.target, MovementTarget::None));
+    }
+
+    #[test]
+    fn horizontal_movement_updates_facing() {
+        let mut app = movement_app();
+        let entity = app
+            .world_mut()
+            .spawn((
+                MovementIntent {
+                    target: MovementTarget::Direction(Vec2::NEG_X),
+                },
+                Speed(TEST_SPEED),
+                Transform::default(),
+                Facing::Right,
+            ))
+            .id();
+
+        app.update();
+
+        assert_eq!(*app.world().get::<Facing>(entity).unwrap(), Facing::Left);
+    }
+
+    #[test]
+    fn vertical_movement_keeps_facing() {
+        let mut app = movement_app();
+        let entity = app
+            .world_mut()
+            .spawn((
+                MovementIntent {
+                    target: MovementTarget::Direction(Vec2::Y),
+                },
+                Speed(TEST_SPEED),
+                Transform::default(),
+                Facing::Left,
+            ))
+            .id();
+
+        app.update();
+
+        assert_eq!(*app.world().get::<Facing>(entity).unwrap(), Facing::Left);
+    }
+}

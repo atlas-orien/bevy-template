@@ -7,7 +7,7 @@ use interaction::{
 use prefab::ui::{DEMO_MENU_ITEMS, DemoMenuAction};
 use render_2d::ui::{DemoMenuButtonIndex, DemoMenuFocused};
 
-use crate::state::AppState;
+use crate::state::{AppState, PauseState};
 
 pub type DemoMenuButtonQuery<'world, 'state> = Query<
     'world,
@@ -21,8 +21,10 @@ pub type DemoMenuButtonQuery<'world, 'state> = Query<
 
 pub fn handle_demo_ui_interactions_system(
     mut interactions: MessageReader<InteractionEventMessage>,
-    state: Res<State<AppState>>,
+    app_state: Res<State<AppState>>,
+    pause_state: Option<Res<State<PauseState>>>,
     mut next_state: ResMut<NextState<AppState>>,
+    mut next_pause_state: Option<ResMut<NextState<PauseState>>>,
     mut app_exit: MessageWriter<AppExit>,
 ) {
     for interaction in interactions.read() {
@@ -30,15 +32,24 @@ pub fn handle_demo_ui_interactions_system(
             continue;
         }
 
-        run_demo_menu_action(&interaction.action, &state, &mut next_state, &mut app_exit);
+        run_demo_menu_action(
+            &interaction.action,
+            &app_state,
+            pause_state.as_deref(),
+            &mut next_state,
+            next_pause_state.as_deref_mut(),
+            &mut app_exit,
+        );
     }
 }
 
 pub fn handle_demo_ui_navigation_system(
     mut navigation_inputs: MessageReader<UiNavigationInputMessage>,
     mut buttons: DemoMenuButtonQuery,
-    state: Res<State<AppState>>,
+    app_state: Res<State<AppState>>,
+    pause_state: Option<Res<State<PauseState>>>,
     mut next_state: ResMut<NextState<AppState>>,
+    mut next_pause_state: Option<ResMut<NextState<PauseState>>>,
     mut app_exit: MessageWriter<AppExit>,
 ) {
     for navigation_input in navigation_inputs.read() {
@@ -53,7 +64,14 @@ pub fn handle_demo_ui_navigation_system(
             }
             UiNavigationInputKind::Activate => {
                 if let Some(action) = focused_demo_menu_action(focused_index, &buttons) {
-                    run_demo_menu_action(&action, &state, &mut next_state, &mut app_exit);
+                    run_demo_menu_action(
+                        &action,
+                        &app_state,
+                        pause_state.as_deref(),
+                        &mut next_state,
+                        next_pause_state.as_deref_mut(),
+                        &mut app_exit,
+                    );
                 }
             }
         }
@@ -96,8 +114,10 @@ fn next_demo_menu_index(current: usize) -> usize {
 
 fn run_demo_menu_action(
     action: &InteractionAction,
-    state: &State<AppState>,
+    app_state: &State<AppState>,
+    pause_state: Option<&State<PauseState>>,
     next_state: &mut NextState<AppState>,
+    next_pause_state: Option<&mut NextState<PauseState>>,
     app_exit: &mut MessageWriter<AppExit>,
 ) {
     match DemoMenuAction::from_id(action.id.as_str()) {
@@ -111,12 +131,53 @@ fn run_demo_menu_action(
             app_exit.write(AppExit::Success);
         }
         Some(DemoMenuAction::Back) => {
-            if state.get() == &AppState::Paused {
-                next_state.set(AppState::Playing);
+            if app_state.get() == &AppState::Playing
+                && pause_state.is_some_and(|state| state.get() == &PauseState::Paused)
+            {
+                if let Some(next_pause_state) = next_pause_state {
+                    next_pause_state.set(PauseState::Running);
+                }
             } else {
                 info!("Demo UI back clicked: no previous screen is active.");
             }
         }
         None => {}
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn previous_demo_menu_index_wraps_from_first_to_last() {
+        assert_eq!(previous_demo_menu_index(0), DEMO_MENU_ITEMS.len() - 1);
+    }
+
+    #[test]
+    fn previous_demo_menu_index_moves_back_from_middle() {
+        assert_eq!(previous_demo_menu_index(2), 1);
+    }
+
+    #[test]
+    fn next_demo_menu_index_wraps_from_last_to_first() {
+        assert_eq!(next_demo_menu_index(DEMO_MENU_ITEMS.len() - 1), 0);
+    }
+
+    #[test]
+    fn next_demo_menu_index_moves_forward_from_middle() {
+        assert_eq!(next_demo_menu_index(1), 2);
+    }
+
+    #[test]
+    fn demo_menu_action_ids_resolve_known_actions() {
+        for item in DEMO_MENU_ITEMS {
+            assert_eq!(DemoMenuAction::from_id(item.action.id()), Some(item.action));
+        }
+    }
+
+    #[test]
+    fn demo_menu_action_unknown_id_returns_none() {
+        assert_eq!(DemoMenuAction::from_id("demo:missing"), None);
     }
 }

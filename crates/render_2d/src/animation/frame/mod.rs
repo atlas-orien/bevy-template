@@ -1,5 +1,4 @@
 pub mod demo_frame_animation;
-pub mod example;
 mod plugin;
 
 pub use demo_frame_animation::{

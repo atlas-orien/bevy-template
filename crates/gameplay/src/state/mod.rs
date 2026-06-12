@@ -2,4 +2,4 @@ mod plugin;
 mod state_def;
 
 pub use plugin::StatePlugin;
-pub use state_def::AppState;
+pub use state_def::{AppState, PauseState};

@@ -1,5 +1,4 @@
 pub mod demo_health_bar;
-pub mod example;
 mod plugin;
 
 pub use demo_health_bar::{

@@ -44,6 +44,7 @@
 3. `03-subsystems.md` — 填充 audio / render_3d / animation / ui 子系统与表现占位模块。
 4. `04-ai-constraint-hardening.md` — 加固 AI 约束体系：堵硬约束漏洞、保护规则本身、给协议补骨架代码。独立于 01–03，建议在让 AI 大规模写代码前先做其阶段 A / B。
 5. `05-2d-demo.md` — 实现完整 2D demo：状态流、可控 player、视差背景、tilemap、动画、粒子、物理感应区、音频、覆盖层与可选 AI NPC。例子先行，规则摩擦在实现中记录、由人统一调整。
+6. `06-quality-closeout.md` — 质量收尾：摩擦表裁决、session 生命周期定型（SubStates）、demo 测试层、流程尾巴清理、封装与模块文档。目标 9 分即停。
 
 网络输入属于 v2，结构上和 AI 源走同一条 `RuntimeRequestMessage` 路，本路线图暂不展开。
 

@@ -3,19 +3,19 @@ use intent::movement::{MovementIntentQuery, MovementTarget, set_movement_intent}
 use prefab::control::{LocallyControlledQuery, find_locally_controlled_entity};
 
 use crate::api::LocalUserInputMessage;
-use crate::state::AppState;
+use crate::state::PauseState;
 
 pub fn apply_demo_local_user_input_system(
     mut local_inputs: MessageReader<LocalUserInputMessage>,
     controlled: LocallyControlledQuery,
     mut movement_intents: MovementIntentQuery,
-    state: Res<State<AppState>>,
-    mut next_state: ResMut<NextState<AppState>>,
+    pause_state: Res<State<PauseState>>,
+    mut next_pause_state: ResMut<NextState<PauseState>>,
 ) {
     for input in local_inputs.read() {
         match *input {
             LocalUserInputMessage::Move(direction) => {
-                if state.get() != &AppState::Playing {
+                if pause_state.get() != &PauseState::Running {
                     continue;
                 }
 
@@ -32,11 +32,68 @@ pub fn apply_demo_local_user_input_system(
                     warn!("failed to apply demo local movement input: {error}");
                 }
             }
-            LocalUserInputMessage::TogglePause => match state.get() {
-                AppState::Playing => next_state.set(AppState::Paused),
-                AppState::Paused => next_state.set(AppState::Playing),
-                _ => {}
-            },
+            LocalUserInputMessage::TogglePause => {
+                next_pause_state.set(match pause_state.get() {
+                    PauseState::Running => PauseState::Paused,
+                    PauseState::Paused => PauseState::Running,
+                });
+            }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use bevy::state::app::StatesPlugin;
+
+    use super::*;
+    use crate::state::AppState;
+
+    fn input_app(pause_state: PauseState) -> App {
+        let mut app = App::new();
+        app.add_plugins(StatesPlugin)
+            .init_state::<AppState>()
+            .add_sub_state::<PauseState>()
+            .add_message::<LocalUserInputMessage>()
+            .add_systems(Update, apply_demo_local_user_input_system);
+        app.world_mut()
+            .resource_mut::<NextState<AppState>>()
+            .set(AppState::Playing);
+        app.update();
+        app.world_mut()
+            .resource_mut::<NextState<PauseState>>()
+            .set(pause_state);
+        app.update();
+        app
+    }
+
+    #[test]
+    fn toggle_pause_switches_running_to_paused() {
+        let mut app = input_app(PauseState::Running);
+        app.world_mut()
+            .write_message(LocalUserInputMessage::TogglePause);
+
+        app.update();
+        app.update();
+
+        assert_eq!(
+            *app.world().resource::<State<PauseState>>().get(),
+            PauseState::Paused
+        );
+    }
+
+    #[test]
+    fn toggle_pause_switches_paused_to_running() {
+        let mut app = input_app(PauseState::Paused);
+        app.world_mut()
+            .write_message(LocalUserInputMessage::TogglePause);
+
+        app.update();
+        app.update();
+
+        assert_eq!(
+            *app.world().resource::<State<PauseState>>().get(),
+            PauseState::Running
+        );
     }
 }

@@ -1,5 +1,4 @@
 pub mod demo_props;
-pub mod example;
 mod plugin;
 
 pub use demo_props::{

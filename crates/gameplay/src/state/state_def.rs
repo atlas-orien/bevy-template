@@ -6,6 +6,13 @@ pub enum AppState {
     Loading,
     MainMenu,
     Playing,
-    Paused,
     GameOver,
+}
+
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, SubStates)]
+#[source(AppState = AppState::Playing)]
+pub enum PauseState {
+    #[default]
+    Running,
+    Paused,
 }

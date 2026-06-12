@@ -1,5 +1,4 @@
 pub mod demo_background;
-pub mod example;
 mod plugin;
 
 pub use demo_background::{

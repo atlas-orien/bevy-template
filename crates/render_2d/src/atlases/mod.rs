@@ -1,5 +1,4 @@
 pub mod demo_player_atlas;
-pub mod example;
 mod plugin;
 
 pub use demo_player_atlas::{DEMO_PLAYER_FRAME_SIZE, demo_player_atlas_layout};

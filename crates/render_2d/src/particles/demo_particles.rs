@@ -22,8 +22,30 @@ pub struct DemoParticleEmitter2d {
     pub enabled: bool,
     pub particles_per_second: f32,
     pub particle_lifetime_seconds: f32,
-    pub emission_accumulator: f32,
+    emission_accumulator: f32,
     pub max_live_particles: usize,
+}
+
+impl DemoParticleEmitter2d {
+    pub fn emission_accumulator(&self) -> f32 {
+        self.emission_accumulator
+    }
+
+    pub fn reset_accumulator(&mut self) {
+        self.emission_accumulator = 0.0;
+    }
+
+    pub fn accumulate(&mut self, delta_seconds: f32) -> usize {
+        self.emission_accumulator += self.particles_per_second * delta_seconds;
+
+        let mut emit_count = 0;
+        while self.emission_accumulator >= DEMO_PARTICLE_EMIT_THRESHOLD {
+            self.emission_accumulator -= DEMO_PARTICLE_EMIT_THRESHOLD;
+            emit_count += 1;
+        }
+
+        emit_count
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
@@ -79,13 +101,12 @@ pub fn demo_particle_emission_system(
 
     for (transform, mut emitter) in &mut emitters {
         if !emitter.enabled || live_count >= emitter.max_live_particles {
-            emitter.emission_accumulator = 0.0;
+            emitter.reset_accumulator();
             continue;
         }
 
-        emitter.emission_accumulator += emitter.particles_per_second * time.delta_secs();
-        while emitter.emission_accumulator >= DEMO_PARTICLE_EMIT_THRESHOLD {
-            emitter.emission_accumulator -= DEMO_PARTICLE_EMIT_THRESHOLD;
+        let emit_count = emitter.accumulate(time.delta_secs());
+        for _ in 0..emit_count {
             let position = transform.translation();
             commands.spawn((
                 Sprite {
@@ -166,5 +187,124 @@ pub fn demo_sensor_particle_burst_system(
                 },
             ));
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::Duration;
+
+    use super::*;
+
+    const TEST_LIFETIME_SECONDS: f32 = 2.0;
+    const TEST_ALPHA: f32 = 0.8;
+
+    fn app_with_time(delta_seconds: f32) -> App {
+        let mut app = App::new();
+        let mut time = Time::<()>::default();
+        time.advance_by(Duration::from_secs_f32(delta_seconds));
+        app.insert_resource(time);
+        app
+    }
+
+    #[test]
+    fn particle_lifetime_despawns_expired_particles() {
+        let mut app = app_with_time(TEST_LIFETIME_SECONDS);
+        app.add_systems(Update, demo_particle_update_system);
+        let entity = app
+            .world_mut()
+            .spawn((
+                DemoParticle2d {
+                    remaining_seconds: 0.1,
+                    lifetime_seconds: TEST_LIFETIME_SECONDS,
+                    velocity: Vec2::ZERO,
+                    initial_alpha: TEST_ALPHA,
+                },
+                Transform::default(),
+                Sprite::default(),
+            ))
+            .id();
+
+        app.update();
+
+        assert!(app.world().get_entity(entity).is_err());
+    }
+
+    #[test]
+    fn particle_alpha_fades_by_remaining_lifetime() {
+        let mut app = app_with_time(TEST_LIFETIME_SECONDS / 2.0);
+        app.add_systems(Update, demo_particle_update_system);
+        let entity = app
+            .world_mut()
+            .spawn((
+                DemoParticle2d {
+                    remaining_seconds: TEST_LIFETIME_SECONDS,
+                    lifetime_seconds: TEST_LIFETIME_SECONDS,
+                    velocity: Vec2::ZERO,
+                    initial_alpha: TEST_ALPHA,
+                },
+                Transform::default(),
+                Sprite {
+                    color: Color::srgba(1.0, 1.0, 1.0, TEST_ALPHA),
+                    ..default()
+                },
+            ))
+            .id();
+
+        app.update();
+
+        let sprite = app.world().get::<Sprite>(entity).unwrap();
+        assert!((sprite.color.alpha() - TEST_ALPHA * 0.5).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn emitter_accumulates_particle_rate() {
+        let mut emitter = DemoParticleEmitter2d {
+            enabled: true,
+            particles_per_second: 4.0,
+            particle_lifetime_seconds: TEST_LIFETIME_SECONDS,
+            emission_accumulator: 0.0,
+            max_live_particles: 10,
+        };
+
+        assert_eq!(emitter.accumulate(0.25), 1);
+        assert_eq!(emitter.emission_accumulator(), 0.0);
+        assert_eq!(emitter.accumulate(0.125), 0);
+        assert_eq!(emitter.accumulate(0.125), 1);
+    }
+
+    #[test]
+    fn emission_system_resets_when_live_particles_reach_limit() {
+        let mut app = app_with_time(1.0);
+        app.add_systems(Update, demo_particle_emission_system);
+        let emitter = app
+            .world_mut()
+            .spawn((
+                DemoParticleEmitter2d {
+                    enabled: true,
+                    particles_per_second: 4.0,
+                    particle_lifetime_seconds: TEST_LIFETIME_SECONDS,
+                    emission_accumulator: 0.75,
+                    max_live_particles: 1,
+                },
+                Transform::default(),
+                GlobalTransform::default(),
+            ))
+            .id();
+        app.world_mut().spawn((
+            DemoParticle2d {
+                remaining_seconds: TEST_LIFETIME_SECONDS,
+                lifetime_seconds: TEST_LIFETIME_SECONDS,
+                velocity: Vec2::ZERO,
+                initial_alpha: TEST_ALPHA,
+            },
+            Sprite::default(),
+            Transform::default(),
+        ));
+
+        app.update();
+
+        let emitter = app.world().get::<DemoParticleEmitter2d>(emitter).unwrap();
+        assert_eq!(emitter.emission_accumulator(), 0.0);
     }
 }

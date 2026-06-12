@@ -1,6 +1,5 @@
 pub mod demo_camera;
 pub mod demo_camera_follow;
-pub mod example;
 mod plugin;
 pub mod ui_camera;
 

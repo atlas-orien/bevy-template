@@ -8,6 +8,7 @@ const REQUIRED_DIRS: &[&str] = &[
     "crates/network/src/connection",
     "crates/network/src/handler",
     "crates/network/src/protocol",
+    "crates/network/src/request",
     "crates/network/src/router",
 ];
 

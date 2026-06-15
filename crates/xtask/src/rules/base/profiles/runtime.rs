@@ -212,7 +212,7 @@ pub fn check_external_runtime(rules: ExternalRuntimeRules<'_>, errors: &mut Vec<
     );
     require_file_contains_all_terms(
         Path::new(rules.crate_path).join("src/input/network/source.rs"),
-        &["NetworkClient", "TocRouter"],
+        &["NetworkClient", "TocRouter", "network::request"],
         errors,
         "external_runtime network source should reuse the network crate client and router instead of reimplementing transport",
     );

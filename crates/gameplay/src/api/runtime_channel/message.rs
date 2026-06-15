@@ -84,6 +84,7 @@ pub enum RuntimeUpdateMessage {
     EntityUnregistered {
         gameplay_entity_id: GameplayEntityId,
     },
+    DemoNetworkLoginRequested,
 }
 
 impl RuntimeRequestMessage {
@@ -128,5 +129,9 @@ impl RuntimeUpdateMessage {
 
     pub fn entity_unregistered(gameplay_entity_id: GameplayEntityId) -> Self {
         Self::EntityUnregistered { gameplay_entity_id }
+    }
+
+    pub fn demo_network_login_requested() -> Self {
+        Self::DemoNetworkLoginRequested
     }
 }

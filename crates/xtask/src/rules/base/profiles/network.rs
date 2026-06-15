@@ -120,6 +120,12 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
         "network router should bridge cmdproto packets into fnroute Input<T> handlers",
     );
     require_file_contains_all_terms(
+        Path::new(rules.crate_path).join("src/request/tos.rs"),
+        &["cmdproto::encode_tos", "M1001Tos", "NetworkPayload"],
+        errors,
+        "network request should construct explicit ToServer protobuf payloads without UI/gameplay dependencies",
+    );
+    require_file_contains_all_terms(
         Path::new(rules.crate_path).join("src/handler/mod.rs"),
         &["pub use fnroute::Input"],
         errors,

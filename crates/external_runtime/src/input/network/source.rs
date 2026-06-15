@@ -26,6 +26,7 @@ impl NetworkSourceConfig {
 pub struct NetworkSource {
     client: NetworkClient,
     router: TocRouter,
+    next_seq: u32,
 }
 
 impl NetworkSource {
@@ -45,7 +46,28 @@ impl NetworkSource {
         Some(Self {
             client,
             router: demo_toc_router(),
+            next_seq: 1,
         })
+    }
+
+    pub fn send_demo_login_request(&mut self) {
+        let seq = self.allocate_seq();
+        match network::request::login(seq, "alice", "secret") {
+            Ok(payload) => match self.client.send(payload) {
+                Ok(true) => {
+                    println!("network login request sent: seq={seq}");
+                }
+                Ok(false) => {
+                    println!("network login request queued=false: seq={seq}");
+                }
+                Err(error) => {
+                    println!("network login request send failed: {error:?}");
+                }
+            },
+            Err(error) => {
+                println!("network login request encode failed: {error}");
+            }
+        }
     }
 
     pub async fn poll(&mut self, _manager: &ExternalRuntimeManager) {
@@ -56,5 +78,11 @@ impl NetworkSource {
         if let NetworkClientEvent::Payload(payload) = event {
             let _ = self.router.dispatch_bytes(payload.as_bytes()).await;
         }
+    }
+
+    fn allocate_seq(&mut self) -> u32 {
+        let seq = self.next_seq;
+        self.next_seq = self.next_seq.wrapping_add(1).max(1);
+        seq
     }
 }

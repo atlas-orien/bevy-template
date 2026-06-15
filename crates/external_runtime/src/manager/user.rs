@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use gameplay::api::{
     RuntimeEntityRegistrationMessage, RuntimeObjectId, RuntimeRequestMessage, RuntimeRequestSender,
-    RuntimeSpawnContext, RuntimeUpdateInbox, RuntimeUserId,
+    RuntimeSpawnContext, RuntimeUpdateInbox, RuntimeUpdateMessage, RuntimeUserId,
 };
 use gameplay::state::AppState;
 use intent::movement::MovementTarget;
@@ -25,8 +25,12 @@ impl ExternalRuntimeManager {
         Self { runtime, state }
     }
 
-    pub(crate) fn sync_gameplay_updates(&self) {
-        self.runtime.receive_updates();
+    pub(crate) fn drain_gameplay_updates(&self) -> Vec<RuntimeUpdateMessage> {
+        self.runtime.drain_updates()
+    }
+
+    pub(crate) fn apply_gameplay_update(&self, update: RuntimeUpdateMessage) {
+        self.runtime.apply_update(update);
     }
 
     pub fn entities(&self) -> Vec<RuntimeEntityRegistrationMessage> {

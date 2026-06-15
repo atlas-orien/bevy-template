@@ -28,6 +28,9 @@ network client
 
 - 客户端连接、断线、重连：写到 `crates/network/src/connection`。
 - protobuf 或二进制 payload 边界：写到 `crates/network/src/protocol`。
+- 发给服务端的 protobuf request 构造：写到 `crates/network/src/request`。
+  - request 模块只负责把明确的 ToServer protobuf 消息编码成 `NetworkPayload`。
+  - UI/gameplay 不直接调用 request；由 `external_runtime` 的 network source 调用。
 - cmdproto + fnroute handler 桥接：写到 `crates/network/src/router`。
 - 用户 protobuf handler 函数的落点：写到 `crates/network/src/handler`。
   - 这个模块导出 `fnroute::Input`。

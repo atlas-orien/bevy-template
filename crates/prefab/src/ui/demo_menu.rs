@@ -11,6 +11,7 @@ use crate::Prefab;
 
 pub const DEMO_START_ACTION: &str = "ui.demo.start";
 pub const DEMO_OPTIONS_ACTION: &str = "ui.demo.options";
+pub const DEMO_NETWORK_LOGIN_ACTION: &str = "ui.demo.network_login";
 pub const DEMO_QUIT_ACTION: &str = "ui.demo.quit";
 pub const DEMO_BACK_ACTION: &str = "ui.demo.back";
 
@@ -18,6 +19,7 @@ pub const DEMO_BACK_ACTION: &str = "ui.demo.back";
 pub enum DemoMenuAction {
     Start,
     Options,
+    NetworkLogin,
     Quit,
     Back,
 }
@@ -33,6 +35,7 @@ impl DemoMenuAction {
         match self {
             Self::Start => DEMO_START_ACTION,
             Self::Options => DEMO_OPTIONS_ACTION,
+            Self::NetworkLogin => DEMO_NETWORK_LOGIN_ACTION,
             Self::Quit => DEMO_QUIT_ACTION,
             Self::Back => DEMO_BACK_ACTION,
         }
@@ -53,6 +56,10 @@ pub const DEMO_MENU_ITEMS: &[DemoMenuItem] = &[
     DemoMenuItem {
         label: "Options",
         action: DemoMenuAction::Options,
+    },
+    DemoMenuItem {
+        label: "Test Network",
+        action: DemoMenuAction::NetworkLogin,
     },
     DemoMenuItem {
         label: "Quit",

@@ -30,20 +30,23 @@ impl RuntimeTransport {
         self.requests.send(request)
     }
 
-    pub fn receive_updates(&self) {
-        for update in self.updates.drain() {
-            let Ok(mut state) = self.state.lock() else {
-                return;
-            };
+    pub fn drain_updates(&self) -> Vec<RuntimeUpdateMessage> {
+        self.updates.drain()
+    }
 
-            match update {
-                RuntimeUpdateMessage::EntityRegistered(registration) => {
+    pub fn apply_update(&self, update: RuntimeUpdateMessage) {
+        match update {
+            RuntimeUpdateMessage::EntityRegistered(registration) => {
+                if let Ok(mut state) = self.state.lock() {
                     state.register_entity(registration);
                 }
-                RuntimeUpdateMessage::EntityUnregistered { gameplay_entity_id } => {
+            }
+            RuntimeUpdateMessage::EntityUnregistered { gameplay_entity_id } => {
+                if let Ok(mut state) = self.state.lock() {
                     state.unregister_entity(gameplay_entity_id);
                 }
             }
+            RuntimeUpdateMessage::DemoNetworkLoginRequested => {}
         }
     }
 }

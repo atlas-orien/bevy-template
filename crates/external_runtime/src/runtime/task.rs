@@ -1,6 +1,8 @@
 use tokio::sync::watch;
 use tokio::task::JoinHandle;
 
+use gameplay::api::RuntimeUpdateMessage;
+
 use crate::input::ai::AiControlSource;
 use crate::input::network::{NetworkSource, NetworkSourceConfig};
 use crate::manager::ExternalRuntimeManager;
@@ -50,8 +52,8 @@ async fn run_external_runtime_loop(
     loop {
         tokio::select! {
             _ = interval.tick() => {
-                manager.sync_gameplay_updates();
-                sources.poll(&manager).await;
+                let updates = manager.drain_gameplay_updates();
+                sources.poll(&manager, updates).await;
             }
             changed = shutdown.changed() => {
                 if changed.is_err() || *shutdown.borrow() {
@@ -75,8 +77,21 @@ impl ExternalSources {
         }
     }
 
-    async fn poll(&mut self, manager: &ExternalRuntimeManager) {
+    async fn poll(&mut self, manager: &ExternalRuntimeManager, updates: Vec<RuntimeUpdateMessage>) {
         self.ai_control.poll(manager);
+
+        for update in updates {
+            match update {
+                RuntimeUpdateMessage::DemoNetworkLoginRequested => {
+                    if let Some(network) = &mut self.network {
+                        network.send_demo_login_request();
+                    } else {
+                        println!("network login test skipped: network source is disabled");
+                    }
+                }
+                other => manager.apply_gameplay_update(other),
+            }
+        }
 
         if let Some(network) = &mut self.network {
             network.poll(manager).await;

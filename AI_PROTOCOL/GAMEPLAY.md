@@ -27,6 +27,7 @@
 - 关卡、回合、gameplay session 生命周期：写到 `crates/gameplay/src/lifecycle`。
 - UI 和世界对象被点击、hover 后的具体业务处理：写到 `crates/gameplay/src/interaction` 下的分类目录。
 - UI 交互业务处理：写到 `crates/gameplay/src/interaction/ui`，demo 菜单逻辑写到 `ui/demo_menu.rs`。
+- UI 触发网络测试这类外部动作时，gameplay 只发送语义 update message，不直接依赖或调用 `network`。
 - UI 键盘导航进入 `gameplay` 时必须已经是 `interaction::UiNavigationInputMessage`；焦点切换和 Enter 激活的 demo 业务处理写到 `interaction/ui/demo_menu.rs`。
 
 当前旧目录可以逐步迁移，不需要保留旧名字。

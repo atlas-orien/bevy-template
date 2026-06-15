@@ -1,6 +1,7 @@
 //! Demo 菜单的焦点导航与按钮动作分发。
 
 use bevy::app::AppExit;
+use bevy::ecs::system::SystemParam;
 use bevy::prelude::*;
 use interaction::{
     InteractionAction, InteractionEventKind, InteractionEventMessage, UiNavigationInputKind,
@@ -9,6 +10,7 @@ use interaction::{
 use prefab::ui::{DEMO_MENU_ITEMS, DemoMenuAction};
 use render_2d::ui::{DemoMenuButtonIndex, DemoMenuFocused};
 
+use crate::api::{RuntimeUpdateMessage, RuntimeUpdateSender};
 use crate::state::{AppState, PauseState};
 
 pub type DemoMenuButtonQuery<'world, 'state> = Query<
@@ -23,36 +25,21 @@ pub type DemoMenuButtonQuery<'world, 'state> = Query<
 
 pub fn handle_demo_ui_interactions_system(
     mut interactions: MessageReader<InteractionEventMessage>,
-    app_state: Res<State<AppState>>,
-    pause_state: Option<Res<State<PauseState>>>,
-    mut next_state: ResMut<NextState<AppState>>,
-    mut next_pause_state: Option<ResMut<NextState<PauseState>>>,
-    mut app_exit: MessageWriter<AppExit>,
+    mut actions: DemoMenuActionContext,
 ) {
     for interaction in interactions.read() {
         if interaction.kind != InteractionEventKind::Pressed {
             continue;
         }
 
-        run_demo_menu_action(
-            &interaction.action,
-            &app_state,
-            pause_state.as_deref(),
-            &mut next_state,
-            next_pause_state.as_deref_mut(),
-            &mut app_exit,
-        );
+        actions.run(&interaction.action);
     }
 }
 
 pub fn handle_demo_ui_navigation_system(
     mut navigation_inputs: MessageReader<UiNavigationInputMessage>,
     mut buttons: DemoMenuButtonQuery,
-    app_state: Res<State<AppState>>,
-    pause_state: Option<Res<State<PauseState>>>,
-    mut next_state: ResMut<NextState<AppState>>,
-    mut next_pause_state: Option<ResMut<NextState<PauseState>>>,
-    mut app_exit: MessageWriter<AppExit>,
+    mut actions: DemoMenuActionContext,
 ) {
     for navigation_input in navigation_inputs.read() {
         let focused_index = focused_demo_menu_index(&buttons);
@@ -66,14 +53,7 @@ pub fn handle_demo_ui_navigation_system(
             }
             UiNavigationInputKind::Activate => {
                 if let Some(action) = focused_demo_menu_action(focused_index, &buttons) {
-                    run_demo_menu_action(
-                        &action,
-                        &app_state,
-                        pause_state.as_deref(),
-                        &mut next_state,
-                        next_pause_state.as_deref_mut(),
-                        &mut app_exit,
-                    );
+                    actions.run(&action);
                 }
             }
         }
@@ -114,36 +94,51 @@ fn next_demo_menu_index(current: usize) -> usize {
     (current + 1) % DEMO_MENU_ITEMS.len()
 }
 
-fn run_demo_menu_action(
-    action: &InteractionAction,
-    app_state: &State<AppState>,
-    pause_state: Option<&State<PauseState>>,
-    next_state: &mut NextState<AppState>,
-    next_pause_state: Option<&mut NextState<PauseState>>,
-    app_exit: &mut MessageWriter<AppExit>,
-) {
-    match DemoMenuAction::from_id(action.id.as_str()) {
-        Some(DemoMenuAction::Start) => {
-            next_state.set(AppState::Playing);
-        }
-        Some(DemoMenuAction::Options) => {
-            info!("Demo UI options clicked: gameplay would open the options flow.");
-        }
-        Some(DemoMenuAction::Quit) => {
-            app_exit.write(AppExit::Success);
-        }
-        Some(DemoMenuAction::Back) => {
-            if app_state.get() == &AppState::Playing
-                && pause_state.is_some_and(|state| state.get() == &PauseState::Paused)
-            {
-                if let Some(next_pause_state) = next_pause_state {
-                    next_pause_state.set(PauseState::Running);
-                }
-            } else {
-                info!("Demo UI back clicked: no previous screen is active.");
+#[derive(SystemParam)]
+pub struct DemoMenuActionContext<'w> {
+    app_state: Res<'w, State<AppState>>,
+    pause_state: Option<Res<'w, State<PauseState>>>,
+    next_state: ResMut<'w, NextState<AppState>>,
+    next_pause_state: Option<ResMut<'w, NextState<PauseState>>>,
+    app_exit: MessageWriter<'w, AppExit>,
+    update_sender: Option<Res<'w, RuntimeUpdateSender>>,
+}
+
+impl DemoMenuActionContext<'_> {
+    fn run(&mut self, action: &InteractionAction) {
+        match DemoMenuAction::from_id(action.id.as_str()) {
+            Some(DemoMenuAction::Start) => {
+                self.next_state.set(AppState::Playing);
             }
+            Some(DemoMenuAction::Options) => {
+                info!("Demo UI options clicked: gameplay would open the options flow.");
+            }
+            Some(DemoMenuAction::NetworkLogin) => {
+                if let Some(update_sender) = &self.update_sender {
+                    let _ =
+                        update_sender.send(RuntimeUpdateMessage::demo_network_login_requested());
+                }
+                info!("Demo UI network login test requested.");
+            }
+            Some(DemoMenuAction::Quit) => {
+                self.app_exit.write(AppExit::Success);
+            }
+            Some(DemoMenuAction::Back) => {
+                if self.app_state.get() == &AppState::Playing
+                    && self
+                        .pause_state
+                        .as_deref()
+                        .is_some_and(|state| state.get() == &PauseState::Paused)
+                {
+                    if let Some(next_pause_state) = &mut self.next_pause_state {
+                        next_pause_state.set(PauseState::Running);
+                    }
+                } else {
+                    info!("Demo UI back clicked: no previous screen is active.");
+                }
+            }
+            None => {}
         }
-        None => {}
     }
 }
 

@@ -53,6 +53,21 @@ GameplayPlugin
 
 `config/services.toml` 是默认 runtime 配置。`network.enabled = false` 时不会启动网络；需要联机时再打开并填写 `local_addr`、`remote_addr`。
 
+前端模板使用 crates.io 上的 `cmdproto = "0.1.0"` 作为 demo 协议，只用于模板自测和 demo network button。脚手架生成完整项目时应生成共享协议 crate：
+
+```text
+my-game/
+  client/
+  server/
+  cmdproto/
+```
+
+生成后，client/server 都依赖真实协议：
+
+```toml
+cmdproto = { path = "../cmdproto" }
+```
+
 ```text
 RuntimeRequestChannel: external_runtime -> Bevy App
 ManagerUpdateChannel: Bevy App -> external_runtime

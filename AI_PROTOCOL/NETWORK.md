@@ -26,6 +26,10 @@ network client
 
 ## 代码落点
 
+- 模板 demo 协议依赖 crates.io 上的 `cmdproto = "0.1.0"`。
+  - 这个依赖用于模板自测和 demo network button。
+  - 脚手架生成真实项目后，把依赖替换成真实项目根目录下的 `../cmdproto`。
+  - 前端代码只通过 crate 名 `cmdproto` 使用协议，不假设协议 crate 的物理路径。
 - 客户端连接、断线、重连：写到 `crates/network/src/connection`。
 - protobuf 或二进制 payload 边界：写到 `crates/network/src/protocol`。
 - 发给服务端的 protobuf request 构造：写到 `crates/network/src/request`。
@@ -42,6 +46,7 @@ network client
 
 - `network` 可以依赖 `msrt-udp`。
 - `network` 可以依赖 `cmdproto`，用于 cmd 包头和 protobuf payload 编解码。
+- 在前端模板仓库中，`cmdproto` 必须使用 crates.io 版本，不能指向开发者本机的 `../cmdproto`。
 - `network` 可以依赖 `fnroute`，用于通用 handler 函数分发。
 - `network` 可以依赖 `prost`，用于 protobuf `Message` 约束。
 - `network` 可以依赖 `tokio`。

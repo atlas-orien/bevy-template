@@ -27,12 +27,10 @@ bevy = "0.18"
 # internal workspace dependencies.
 audio = { path = "crates/audio" }
 app = { path = "crates/app" }
-cmdproto = { path = "../cmdproto" }
 dev_preview = { path = "crates/dev_preview" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }
 external_runtime = { path = "crates/external_runtime" }
-fnroute = { path = "../fnroute" }
 helper = { path = "crates/helper" }
 interaction = { path = "crates/interaction" }
 intent = { path = "crates/intent" }
@@ -45,12 +43,16 @@ render_2d = { path = "crates/render_2d" }
 render_3d = { path = "crates/render_3d" }
 gameplay = { path = "crates/gameplay" }
 
+# Vendor dependencies that are not published on crates.io but are essential for the game development process.
+cmdproto = "0.1.0"
+
 # Additional dependencies that are not part of the workspace but are essential for the game development process.
 thiserror = "2"
 msrt-udp = "0.1.0"
 prost = "0.14"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "sync", "time"] }
+fnroute = "0.1.0"
 toolcraft-config = "0.2.0"
 
 [dependencies]

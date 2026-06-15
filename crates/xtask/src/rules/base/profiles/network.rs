@@ -4,8 +4,8 @@ use crate::rules::base::dependencies::{reject_dependencies, require_workspace_de
 use crate::rules::base::derives::reject_derived_types;
 use crate::rules::base::paths::{require_mod_rs_under_src, require_paths};
 use crate::rules::base::source::{
-    reject_bevy_world_access, reject_direct_input_access, reject_terms_in_rust_files,
-    require_file_contains_all_terms,
+    reject_bevy_world_access, reject_direct_input_access, reject_terms_in_file,
+    reject_terms_in_rust_files, require_file_contains_all_terms,
 };
 use crate::rules::util::require_path;
 
@@ -49,6 +49,18 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
         "cmdproto",
         errors,
         "network should use cmdproto for cmd packet decode/encode",
+    );
+    require_file_contains_all_terms(
+        "Cargo.toml",
+        &["cmdproto = \"0.1.0\"", "fnroute = \"0.1.0\""],
+        errors,
+        "frontend template should be CI-safe: use crates.io cmdproto/fnroute, not parent-directory path dependencies",
+    );
+    reject_terms_in_file(
+        "Cargo.toml",
+        &["path = \"../cmdproto\"", "path = \"../fnroute\""],
+        errors,
+        "frontend template must not depend on developer-local parent directories; scaffolded projects may replace cmdproto later",
     );
     require_workspace_dependency(
         rules.crate_path,

@@ -1950,12 +1950,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "cmake"
+version = "0.1.58"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c0f78a02292a74a88ac736019ab962ece0bc380e3f977bf72e376c5d78ff0678"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "cmdproto"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9890c6397f6c5cfffbb00982e0fa028b3d89067db7c3c804e7468d5e752c9037"
 dependencies = [
  "bytes",
  "prost",
  "prost-build",
+ "protobuf-src",
  "thiserror 2.0.18",
 ]
 
@@ -2648,6 +2660,8 @@ dependencies = [
 [[package]]
 name = "fnroute"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09cdaf840365e4a85018a1f3214921687e35c660e89016058d9890f0782c0888"
 
 [[package]]
 name = "fnv"
@@ -4799,6 +4813,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f94967dc7688f3054c7fac87473ffae4cc4c3904800e2d9f5b857246d8963b0a"
 dependencies = [
  "prost",
+]
+
+[[package]]
+name = "protobuf-src"
+version = "2.1.1+27.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6217c3504da19b85a3a4b2e9a5183d635822d83507ba0986624b5c05b83bfc40"
+dependencies = [
+ "cmake",
 ]
 
 [[package]]

@@ -76,6 +76,9 @@ impl NetworkClient {
             self.next_reconnect = None;
             return Ok(NetworkClientEvent::Connected);
         }
+        if self.state == NetworkConnectionState::Reconnecting {
+            return Ok(NetworkClientEvent::Reconnecting);
+        }
 
         match self.client.tick().await? {
             UdpClientEvent::Message(message) if message.as_bytes() != [0] => {

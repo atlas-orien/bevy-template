@@ -1,7 +1,9 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use network::connection::{NetworkClient, NetworkClientConfig, NetworkClientEvent};
+use network::connection::{
+    NetworkClient, NetworkClientConfig, NetworkClientEvent, NetworkConnectionState,
+};
 use network::router::{TocRouter, demo_toc_router};
 
 use crate::manager::ExternalRuntimeManager;
@@ -27,6 +29,7 @@ pub struct NetworkSource {
     client: NetworkClient,
     router: TocRouter,
     next_seq: u32,
+    last_logged_state: NetworkConnectionState,
 }
 
 impl NetworkSource {
@@ -43,10 +46,13 @@ impl NetworkSource {
         .await
         .ok()?;
 
+        let last_logged_state = client.state();
+
         Some(Self {
             client,
             router: demo_toc_router(),
             next_seq: 1,
+            last_logged_state,
         })
     }
 
@@ -71,12 +77,39 @@ impl NetworkSource {
     }
 
     pub async fn poll(&mut self, _manager: &ExternalRuntimeManager) {
-        let Ok(event) = self.client.tick().await else {
-            return;
+        let event = match self.client.tick().await {
+            Ok(event) => event,
+            Err(error) => {
+                println!("network client tick failed: {error:?}");
+                return;
+            }
         };
 
-        if let NetworkClientEvent::Payload(payload) = event {
-            let _ = self.router.dispatch_bytes(payload.as_bytes()).await;
+        match event {
+            NetworkClientEvent::Connected => {
+                self.log_state_change(
+                    NetworkConnectionState::Connected,
+                    "network client connected",
+                );
+            }
+            NetworkClientEvent::Payload(payload) => {
+                if let Err(error) = self.router.dispatch_bytes(payload.as_bytes()).await {
+                    println!("network payload dispatch failed: {error}");
+                }
+            }
+            NetworkClientEvent::SendFailed => {
+                println!("network send failed; reconnect scheduled");
+            }
+            NetworkClientEvent::TransportUnavailable { kind } => {
+                println!("network transport unavailable ({kind:?}); reconnect scheduled");
+            }
+            NetworkClientEvent::Reconnecting => {
+                self.log_state_change(
+                    NetworkConnectionState::Reconnecting,
+                    "network client reconnecting",
+                );
+            }
+            NetworkClientEvent::Idle => {}
         }
     }
 
@@ -84,5 +117,12 @@ impl NetworkSource {
         let seq = self.next_seq;
         self.next_seq = self.next_seq.wrapping_add(1).max(1);
         seq
+    }
+
+    fn log_state_change(&mut self, state: NetworkConnectionState, message: &str) {
+        if self.last_logged_state != state {
+            self.last_logged_state = state;
+            println!("{message}");
+        }
     }
 }

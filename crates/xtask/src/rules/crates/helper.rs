@@ -14,6 +14,8 @@ const FORBIDDEN_DEPENDENCIES: &[&str] = &[
     "prefab",
     "render_2d",
     "render_3d",
+    "network",
+    "msrt-udp",
 ];
 
 pub fn check() -> CheckStatus {

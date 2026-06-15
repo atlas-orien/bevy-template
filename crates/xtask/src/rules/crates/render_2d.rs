@@ -64,6 +64,8 @@ const FORBIDDEN_DEPENDENCIES: &[&str] = &[
     "prefab",
     "physics",
     "render_3d",
+    "network",
+    "msrt-udp",
 ];
 
 const WORLD_RULE_TERMS: &[&str] = &[

@@ -50,6 +50,10 @@ pub fn check_architecture() -> CheckStatus {
         errors.append(&mut rule_errors);
     }
 
+    if let CheckStatus::Failed(mut rule_errors) = crates::network::check() {
+        errors.append(&mut rule_errors);
+    }
+
     if let CheckStatus::Failed(mut rule_errors) = crates::peripherals::check() {
         errors.append(&mut rule_errors);
     }

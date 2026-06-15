@@ -11,6 +11,8 @@ const FORBIDDEN_DEPENDENCIES: &[&str] = &[
     "prefab",
     "render_2d",
     "render_3d",
+    "network",
+    "msrt-udp",
 ];
 
 const FORBIDDEN_PLUGINS: &[&str] = &[

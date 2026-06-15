@@ -14,8 +14,15 @@ const REQUIRED_DIRS: &[&str] = &[
 
 const ALLOWED_INTERACTION_CATEGORIES: &[&str] = &["ui"];
 
-const FORBIDDEN_DEPENDENCIES: &[&str] =
-    &["ecs", "audio", "external_runtime", "physics", "render_3d"];
+const FORBIDDEN_DEPENDENCIES: &[&str] = &[
+    "ecs",
+    "audio",
+    "external_runtime",
+    "physics",
+    "render_3d",
+    "network",
+    "msrt-udp",
+];
 
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();

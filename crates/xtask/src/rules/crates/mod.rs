@@ -9,6 +9,7 @@ pub mod helper;
 pub mod intent;
 pub mod interaction;
 pub mod navigation;
+pub mod network;
 pub mod peripherals;
 pub mod physics;
 pub mod prefab;

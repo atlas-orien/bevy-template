@@ -4,7 +4,15 @@ use crate::rules::{CheckStatus, finish};
 const INTENT_CRATE: &str = "crates/intent";
 const INTENT_PROTOCOL: &str = "AI_PROTOCOL/INTENT.md";
 
-const FORBIDDEN_DEPENDENCIES: &[&str] = &["ecs", "audio", "physics", "render_2d", "render_3d"];
+const FORBIDDEN_DEPENDENCIES: &[&str] = &[
+    "ecs",
+    "audio",
+    "physics",
+    "render_2d",
+    "render_3d",
+    "network",
+    "msrt-udp",
+];
 
 const WORLD_MUTATION_TERMS: &[&str] = &["Commands", "Transform", "PhysicsBody", "PhysicsCollider"];
 

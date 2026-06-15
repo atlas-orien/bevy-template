@@ -4,7 +4,13 @@ use crate::rules::{CheckStatus, finish};
 const PREFAB_CRATE: &str = "crates/prefab";
 const PREFAB_PROTOCOL: &str = "AI_PROTOCOL/PREFAB.md";
 
-const FORBIDDEN_DEPENDENCIES: &[&str] = &["external_runtime", "intent", "gameplay"];
+const FORBIDDEN_DEPENDENCIES: &[&str] = &[
+    "external_runtime",
+    "intent",
+    "gameplay",
+    "network",
+    "msrt-udp",
+];
 
 const UI_PRESENTATION_TERMS: &[&str] = &[
     "TextFont",

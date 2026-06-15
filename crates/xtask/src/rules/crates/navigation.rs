@@ -20,6 +20,8 @@ const FORBIDDEN_DEPENDENCIES: &[&str] = &[
     "physics",
     "render_2d",
     "render_3d",
+    "network",
+    "msrt-udp",
 ];
 
 const RENDER_TERMS: &[&str] = &[

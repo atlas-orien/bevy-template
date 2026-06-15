@@ -21,7 +21,10 @@ authors = ["Atlas Orein <gamesworldcraft@gamil.com>"]
 repository = "https://github.com/atlas-orien/bevy-template"
 
 [workspace.dependencies]
+# Bevy is the core dependency for the game template, providing the game engine and essential features.
 bevy = "0.18"
+
+# internal workspace dependencies.
 audio = { path = "crates/audio" }
 app = { path = "crates/app" }
 dev_preview = { path = "crates/dev_preview" }
@@ -32,14 +35,18 @@ helper = { path = "crates/helper" }
 interaction = { path = "crates/interaction" }
 intent = { path = "crates/intent" }
 navigation = { path = "crates/navigation" }
+network = { path = "crates/network" }
 peripherals = { path = "crates/peripherals" }
 physics = { path = "crates/physics" }
 prefab = { path = "crates/prefab" }
 render_2d = { path = "crates/render_2d" }
 render_3d = { path = "crates/render_3d" }
 gameplay = { path = "crates/gameplay" }
+
+# Additional dependencies that are not part of the workspace but are essential for the game development process.
 thiserror = "2"
-tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }
+msrt-udp = "0.1.0"
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "sync", "time"] }
 
 [dependencies]
 app.workspace = true

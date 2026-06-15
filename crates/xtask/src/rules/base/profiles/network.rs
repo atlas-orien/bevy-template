@@ -46,6 +46,24 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
     );
     require_workspace_dependency(
         rules.crate_path,
+        "cmdproto",
+        errors,
+        "network should use cmdproto for cmd packet decode/encode",
+    );
+    require_workspace_dependency(
+        rules.crate_path,
+        "fnroute",
+        errors,
+        "network should use fnroute for user handler dispatch",
+    );
+    require_workspace_dependency(
+        rules.crate_path,
+        "prost",
+        errors,
+        "network should constrain routed protobuf messages with prost::Message",
+    );
+    require_workspace_dependency(
+        rules.crate_path,
         "tokio",
         errors,
         "network should use Tokio-compatible async transport",
@@ -94,5 +112,32 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
         ],
         errors,
         "network is a frontend client layer; do not add server peer/session management here",
+    );
+    require_file_contains_all_terms(
+        Path::new(rules.crate_path).join("src/router/toc.rs"),
+        &["cmdproto::decode_packet_toc", "fnroute::Input"],
+        errors,
+        "network router should bridge cmdproto packets into fnroute Input<T> handlers",
+    );
+    require_file_contains_all_terms(
+        Path::new(rules.crate_path).join("src/handler/mod.rs"),
+        &["pub use fnroute::Input"],
+        errors,
+        "network handler module should re-export fnroute Input<T> for user handler functions",
+    );
+    require_file_contains_all_terms(
+        Path::new(rules.crate_path).join("src/handler/toc.rs"),
+        &["async fn", "Input<M1001Toc>"],
+        errors,
+        "network handler files should contain concrete protobuf handler functions, not generic registration",
+    );
+    reject_terms_in_rust_files(
+        Path::new(rules.crate_path)
+            .join("src/handler")
+            .to_string_lossy()
+            .as_ref(),
+        &["route_toc", "TocRouter", "HashMap", "Input<T>"],
+        errors,
+        "network handler should not register routes or use generic Input<T>; router owns cmd-to-handler registration",
     );
 }

@@ -20,17 +20,27 @@ network client
 - 支持断线后自动重连。
 - 定义连接状态和客户端事件。
 - 定义 protobuf payload 边界。
-- 保留 protobuf payload 边界；具体 `.proto` schema 确定后再接入编解码。
+- 使用 `cmdproto` 解包 cmd + protobuf payload。
+- 使用 `fnroute` 分发已解码 protobuf 消息给 handler。
 - 不直接进入 Bevy App、World 或 Schedule。
 
 ## 代码落点
 
 - 客户端连接、断线、重连：写到 `crates/network/src/connection`。
 - protobuf 或二进制 payload 边界：写到 `crates/network/src/protocol`。
+- cmdproto + fnroute handler 桥接：写到 `crates/network/src/router`。
+- 用户 protobuf handler 函数的落点：写到 `crates/network/src/handler`。
+  - 这个模块导出 `fnroute::Input`。
+  - 用户业务 handler 使用 `async fn handle_login(Input(data): Input<M1001Toc>)`。
+  - handler 模块只放 handler 函数，不做注册。
+  - cmd 到 handler 的注册和分发写在 `crates/network/src/router`。
 
 ## 边界规则
 
 - `network` 可以依赖 `msrt-udp`。
+- `network` 可以依赖 `cmdproto`，用于 cmd 包头和 protobuf payload 编解码。
+- `network` 可以依赖 `fnroute`，用于通用 handler 函数分发。
+- `network` 可以依赖 `prost`，用于 protobuf `Message` 约束。
 - `network` 可以依赖 `tokio`。
 - `network` 必须依赖 `error`。
 - `network` 不依赖 `bevy`。
@@ -43,6 +53,7 @@ network client
 - `network` 不做服务端 peer/session 管理；当前项目是前端框架，只维护一个服务器连接。
 - 不新增 `session` 目录；如果未来需要多人服务端框架，单独设计。
 - `network` 不写 gameplay 业务逻辑。
+- handler 参数使用 `fnroute::Input<T>`，例如 `async fn handle_login(Input(data): Input<M1001Toc>)`。
 
 ## 验证要求
 

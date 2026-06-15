@@ -8,6 +8,9 @@ repository.workspace = true
 publish = false
 
 [dependencies]
+cmdproto.workspace = true
 error.workspace = true
+fnroute.workspace = true
 msrt-udp.workspace = true
+prost.workspace = true
 tokio.workspace = true

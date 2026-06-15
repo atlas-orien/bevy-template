@@ -1,2 +1,3 @@
 [alias]
 xtask = "run -p xtask --"
+preview = "run -p dev_preview -- skeletal_animation"

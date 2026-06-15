@@ -1,4 +1,5 @@
 mod demo_menu;
 mod registry;
+mod skeletal_animation;
 
 pub use registry::{DEFAULT_PREVIEW, run};

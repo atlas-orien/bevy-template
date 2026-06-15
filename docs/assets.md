@@ -16,4 +16,13 @@
 - 许可证
 - 用途
 
-当前模板不携带默认资源。
+## 当前模板资源
+
+- `assets/2d/static/props/demo-skeletal-bone/demo-skeletal-bone.png`
+  - 来源：Bevy 示例资源 `assets/textures/rpg/props/generic-rpg-rod.png`
+  - 许可证：Bevy `CREDITS.md` 记录的 Kenney 资源，CC0 1.0 Universal
+  - 用途：`render_2d` 2D skeletal demo 的骨段 attachment 贴图
+- `assets/2d/static/props/demo-skeletal-joint/demo-skeletal-joint.png`
+  - 来源：Bevy 示例资源 `assets/textures/rpg/props/generic-rpg-loot01.png`
+  - 许可证：Bevy `CREDITS.md` 记录的 Kenney 资源，CC0 1.0 Universal
+  - 用途：`render_2d` 2D skeletal demo 的关节 attachment 贴图

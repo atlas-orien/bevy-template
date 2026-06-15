@@ -2392,10 +2392,13 @@ name = "dev_preview"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "ecs",
  "error",
  "gameplay",
  "interaction",
  "peripherals",
+ "prefab",
+ "render_2d",
 ]
 
 [[package]]

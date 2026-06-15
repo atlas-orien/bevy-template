@@ -4,8 +4,8 @@ use crate::rules::base::dependencies::{reject_dependencies, require_workspace_de
 use crate::rules::base::derives::reject_derived_types;
 use crate::rules::base::paths::{require_mod_rs_under_src, require_paths};
 use crate::rules::base::source::{
-    reject_bevy_world_access, reject_direct_input_access, reject_network_transport_terms,
-    reject_terms_in_rust_files, require_file_contains_all_terms,
+    reject_bevy_world_access, reject_direct_input_access, reject_terms_in_rust_files,
+    require_file_contains_all_terms,
 };
 use crate::rules::util::require_path;
 
@@ -30,12 +30,12 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
     require_path(
         Path::new(rules.crate_path).join("src/lib.rs"),
         errors,
-        "network needs a crate root that exports protocol/session/transport boundaries",
+        "network needs a crate root that exports connection/protocol boundaries",
     );
     require_paths(
         rules.required_dirs,
         errors,
-        "network must keep transport, protocol, and session boundaries explicit",
+        "network must keep client connection and protocol boundaries explicit",
     );
     require_mod_rs_under_src(rules.crate_path, errors);
     require_workspace_dependency(
@@ -54,7 +54,7 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
         rules.crate_path,
         rules.forbidden_dependencies,
         errors,
-        "network should stay a transport/protocol/session layer and must not depend on gameplay or Bevy world crates",
+        "network should stay a frontend connection/protocol layer and must not depend on gameplay or Bevy world crates",
     );
     reject_derived_types(
         rules.crate_path,
@@ -76,17 +76,23 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
         rules.crate_path,
         &["RuntimeRequestMessage", "RuntimeUserId", "RuntimeObjectId"],
         errors,
-        "network should expose transport/protocol payloads only; external_runtime owns gameplay-facing id mapping",
+        "network should expose client connection/protocol payloads only; external_runtime owns gameplay-facing id mapping",
     );
     require_file_contains_all_terms(
-        Path::new(rules.crate_path).join("src/transport/msrt_udp.rs"),
-        &["msrt_udp::UdpClient", "msrt_udp::UdpServer"],
+        Path::new(rules.crate_path).join("src/connection/client.rs"),
+        &["msrt_udp", "UdpClient", "Reconnecting"],
         errors,
-        "network transport should wrap the published msrt-udp adapter",
+        "network connection should wrap msrt-udp client and own frontend reconnect state",
     );
-    reject_network_transport_terms(
-        Path::new(rules.crate_path).join("src/protocol"),
+    reject_terms_in_rust_files(
+        rules.crate_path,
+        &[
+            "UdpServer",
+            "NetworkSessionId",
+            "NetworkPeerId",
+            "src/session",
+        ],
         errors,
-        "network protocol payload definitions should not own socket transport details",
+        "network is a frontend client layer; do not add server peer/session management here",
     );
 }

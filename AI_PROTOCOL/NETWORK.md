@@ -4,30 +4,29 @@
 
 这个文件是 `crates/network` 的 AI 规则。
 
-`network` 是游戏网络协议层，负责把 UDP transport payload 转换成游戏外部网络消息。
+`network` 是前端游戏网络连接层，负责维护客户端到服务器的一条 UDP/MSRT 连接，并把 transport payload 暴露给外部 runtime。
 
 它位于 `msrt-udp` 和 `external_runtime` 之间：
 
 ```text
-msrt-udp
-  -> network
+network client
   -> external_runtime
   -> gameplay RuntimeRequestMessage
 ```
 
 ## 核心职责
 
-- 持有网络 transport 的项目级封装。
-- 定义网络连接、session、peer、payload 的项目级类型。
-- 定义从网络收到的 inbound message 和准备发出的 outbound message。
+- 持有前端客户端网络连接。
+- 支持断线后自动重连。
+- 定义连接状态和客户端事件。
+- 定义 protobuf payload 边界。
 - 保留 protobuf payload 边界；具体 `.proto` schema 确定后再接入编解码。
 - 不直接进入 Bevy App、World 或 Schedule。
 
 ## 代码落点
 
-- transport adapter：写到 `crates/network/src/transport`。
+- 客户端连接、断线、重连：写到 `crates/network/src/connection`。
 - protobuf 或二进制 payload 边界：写到 `crates/network/src/protocol`。
-- 网络 session、peer、connection id：写到 `crates/network/src/session`。
 
 ## 边界规则
 
@@ -41,6 +40,8 @@ msrt-udp
 - `network` 不定义 Bevy `Component`、`Bundle`、`Resource`、`Event` 或 `Message`。
 - `network` 不构造 `RuntimeRequestMessage`。
 - `network` 不知道 `RuntimeUserId` 或 `RuntimeObjectId` 的 gameplay 含义；这些映射属于 `external_runtime` manager/bridge。
+- `network` 不做服务端 peer/session 管理；当前项目是前端框架，只维护一个服务器连接。
+- 不新增 `session` 目录；如果未来需要多人服务端框架，单独设计。
 - `network` 不写 gameplay 业务逻辑。
 
 ## 验证要求

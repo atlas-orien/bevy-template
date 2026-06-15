@@ -5,9 +5,8 @@ const NETWORK_CRATE: &str = "crates/network";
 const NETWORK_PROTOCOL: &str = "AI_PROTOCOL/NETWORK.md";
 
 const REQUIRED_DIRS: &[&str] = &[
-    "crates/network/src/transport",
+    "crates/network/src/connection",
     "crates/network/src/protocol",
-    "crates/network/src/session",
 ];
 
 const FORBIDDEN_DEPENDENCIES: &[&str] = &[

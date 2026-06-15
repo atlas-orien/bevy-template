@@ -9,7 +9,7 @@
 项目运行时有两套系统：
 
 - Bevy App：运行 Bevy `World`、`Schedule`、render、physics、gameplay。
-- External Runtime：运行 Bevy App 外部的 AI、脚本、回放，以及未来网络等外部系统。
+- External Runtime：运行 Bevy App 外部的 AI、脚本、回放，以及可选网络等外部系统。
 
 `external_runtime` 通过 `external_runtime::manager` 持有 gameplay transport，并通过双向 channel 和 Bevy App 通信。
 
@@ -17,7 +17,7 @@
 
 - 启动和停止 Bevy App 外部的 runtime loop。
 - 持有 manager，作为外部系统进入 gameplay 的唯一入口。
-- 管理 input/ai、script、replay 等 Bevy App 外部来源模块。
+- 管理 input/ai、script、replay、network 等 Bevy App 外部来源模块。
 - 把外部来源转换成 manager API 调用。
 - 不直接读取或修改 Bevy `World`。
 - 本机键盘、鼠标和手柄属于 `crates/peripherals`；UI 和世界对象 hover/click 等 Bevy interaction 属于 `crates/interaction`。它们都不属于 `external_runtime`。
@@ -29,8 +29,10 @@
 - manager API：写到 `crates/external_runtime/src/manager`。
 - App 外部来源总入口：写到 `crates/external_runtime/src/input`。
 - AI 来源：写到 `crates/external_runtime/src/input/ai`。
+- Network 来源：写到 `crates/external_runtime/src/input/network`。
+- external runtime 配置读取：写到 `crates/external_runtime/src/config.rs`，使用 `toolcraft-config`。
 
-网络不是 v1 的子模块。网络是双向通信层，v2 单独设计。
+network 是可选外部来源。单机游戏必须可以关闭 network；未配置 network 或 `network.enabled = false` 时 external runtime 不启动网络连接。
 
 ## Runtime 规则
 
@@ -43,7 +45,8 @@
 
 ## External source adapter 规则
 
-- external source adapter 只处理 Bevy App 外部来源，例如 AI、脚本、回放和未来网络。
+- external source adapter 只处理 Bevy App 外部来源，例如 AI、脚本、回放和 network。
+- network source adapter 只负责启动/轮询 `crates/network` 暴露的客户端连接和 router，不在 `external_runtime` 内重写 UDP、protobuf 或 cmdproto transport。
 - external source adapter 不读取本机键盘、鼠标、手柄或 Bevy interaction。
 - external source adapter 只把外部来源转换成 manager API 调用，不直接生成实体。
 - external source adapter 不直接使用裸 `ecs`，通过 manager API 提交 gameplay 请求或 intent 请求。
@@ -83,8 +86,10 @@
 
 - `external_runtime` 可以依赖 `gameplay`，用于持有 request/update channel 端点和消息类型。
 - `external_runtime` 可以依赖 `helper`，用于共享 channel/transport 基础设施。
+- `external_runtime` 可以依赖 `network`，用于可选启动客户端网络连接。
 - `external_runtime` 可以依赖 `intent` 和 `prefab`，但优先通过 manager API。
 - `external_runtime` 可以依赖 `tokio`。
+- `external_runtime` 可以依赖 `toolcraft-config`，用于读取 runtime/network 配置。
 - `external_runtime` 必须依赖 `error`。
 - `external_runtime` 不依赖 `audio`。
 - `external_runtime` 不依赖 `ecs`。

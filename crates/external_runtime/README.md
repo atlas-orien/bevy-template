@@ -11,7 +11,7 @@ External Runtime
 
 Bevy App 负责 `World`、`Schedule`、render、physics、gameplay。
 
-External Runtime 负责 Bevy App 外部的来源模块，例如 input/ai、script、replay，以及未来 v2 单独设计的 network。
+External Runtime 负责 Bevy App 外部的来源模块，例如 input/ai、script、replay，以及可选 network。
 
 ## 职责
 
@@ -28,10 +28,12 @@ External Runtime 负责 Bevy App 外部的来源模块，例如 input/ai、scrip
 - `bridge`: external runtime 和 Bevy App/gameplay channel 之间的通道组装。
 - `input`: 输入来源域。
 - `input/ai`: AI 输入来源。
+- `input/network`: 可选网络来源，未配置时单机游戏不会启动网络。
+- `config`: 使用 `toolcraft-config` 读取 runtime/network 配置。
 
 本机键盘、鼠标和手柄属于 `crates/peripherals`。UI 和世界对象 hover/click 等 Bevy interaction 属于 `crates/interaction`。它们都不属于 external runtime。
 
-网络不是 v1 子模块。网络是双向通信层，v2 单独设计。
+网络是可选来源。`external_runtime` 只启动和轮询 `network` crate 暴露的客户端连接，不在这里重写 UDP、protobuf 或 cmdproto transport。
 
 ## runtime
 

@@ -186,6 +186,36 @@ pub fn check_external_runtime(rules: ExternalRuntimeRules<'_>, errors: &mut Vec<
         errors,
         "external_runtime should use manager request/update channels instead of mutating world results",
     );
+    require_workspace_dependency(
+        rules.crate_path,
+        "network",
+        errors,
+        "external_runtime should optionally start and poll the network crate as an external source",
+    );
+    require_workspace_dependency(
+        rules.crate_path,
+        "toolcraft-config",
+        errors,
+        "external_runtime should load runtime/network settings through toolcraft-config",
+    );
+    require_file_contains_all_terms(
+        Path::new(rules.crate_path).join("src/config.rs"),
+        &["toolcraft_config::load_settings", "network", "enabled"],
+        errors,
+        "external_runtime config should use toolcraft-config and keep network optional",
+    );
+    require_file_contains_all_terms(
+        Path::new(rules.crate_path).join("src/runtime/task.rs"),
+        &["Option<NetworkSourceConfig>", "NetworkSource::connect"],
+        errors,
+        "external_runtime network startup should be optional so single-player games can run without network",
+    );
+    require_file_contains_all_terms(
+        Path::new(rules.crate_path).join("src/input/network/source.rs"),
+        &["NetworkClient", "TocRouter"],
+        errors,
+        "external_runtime network source should reuse the network crate client and router instead of reimplementing transport",
+    );
     for file in rules.manager_user_files {
         reject_terms_in_file(
             file,

@@ -2,4 +2,4 @@ mod error;
 mod toc;
 
 pub use error::{NetworkRouteError, NetworkRouteResult};
-pub use toc::TocRouter;
+pub use toc::{TocRouter, demo_toc_router};

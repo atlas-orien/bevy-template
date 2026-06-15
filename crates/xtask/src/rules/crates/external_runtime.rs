@@ -6,6 +6,7 @@ const EXTERNAL_RUNTIME_PROTOCOL: &str = "AI_PROTOCOL/EXTERNAL_RUNTIME.md";
 
 const REQUIRED_DIRS: &[&str] = &[
     "crates/external_runtime/src/input/ai",
+    "crates/external_runtime/src/input/network",
     "crates/external_runtime/src/runtime",
     "crates/external_runtime/src/manager",
     "crates/external_runtime/src/bridge",
@@ -17,7 +18,6 @@ const REJECTED_PATHS: &[&str] = &[
     "crates/external_runtime/src/local",
     "crates/external_runtime/src/device",
     "crates/external_runtime/src/peripherals",
-    "crates/external_runtime/src/network",
 ];
 
 const FORBIDDEN_DEPENDENCIES: &[&str] = &["ecs", "audio", "physics", "render_2d", "render_3d"];

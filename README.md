@@ -36,6 +36,7 @@
 - `crates/app`: Bevy App 子包，负责组装 Bevy 外壳和 `GameplayPlugin`
 - `src/main.rs`: 工作区根入口，同时启动 `external_runtime` 和 Bevy App
 - `assets`: Bevy 运行时资源目录，模板默认只保留空目录
+- `config`: runtime 配置目录，默认 `services.toml` 关闭 network，单机游戏无需联网
 - `workbench`: 用户给 AI 和离线工具使用的工作台目录，不由 Bevy runtime 直接加载
 - `docs`: 设计文档、AI 任务说明、开发决策
 - `tools`: 本地辅助脚本
@@ -49,6 +50,8 @@ GameplayPlugin
 ```
 
 `src/main.rs` 会创建两个具体 channel，再分别交给 `external_runtime` 和 Bevy App。底层 channel 机制由 `helper` 提供，request/update 的语义类型由 `gameplay::api` 定义。
+
+`config/services.toml` 是默认 runtime 配置。`network.enabled = false` 时不会启动网络；需要联机时再打开并填写 `local_addr`、`remote_addr`。
 
 ```text
 RuntimeRequestChannel: external_runtime -> Bevy App

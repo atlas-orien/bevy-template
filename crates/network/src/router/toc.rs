@@ -2,14 +2,15 @@ use std::collections::HashMap;
 use std::future::Future;
 use std::pin::Pin;
 
-use cmdproto::PacketToc;
+use cmdproto::{Cmd, PacketToc};
 use fnroute::Input;
 use prost::Message;
 
 use super::{NetworkRouteError, NetworkRouteResult};
+use crate::handler::handle_login;
 
-type BoxedTocFuture = Pin<Box<dyn Future<Output = NetworkRouteResult<()>>>>;
-type BoxedTocHandler = Box<dyn Fn(Vec<u8>) -> BoxedTocFuture>;
+type BoxedTocFuture = Pin<Box<dyn Future<Output = NetworkRouteResult<()>> + Send>>;
+type BoxedTocHandler = Box<dyn Fn(Vec<u8>) -> BoxedTocFuture + Send + Sync>;
 
 #[derive(Default)]
 pub struct TocRouter {
@@ -24,8 +25,8 @@ impl TocRouter {
     pub fn route<T, H, Fut>(mut self, cmd: u32, handler: H) -> Self
     where
         T: Message + Default + Clone + Send + Sync + 'static,
-        H: Fn(Input<T>) -> Fut + Clone + 'static,
-        Fut: Future<Output = ()> + 'static,
+        H: Fn(Input<T>) -> Fut + Clone + Send + Sync + 'static,
+        Fut: Future<Output = ()> + Send + 'static,
     {
         self.handlers.insert(
             cmd,
@@ -55,25 +56,28 @@ impl TocRouter {
     }
 }
 
+pub fn demo_toc_router() -> TocRouter {
+    TocRouter::new().route(Cmd::Cmd1001 as u32, handle_login)
+}
+
 #[cfg(test)]
 mod tests {
-    use std::cell::RefCell;
-    use std::rc::Rc;
+    use std::sync::{Arc, Mutex};
 
     use cmdproto::{Cmd, M1001Toc};
 
     use super::*;
 
-    async fn handle_login(Input(data): Input<M1001Toc>, captured: Rc<RefCell<Option<String>>>) {
-        *captured.borrow_mut() = Some(data.token);
+    async fn handle_login(Input(data): Input<M1001Toc>, captured: Arc<Mutex<Option<String>>>) {
+        *captured.lock().unwrap() = Some(data.token);
     }
 
     #[tokio::test]
     async fn dispatches_decoded_toc_payload_to_input_handler() {
-        let captured = Rc::new(RefCell::new(None));
+        let captured = Arc::new(Mutex::new(None));
         let router = TocRouter::new().route(Cmd::Cmd1001 as u32, {
-            let captured = Rc::clone(&captured);
-            move |input| handle_login(input, Rc::clone(&captured))
+            let captured = Arc::clone(&captured);
+            move |input| handle_login(input, Arc::clone(&captured))
         });
 
         let message = M1001Toc {
@@ -85,6 +89,6 @@ mod tests {
 
         router.dispatch_bytes(&bytes).await.unwrap();
 
-        assert_eq!(captured.borrow().as_deref(), Some("token-1"));
+        assert_eq!(captured.lock().unwrap().as_deref(), Some("token-1"));
     }
 }

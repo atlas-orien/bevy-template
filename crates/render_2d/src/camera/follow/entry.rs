@@ -17,9 +17,6 @@ impl Default for FollowCamera2d {
     }
 }
 
-#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct FollowCameraTarget2d;
-
 #[derive(Bundle, Default)]
 pub struct FollowCamera2dBundle {
     fixed_camera: FixedCamera2dBundle,

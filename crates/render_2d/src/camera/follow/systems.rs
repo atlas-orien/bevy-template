@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use super::{FollowCamera2d, FollowCameraTarget2d};
+use super::FollowCamera2d;
+use crate::camera::FollowCameraTarget2d;
 
 pub(in crate::camera) fn follow_camera_system(
     time: Res<Time>,

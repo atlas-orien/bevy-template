@@ -2,4 +2,4 @@
 
 mod entry;
 
-pub use entry::{FixedCamera2d, FixedCamera2dBundle};
+pub use entry::FixedCamera2dBundle;

@@ -4,6 +4,7 @@ use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 
 use super::DemoCameraFollow;
+use super::WorldCamera2d;
 
 const DEMO_WORLD_CAMERA_ORDER: isize = 0;
 const DEMO_WORLD_CAMERA_LAYER: usize = 0;
@@ -17,6 +18,7 @@ pub struct DemoWorldCamera2d {
     camera_2d: Camera2d,
     camera: Camera,
     render_layers: RenderLayers,
+    world_camera: WorldCamera2d,
     marker: DemoWorldCamera2dMarker,
     follow: DemoCameraFollow,
     transform: Transform,
@@ -31,6 +33,7 @@ impl Default for DemoWorldCamera2d {
                 ..default()
             },
             render_layers: RenderLayers::layer(DEMO_WORLD_CAMERA_LAYER),
+            world_camera: WorldCamera2d,
             marker: DemoWorldCamera2dMarker,
             follow: DemoCameraFollow::default(),
             transform: Transform::from_xyz(0.0, 0.0, DEMO_WORLD_CAMERA_Z),

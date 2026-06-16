@@ -1,7 +1,7 @@
 //! Demo 视差背景 prefab。
 
 use bevy::prelude::*;
-use render_2d::products::background::DemoBackground2d;
+use render_2d::products::background::DemoBackground2dBundle;
 
 use crate::Prefab;
 
@@ -10,11 +10,16 @@ pub struct DemoBackgroundRoot;
 
 pub struct DemoBackgroundPrefab;
 
+#[derive(Bundle, Default)]
+struct DemoBackgroundRootBundle {
+    root: DemoBackgroundRoot,
+}
+
 impl Prefab for DemoBackgroundPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn(DemoBackgroundRoot)
-            .insert(DemoBackground2d::default().into_bundle())
+            .spawn(DemoBackgroundRootBundle::default())
+            .insert(DemoBackground2dBundle::default())
             .id()
     }
 }

@@ -43,6 +43,7 @@
 - `primitives`: 最小通用表现单元，供 capabilities/products 组合。
 - `capabilities`: 较复杂的通用表现能力，可以带 plugin、system、runtime state。
 - `products`: 具体游戏对象、画面、场景或 UI 表现，通常给 `prefab` 直接组合。
+- `products` 对 `prefab` 暴露的公共入口应优先是命名的 public bundle struct；不要把最终公共产品 API 做成 `pub fn into_bundle(self) -> impl Bundle`。
 
 `primitives`:
 

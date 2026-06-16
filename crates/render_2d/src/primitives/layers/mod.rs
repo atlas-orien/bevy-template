@@ -4,9 +4,11 @@ mod plugin;
 mod systems;
 
 use bevy::ecs::spawn::SpawnIter;
+use bevy::ecs::spawn::SpawnRelatedBundle;
 use bevy::prelude::*;
 
 use crate::primitives::images::StaticImage2d;
+use crate::primitives::images::StaticImage2dBundle;
 use crate::primitives::markers::RenderLayer2dMarker;
 
 pub use plugin::Layers2dPlugin;
@@ -14,31 +16,52 @@ pub use plugin::Layers2dPlugin;
 #[derive(Default)]
 pub struct LayerStack2d {
     pub bundle: LayerStack2dBundle,
-    layers: LayerStackChildren2d,
 }
 
 impl LayerStack2d {
     pub fn new(layers: impl IntoIterator<Item = RenderLayer2d>) -> Self {
         Self {
-            bundle: LayerStack2dBundle::default(),
-            layers: LayerStackChildren2d::new(layers),
+            bundle: LayerStack2dBundle::new(layers),
         }
-    }
-
-    pub fn into_bundle(self) -> impl Bundle {
-        (self.bundle, self.layers.into_children())
     }
 }
 
-#[derive(Bundle, Default)]
+#[derive(Bundle)]
+#[bundle(ignore_from_components)]
 pub struct LayerStack2dBundle {
-    marker: LayerStack2dRoot,
-    transform: Transform,
-    visibility: Visibility,
+    pub(crate) root: LayerStack2dRootBundle,
+    pub(crate) children: LayerStackChildren2dBundle,
+}
+
+impl LayerStack2dBundle {
+    pub fn new(layers: impl IntoIterator<Item = RenderLayer2d>) -> Self {
+        let layers = layers.into_iter().collect::<Vec<_>>();
+        Self {
+            root: LayerStack2dRootBundle::default(),
+            children: Children::spawn(SpawnIter(
+                layers
+                    .into_iter()
+                    .map(render_layer_bundle as fn(RenderLayer2d) -> RenderLayer2dBundle),
+            )),
+        }
+    }
+}
+
+impl Default for LayerStack2dBundle {
+    fn default() -> Self {
+        Self::new([])
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct LayerStack2dRoot;
+
+#[derive(Bundle, Default)]
+pub struct LayerStack2dRootBundle {
+    marker: LayerStack2dRoot,
+    transform: Transform,
+    visibility: Visibility,
+}
 
 pub struct RenderLayer2d {
     color: Color,
@@ -68,21 +91,6 @@ impl RenderLayer2d {
             parallax_speed,
         }
     }
-
-    pub(in crate::primitives::layers) fn into_bundle(self) -> impl Bundle {
-        let image = match self.image {
-            Some(image) => StaticImage2d::image(image, self.size, self.z),
-            None => StaticImage2d::color(self.color, self.size, self.z),
-        };
-
-        (
-            RenderLayer2dMarker,
-            ParallaxLayer2d {
-                speed: self.parallax_speed,
-            },
-            image.into_bundle(),
-        )
-    }
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, PartialEq)]
@@ -90,21 +98,31 @@ pub(in crate::primitives::layers) struct ParallaxLayer2d {
     pub(in crate::primitives::layers) speed: Vec2,
 }
 
-#[derive(Default)]
-struct LayerStackChildren2d {
-    layers: Vec<RenderLayer2d>,
+pub(crate) type LayerStackChildren2dBundle = SpawnRelatedBundle<
+    ChildOf,
+    SpawnIter<
+        std::iter::Map<std::vec::IntoIter<RenderLayer2d>, fn(RenderLayer2d) -> RenderLayer2dBundle>,
+    >,
+>;
+
+#[derive(Bundle)]
+pub(crate) struct RenderLayer2dBundle {
+    marker: RenderLayer2dMarker,
+    parallax: ParallaxLayer2d,
+    image: StaticImage2dBundle,
 }
 
-impl LayerStackChildren2d {
-    fn new(layers: impl IntoIterator<Item = RenderLayer2d>) -> Self {
-        Self {
-            layers: layers.into_iter().collect(),
-        }
-    }
+fn render_layer_bundle(layer: RenderLayer2d) -> RenderLayer2dBundle {
+    let image = match layer.image {
+        Some(image) => StaticImage2d::image(image, layer.size, layer.z),
+        None => StaticImage2d::color(layer.color, layer.size, layer.z),
+    };
 
-    fn into_children(self) -> impl Bundle {
-        Children::spawn(SpawnIter(
-            self.layers.into_iter().map(RenderLayer2d::into_bundle),
-        ))
+    RenderLayer2dBundle {
+        marker: RenderLayer2dMarker,
+        parallax: ParallaxLayer2d {
+            speed: layer.parallax_speed,
+        },
+        image: image.into_bundle(),
     }
 }

@@ -193,6 +193,12 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         errors,
         "render_2d is consumed by prefab and concrete render files should expose one product-level public entry instead of public marker/bundle/config scatter",
     );
+    reject_terms_in_rust_files(
+        Path::new(rules.crate_path).join("src/products"),
+        &["pub fn into_bundle(self) -> impl Bundle"],
+        errors,
+        "render_2d products are consumed by prefab and should expose named public Bundle structs instead of public `into_bundle() -> impl Bundle` APIs",
+    );
     reject_paths(
         &[
             "crates/render_2d/src/ui/camera.rs",

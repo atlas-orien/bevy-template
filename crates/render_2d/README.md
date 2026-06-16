@@ -37,7 +37,8 @@
 - `overlays`: 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示。
 - `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
 - `pixel`: pixel art、pixel-perfect camera、pixel grid snap 相关表现策略。
-- `tilemap`: tile map、tile layer、tile chunk 和 tileset 表现。
+- `tilemap`: 通用 tilemap primitive。
+  - `tilemap/chunk.rs`: `TilemapChunkLayer2d`，基于 Bevy `TilemapChunk` 组合 tileset、chunk size、tile size、tile index 数据和 transform。
 - `environment`: 天气、雾、环境氛围、非背景类环境装饰。
 - `images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块。
 - `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。
@@ -82,6 +83,14 @@
 - `animation/frame`: sprite sheet、texture atlas、逐帧播放。
 - `animation/skeletal`: 2D bone、skeleton、骨骼播放状态。
 - 攻击前摇、技能窗口、硬直、combo、碰撞判定不放在 render animation。
+
+## tilemap
+
+`tilemap` 只放通用 tilemap 表现 primitive。
+
+- `TilemapChunkLayer2d` 负责把 `Handle<Image>`、chunk size、tile display size、tile index 数据和 translation 组合成 Bevy tilemap chunk bundle。
+- 具体地图布局、demo 地面原点、tileset 路径和 loader settings 不放在 `render_2d::tilemap`。
+- demo 关卡地面属于 `prefab/src/world_2d/demo_level`；资源加载属于 `catalog`。
 
 ## 和 ecs/intent/gameplay 的区别
 

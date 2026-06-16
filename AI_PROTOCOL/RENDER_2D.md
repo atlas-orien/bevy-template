@@ -60,7 +60,7 @@
 - `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
 - `screens`: 标题画面、过场屏、加载屏等屏幕级表现。
 - `text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
-- `tilemap`: tile map、tile layer、tile chunk、tileset 表现。
+- `tilemap`: 通用 tile map primitive，例如基于 Bevy `TilemapChunk` 的 tile chunk layer。
 - `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
 - `ui`: 2D UI 表现。
 - `camera/base.rs`: 共享 Bevy 2D camera bundle/config，只放 `Camera2d`、`Camera`、`RenderLayers`、`Transform` 等基础组合。
@@ -72,6 +72,7 @@
 - `ui`: UI root target、UI 层级 marker 和 UI node 基础 bundle。
 - `ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。
 - `ui/demo_menu.rs`: demo 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
+- `tilemap/chunk.rs`: 通用 `TilemapChunkLayer2d`，只负责把 tileset handle、chunk size、tile size、tile index 数据和 transform 组合成 Bevy tilemap chunk bundle。
 
 ## 文件组织规则
 
@@ -95,6 +96,14 @@
 - `text` 不处理 UI 布局文字；UI text 属于 `ui` 目录中的具体 UI 表现。
 - `text` 不加载具体字体路径；字体资源由 `catalog` 或上层传入 `Handle<Font>`。
 - `text` 可以提供已经命名的 bundle/product，例如 `WorldText2d` 和 `WorldText2dBundle`。
+
+## Tilemap 规则
+
+- `tilemap` 是通用 tilemap primitive，不写具体 demo 地图产品。
+- `tilemap/chunk.rs` 暴露 `TilemapChunkLayer2d`，基于 Bevy 内置 `TilemapChunk` 和 `TilemapChunkTileData`。
+- `tilemap` 不硬编码具体地图原点、尺寸布局、demo 常量或资源路径。
+- tile index 布局、tileset 资源和 transform 由 `prefab`、`catalog` 或更高层具体产品传入。
+- 不新增 `DemoTilemap*` 类型；demo 地面属于 `prefab/src/world_2d/demo_level` 的具体关卡组合。
 
 ## 边界规则
 

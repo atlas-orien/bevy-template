@@ -2,6 +2,7 @@ use crate::rules::base::camera::CameraRules;
 use crate::rules::base::frame_animation::FrameAnimationRules;
 use crate::rules::base::profiles::{Render2dRules, check_render_2d};
 use crate::rules::base::skeletal_animation::SkeletalAnimationRules;
+use crate::rules::base::tilemap::TilemapRules;
 use crate::rules::base::visual_primitives::{ImagesRules, TextRules};
 use crate::rules::{CheckStatus, finish};
 
@@ -129,6 +130,21 @@ const TEXT_REQUIRED_API_TERMS: &[&str] = &[
 
 const TEXT_FORBIDDEN_TERMS: &[&str] = &["AssetServer", "asset_server", ".load(", "Node"];
 
+const TILEMAP_REQUIRED_FILES: &[&str] = &["mod.rs", "chunk.rs", "plugin.rs"];
+
+const TILEMAP_ALLOWED_FILES: &[&str] = &["mod.rs", "chunk.rs", "plugin.rs"];
+
+const TILEMAP_REQUIRED_CHUNK_API_TERMS: &[&str] = &[
+    "pub struct TilemapChunkLayer2d",
+    "TilemapChunk",
+    "TilemapChunkTileData",
+    "tile_indices: impl IntoIterator<Item = Option<u16>>",
+    "translation: Vec3",
+    "Transform::from_translation(translation)",
+];
+
+const TILEMAP_FORBIDDEN_TERMS: &[&str] = &["DemoTilemap", "demo_tilemap"];
+
 const SKELETAL_PRODUCT_REQUIRED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
 
 const SKELETAL_PRODUCT_ALLOWED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
@@ -173,6 +189,13 @@ pub fn check() -> CheckStatus {
                 allowed_files: TEXT_ALLOWED_FILES,
                 required_api_terms: TEXT_REQUIRED_API_TERMS,
                 forbidden_terms: TEXT_FORBIDDEN_TERMS,
+            },
+            tilemap: TilemapRules {
+                tilemap_dir: "crates/render_2d/src/tilemap",
+                required_files: TILEMAP_REQUIRED_FILES,
+                allowed_files: TILEMAP_ALLOWED_FILES,
+                required_chunk_api_terms: TILEMAP_REQUIRED_CHUNK_API_TERMS,
+                forbidden_terms: TILEMAP_FORBIDDEN_TERMS,
             },
             frame_animation: FrameAnimationRules {
                 frame_dir: "crates/render_2d/src/animation/frame",

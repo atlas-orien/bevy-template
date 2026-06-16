@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
-use super::FrameAnimationBasePlugin;
+use super::systems::FrameAnimationSystemsPlugin;
 
 pub struct FrameAnimation2dPlugin;
 
 impl Plugin for FrameAnimation2dPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(FrameAnimationBasePlugin);
+        app.add_plugins(FrameAnimationSystemsPlugin);
     }
 }

@@ -1,11 +1,9 @@
-pub mod base;
-pub mod content;
-pub mod demo;
+mod animation;
+mod manifest;
 mod plugin;
+mod systems;
 
-pub use base::{
-    FrameAnimation2d, FrameAnimationBasePlugin, FrameAnimationClip2d, FrameAnimationFacingFlip2d,
-    FrameAnimationHandle2d, FrameAnimationLoader2d, FrameAnimationManifest2d,
-    FrameAnimationManifestLoader2d, FrameAnimationMovementClips2d,
-};
+pub use animation::{FrameAnimation2d, FrameAnimationFacingFlip2d, FrameAnimationMovementClips2d};
+pub use manifest::{FrameAnimationClip2d, FrameAnimationHandle2d, FrameAnimationLoader2d};
+pub use manifest::{FrameAnimationManifest2d, FrameAnimationManifestLoader2d};
 pub use plugin::FrameAnimation2dPlugin;

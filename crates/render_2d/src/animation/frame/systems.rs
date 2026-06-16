@@ -8,9 +8,9 @@ use super::{
     FrameAnimationMovementClips2d,
 };
 
-pub struct FrameAnimationBasePlugin;
+pub(super) struct FrameAnimationSystemsPlugin;
 
-impl Plugin for FrameAnimationBasePlugin {
+impl Plugin for FrameAnimationSystemsPlugin {
     fn build(&self, app: &mut App) {
         app.init_asset::<FrameAnimationManifest2d>()
             .init_asset_loader::<super::FrameAnimationManifestLoader2d>()

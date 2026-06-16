@@ -8,7 +8,7 @@ use ecs::EcsPlugin;
 use gameplay::api::GameplayApiPlugin;
 use prefab::Prefab;
 use render_2d::Render2dPlugin;
-use render_2d::camera::DemoWorldCamera2d;
+use render_2d::camera::FixedCamera2dBundle;
 
 pub fn run() {
     App::new()
@@ -36,7 +36,7 @@ pub fn run() {
 }
 
 fn spawn_skeletal_animation_preview_system(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(DemoWorldCamera2d::default());
+    commands.spawn(FixedCamera2dBundle::default());
 
     demo_skeleton(Vec2::new(0.0, -48.0), &asset_server).spawn(&mut commands);
 }

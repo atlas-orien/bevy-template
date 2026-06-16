@@ -4,7 +4,7 @@ use prefab::lifecycle::GameplaySessionEntity;
 use prefab::world_2d::demo_level::{
     DemoBackgroundPrefab, DemoLandmarkPrefab, DemoRockPrefab, DemoSensorZonePrefab,
 };
-use render_2d::camera::DemoWorldCamera2d;
+use render_2d::camera::FollowCamera2dBundle;
 
 use super::plan::GameplaySpawnPlan;
 
@@ -35,7 +35,7 @@ pub fn spawn_initial_gameplay_plan_system(
     asset_server: Res<AssetServer>,
     mut demo_session_started: MessageWriter<prefab::demo_events::DemoSessionStartedEvent>,
 ) {
-    commands.spawn((DemoWorldCamera2d::default(), GameplaySessionEntity));
+    commands.spawn((FollowCamera2dBundle::default(), GameplaySessionEntity));
 
     for prefab in default_gameplay_spawn_plan(&asset_server).into_prefabs() {
         prefab.spawn_boxed(&mut commands);

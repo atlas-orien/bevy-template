@@ -10,7 +10,7 @@ use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
 use render_2d::animation::frame::FrameAnimationManifest2d;
-use render_2d::camera::DemoCameraFollowTarget;
+use render_2d::camera::FollowCameraTarget2d;
 use render_2d::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
 use render_2d::overlays::DemoHealthBarOverlay2d;
 use render_2d::particles::DemoParticleEmitter2d;
@@ -80,7 +80,7 @@ impl Prefab for DemoPlayerPrefab {
             .spawn((
                 Character,
                 DemoPlayerControlled,
-                DemoCameraFollowTarget,
+                FollowCameraTarget2d,
                 GameplayEntity,
                 GameplaySessionEntity,
                 DEMO_PLAYER_ENTITY_ID,

@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
 use super::entry::{ParallaxLayer2d, RenderLayer2dMarker};
-use crate::camera::WorldCamera2d;
+use crate::camera::SceneCamera2d;
 
 pub(super) fn parallax_layer_system(
-    camera: Query<&Transform, (With<WorldCamera2d>, Without<RenderLayer2dMarker>)>,
+    camera: Query<&Transform, (With<SceneCamera2d>, Without<RenderLayer2dMarker>)>,
     mut layers: Query<(&ParallaxLayer2d, &mut Transform), With<RenderLayer2dMarker>>,
 ) {
     let Ok(camera) = camera.single() else {

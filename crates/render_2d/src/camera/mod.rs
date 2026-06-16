@@ -1,13 +1,11 @@
-pub mod demo_camera;
-pub mod demo_camera_follow;
+pub mod fixed;
+pub mod follow;
 mod plugin;
+mod scene_camera;
 pub mod ui_camera;
-mod world_camera;
 
-pub use demo_camera::DemoWorldCamera2d;
-pub(crate) use demo_camera::DemoWorldCamera2dMarker;
-pub(crate) use demo_camera_follow::DemoCameraFollow;
-pub use demo_camera_follow::DemoCameraFollowTarget;
+pub use fixed::{FixedCamera2d, FixedCamera2dBundle};
+pub use follow::{FollowCamera2d, FollowCamera2dBundle, FollowCameraTarget2d};
 pub use plugin::Camera2dPlugin;
+pub use scene_camera::SceneCamera2d;
 pub use ui_camera::{UI_CAMERA_ORDER, UiCamera};
-pub use world_camera::WorldCamera2d;

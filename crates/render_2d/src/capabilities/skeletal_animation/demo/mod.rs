@@ -4,8 +4,8 @@ mod entry;
 mod rig;
 mod systems;
 
-pub use entry::DemoSkeleton2d;
-pub use rig::{DemoSkeleton2dBundle, DemoSkeleton2dRig};
+pub use entry::{DemoSkeleton2d, DemoSkeleton2dBundle};
+pub use rig::DemoSkeleton2dRig;
 pub(super) use systems::DemoSkeletalAnimationPlugin;
 
 #[cfg(test)]

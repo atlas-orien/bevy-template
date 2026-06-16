@@ -5,7 +5,7 @@ mod structure;
 
 #[cfg(test)]
 pub(super) use bundles::DemoBone2dBundle;
-pub use bundles::DemoSkeleton2dBundle;
+pub use bundles::DemoSkeleton2dRootBundle;
 pub(super) use bundles::{DemoBone2d, DemoSkeleton2dRoot};
 pub(super) use layout::DemoSkeletonSide;
-pub use structure::DemoSkeleton2dRig;
+pub use structure::{DemoSkeleton2dChildrenBundle, DemoSkeleton2dRig};

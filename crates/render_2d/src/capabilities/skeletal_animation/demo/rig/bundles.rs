@@ -20,14 +20,14 @@ pub(in crate::capabilities::skeletal_animation::demo) enum DemoBone2d {
 }
 
 #[derive(Bundle)]
-pub struct DemoSkeleton2dBundle {
+pub struct DemoSkeleton2dRootBundle {
     marker: DemoSkeleton2dRoot,
     animation: DemoSkeletalAnimation2d,
     transform: Transform,
     visibility: Visibility,
 }
 
-impl DemoSkeleton2dBundle {
+impl DemoSkeleton2dRootBundle {
     pub(in crate::capabilities::skeletal_animation::demo) fn new(translation: Vec3) -> Self {
         Self {
             marker: DemoSkeleton2dRoot,

@@ -37,15 +37,32 @@ impl DemoMenuButtonVisual {
         Self { label, focused }
     }
 
-    pub fn into_bundle(self) -> impl Bundle {
-        (
+    pub fn into_bundle(self) -> DemoMenuButtonVisualBundle {
+        DemoMenuButtonVisualBundle::new(self.label, self.focused)
+    }
+}
+
+#[derive(Bundle)]
+#[bundle(ignore_from_components)]
+pub struct DemoMenuButtonVisualBundle(
+    DemoMenuButtonBundle,
+    DemoMenuVisualFocused,
+    bevy::ecs::spawn::SpawnRelatedBundle<
+        bevy::ecs::hierarchy::ChildOf,
+        bevy::ecs::spawn::Spawn<DemoMenuButtonTextBundle>,
+    >,
+);
+
+impl DemoMenuButtonVisualBundle {
+    pub fn new(label: &'static str, focused: bool) -> Self {
+        Self(
             DemoMenuButtonBundle::default(),
-            if self.focused {
+            if focused {
                 DemoMenuVisualFocused::focused()
             } else {
                 DemoMenuVisualFocused::unfocused()
             },
-            children![DemoMenuButtonTextBundle::new(self.label)],
+            children![DemoMenuButtonTextBundle::new(label)],
         )
     }
 }

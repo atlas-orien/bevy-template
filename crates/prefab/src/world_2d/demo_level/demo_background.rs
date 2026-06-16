@@ -8,18 +8,15 @@ use crate::Prefab;
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoBackgroundRoot;
 
-pub struct DemoBackgroundPrefab;
-
 #[derive(Bundle, Default)]
-struct DemoBackgroundRootBundle {
+#[bundle(ignore_from_components)]
+pub struct DemoBackgroundPrefab {
     root: DemoBackgroundRoot,
+    visual: DemoBackground2dBundle,
 }
 
 impl Prefab for DemoBackgroundPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
-        commands
-            .spawn(DemoBackgroundRootBundle::default())
-            .insert(DemoBackground2dBundle::default())
-            .id()
+        commands.spawn(self).id()
     }
 }

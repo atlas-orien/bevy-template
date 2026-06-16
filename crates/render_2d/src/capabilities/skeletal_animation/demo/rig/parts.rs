@@ -43,6 +43,19 @@ pub(in crate::capabilities::skeletal_animation::demo) struct DemoSkeletonArm2d {
     joint_image: Handle<Image>,
 }
 
+#[derive(Bundle)]
+#[bundle(ignore_from_components)]
+pub(in crate::capabilities::skeletal_animation::demo) struct DemoSkeletonArm2dBundle(
+    DemoBone2dBundle,
+    bevy::ecs::spawn::SpawnRelatedBundle<
+        bevy::ecs::hierarchy::ChildOf,
+        (
+            bevy::ecs::spawn::Spawn<DemoJoint2dBundle>,
+            bevy::ecs::spawn::Spawn<DemoBone2dBundle>,
+        ),
+    >,
+);
+
 impl DemoSkeletonArm2d {
     pub(in crate::capabilities::skeletal_animation::demo) fn new(
         side: DemoSkeletonSide,
@@ -56,8 +69,10 @@ impl DemoSkeletonArm2d {
         }
     }
 
-    pub(in crate::capabilities::skeletal_animation::demo) fn into_bundle(self) -> impl Bundle {
-        (
+    pub(in crate::capabilities::skeletal_animation::demo) fn into_bundle(
+        self,
+    ) -> DemoSkeletonArm2dBundle {
+        DemoSkeletonArm2dBundle(
             DemoBone2dBundle::upper_arm(
                 self.bone_image.clone(),
                 self.side.upper_arm_bone(),

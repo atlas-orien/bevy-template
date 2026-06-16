@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 
 use super::layout::{DemoJoint2d, DemoSkeletonSide};
-use super::parts::{DemoSkeletonArm2d, DemoSkeletonShoulder2d, DemoSkeletonTorso2d};
+use super::parts::{
+    DemoSkeletonArm2d, DemoSkeletonArm2dBundle, DemoSkeletonShoulder2d, DemoSkeletonTorso2d,
+};
 
 pub struct DemoSkeleton2dRig {
     torso: DemoSkeletonTorso2d,
@@ -10,6 +12,21 @@ pub struct DemoSkeleton2dRig {
     left_arm: DemoSkeletonArm2d,
     right_arm: DemoSkeletonArm2d,
 }
+
+#[derive(Bundle)]
+#[bundle(ignore_from_components)]
+pub struct DemoSkeleton2dChildrenBundle(
+    bevy::ecs::spawn::SpawnRelatedBundle<
+        bevy::ecs::hierarchy::ChildOf,
+        (
+            bevy::ecs::spawn::Spawn<super::bundles::DemoBone2dBundle>,
+            bevy::ecs::spawn::Spawn<super::bundles::DemoJoint2dBundle>,
+            bevy::ecs::spawn::Spawn<super::bundles::DemoJoint2dBundle>,
+            bevy::ecs::spawn::Spawn<DemoSkeletonArm2dBundle>,
+            bevy::ecs::spawn::Spawn<DemoSkeletonArm2dBundle>,
+        ),
+    >,
+);
 
 impl DemoSkeleton2dRig {
     pub(in crate::capabilities::skeletal_animation::demo) fn new(
@@ -35,13 +52,15 @@ impl DemoSkeleton2dRig {
         }
     }
 
-    pub(in crate::capabilities::skeletal_animation::demo) fn into_children(self) -> impl Bundle {
-        children![
+    pub(in crate::capabilities::skeletal_animation::demo) fn into_children(
+        self,
+    ) -> DemoSkeleton2dChildrenBundle {
+        DemoSkeleton2dChildrenBundle(children![
             self.torso.into_bundle(),
             self.left_shoulder.into_bundle(),
             self.right_shoulder.into_bundle(),
             self.left_arm.into_bundle(),
             self.right_arm.into_bundle(),
-        ]
+        ])
     }
 }

@@ -65,6 +65,8 @@ impl Prefab for YourObjectPrefab {
 
 - 生成实体时优先使用 prefab bundle，不要在生成系统里散装组件。
 - `commands.spawn((A, B, C))` 这种现场 tuple 组合不允许出现在 prefab；先定义命名 bundle/product，再 `spawn(named_bundle)`，子节点用 `with_children` 或明确的 render children helper。
+- prefab 根实体必须一次性 `spawn(完整命名 bundle)`；优先让 `YourPrefab` 自己 `#[derive(Bundle)]` 并持有 root、render product、ecs/physics/audio 等字段。
+- 不要用 `spawn(root_bundle).insert(render_bundle)` 这种后补组件方式表达对象结构；如果 prefab 的结构需要单独 bundle，必须有明确原因。
 - 具体游戏可以添加 `CharacterPrefabBundle`、`EnemyPrefabBundle` 等对象模板。
 - 具体 prefab 本身保存生成所需数据，优先暴露 prefab struct + bundle，并实现最小 `Prefab` trait。
 - `Prefab` trait 只表达公共生成能力；具体 prefab 的特殊能力放在自己的类型或模块里。

@@ -53,6 +53,12 @@ pub fn check_prefab(rules: PrefabRules<'_>, errors: &mut Vec<String>) {
         "inserts a loose tuple directly; prefab follow-up inserts must also use named bundle/product types instead of ad hoc component tuples",
     );
     reject_terms_in_rust_files(
+        Path::new(rules.crate_path).join("src"),
+        &[".insert("],
+        errors,
+        "adds components after spawning a prefab root; prefab root objects must be expressed as one complete named bundle",
+    );
+    reject_terms_in_rust_files(
         Path::new(rules.crate_path).join("src/ui"),
         rules.ui_presentation_terms,
         errors,

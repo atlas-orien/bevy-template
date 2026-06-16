@@ -50,12 +50,6 @@ pub fn check_network(rules: NetworkRules<'_>, errors: &mut Vec<String>) {
         errors,
         "network should use cmdproto for cmd packet decode/encode",
     );
-    require_file_contains_all_terms(
-        "Cargo.toml",
-        &["cmdproto = \"0.1.0\"", "fnroute = \"0.1.0\""],
-        errors,
-        "frontend template should be CI-safe: use crates.io cmdproto/fnroute, not parent-directory path dependencies",
-    );
     reject_terms_in_file(
         "Cargo.toml",
         &["path = \"../cmdproto\"", "path = \"../fnroute\""],

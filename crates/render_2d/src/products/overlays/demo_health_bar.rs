@@ -37,8 +37,27 @@ impl Default for DemoHealthBarOverlay2dBundle {
 }
 
 impl DemoHealthBarOverlay2d {
-    pub fn into_bundle(self) -> impl Bundle {
+    pub fn into_bundle(self) -> DemoHealthBarOverlay2dProductBundle {
+        DemoHealthBarOverlay2dProductBundle::default()
+    }
+}
+
+#[derive(Bundle)]
+#[bundle(ignore_from_components)]
+pub struct DemoHealthBarOverlay2dProductBundle(
+    DemoHealthBarOverlay2dBundle,
+    bevy::ecs::spawn::SpawnRelatedBundle<
+        bevy::ecs::hierarchy::ChildOf,
         (
+            bevy::ecs::spawn::Spawn<DemoHealthBarBackground2dBundle>,
+            bevy::ecs::spawn::Spawn<DemoHealthBarFill2dBundle>,
+        ),
+    >,
+);
+
+impl Default for DemoHealthBarOverlay2dProductBundle {
+    fn default() -> Self {
+        Self(
             DemoHealthBarOverlay2dBundle::default(),
             children![
                 DemoHealthBarBackground2dBundle::default(),

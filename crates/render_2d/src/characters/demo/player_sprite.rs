@@ -13,10 +13,10 @@ const DEMO_PLAYER_SPRITE_SIZE: Vec2 = Vec2::new(48.0, 48.0);
 const DEMO_PLAYER_SPRITE_TRANSLATION: Vec3 = Vec3::new(0.0, 18.0, 4.0);
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub(super) struct DemoPlayerSprite2dMarker;
+pub(in crate::characters) struct DemoPlayerSprite2dMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub(super) struct DemoPlayerSpriteAtlasReady2d;
+pub(in crate::characters) struct DemoPlayerSpriteAtlasReady2d;
 
 type PendingDemoPlayerSpriteAtlasQuery<'world, 'state> = Query<
     'world,
@@ -56,7 +56,7 @@ impl DemoPlayerSprite2d {
     }
 }
 
-pub(super) fn prepare_demo_player_sprite_atlas_system(
+pub(in crate::characters) fn prepare_demo_player_sprite_atlas_system(
     mut commands: Commands,
     frame_manifests: Res<Assets<FrameAnimationManifest2d>>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,

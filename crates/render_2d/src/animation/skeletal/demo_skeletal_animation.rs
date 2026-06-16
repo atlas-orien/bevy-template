@@ -12,73 +12,71 @@ const DEMO_BONE_Z: f32 = 6.0;
 const DEMO_JOINT_Z: f32 = 7.0;
 
 pub struct DemoSkeleton2d {
-    translation: Vec3,
-    bone_image: Handle<Image>,
-    joint_image: Handle<Image>,
+    pub bundle: DemoSkeleton2dBundle,
+    pub rig: DemoSkeleton2dRig,
 }
 
 impl DemoSkeleton2d {
     pub fn new(translation: Vec3, bone_image: Handle<Image>, joint_image: Handle<Image>) -> Self {
         Self {
-            translation,
+            bundle: DemoSkeleton2dBundle::new(translation),
+            rig: DemoSkeleton2dRig::new(bone_image, joint_image),
+        }
+    }
+
+    pub fn into_bundle(self) -> impl Bundle {
+        (self.bundle, self.rig.into_children())
+    }
+}
+
+pub struct DemoSkeleton2dRig {
+    bone_image: Handle<Image>,
+    joint_image: Handle<Image>,
+}
+
+impl DemoSkeleton2dRig {
+    fn new(bone_image: Handle<Image>, joint_image: Handle<Image>) -> Self {
+        Self {
             bone_image,
             joint_image,
         }
     }
 
-    pub fn into_bundle(self) -> impl Bundle {
+    fn into_children(self) -> impl Bundle {
+        let bone_image = self.bone_image;
+        let joint_image = self.joint_image;
+
+        children![
+            DemoBone2dBundle::torso(bone_image.clone()),
+            Self::shoulder(joint_image.clone(), DemoJoint2d::LeftShoulder),
+            Self::shoulder(joint_image.clone(), DemoJoint2d::RightShoulder),
+            Self::arm(
+                bone_image.clone(),
+                joint_image.clone(),
+                DemoSkeletonSide::Left
+            ),
+            Self::arm(bone_image, joint_image, DemoSkeletonSide::Right),
+        ]
+    }
+
+    fn shoulder(image: Handle<Image>, joint: DemoJoint2d) -> DemoJoint2dBundle {
+        DemoJoint2dBundle::new(image, joint, joint.translation())
+    }
+
+    fn arm(
+        bone_image: Handle<Image>,
+        joint_image: Handle<Image>,
+        side: DemoSkeletonSide,
+    ) -> impl Bundle {
         (
-            DemoSkeleton2dRootBundle::new(self.translation),
+            DemoBone2dBundle::upper_arm(bone_image.clone(), side.upper_arm_bone(), side),
             children![
-                DemoBone2dBundle::torso(self.bone_image.clone()),
                 DemoJoint2dBundle::new(
-                    self.joint_image.clone(),
-                    DemoJoint2d::LeftShoulder,
-                    Vec3::new(-15.0, 34.0, 0.0),
+                    joint_image,
+                    side.elbow_joint(),
+                    side.elbow_joint().translation(),
                 ),
-                DemoJoint2dBundle::new(
-                    self.joint_image.clone(),
-                    DemoJoint2d::RightShoulder,
-                    Vec3::new(15.0, 34.0, 0.0),
-                ),
-                (
-                    DemoBone2dBundle::upper_arm(
-                        self.bone_image.clone(),
-                        DemoBone2d::LeftUpperArm,
-                        DemoSkeletonSide::Left,
-                    ),
-                    children![
-                        DemoJoint2dBundle::new(
-                            self.joint_image.clone(),
-                            DemoJoint2d::LeftElbow,
-                            Vec3::new(0.0, -26.0, 0.0),
-                        ),
-                        DemoBone2dBundle::lower_arm(
-                            self.bone_image.clone(),
-                            DemoBone2d::LeftLowerArm,
-                            DemoSkeletonSide::Left,
-                        ),
-                    ],
-                ),
-                (
-                    DemoBone2dBundle::upper_arm(
-                        self.bone_image.clone(),
-                        DemoBone2d::RightUpperArm,
-                        DemoSkeletonSide::Right,
-                    ),
-                    children![
-                        DemoJoint2dBundle::new(
-                            self.joint_image.clone(),
-                            DemoJoint2d::RightElbow,
-                            Vec3::new(0.0, -26.0, 0.0),
-                        ),
-                        DemoBone2dBundle::lower_arm(
-                            self.bone_image.clone(),
-                            DemoBone2d::RightLowerArm,
-                            DemoSkeletonSide::Right,
-                        ),
-                    ],
-                ),
+                DemoBone2dBundle::lower_arm(bone_image, side.lower_arm_bone(), side,),
             ],
         )
     }
@@ -102,6 +100,16 @@ enum DemoJoint2d {
     LeftElbow,
     RightShoulder,
     RightElbow,
+}
+
+impl DemoJoint2d {
+    fn translation(self) -> Vec3 {
+        match self {
+            Self::LeftShoulder => Vec3::new(-15.0, 34.0, 0.0),
+            Self::RightShoulder => Vec3::new(15.0, 34.0, 0.0),
+            Self::LeftElbow | Self::RightElbow => Vec3::new(0.0, -26.0, 0.0),
+        }
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
@@ -133,14 +141,14 @@ impl DemoSkeletalAnimation2d {
 }
 
 #[derive(Bundle)]
-struct DemoSkeleton2dRootBundle {
+pub struct DemoSkeleton2dBundle {
     marker: DemoSkeleton2dRoot,
     animation: DemoSkeletalAnimation2d,
     transform: Transform,
     visibility: Visibility,
 }
 
-impl DemoSkeleton2dRootBundle {
+impl DemoSkeleton2dBundle {
     fn new(translation: Vec3) -> Self {
         Self {
             marker: DemoSkeleton2dRoot,
@@ -239,6 +247,27 @@ impl DemoSkeletonSide {
         match self {
             Self::Left => swing,
             Self::Right => -swing,
+        }
+    }
+
+    fn upper_arm_bone(self) -> DemoBone2d {
+        match self {
+            Self::Left => DemoBone2d::LeftUpperArm,
+            Self::Right => DemoBone2d::RightUpperArm,
+        }
+    }
+
+    fn lower_arm_bone(self) -> DemoBone2d {
+        match self {
+            Self::Left => DemoBone2d::LeftLowerArm,
+            Self::Right => DemoBone2d::RightLowerArm,
+        }
+    }
+
+    fn elbow_joint(self) -> DemoJoint2d {
+        match self {
+            Self::Left => DemoJoint2d::LeftElbow,
+            Self::Right => DemoJoint2d::RightElbow,
         }
     }
 }

@@ -1,5 +1,5 @@
-pub mod demo_tilemap;
+pub mod chunk;
 mod plugin;
 
-pub use demo_tilemap::DemoTilemapLayer2d;
+pub use chunk::TilemapChunkLayer2d;
 pub use plugin::TilemapPlugin;

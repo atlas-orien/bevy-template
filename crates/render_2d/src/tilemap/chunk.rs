@@ -1,29 +1,28 @@
-//! Demo tile 地面层 bundle，基于 bevy 内置 TilemapChunk。
+//! 通用 tilemap chunk layer bundle，基于 Bevy 内置 TilemapChunk。
 
 use bevy::{
     prelude::*,
     sprite_render::{TileData, TilemapChunk, TilemapChunkTileData},
 };
 
-const DEMO_TILEMAP_ORIGIN: Vec3 = Vec3::new(-1536.0, -192.0, 0.0);
-
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-struct DemoTilemapLayer2dMarker;
+struct TilemapChunkLayer2dMarker;
 
 #[derive(Bundle)]
-pub struct DemoTilemapLayer2d {
-    marker: DemoTilemapLayer2dMarker,
+pub struct TilemapChunkLayer2d {
+    marker: TilemapChunkLayer2dMarker,
     pub chunk: TilemapChunk,
     pub tiles: TilemapChunkTileData,
     pub transform: Transform,
 }
 
-impl DemoTilemapLayer2d {
+impl TilemapChunkLayer2d {
     pub fn new(
         chunk_size: UVec2,
         tile_display_size: UVec2,
         tileset: Handle<Image>,
         tile_indices: impl IntoIterator<Item = Option<u16>>,
+        translation: Vec3,
     ) -> Self {
         let tile_data = tile_indices
             .into_iter()
@@ -31,7 +30,7 @@ impl DemoTilemapLayer2d {
             .collect();
 
         Self {
-            marker: DemoTilemapLayer2dMarker,
+            marker: TilemapChunkLayer2dMarker,
             chunk: TilemapChunk {
                 chunk_size,
                 tile_display_size,
@@ -39,7 +38,7 @@ impl DemoTilemapLayer2d {
                 ..default()
             },
             tiles: TilemapChunkTileData(tile_data),
-            transform: Transform::from_translation(DEMO_TILEMAP_ORIGIN),
+            transform: Transform::from_translation(translation),
         }
     }
 }

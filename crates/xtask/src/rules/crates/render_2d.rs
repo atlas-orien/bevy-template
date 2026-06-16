@@ -18,6 +18,7 @@ const CONTENT_DIRS: &[&str] = &[
     "crates/render_2d/src/debug",
     "crates/render_2d/src/effects",
     "crates/render_2d/src/environment",
+    "crates/render_2d/src/images",
     "crates/render_2d/src/items",
     "crates/render_2d/src/lighting",
     "crates/render_2d/src/materials",

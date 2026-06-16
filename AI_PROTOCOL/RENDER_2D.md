@@ -49,6 +49,7 @@
 - `debug`: 渲染调试显示，例如 gizmo、边界、坐标轴、可视化标记。
 - `effects`: 命中特效、技能特效、纯视觉生命周期效果。
 - `environment`: 天气、雾、环境氛围、非背景类环境装饰。
+- `images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块；不负责加载具体资源路径。
 - `items`: 物品、掉落物、可拾取物的 2D 表现。
 - `lighting`: 2D 光照感、发光层、假阴影、bloom 相关表现配置。
 - `materials`: 自定义 2D material、shader、特殊 sprite material。
@@ -80,6 +81,13 @@
 - 用户开始真实项目后，可以直接删除或替换占位文件。
 - 不新增 `common.rs`、`misc.rs`、`utils.rs` 这类含义模糊的文件。
 - 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `animation/frame`。
+
+## Images 规则
+
+- `images` 是通用图片表现 primitive，不是 Bevy `Sprite` 的二次 facade。
+- `images` 可以提供已经命名的 bundle/product，例如 `StaticImage2d` 和 `StaticImage2dBundle`。
+- `images` 不加载具体资源路径；图片资源由 `catalog` 或上层传入 `Handle<Image>`。
+- `background`、`layers`、`ui` 等复合表现可以组合 `images`，不要重复散装 `Sprite`、`Transform`、`Visibility`。
 
 ## 边界规则
 

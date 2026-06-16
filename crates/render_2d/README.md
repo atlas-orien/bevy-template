@@ -39,6 +39,7 @@
 - `pixel`: pixel art、pixel-perfect camera、pixel grid snap 相关表现策略。
 - `tilemap`: tile map、tile layer、tile chunk 和 tileset 表现。
 - `environment`: 天气、雾、环境氛围、非背景类环境装饰。
+- `images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块。
 - `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。
 - `particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
 - `screens`: 屏幕级表现，例如标题画面、过场屏、加载屏。

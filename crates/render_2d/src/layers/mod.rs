@@ -6,6 +6,8 @@ mod systems;
 use bevy::ecs::spawn::SpawnIter;
 use bevy::prelude::*;
 
+use crate::images::StaticImage2d;
+
 pub use plugin::Layers2dPlugin;
 
 #[derive(Default)]
@@ -67,18 +69,17 @@ impl RenderLayer2d {
     }
 
     pub(in crate::layers) fn into_bundle(self) -> impl Bundle {
-        let mut sprite = Sprite::from_color(self.color, self.size);
-        if let Some(image) = self.image {
-            sprite.image = image;
-        }
+        let image = match self.image {
+            Some(image) => StaticImage2d::image(image, self.size, self.z),
+            None => StaticImage2d::color(self.color, self.size, self.z),
+        };
 
         (
             RenderLayer2dMarker,
             ParallaxLayer2d {
                 speed: self.parallax_speed,
             },
-            sprite,
-            Transform::from_xyz(0.0, 0.0, self.z),
+            image.into_bundle(),
         )
     }
 }

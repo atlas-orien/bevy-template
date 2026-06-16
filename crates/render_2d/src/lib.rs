@@ -8,6 +8,7 @@ pub mod characters;
 pub mod debug;
 pub mod effects;
 pub mod environment;
+pub mod images;
 pub mod items;
 pub mod layers;
 pub mod lighting;

@@ -9,6 +9,7 @@ publish = false
 
 [dependencies]
 bevy.workspace = true
+catalog.workspace = true
 ecs.workspace = true
 error.workspace = true
 gameplay.workspace = true

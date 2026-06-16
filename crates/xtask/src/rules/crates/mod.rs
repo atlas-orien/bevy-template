@@ -1,5 +1,6 @@
 pub mod app;
 pub mod audio;
+pub mod catalog;
 pub mod dev_preview;
 pub mod ecs;
 pub mod error;

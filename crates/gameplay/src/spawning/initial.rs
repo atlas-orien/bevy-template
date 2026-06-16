@@ -1,14 +1,9 @@
-use bevy::{
-    image::{ImageArrayLayout, ImageLoaderSettings},
-    prelude::*,
-};
+use bevy::prelude::*;
+use catalog::demo::{demo_ground, demo_player};
 use prefab::lifecycle::GameplaySessionEntity;
-use prefab::world_2d::characters::DemoPlayerPrefab;
 use prefab::world_2d::demo_level::{
-    DemoBackgroundPrefab, DemoGroundPrefab, DemoLandmarkPrefab, DemoRockPrefab,
-    DemoSensorZonePrefab,
+    DemoBackgroundPrefab, DemoLandmarkPrefab, DemoRockPrefab, DemoSensorZonePrefab,
 };
-use render_2d::atlases::demo_player_atlas_layout;
 use render_2d::camera::DemoWorldCamera2dBundle;
 
 use super::plan::GameplaySpawnPlan;
@@ -17,20 +12,13 @@ pub fn default_gameplay_spawn_plan(
     asset_server: &AssetServer,
     atlas_layouts: &mut Assets<TextureAtlasLayout>,
 ) -> GameplaySpawnPlan {
-    let player_atlas_layout = atlas_layouts.add(demo_player_atlas_layout());
-
     GameplaySpawnPlan::new()
         .with(DemoBackgroundPrefab)
-        .with(DemoGroundPrefab::new(asset_server.load_with_settings(
-            "2d/static/tilemaps/demo_tileset.png",
-            |settings: &mut ImageLoaderSettings| {
-                settings.array_layout = Some(ImageArrayLayout::RowCount { rows: 4 });
-            },
-        )))
-        .with(DemoPlayerPrefab::new(
+        .with(demo_ground(asset_server))
+        .with(demo_player(
             Vec2::new(0.0, 96.0),
-            asset_server.load("2d/animated/characters/demo_player.png"),
-            player_atlas_layout,
+            asset_server,
+            atlas_layouts,
         ))
         .with(DemoRockPrefab::new(Vec2::new(-220.0, 94.0)))
         .with(DemoRockPrefab::new(Vec2::new(260.0, 94.0)))

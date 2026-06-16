@@ -3,10 +3,10 @@
 use bevy::asset::AssetPlugin;
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
+use catalog::demo::demo_skeleton;
 use ecs::EcsPlugin;
 use gameplay::api::GameplayApiPlugin;
 use prefab::Prefab;
-use prefab::world_2d::demo_level::DemoSkeletonPrefab;
 use render_2d::Render2dPlugin;
 use render_2d::camera::DemoWorldCamera2dBundle;
 
@@ -38,10 +38,5 @@ pub fn run() {
 fn spawn_skeletal_animation_preview_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(DemoWorldCamera2dBundle::default());
 
-    DemoSkeletonPrefab::new(
-        Vec2::new(0.0, -48.0),
-        asset_server.load("2d/static/props/demo-skeletal-bone/demo-skeletal-bone.png"),
-        asset_server.load("2d/static/props/demo-skeletal-joint/demo-skeletal-joint.png"),
-    )
-    .spawn(&mut commands);
+    demo_skeleton(Vec2::new(0.0, -48.0), &asset_server).spawn(&mut commands);
 }

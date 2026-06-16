@@ -1900,6 +1900,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "catalog"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "error",
+ "prefab",
+ "render_2d",
+]
+
+[[package]]
 name = "cc"
 version = "1.2.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2392,6 +2402,7 @@ name = "dev_preview"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "catalog",
  "ecs",
  "error",
  "gameplay",
@@ -2821,6 +2832,7 @@ name = "gameplay"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "catalog",
  "error",
  "helper",
  "intent",

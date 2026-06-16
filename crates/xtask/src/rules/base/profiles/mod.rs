@@ -1,4 +1,5 @@
 pub mod app;
+pub mod catalog;
 pub mod dev_preview;
 pub mod ecs;
 pub mod error;
@@ -11,6 +12,7 @@ pub mod render;
 pub mod runtime;
 
 pub use app::{AppRules, check_app};
+pub use catalog::{CatalogRules, check_catalog};
 pub use dev_preview::{DevPreviewRules, check_dev_preview};
 pub use ecs::{EcsRules, check_ecs};
 pub use error::{ErrorRules, check_error};

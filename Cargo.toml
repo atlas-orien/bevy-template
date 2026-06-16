@@ -27,6 +27,7 @@ bevy = "0.18"
 # internal workspace dependencies.
 audio = { path = "crates/audio" }
 app = { path = "crates/app" }
+catalog = { path = "crates/catalog" }
 dev_preview = { path = "crates/dev_preview" }
 ecs = { path = "crates/ecs" }
 error = { path = "crates/error" }

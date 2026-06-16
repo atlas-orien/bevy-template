@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use crate::rules::base::atlases::{AtlasesRules, check_atlases};
 use crate::rules::base::camera::{CameraRules, check_camera};
 use crate::rules::base::dependencies::reject_dependencies;
 use crate::rules::base::frame_animation::{FrameAnimationRules, check_frame_animation};
@@ -11,7 +12,7 @@ use crate::rules::base::render_api::reject_multi_public_render_items;
 use crate::rules::base::skeletal_animation::{SkeletalAnimationRules, check_skeletal_animation};
 use crate::rules::base::source::{
     reject_direct_input_access, reject_files_containing_all_terms, reject_terms_in_file,
-    reject_terms_in_rust_files,
+    reject_terms_in_rust_files, reject_terms_in_rust_files_except,
 };
 use crate::rules::base::tilemap::{TilemapRules, check_tilemap};
 use crate::rules::base::visual_primitives::{ImagesRules, TextRules, check_images, check_text};
@@ -74,6 +75,7 @@ pub struct Render2dRules<'a> {
     pub forbidden_dependencies: &'a [&'a str],
     pub world_rule_terms: &'a [&'a str],
     pub hardcoded_sprite_sheet_terms: &'a [&'a str],
+    pub atlases: AtlasesRules<'a>,
     pub camera: CameraRules<'a>,
     pub images: ImagesRules<'a>,
     pub text: TextRules<'a>,
@@ -116,6 +118,17 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         errors,
         "render_2d root should expose the grouped primitives/capabilities/products structure instead of restoring flat root modules",
     );
+    reject_terms_in_rust_files_except(
+        Path::new(rules.crate_path).join("src/primitives"),
+        Path::new(rules.crate_path).join("src/primitives/markers.rs"),
+        &[
+            "struct AtlasSprite2dMarker",
+            "struct RenderLayer2dMarker",
+            "struct TilemapChunkLayer2dMarker",
+        ],
+        errors,
+        "primitive marker structs belong in render_2d/src/primitives/markers.rs instead of individual primitive modules",
+    );
     require_paths(
         rules.content_dirs,
         errors,
@@ -151,6 +164,7 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         "render_2d must load sprite sheet layout and frame clips from .frames.ron assets, not hardcode concrete sheet slicing in Rust",
     );
     check_frame_animation(rules.frame_animation, errors);
+    check_atlases(rules.atlases, errors);
     check_camera(rules.camera, errors);
     check_images(rules.images, errors);
     check_text(rules.text, errors);

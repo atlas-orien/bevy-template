@@ -7,6 +7,7 @@ use bevy::ecs::spawn::SpawnIter;
 use bevy::prelude::*;
 
 use crate::primitives::images::StaticImage2d;
+use crate::primitives::markers::RenderLayer2dMarker;
 
 pub use plugin::Layers2dPlugin;
 
@@ -83,9 +84,6 @@ impl RenderLayer2d {
         )
     }
 }
-
-#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub(in crate::primitives::layers) struct RenderLayer2dMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, PartialEq)]
 pub(in crate::primitives::layers) struct ParallaxLayer2d {

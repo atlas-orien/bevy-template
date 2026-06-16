@@ -47,14 +47,14 @@
 `primitives`:
 
 - `primitives/frame_animation`: sprite sheet、texture atlas、逐帧动画。
-- `primitives/atlases`: 共享 texture atlas、sprite sheet layout、tileset layout。
+- `primitives/atlases`: 通用 texture atlas 表现 primitive，例如显示 atlas 中某一格。
 - `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
 - `primitives/images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块；不负责加载具体资源路径。
 - `primitives/layers`: 通用 layer stack 和 parallax layer 能力。
+- `primitives/markers.rs`: 跨 primitive 使用的无数据语义 marker，例如 `SceneCamera2d`、`FollowCameraTarget2d`、`AtlasSprite2dMarker`、`RenderLayer2dMarker`、`TilemapChunkLayer2dMarker`。
 - `primitives/text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
 - `primitives/tilemap`: 通用 tile map primitive，例如基于 Bevy `TilemapChunk` 的 tile chunk layer。
 - `primitives/camera/base.rs`: 共享 Bevy 2D camera bundle/config，只放 `Camera2d`、`Camera`、`RenderLayers`、`Transform` 等基础组合。
-- `primitives/camera/markers.rs`: camera 语义 marker，例如 `SceneCamera2d`、`FollowCameraTarget2d`。
 - `primitives/camera/presets`: 业务可直接选择的 camera preset，例如 fixed、follow、ui。
 - `primitives/tilemap/chunk.rs`: 通用 `TilemapChunkLayer2d`，只负责把 tileset handle、chunk size、tile size、tile index 数据和 transform 组合成 Bevy tilemap chunk bundle。
 
@@ -98,6 +98,13 @@
 - `images` 可以提供已经命名的 bundle/product，例如 `StaticImage2d` 和 `StaticImage2dBundle`。
 - `images` 不加载具体资源路径；图片资源由 `catalog` 或上层传入 `Handle<Image>`。
 - `background`、`layers`、`ui` 等复合表现可以组合 `images`，不要重复散装 `Sprite`、`Transform`、`Visibility`。
+
+## Atlases 规则
+
+- `atlases` 是通用 texture atlas 表现 primitive，不写具体角色、物品或 demo 产品。
+- `atlases` 可以提供 `AtlasSprite2d` 这类 named bundle，用于显示 atlas layout 的某一格。
+- `atlases` 不加载具体资源路径，不创建 `TextureAtlasLayout` 资源；image handle 和 layout handle 由 `catalog`、`frame_animation` 或上层传入。
+- `atlases` 不负责按时间切换帧；逐帧播放属于 `primitives/frame_animation`。
 
 ## Text 规则
 

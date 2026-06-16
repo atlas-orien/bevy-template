@@ -17,14 +17,14 @@ pub fn check_camera(rules: CameraRules<'_>, errors: &mut Vec<String>) {
     require_path(
         camera_dir,
         errors,
-        "render_2d camera must stay grouped under src/camera",
+        "render_2d camera must stay grouped under primitives/camera",
     );
 
     for file_name in rules.root_required_files {
         require_path(
             camera_dir.join(file_name),
             errors,
-            "camera root keeps shared base, markers, plugin and module exports",
+            "camera root keeps shared base, plugin and module exports",
         );
     }
 

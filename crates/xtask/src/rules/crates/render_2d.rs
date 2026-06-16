@@ -1,3 +1,4 @@
+use crate::rules::base::atlases::AtlasesRules;
 use crate::rules::base::camera::CameraRules;
 use crate::rules::base::frame_animation::FrameAnimationRules;
 use crate::rules::base::profiles::{Render2dRules, check_render_2d};
@@ -16,6 +17,7 @@ const CONTENT_DIRS: &[&str] = &[
     "crates/render_2d/src/primitives/camera",
     "crates/render_2d/src/primitives/images",
     "crates/render_2d/src/primitives/layers",
+    "crates/render_2d/src/primitives/markers.rs",
     "crates/render_2d/src/primitives/text",
     "crates/render_2d/src/primitives/tilemap",
     "crates/render_2d/src/capabilities",
@@ -95,6 +97,7 @@ const OBSOLETE_PATHS: &[&str] = &[
     "crates/render_2d/src/primitives/animation/frame",
     "crates/render_2d/src/capabilities/animation",
     "crates/render_2d/src/capabilities/animation/skeletal",
+    "crates/render_2d/src/primitives/camera/markers.rs",
 ];
 
 const FORBIDDEN_DEPENDENCIES: &[&str] = &[
@@ -130,15 +133,29 @@ const FRAME_ANIMATION_ALLOWED_SUBDIRS: &[&str] = &[];
 const FRAME_ANIMATION_FORBIDDEN_FILE_NAMES: &[&str] =
     &["base.rs", "content.rs", "demo.rs", "example.rs"];
 
-const CAMERA_ROOT_REQUIRED_FILES: &[&str] = &["mod.rs", "base.rs", "markers.rs", "plugin.rs"];
+const CAMERA_ROOT_REQUIRED_FILES: &[&str] = &["mod.rs", "base.rs", "plugin.rs"];
 
-const CAMERA_ROOT_ALLOWED_FILES: &[&str] = &["mod.rs", "base.rs", "markers.rs", "plugin.rs"];
+const CAMERA_ROOT_ALLOWED_FILES: &[&str] = &["mod.rs", "base.rs", "plugin.rs"];
 
 const CAMERA_ROOT_ALLOWED_DIRS: &[&str] = &["presets"];
 
 const CAMERA_PRESETS_REQUIRED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
 
 const CAMERA_PRESETS_ALLOWED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
+
+const ATLASES_REQUIRED_FILES: &[&str] = &["mod.rs", "plugin.rs"];
+
+const ATLASES_ALLOWED_FILES: &[&str] = &["mod.rs", "plugin.rs"];
+
+const ATLASES_REQUIRED_SPRITE_API_TERMS: &[&str] = &[
+    "pub struct AtlasSprite2d",
+    "Handle<Image>",
+    "Handle<TextureAtlasLayout>",
+    "TextureAtlas { layout, index }",
+    "Transform::from_translation(translation)",
+];
+
+const ATLASES_FORBIDDEN_TERMS: &[&str] = &["AssetServer", "asset_server", ".load(", "Timer"];
 
 const IMAGES_ALLOWED_FILES: &[&str] = &["mod.rs"];
 
@@ -204,6 +221,13 @@ pub fn check() -> CheckStatus {
             forbidden_dependencies: FORBIDDEN_DEPENDENCIES,
             world_rule_terms: WORLD_RULE_TERMS,
             hardcoded_sprite_sheet_terms: HARDCODED_SPRITE_SHEET_TERMS,
+            atlases: AtlasesRules {
+                atlases_dir: "crates/render_2d/src/primitives/atlases",
+                required_files: ATLASES_REQUIRED_FILES,
+                allowed_files: ATLASES_ALLOWED_FILES,
+                required_sprite_api_terms: ATLASES_REQUIRED_SPRITE_API_TERMS,
+                forbidden_terms: ATLASES_FORBIDDEN_TERMS,
+            },
             camera: CameraRules {
                 camera_dir: "crates/render_2d/src/primitives/camera",
                 root_required_files: CAMERA_ROOT_REQUIRED_FILES,

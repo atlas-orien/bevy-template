@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 
 use super::FixedCamera2dBundle;
-use crate::primitives::camera::FollowCameraTarget2d;
+use crate::primitives::markers::FollowCameraTarget2d;
 
 const FOLLOW_CAMERA_2D_SMOOTHNESS: f32 = 12.0;
 

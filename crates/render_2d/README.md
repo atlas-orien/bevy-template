@@ -26,7 +26,9 @@
 关键路径：
 
 - `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
+- `primitives/atlases`: 通用 texture atlas sprite primitive。
 - `primitives/frame_animation`: sprite sheet、texture atlas、逐帧播放。
+- `primitives/markers.rs`: 跨 primitive 使用的无数据语义 marker。
 - `primitives/tilemap/chunk.rs`: `TilemapChunkLayer2d`，基于 Bevy `TilemapChunk` 组合 tileset、chunk size、tile size、tile index 数据和 transform。
 - `capabilities/skeletal_animation`: 自定义骨骼动画能力。
 - `products/ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。

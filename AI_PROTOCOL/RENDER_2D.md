@@ -101,6 +101,12 @@
 - `animation/frame` 只暴露通用动画状态、manifest、handle、loader、plugin 和 system，不暴露 `Demo*` 类型或 `demo_*` API。
 - 具体角色如何使用 frame animation，写到 `render_2d/src/characters` 等语义目录；例如角色视觉 bundle 组合 `FrameAnimation2d` 和 `FrameAnimationManifest2d` handle。
 - 具体资源路径由 `catalog` 绑定；`animation/frame` 不直接加载具体图片资源。
+- `animation/skeletal` 当前不是通用骨骼 runtime，而是具体自定义骨骼动画产品集合。
+- `animation/skeletal` 下每个具体产品必须建目录，例如 `animation/skeletal/demo/`，不要写成 `demo_skeletal_animation.rs` 巨型单文件。
+- skeletal 产品目录 root 只放 `mod.rs`、`entry.rs`、`systems.rs`、`tests.rs` 和 `rig/`。
+- skeletal 产品入口写在 `entry.rs`，`mod.rs` 只声明模块和 re-export；这符合全项目 `mod.rs` 只做导出的规则。
+- skeletal 的骨架结构写在 `rig/` 子目录，至少拆成 `structure.rs`、`parts.rs`、`bundles.rs`、`layout.rs`。
+- `rig/structure.rs` 描述完整 rig 由哪些部件组成；`parts.rs` 描述 torso、arm、shoulder 等部件；`bundles.rs` 描述 root/bone/joint bundle；`layout.rs` 描述尺寸、颜色、位置和左右侧语义。
 - 帧动画的 sprite sheet 布局、clip、帧顺序、fps 和循环信息必须来自
   `assets/2d/animated/**/*.frames.ron`。
 - `render_2d` 不允许为具体 sprite sheet 写硬编码切片逻辑，例如

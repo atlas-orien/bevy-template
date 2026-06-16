@@ -1,5 +1,6 @@
 use crate::rules::base::frame_animation::FrameAnimationRules;
 use crate::rules::base::profiles::{Render2dRules, check_render_2d};
+use crate::rules::base::skeletal_animation::SkeletalAnimationRules;
 use crate::rules::{CheckStatus, finish};
 
 const RENDER_2D_CRATE: &str = "crates/render_2d";
@@ -91,6 +92,20 @@ const FRAME_ANIMATION_ALLOWED_SUBDIRS: &[&str] = &[];
 const FRAME_ANIMATION_FORBIDDEN_FILE_NAMES: &[&str] =
     &["base.rs", "content.rs", "demo.rs", "example.rs"];
 
+const SKELETAL_PRODUCT_REQUIRED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
+
+const SKELETAL_PRODUCT_ALLOWED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
+
+const SKELETAL_RIG_REQUIRED_FILES: &[&str] = &[
+    "mod.rs",
+    "structure.rs",
+    "parts.rs",
+    "bundles.rs",
+    "layout.rs",
+];
+
+const SKELETAL_FORBIDDEN_FILE_NAMES: &[&str] = &["demo_skeletal_animation.rs", "example.rs"];
+
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
     check_render_2d(
@@ -107,6 +122,13 @@ pub fn check() -> CheckStatus {
                 forbidden_subdirs: FRAME_ANIMATION_ALLOWED_SUBDIRS,
                 forbidden_file_names: FRAME_ANIMATION_FORBIDDEN_FILE_NAMES,
                 hardcoded_sheet_terms: HARDCODED_SPRITE_SHEET_TERMS,
+            },
+            skeletal_animation: SkeletalAnimationRules {
+                skeletal_dir: "crates/render_2d/src/animation/skeletal",
+                product_required_files: SKELETAL_PRODUCT_REQUIRED_FILES,
+                product_allowed_files: SKELETAL_PRODUCT_ALLOWED_FILES,
+                rig_required_files: SKELETAL_RIG_REQUIRED_FILES,
+                forbidden_file_names: SKELETAL_FORBIDDEN_FILE_NAMES,
             },
         },
         &mut errors,

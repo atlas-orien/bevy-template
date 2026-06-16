@@ -7,6 +7,7 @@ use crate::rules::base::paths::{
     reject_file_names, reject_paths, require_mod_rs_under_src, require_paths,
 };
 use crate::rules::base::render_api::reject_multi_public_render_items;
+use crate::rules::base::skeletal_animation::{SkeletalAnimationRules, check_skeletal_animation};
 use crate::rules::base::source::{
     reject_direct_input_access, reject_files_containing_all_terms, reject_terms_in_rust_files,
 };
@@ -70,6 +71,7 @@ pub struct Render2dRules<'a> {
     pub world_rule_terms: &'a [&'a str],
     pub hardcoded_sprite_sheet_terms: &'a [&'a str],
     pub frame_animation: FrameAnimationRules<'a>,
+    pub skeletal_animation: SkeletalAnimationRules<'a>,
 }
 
 pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
@@ -123,6 +125,7 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         "render_2d must load sprite sheet layout and frame clips from .frames.ron assets, not hardcode concrete sheet slicing in Rust",
     );
     check_frame_animation(rules.frame_animation, errors);
+    check_skeletal_animation(rules.skeletal_animation, errors);
     reject_terms_in_rust_files(
         Path::new(rules.crate_path).join("src"),
         &["UiCameraTarget"],

@@ -40,6 +40,12 @@ pub fn check_prefab(rules: PrefabRules<'_>, errors: &mut Vec<String>) {
         "calls another prefab's `spawn` from inside prefab code; compose multiple prefab instances from gameplay instead",
     );
     reject_terms_in_rust_files(
+        Path::new(rules.crate_path).join("src"),
+        &[".spawn(("],
+        errors,
+        "spawns a loose tuple directly; prefab must spawn a named bundle/product first, then attach children or narrow follow-up inserts",
+    );
+    reject_terms_in_rust_files(
         Path::new(rules.crate_path).join("src/ui"),
         rules.ui_presentation_terms,
         errors,

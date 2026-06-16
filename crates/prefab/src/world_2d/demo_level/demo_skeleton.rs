@@ -14,6 +14,15 @@ pub struct DemoSkeletonPrefab {
     joint_image: Handle<Image>,
 }
 
+#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+struct DemoSkeletonRoot;
+
+#[derive(Bundle, Default)]
+struct DemoSkeletonRootBundle {
+    root: DemoSkeletonRoot,
+    session: GameplaySessionEntity,
+}
+
 impl DemoSkeletonPrefab {
     pub fn new(position: Vec2, bone_image: Handle<Image>, joint_image: Handle<Image>) -> Self {
         Self {
@@ -27,15 +36,15 @@ impl DemoSkeletonPrefab {
 impl Prefab for DemoSkeletonPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn((
-                GameplaySessionEntity,
+            .spawn(DemoSkeletonRootBundle::default())
+            .insert(
                 DemoSkeleton2d::new(
                     Vec3::new(self.position.x, self.position.y, DEMO_SKELETON_Z),
                     self.bone_image,
                     self.joint_image,
                 )
                 .into_bundle(),
-            ))
+            )
             .id()
     }
 }

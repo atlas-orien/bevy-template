@@ -13,6 +13,21 @@ pub struct DemoRockPrefab {
     position: Vec2,
 }
 
+#[derive(Bundle)]
+struct DemoRockBundle {
+    session: GameplaySessionEntity,
+    visual: DemoRock2d,
+}
+
+impl DemoRockBundle {
+    fn new(position: Vec2) -> Self {
+        Self {
+            session: GameplaySessionEntity,
+            visual: DemoRock2d::new(Vec3::new(position.x, position.y, DEMO_ROCK_Z)),
+        }
+    }
+}
+
 impl DemoRockPrefab {
     pub fn new(position: Vec2) -> Self {
         Self { position }
@@ -21,18 +36,28 @@ impl DemoRockPrefab {
 
 impl Prefab for DemoRockPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
-        commands
-            .spawn((
-                GameplaySessionEntity,
-                DemoRock2d::new(Vec3::new(self.position.x, self.position.y, DEMO_ROCK_Z)),
-            ))
-            .id()
+        commands.spawn(DemoRockBundle::new(self.position)).id()
     }
 }
 
 pub struct DemoLandmarkPrefab {
     position: Vec2,
     color: Color,
+}
+
+#[derive(Bundle)]
+struct DemoLandmarkBundle {
+    session: GameplaySessionEntity,
+    visual: DemoLandmark2d,
+}
+
+impl DemoLandmarkBundle {
+    fn new(position: Vec2, color: Color) -> Self {
+        Self {
+            session: GameplaySessionEntity,
+            visual: DemoLandmark2d::new(Vec3::new(position.x, position.y, DEMO_LANDMARK_Z), color),
+        }
+    }
 }
 
 impl DemoLandmarkPrefab {
@@ -44,13 +69,7 @@ impl DemoLandmarkPrefab {
 impl Prefab for DemoLandmarkPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn((
-                GameplaySessionEntity,
-                DemoLandmark2d::new(
-                    Vec3::new(self.position.x, self.position.y, DEMO_LANDMARK_Z),
-                    self.color,
-                ),
-            ))
+            .spawn(DemoLandmarkBundle::new(self.position, self.color))
             .id()
     }
 }

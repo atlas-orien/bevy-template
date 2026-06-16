@@ -38,6 +38,21 @@ pub struct DemoMenuFocused {
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
 pub struct DemoMenuRoot;
 
+#[derive(Bundle)]
+struct DemoMenuBundle {
+    root: DemoMenuRoot,
+    visual: DemoMenuVisual,
+}
+
+impl Default for DemoMenuBundle {
+    fn default() -> Self {
+        Self {
+            root: DemoMenuRoot,
+            visual: DemoMenuVisual::default(),
+        }
+    }
+}
+
 impl DemoMenuFocused {
     pub const fn focused() -> Self {
         Self { focused: true }
@@ -94,7 +109,7 @@ pub struct DemoMenuPrefab;
 impl Prefab for DemoMenuPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn((DemoMenuRoot, DemoMenuVisual::default()))
+            .spawn(DemoMenuBundle::default())
             .with_children(|parent| {
                 for (index, item) in DEMO_MENU_ITEMS.iter().enumerate() {
                     parent.spawn(Self::button(index, *item));

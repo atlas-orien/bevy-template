@@ -13,10 +13,8 @@ pub struct DemoBackgroundPrefab;
 impl Prefab for DemoBackgroundPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn((
-                DemoBackgroundRoot,
-                DemoBackground2d::default().into_bundle(),
-            ))
+            .spawn(DemoBackgroundRoot)
+            .insert(DemoBackground2d::default().into_bundle())
             .id()
     }
 }

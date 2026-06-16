@@ -17,6 +17,29 @@ pub struct DemoGroundPrefab {
     tileset: Handle<Image>,
 }
 
+#[derive(Bundle)]
+struct DemoGroundBundle {
+    root: DemoGroundRoot,
+    layer: TilemapChunkLayer2d,
+}
+
+impl DemoGroundBundle {
+    fn new(tileset: Handle<Image>) -> Self {
+        let tile_indices = DEMO_GROUND.into_iter().flatten();
+
+        Self {
+            root: DemoGroundRoot,
+            layer: TilemapChunkLayer2d::new(
+                UVec2::new(DEMO_GROUND_WIDTH as u32, DEMO_GROUND_HEIGHT as u32),
+                UVec2::splat(DEMO_TILE_SIZE),
+                tileset,
+                tile_indices,
+                DEMO_TILEMAP_ORIGIN,
+            ),
+        }
+    }
+}
+
 impl DemoGroundPrefab {
     pub fn new(tileset: Handle<Image>) -> Self {
         Self { tileset }
@@ -25,19 +48,6 @@ impl DemoGroundPrefab {
 
 impl Prefab for DemoGroundPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
-        let tile_indices = DEMO_GROUND.into_iter().flatten();
-
-        commands
-            .spawn((
-                DemoGroundRoot,
-                TilemapChunkLayer2d::new(
-                    UVec2::new(DEMO_GROUND_WIDTH as u32, DEMO_GROUND_HEIGHT as u32),
-                    UVec2::splat(DEMO_TILE_SIZE),
-                    self.tileset,
-                    tile_indices,
-                    DEMO_TILEMAP_ORIGIN,
-                ),
-            ))
-            .id()
+        commands.spawn(DemoGroundBundle::new(self.tileset)).id()
     }
 }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::entry::{ParallaxLayer2d, RenderLayer2dMarker};
+use super::{ParallaxLayer2d, RenderLayer2dMarker};
 use crate::camera::SceneCamera2d;
 
 pub(super) fn parallax_layer_system(

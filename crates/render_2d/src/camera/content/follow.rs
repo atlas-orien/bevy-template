@@ -1,7 +1,30 @@
+//! 跟随目标的 2D 场景相机。
+
 use bevy::prelude::*;
 
-use super::FollowCamera2d;
+use super::FixedCamera2dBundle;
 use crate::camera::FollowCameraTarget2d;
+
+const FOLLOW_CAMERA_2D_SMOOTHNESS: f32 = 12.0;
+
+#[derive(Component, Debug, Clone, Copy, PartialEq)]
+pub struct FollowCamera2d {
+    pub smoothness: f32,
+}
+
+impl Default for FollowCamera2d {
+    fn default() -> Self {
+        Self {
+            smoothness: FOLLOW_CAMERA_2D_SMOOTHNESS,
+        }
+    }
+}
+
+#[derive(Bundle, Default)]
+pub struct FollowCamera2dBundle {
+    fixed_camera: FixedCamera2dBundle,
+    follow: FollowCamera2d,
+}
 
 pub(in crate::camera) fn follow_camera_system(
     time: Res<Time>,

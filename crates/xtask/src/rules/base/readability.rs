@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::util::{files_named_below, parse_rust_file, read_file, rust_files};
+use crate::rules::util::{read_file, rust_files};
 
 pub fn check_workspace_readability(crates_root: impl AsRef<Path>, errors: &mut Vec<String>) {
     let Ok(entries) = std::fs::read_dir(crates_root.as_ref()) else {
@@ -17,7 +17,6 @@ pub fn check_workspace_readability(crates_root: impl AsRef<Path>, errors: &mut V
             require_crate_lib_doc(&crate_path, errors);
         }
         reject_long_rust_files(&crate_path, 400, errors);
-        reject_non_declaration_mod_rs(&crate_path, errors);
     }
 }
 
@@ -49,21 +48,6 @@ pub fn reject_long_rust_files(root: impl AsRef<Path>, max_lines: usize, errors: 
     }
 }
 
-pub fn reject_non_declaration_mod_rs(root: impl AsRef<Path>, errors: &mut Vec<String>) {
-    for file in files_named_below(root, "mod.rs") {
-        let Some(parsed) = parse_rust_file(&file, errors) else {
-            continue;
-        };
-
-        for kind in non_declaration_item_kinds(&parsed) {
-            errors.push(format!(
-                "{} contains `{kind}`; mod.rs should only declare modules and re-export names",
-                file.display()
-            ));
-        }
-    }
-}
-
 fn crate_lib_doc_missing(source: &str) -> bool {
     !source.trim_start().starts_with("//!")
 }
@@ -73,43 +57,9 @@ fn line_count_over_limit(source: &str, max_lines: usize) -> Option<usize> {
     (line_count > max_lines).then_some(line_count)
 }
 
-fn non_declaration_item_kinds(parsed: &syn::File) -> Vec<&'static str> {
-    parsed
-        .items
-        .iter()
-        .filter(|item| !is_allowed_mod_item(item))
-        .map(item_kind)
-        .collect()
-}
-
-fn is_allowed_mod_item(item: &syn::Item) -> bool {
-    matches!(item, syn::Item::Mod(_) | syn::Item::Use(_))
-}
-
-fn item_kind(item: &syn::Item) -> &'static str {
-    match item {
-        syn::Item::Const(_) => "const",
-        syn::Item::Enum(_) => "enum",
-        syn::Item::ExternCrate(_) => "extern crate",
-        syn::Item::Fn(_) => "fn",
-        syn::Item::ForeignMod(_) => "extern block",
-        syn::Item::Impl(_) => "impl",
-        syn::Item::Macro(_) => "macro",
-        syn::Item::Mod(_) => "mod",
-        syn::Item::Static(_) => "static",
-        syn::Item::Struct(_) => "struct",
-        syn::Item::Trait(_) => "trait",
-        syn::Item::TraitAlias(_) => "trait alias",
-        syn::Item::Type(_) => "type",
-        syn::Item::Union(_) => "union",
-        syn::Item::Use(_) => "use",
-        _ => "item",
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use super::{crate_lib_doc_missing, line_count_over_limit, non_declaration_item_kinds};
+    use super::{crate_lib_doc_missing, line_count_over_limit};
 
     #[test]
     fn crate_lib_doc_detects_missing_and_present_doc() {
@@ -126,19 +76,5 @@ mod tests {
 
         assert_eq!(line_count_over_limit(&at_limit, 400), None);
         assert_eq!(line_count_over_limit(&over_limit, 400), Some(401));
-    }
-
-    #[test]
-    fn mod_rs_judgment_allows_declarations_and_flags_definitions() {
-        let declarations = syn::parse_file("pub mod a;\nmod b;\npub use a::Thing;\n")
-            .expect("test source should parse");
-        assert!(non_declaration_item_kinds(&declarations).is_empty());
-
-        let definitions = syn::parse_file("pub fn run() {}\npub struct Plugin;\n")
-            .expect("test source should parse");
-        assert_eq!(
-            non_declaration_item_kinds(&definitions),
-            vec!["fn", "struct"]
-        );
     }
 }

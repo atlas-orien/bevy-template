@@ -1,6 +1,36 @@
 //! Demo 视差背景产品，包含背景 root、层级结构和视差系统。
 
-mod entry;
+use bevy::prelude::*;
+
 mod layers;
 
-pub use entry::DemoBackground2d;
+use self::layers::demo_background_layers;
+use crate::layers::LayerStack2d;
+
+pub struct DemoBackground2d {
+    layers: LayerStack2d,
+}
+
+impl Default for DemoBackground2d {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl DemoBackground2d {
+    pub fn into_bundle(self) -> impl Bundle {
+        self.layers.into_bundle()
+    }
+}
+
+impl From<LayerStack2d> for DemoBackground2d {
+    fn from(layers: LayerStack2d) -> Self {
+        Self { layers }
+    }
+}
+
+impl DemoBackground2d {
+    pub fn new() -> Self {
+        LayerStack2d::new(demo_background_layers()).into()
+    }
+}

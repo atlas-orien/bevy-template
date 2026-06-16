@@ -12,6 +12,7 @@ pub struct PrefabRules<'a> {
     pub protocol_path: &'a str,
     pub forbidden_dependencies: &'a [&'a str],
     pub ui_presentation_terms: &'a [&'a str],
+    pub forbidden_asset_path_terms: &'a [&'a str],
 }
 
 pub fn check_prefab(rules: PrefabRules<'_>, errors: &mut Vec<String>) {
@@ -70,5 +71,11 @@ pub fn check_prefab(rules: PrefabRules<'_>, errors: &mut Vec<String>) {
         &["UiCameraTarget"],
         errors,
         "UI prefab should not accept runtime camera handles, so gameplay must attach UiTargetCamera after spawning the UI prefab root",
+    );
+    reject_terms_in_rust_files(
+        Path::new(rules.crate_path).join("src"),
+        rules.forbidden_asset_path_terms,
+        errors,
+        "prefab must not hardcode concrete asset paths; catalog should bind resources and pass handles or semantic asset ids into prefab constructors",
     );
 }

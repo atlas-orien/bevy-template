@@ -8,17 +8,36 @@ use ecs::components::characters::DemoPlayerControlled;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
 use ecs::events::demo_session::DemoSessionStartedEvent;
 
-const DEMO_BGM_AUDIO: &str = "audio/demo_bgm.ogg";
 const DEMO_BGM_VOLUME: f32 = 0.35;
 const DEMO_FOOTSTEP_INTERVAL_SECONDS: f32 = 0.28;
 
+#[derive(Resource, Debug, Clone, Eq, PartialEq)]
+pub struct DemoBgmAudio {
+    path: String,
+}
+
+impl DemoBgmAudio {
+    pub fn new(path: impl Into<String>) -> Self {
+        Self { path: path.into() }
+    }
+
+    fn path(&self) -> &str {
+        &self.path
+    }
+}
+
 pub fn demo_bgm_audio_system(
     mut events: MessageReader<DemoSessionStartedEvent>,
+    bgm: Option<Res<DemoBgmAudio>>,
     mut audio_requests: MessageWriter<PlayAudioRequest>,
 ) {
+    let Some(bgm) = bgm else {
+        return;
+    };
+
     for _ in events.read() {
         audio_requests.write(
-            PlayAudioRequest::sample(DEMO_BGM_AUDIO)
+            PlayAudioRequest::sample(bgm.path())
                 .with_settings(AudioPlaybackSettings::looping().with_volume(DEMO_BGM_VOLUME)),
         );
     }

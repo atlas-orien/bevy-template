@@ -24,11 +24,11 @@ const DEMO_NPC_STOPPING_DISTANCE: f32 = 3.0;
 const DEMO_PLAYER_HEALTH: f32 = 100.0;
 const DEMO_PLAYER_COLLIDER_WIDTH: f32 = 24.0;
 const DEMO_PLAYER_COLLIDER_HEIGHT: f32 = 32.0;
-const DEMO_PLAYER_FOOTSTEP_AUDIO: &str = "audio/demo_footstep.ogg";
 
 pub struct DemoPlayerPrefab {
     position: Vec2,
     frame_manifest: Handle<FrameAnimationManifest2d>,
+    footstep_audio: String,
 }
 
 pub struct DemoNpcPrefab {
@@ -146,15 +146,15 @@ impl Default for DemoPlayerPhysicsBundle {
     }
 }
 
-#[derive(Bundle)]
+#[derive(Bundle, Default)]
 struct DemoPlayerAudioBundle {
     clips: AudioClips,
 }
 
-impl Default for DemoPlayerAudioBundle {
-    fn default() -> Self {
+impl DemoPlayerAudioBundle {
+    fn new(footstep_audio: impl Into<String>) -> Self {
         Self {
-            clips: AudioClips::default().with_interact(DEMO_PLAYER_FOOTSTEP_AUDIO),
+            clips: AudioClips::default().with_interact(footstep_audio),
         }
     }
 }
@@ -184,12 +184,12 @@ struct DemoPlayerBundle {
 }
 
 impl DemoPlayerBundle {
-    fn new(position: Vec2) -> Self {
+    fn new(position: Vec2, footstep_audio: impl Into<String>) -> Self {
         Self {
             core: DemoCharacterCoreBundle::new(position, Speed::default()),
             identity: DemoPlayerIdentityBundle::default(),
             vitals: DemoPlayerVitalsBundle::default(),
-            audio: DemoPlayerAudioBundle::default(),
+            audio: DemoPlayerAudioBundle::new(footstep_audio),
             physics: DemoPlayerPhysicsBundle::default(),
         }
     }
@@ -213,10 +213,15 @@ impl Prefab for DemoNpcPrefab {
 }
 
 impl DemoPlayerPrefab {
-    pub fn new(position: Vec2, frame_manifest: Handle<FrameAnimationManifest2d>) -> Self {
+    pub fn new(
+        position: Vec2,
+        frame_manifest: Handle<FrameAnimationManifest2d>,
+        footstep_audio: impl Into<String>,
+    ) -> Self {
         Self {
             position,
             frame_manifest,
+            footstep_audio: footstep_audio.into(),
         }
     }
 }
@@ -224,7 +229,7 @@ impl DemoPlayerPrefab {
 impl Prefab for DemoPlayerPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn(DemoPlayerBundle::new(self.position))
+            .spawn(DemoPlayerBundle::new(self.position, self.footstep_audio))
             .with_children(|parent| {
                 parent.spawn(DemoPlayerSprite2d::new(self.frame_manifest));
                 parent.spawn(DemoParticleEmitter2d::default());

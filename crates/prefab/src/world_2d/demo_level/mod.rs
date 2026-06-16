@@ -8,6 +8,7 @@ pub mod demo_sensor_bridge;
 pub mod demo_sensor_zone;
 pub mod demo_skeleton;
 
+pub use demo_audio_bridge::DemoBgmAudio;
 pub use demo_audio_bridge::{
     demo_bgm_audio_system, demo_footstep_audio_system, demo_sensor_audio_system,
 };

@@ -47,6 +47,7 @@ impl Prefab for YourObjectPrefab {
 
 - `prefab` 可以依赖 `ecs`、`physics`、`navigation`、`audio`、`render_2d`、`interaction`。
 - 对象模板需要声音资源配置时，优先组合 `ecs::components::base::AudioClips`。
+- `prefab` 不硬编码具体资源路径；图片、音频、manifest 等资源路径由 `catalog` 绑定，再通过构造参数传入 prefab。
 - 未来 3D prefab 可以依赖 `render_3d`。
 - `prefab` 不读取键盘、鼠标、手柄、外设、AI、网络或脚本输入。
 - `prefab` 不写底层 ECS system 函数；可以封装和导出 gameplay-facing spawn API 或窄 facade。
@@ -88,6 +89,7 @@ impl Prefab for YourObjectPrefab {
 - `prefab` 可以提供窄桥接 system，把 ECS 事件和 `AudioClips` 转成 `audio::PlayAudioRequest`。
 - `prefab` 不直接生成 Bevy `AudioPlayer`；真正播放由 `crates/audio` 处理。
 - 具体对象使用哪些声音，例如 `object_action.wav`、`engine_loop`、`level_bgm`，属于 prefab 或未来 content。
+- 具体音频资源路径属于 `catalog` 或未来 content catalog；`prefab` 只组合传入的声音槽位标识或句柄。
 - `prefab` 不实现音频后端、DSP 合成器或播放 runtime。
 - `prefab` 不决定什么时候播放声音；播放时机由 gameplay、ecs event 或其它上层流程决定。
 

@@ -2673,9 +2673,9 @@ dependencies = [
 
 [[package]]
 name = "fnroute"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09cdaf840365e4a85018a1f3214921687e35c660e89016058d9890f0782c0888"
+checksum = "55f4c432e09fc24c09483b399d8a82da0a377971999c13f9bb06dfbf99d5ea95"
 
 [[package]]
 name = "fnv"

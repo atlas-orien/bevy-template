@@ -17,11 +17,11 @@ use render_2d::products::props::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2d};
 use crate::Prefab;
 
 pub const DEMO_SENSOR_ENTITY_ID: GameplayEntityId = GameplayEntityId(2);
-const DEMO_SENSOR_AUDIO: &str = "audio/demo_pickup.ogg";
 const DEMO_SENSOR_Z: f32 = 1.5;
 
 pub struct DemoSensorZonePrefab {
     position: Vec2,
+    interact_audio: String,
 }
 
 #[derive(Bundle)]
@@ -43,15 +43,15 @@ impl Default for DemoSensorIdentityBundle {
     }
 }
 
-#[derive(Bundle)]
+#[derive(Bundle, Default)]
 struct DemoSensorAudioBundle {
     clips: AudioClips,
 }
 
-impl Default for DemoSensorAudioBundle {
-    fn default() -> Self {
+impl DemoSensorAudioBundle {
+    fn new(interact_audio: impl Into<String>) -> Self {
         Self {
-            clips: AudioClips::default().with_interact(DEMO_SENSOR_AUDIO),
+            clips: AudioClips::default().with_interact(interact_audio),
         }
     }
 }
@@ -100,10 +100,10 @@ struct DemoSensorZoneBundle {
 }
 
 impl DemoSensorZoneBundle {
-    fn new(position: Vec2) -> Self {
+    fn new(position: Vec2, interact_audio: impl Into<String>) -> Self {
         Self {
             identity: DemoSensorIdentityBundle::default(),
-            audio: DemoSensorAudioBundle::default(),
+            audio: DemoSensorAudioBundle::new(interact_audio),
             physics: DemoSensorPhysicsBundle::default(),
             transform: Transform::from_xyz(position.x, position.y, DEMO_SENSOR_Z),
             visibility: Visibility::default(),
@@ -112,15 +112,21 @@ impl DemoSensorZoneBundle {
 }
 
 impl DemoSensorZonePrefab {
-    pub fn new(position: Vec2) -> Self {
-        Self { position }
+    pub fn new(position: Vec2, interact_audio: impl Into<String>) -> Self {
+        Self {
+            position,
+            interact_audio: interact_audio.into(),
+        }
     }
 }
 
 impl Prefab for DemoSensorZonePrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn(DemoSensorZoneBundle::new(self.position))
+            .spawn(DemoSensorZoneBundle::new(
+                self.position,
+                self.interact_audio,
+            ))
             .with_children(|parent| {
                 parent.spawn(DemoSensorZone2d::default());
             })

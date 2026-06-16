@@ -25,6 +25,11 @@ const UI_PRESENTATION_TERMS: &[&str] = &[
     "percent(",
 ];
 
+const FORBIDDEN_ASSET_PATH_TERMS: &[&str] = &[
+    "\"audio/", "\"2d/", "\"3d/", ".ogg\"", ".wav\"", ".mp3\"", ".png\"", ".jpg\"", ".jpeg\"",
+    ".ron\"", ".glb\"", ".gltf\"",
+];
+
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
     check_prefab(
@@ -33,6 +38,7 @@ pub fn check() -> CheckStatus {
             protocol_path: PREFAB_PROTOCOL,
             forbidden_dependencies: FORBIDDEN_DEPENDENCIES,
             ui_presentation_terms: UI_PRESENTATION_TERMS,
+            forbidden_asset_path_terms: FORBIDDEN_ASSET_PATH_TERMS,
         },
         &mut errors,
     );

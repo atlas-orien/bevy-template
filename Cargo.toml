@@ -54,7 +54,7 @@ prost = "0.14"
 serde = { version = "1", features = ["derive"] }
 ron = "0.12.1"
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "sync", "time"] }
-fnroute = "0.1.0"
+fnroute = "0.1.1"
 toolcraft-config = "0.2.0"
 
 [dependencies]

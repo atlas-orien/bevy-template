@@ -1,5 +1,5 @@
-pub mod demo_skeletal_animation;
+pub mod demo;
 mod plugin;
 
-pub use demo_skeletal_animation::DemoSkeleton2d;
+pub use demo::DemoSkeleton2d;
 pub use plugin::SkeletalAnimation2dPlugin;

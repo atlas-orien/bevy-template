@@ -1,19 +1,19 @@
 use bevy::prelude::*;
 
-use super::layers::{DemoBackgroundLayer2dMarker, DemoParallaxBackgroundLayer2d};
+use super::entry::{BackgroundLayer2dMarker, ParallaxBackgroundLayer2d};
 use crate::camera::DemoWorldCamera2dMarker;
 
-pub(in crate::background) fn demo_parallax_background_system(
+pub(in crate::background) fn layered_background_parallax_system(
     camera: Query<
         &Transform,
         (
             With<DemoWorldCamera2dMarker>,
-            Without<DemoBackgroundLayer2dMarker>,
+            Without<BackgroundLayer2dMarker>,
         ),
     >,
     mut backgrounds: Query<
-        (&DemoParallaxBackgroundLayer2d, &mut Transform),
-        With<DemoBackgroundLayer2dMarker>,
+        (&ParallaxBackgroundLayer2d, &mut Transform),
+        With<BackgroundLayer2dMarker>,
     >,
 ) {
     let Ok(camera) = camera.single() else {

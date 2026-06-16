@@ -2,7 +2,5 @@
 
 mod entry;
 mod layers;
-mod systems;
 
 pub use entry::DemoBackground2d;
-pub(super) use systems::demo_parallax_background_system;

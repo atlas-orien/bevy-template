@@ -97,11 +97,11 @@ const CAMERA_ROOT_REQUIRED_FILES: &[&str] = &["mod.rs", "base.rs", "markers.rs",
 
 const CAMERA_ROOT_ALLOWED_FILES: &[&str] = &["mod.rs", "base.rs", "markers.rs", "plugin.rs"];
 
-const CAMERA_ROOT_ALLOWED_DIRS: &[&str] = &["content"];
+const CAMERA_ROOT_ALLOWED_DIRS: &[&str] = &["presets"];
 
-const CAMERA_CONTENT_REQUIRED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
+const CAMERA_PRESETS_REQUIRED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
 
-const CAMERA_CONTENT_ALLOWED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
+const CAMERA_PRESETS_ALLOWED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
 
 const SKELETAL_PRODUCT_REQUIRED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
 
@@ -133,8 +133,8 @@ pub fn check() -> CheckStatus {
                 root_required_files: CAMERA_ROOT_REQUIRED_FILES,
                 root_allowed_files: CAMERA_ROOT_ALLOWED_FILES,
                 root_allowed_dirs: CAMERA_ROOT_ALLOWED_DIRS,
-                content_required_files: CAMERA_CONTENT_REQUIRED_FILES,
-                content_allowed_files: CAMERA_CONTENT_ALLOWED_FILES,
+                presets_required_files: CAMERA_PRESETS_REQUIRED_FILES,
+                presets_allowed_files: CAMERA_PRESETS_ALLOWED_FILES,
             },
             frame_animation: FrameAnimationRules {
                 frame_dir: "crates/render_2d/src/animation/frame",

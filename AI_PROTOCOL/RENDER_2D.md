@@ -44,7 +44,7 @@
 - `animation/skeletal`: 2D bone、skeleton、骨骼动画边界。
 - `atlases`: 共享 texture atlas、sprite sheet layout、tileset layout。
 - `background`: 背景、远景、视差背景层。
-- `camera`: 2D 相机、pixel-perfect camera、跟随相机、相机切换。
+- `camera`: 2D 相机基础能力和可直接实例化的 camera presets。
 - `characters`: 角色 2D 表现。
 - `debug`: 渲染调试显示，例如 gizmo、边界、坐标轴、可视化标记。
 - `effects`: 命中特效、技能特效、纯视觉生命周期效果。
@@ -62,14 +62,19 @@
 - `tilemap`: tile map、tile layer、tile chunk、tileset 表现。
 - `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
 - `ui`: 2D UI 表现。
-- `camera/ui_camera.rs`: UI 专用 camera 配置。
+- `camera/base.rs`: 共享 Bevy 2D camera bundle/config，只放 `Camera2d`、`Camera`、`RenderLayers`、`Transform` 等基础组合。
+- `camera/markers.rs`: camera 语义 marker，例如 `SceneCamera2d`、`FollowCameraTarget2d`。
+- `camera/presets`: 业务可直接选择的 camera preset，例如 fixed、follow、ui。
+- `camera/presets/fixed.rs`: 固定不动的 2D 场景相机。
+- `camera/presets/follow.rs`: 跟随目标的 2D 场景相机。
+- `camera/presets/ui.rs`: UI 专用 camera 配置。
 - `ui`: UI root target、UI 层级 marker 和 UI node 基础 bundle。
 - `ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。
 - `ui/demo_menu.rs`: demo 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
 
 ## 文件组织规则
 
-- 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
+- 小目录可以直接把入口类型写在 `mod.rs`；复杂目录再拆成语义明确的文件。
 - 具体 Component、Bundle、Resource、system 拆到语义明确的文件里。
 - 模板阶段每个目录可以只保留可删除的占位文件。
 - 用户开始真实项目后，可以直接删除或替换占位文件。

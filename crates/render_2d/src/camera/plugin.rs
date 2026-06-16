@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::content::follow_camera_system;
+use super::presets::follow_camera_system;
 
 pub struct Camera2dPlugin;
 

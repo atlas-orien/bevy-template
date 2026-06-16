@@ -19,8 +19,12 @@
 
 ## 当前结构
 
-- `camera`: 2D 相机表现。
-  - `camera/ui_camera.rs`: UI 专用 camera 配置。
+- `camera`: 2D 相机基础能力和可直接实例化的 camera presets。
+  - `camera/base.rs`: 共享 Bevy 2D camera bundle/config。
+  - `camera/markers.rs`: camera 语义 marker。
+  - `camera/presets/fixed.rs`: 固定不动的 2D 场景相机。
+  - `camera/presets/follow.rs`: 跟随目标的 2D 场景相机。
+  - `camera/presets/ui.rs`: UI 专用 camera 配置。
 - `animation`: 2D 表现层动画。
 - `atlases`: 共享 texture atlas、sprite sheet layout、tileset layout 表现资源配置。
 - `background`: 背景、远景、视差背景层。
@@ -48,7 +52,7 @@
 
 ## 文件规则
 
-- 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
+- 小目录可以直接把入口类型写在 `mod.rs`；复杂目录再拆成语义明确的文件。
 - 具体 Component、Bundle、system 拆到语义明确的文件里。
 - 不新增 `common.rs`、`misc.rs` 这类含义模糊的文件。
 - 默认模板不强制生成主相机；如果项目需要默认相机，写在 `camera`。

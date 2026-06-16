@@ -8,8 +8,8 @@ pub struct CameraRules<'a> {
     pub root_required_files: &'a [&'a str],
     pub root_allowed_files: &'a [&'a str],
     pub root_allowed_dirs: &'a [&'a str],
-    pub content_required_files: &'a [&'a str],
-    pub content_allowed_files: &'a [&'a str],
+    pub presets_required_files: &'a [&'a str],
+    pub presets_allowed_files: &'a [&'a str],
 }
 
 pub fn check_camera(rules: CameraRules<'_>, errors: &mut Vec<String>) {
@@ -32,39 +32,39 @@ pub fn check_camera(rules: CameraRules<'_>, errors: &mut Vec<String>) {
         camera_dir,
         rules.root_allowed_files,
         errors,
-        "camera root should contain only shared infrastructure; concrete camera products belong under camera/content",
+        "camera root should contain only shared infrastructure; concrete camera products belong under camera/presets",
     );
     reject_subdirs_except(
         camera_dir,
         rules.root_allowed_dirs,
         errors,
-        "camera root should keep concrete camera products under camera/content",
+        "camera root should keep concrete camera products under camera/presets",
     );
 
-    let content_dir = camera_dir.join("content");
+    let presets_dir = camera_dir.join("presets");
     require_path(
-        &content_dir,
+        &presets_dir,
         errors,
-        "camera/content contains the concrete camera products available to gameplay",
+        "camera/presets contains the concrete camera products available to gameplay",
     );
-    for file_name in rules.content_required_files {
+    for file_name in rules.presets_required_files {
         require_path(
-            content_dir.join(file_name),
+            presets_dir.join(file_name),
             errors,
-            "camera/content must expose the first-party fixed, follow and UI camera products",
+            "camera/presets must expose the first-party fixed, follow and UI camera products",
         );
     }
 
     reject_files_under_dir_except(
-        &content_dir,
-        rules.content_allowed_files,
+        &presets_dir,
+        rules.presets_allowed_files,
         errors,
-        "camera/content should contain concrete camera product files only",
+        "camera/presets should contain concrete camera product files only",
     );
     reject_subdirs_except(
-        &content_dir,
+        &presets_dir,
         &[],
         errors,
-        "camera/content products should stay as files until a product is large enough to justify a directory",
+        "camera/presets products should stay as files until a product is large enough to justify a directory",
     );
 }

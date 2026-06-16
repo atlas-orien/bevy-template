@@ -12,7 +12,7 @@ use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
     PhysicsSensor,
 };
-use render_2d::props::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2dBundle};
+use render_2d::props::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2d};
 
 use crate::Prefab;
 
@@ -59,7 +59,7 @@ impl Prefab for DemoSensorZonePrefab {
                 },
                 Transform::from_xyz(self.position.x, self.position.y, DEMO_SENSOR_Z),
                 Visibility::default(),
-                children![DemoSensorZone2dBundle::default()],
+                children![DemoSensorZone2d::default()],
             ))
             .id()
     }

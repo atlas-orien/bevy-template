@@ -1,7 +1,7 @@
 //! Demo tilemap 地面 prefab。
 
 use bevy::prelude::*;
-use render_2d::tilemap::DemoTilemapLayer2dBundle;
+use render_2d::tilemap::DemoTilemapLayer2d;
 
 use crate::Prefab;
 
@@ -29,7 +29,7 @@ impl Prefab for DemoGroundPrefab {
         commands
             .spawn((
                 DemoGroundRoot,
-                DemoTilemapLayer2dBundle::new(
+                DemoTilemapLayer2d::new(
                     UVec2::new(DEMO_GROUND_WIDTH as u32, DEMO_GROUND_HEIGHT as u32),
                     UVec2::splat(DEMO_TILE_SIZE),
                     self.tileset,

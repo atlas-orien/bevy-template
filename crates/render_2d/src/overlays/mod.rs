@@ -1,8 +1,5 @@
 pub mod demo_health_bar;
 mod plugin;
 
-pub use demo_health_bar::{
-    DemoHealthBarBackground2dBundle, DemoHealthBarFill2d, DemoHealthBarFill2dBundle,
-    DemoHealthBarOverlay2d, DemoHealthBarOverlay2dBundle, demo_health_bar_system,
-};
+pub use demo_health_bar::DemoHealthBarOverlay2d;
 pub use plugin::OverlaysPlugin;

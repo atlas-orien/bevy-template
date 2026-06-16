@@ -1,8 +1,9 @@
-pub mod demo_props;
+pub mod demo_landmark;
+pub mod demo_rock;
+pub mod demo_sensor_zone;
 mod plugin;
 
-pub use demo_props::{
-    DEMO_SENSOR_ZONE_SIZE, DemoLandmark2d, DemoLandmark2dBundle, DemoRock2d, DemoRock2dBundle,
-    DemoSensorZone2d, DemoSensorZone2dBundle,
-};
+pub use demo_landmark::DemoLandmark2d;
+pub use demo_rock::DemoRock2d;
+pub use demo_sensor_zone::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2d};
 pub use plugin::PropsPlugin;

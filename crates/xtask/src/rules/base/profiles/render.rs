@@ -5,6 +5,7 @@ use crate::rules::base::functions::reject_free_functions_returning_any;
 use crate::rules::base::paths::{
     reject_file_names, reject_paths, require_mod_rs_under_src, require_paths,
 };
+use crate::rules::base::render_api::reject_multi_public_render_items;
 use crate::rules::base::source::{
     reject_direct_input_access, reject_files_containing_all_terms, reject_terms_in_rust_files,
 };
@@ -136,6 +137,11 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         &[": FullScreenUiNodeBundle", ": Node"],
         errors,
         "combines `FullScreenUiNodeBundle` with another `Node`; Bevy entities may only receive one Node component, so UI root/layout bundles must expose a single composed Node",
+    );
+    reject_multi_public_render_items(
+        Path::new(rules.crate_path).join("src"),
+        errors,
+        "render_2d is consumed by prefab and concrete render files should expose one product-level public entry instead of public marker/bundle/config scatter",
     );
     reject_paths(
         &[

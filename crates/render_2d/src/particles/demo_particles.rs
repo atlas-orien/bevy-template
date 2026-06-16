@@ -20,24 +20,25 @@ const DEMO_BURST_PARTICLE_LIFETIME_SECONDS: f32 = 0.45;
 const DEMO_BURST_PARTICLE_SPEED: f32 = 90.0;
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
-pub struct DemoParticleEmitter2d {
-    pub enabled: bool,
-    pub particles_per_second: f32,
-    pub particle_lifetime_seconds: f32,
+pub(super) struct DemoParticleEmitter2dMarker {
+    enabled: bool,
+    particles_per_second: f32,
+    particle_lifetime_seconds: f32,
     emission_accumulator: f32,
-    pub max_live_particles: usize,
+    max_live_particles: usize,
 }
 
-impl DemoParticleEmitter2d {
-    pub fn emission_accumulator(&self) -> f32 {
+impl DemoParticleEmitter2dMarker {
+    #[cfg(test)]
+    fn emission_accumulator(&self) -> f32 {
         self.emission_accumulator
     }
 
-    pub fn reset_accumulator(&mut self) {
+    fn reset_accumulator(&mut self) {
         self.emission_accumulator = 0.0;
     }
 
-    pub fn accumulate(&mut self, delta_seconds: f32) -> usize {
+    fn accumulate(&mut self, delta_seconds: f32) -> usize {
         self.emission_accumulator += self.particles_per_second * delta_seconds;
 
         let mut emit_count = 0;
@@ -51,24 +52,24 @@ impl DemoParticleEmitter2d {
 }
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
-pub struct DemoParticle2d {
-    pub remaining_seconds: f32,
-    pub lifetime_seconds: f32,
-    pub velocity: Vec2,
+pub(super) struct DemoParticle2d {
+    remaining_seconds: f32,
+    lifetime_seconds: f32,
+    velocity: Vec2,
     /// 生成时 sprite 颜色的 alpha；淡出按剩余寿命比例向 0 衰减到它。
-    pub initial_alpha: f32,
+    initial_alpha: f32,
 }
 
 #[derive(Bundle)]
-pub struct DemoParticleEmitter2dBundle {
-    pub emitter: DemoParticleEmitter2d,
-    pub transform: Transform,
+pub struct DemoParticleEmitter2d {
+    emitter: DemoParticleEmitter2dMarker,
+    transform: Transform,
 }
 
-impl Default for DemoParticleEmitter2dBundle {
+impl Default for DemoParticleEmitter2d {
     fn default() -> Self {
         Self {
-            emitter: DemoParticleEmitter2d {
+            emitter: DemoParticleEmitter2dMarker {
                 enabled: false,
                 particles_per_second: DEMO_DUST_PARTICLES_PER_SECOND,
                 particle_lifetime_seconds: DEMO_DUST_PARTICLE_LIFETIME_SECONDS,
@@ -80,9 +81,9 @@ impl Default for DemoParticleEmitter2dBundle {
     }
 }
 
-pub fn demo_player_dust_system(
+pub(super) fn demo_player_dust_system(
     parents: Query<&MovementIntent>,
-    mut emitters: Query<(&ChildOf, &mut DemoParticleEmitter2d)>,
+    mut emitters: Query<(&ChildOf, &mut DemoParticleEmitter2dMarker)>,
 ) {
     for (parent, mut emitter) in &mut emitters {
         let Ok(movement) = parents.get(parent.parent()) else {
@@ -93,11 +94,11 @@ pub fn demo_player_dust_system(
     }
 }
 
-pub fn demo_particle_emission_system(
+pub(super) fn demo_particle_emission_system(
     mut commands: Commands,
     time: Res<Time>,
     live_particles: Query<(), With<DemoParticle2d>>,
-    mut emitters: Query<(&GlobalTransform, &mut DemoParticleEmitter2d)>,
+    mut emitters: Query<(&GlobalTransform, &mut DemoParticleEmitter2dMarker)>,
 ) {
     let live_count = live_particles.iter().len();
 
@@ -128,7 +129,7 @@ pub fn demo_particle_emission_system(
     }
 }
 
-pub fn demo_particle_update_system(
+pub(super) fn demo_particle_update_system(
     mut commands: Commands,
     time: Res<Time>,
     mut particles: Query<(Entity, &mut DemoParticle2d, &mut Transform, &mut Sprite)>,
@@ -151,7 +152,7 @@ pub fn demo_particle_update_system(
     }
 }
 
-pub fn demo_sensor_particle_burst_system(
+pub(super) fn demo_sensor_particle_burst_system(
     mut commands: Commands,
     mut events: MessageReader<DemoSensorTriggeredEvent>,
     transforms: Query<&GlobalTransform>,
@@ -261,7 +262,7 @@ mod tests {
 
     #[test]
     fn emitter_accumulates_particle_rate() {
-        let mut emitter = DemoParticleEmitter2d {
+        let mut emitter = DemoParticleEmitter2dMarker {
             enabled: true,
             particles_per_second: 4.0,
             particle_lifetime_seconds: TEST_LIFETIME_SECONDS,
@@ -282,7 +283,7 @@ mod tests {
         let emitter = app
             .world_mut()
             .spawn((
-                DemoParticleEmitter2d {
+                DemoParticleEmitter2dMarker {
                     enabled: true,
                     particles_per_second: 4.0,
                     particle_lifetime_seconds: TEST_LIFETIME_SECONDS,
@@ -306,7 +307,10 @@ mod tests {
 
         app.update();
 
-        let emitter = app.world().get::<DemoParticleEmitter2d>(emitter).unwrap();
+        let emitter = app
+            .world()
+            .get::<DemoParticleEmitter2dMarker>(emitter)
+            .unwrap();
         assert_eq!(emitter.emission_accumulator(), 0.0);
     }
 }

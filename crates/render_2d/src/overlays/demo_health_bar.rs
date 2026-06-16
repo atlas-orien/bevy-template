@@ -13,24 +13,26 @@ const DEMO_HEALTH_BAR_BACKGROUND_Z: f32 = 0.0;
 const DEMO_HEALTH_BAR_FILL_Z: f32 = 0.1;
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
-pub struct DemoHealthBarOverlay2d {
-    pub width: f32,
+pub(super) struct DemoHealthBarOverlay2dMarker {
+    width: f32,
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct DemoHealthBarFill2d;
+pub(super) struct DemoHealthBarFill2dMarker;
+
+pub struct DemoHealthBarOverlay2d;
 
 #[derive(Bundle)]
-pub struct DemoHealthBarOverlay2dBundle {
-    pub marker: DemoHealthBarOverlay2d,
-    pub transform: Transform,
-    pub visibility: Visibility,
+struct DemoHealthBarOverlay2dBundle {
+    marker: DemoHealthBarOverlay2dMarker,
+    transform: Transform,
+    visibility: Visibility,
 }
 
 impl Default for DemoHealthBarOverlay2dBundle {
     fn default() -> Self {
         Self {
-            marker: DemoHealthBarOverlay2d {
+            marker: DemoHealthBarOverlay2dMarker {
                 width: DEMO_HEALTH_BAR_WIDTH,
             },
             transform: Transform::from_translation(DEMO_HEALTH_BAR_TRANSLATION),
@@ -39,10 +41,22 @@ impl Default for DemoHealthBarOverlay2dBundle {
     }
 }
 
-pub fn demo_health_bar_system(
+impl DemoHealthBarOverlay2d {
+    pub fn into_bundle(self) -> impl Bundle {
+        (
+            DemoHealthBarOverlay2dBundle::default(),
+            children![
+                DemoHealthBarBackground2dBundle::default(),
+                DemoHealthBarFill2dBundle::default(),
+            ],
+        )
+    }
+}
+
+pub(super) fn demo_health_bar_system(
     parents: Query<(&Health, &MaxHealth)>,
-    overlays: Query<(&ChildOf, &DemoHealthBarOverlay2d, &Children)>,
-    mut fills: Query<(&mut Sprite, &mut Transform), With<DemoHealthBarFill2d>>,
+    overlays: Query<(&ChildOf, &DemoHealthBarOverlay2dMarker, &Children)>,
+    mut fills: Query<(&mut Sprite, &mut Transform), With<DemoHealthBarFill2dMarker>>,
 ) {
     for (parent, overlay, children) in &overlays {
         let Ok((health, max_health)) = parents.get(parent.parent()) else {
@@ -66,9 +80,9 @@ pub fn demo_health_bar_system(
 }
 
 #[derive(Bundle)]
-pub struct DemoHealthBarBackground2dBundle {
-    pub sprite: Sprite,
-    pub transform: Transform,
+struct DemoHealthBarBackground2dBundle {
+    sprite: Sprite,
+    transform: Transform,
 }
 
 impl Default for DemoHealthBarBackground2dBundle {
@@ -85,16 +99,16 @@ impl Default for DemoHealthBarBackground2dBundle {
 }
 
 #[derive(Bundle)]
-pub struct DemoHealthBarFill2dBundle {
-    pub marker: DemoHealthBarFill2d,
-    pub sprite: Sprite,
-    pub transform: Transform,
+struct DemoHealthBarFill2dBundle {
+    marker: DemoHealthBarFill2dMarker,
+    sprite: Sprite,
+    transform: Transform,
 }
 
 impl Default for DemoHealthBarFill2dBundle {
     fn default() -> Self {
         Self {
-            marker: DemoHealthBarFill2d,
+            marker: DemoHealthBarFill2dMarker,
             sprite: Sprite {
                 color: DEMO_HEALTH_BAR_FILL_COLOR,
                 custom_size: Some(Vec2::new(DEMO_HEALTH_BAR_WIDTH, DEMO_HEALTH_BAR_HEIGHT)),

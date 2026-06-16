@@ -2,46 +2,60 @@
 
 use bevy::prelude::*;
 
-use crate::camera::DemoWorldCamera2d;
+use crate::camera::DemoWorldCamera2dMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct DemoBackgroundLayer2d;
+pub(super) struct DemoBackgroundLayer2dMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, PartialEq)]
-pub struct DemoParallaxBackgroundLayer2d {
-    pub speed: Vec2,
+pub(super) struct DemoParallaxBackgroundLayer2d {
+    speed: Vec2,
 }
 
-#[derive(Bundle)]
-pub struct DemoBackgroundLayer2dBundle {
-    pub marker: DemoBackgroundLayer2d,
-    pub parallax: DemoParallaxBackgroundLayer2d,
-    pub sprite: Sprite,
-    pub transform: Transform,
+pub struct DemoBackgroundLayer2d {
+    color: Color,
+    size: Vec2,
+    z: f32,
+    parallax_speed: Vec2,
 }
 
-impl DemoBackgroundLayer2dBundle {
+impl DemoBackgroundLayer2d {
     pub fn new(color: Color, size: Vec2, z: f32, parallax_speed: Vec2) -> Self {
         Self {
-            marker: DemoBackgroundLayer2d,
-            parallax: DemoParallaxBackgroundLayer2d {
-                speed: parallax_speed,
+            color,
+            size,
+            z,
+            parallax_speed,
+        }
+    }
+
+    pub fn into_bundle(self) -> impl Bundle {
+        (
+            DemoBackgroundLayer2dMarker,
+            DemoParallaxBackgroundLayer2d {
+                speed: self.parallax_speed,
             },
-            sprite: Sprite {
-                color,
-                custom_size: Some(size),
+            Sprite {
+                color: self.color,
+                custom_size: Some(self.size),
                 ..default()
             },
-            transform: Transform::from_xyz(0.0, 0.0, z),
-        }
+            Transform::from_xyz(0.0, 0.0, self.z),
+        )
     }
 }
 
-pub fn demo_parallax_background_system(
-    camera: Query<&Transform, (With<DemoWorldCamera2d>, Without<DemoBackgroundLayer2d>)>,
+pub(super) fn demo_parallax_background_system(
+    camera: Query<
+        &Transform,
+        (
+            With<DemoWorldCamera2dMarker>,
+            Without<DemoBackgroundLayer2dMarker>,
+        ),
+    >,
     mut backgrounds: Query<
         (&DemoParallaxBackgroundLayer2d, &mut Transform),
-        With<DemoBackgroundLayer2d>,
+        With<DemoBackgroundLayer2dMarker>,
     >,
 ) {
     let Ok(camera) = camera.single() else {

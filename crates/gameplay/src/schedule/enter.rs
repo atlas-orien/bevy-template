@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use prefab::Prefab;
 use prefab::ui::DemoMenuPrefab;
-use render_2d::camera::{UiCamera, UiCameraConfig};
+use render_2d::camera::UiCamera;
 
 use crate::api::{LocalInputContext, LocalInputContextMessage};
 use crate::spawning::initial::spawn_initial_gameplay_plan_system;
@@ -42,7 +42,7 @@ fn set_gameplay_input_context(mut input_context: MessageWriter<LocalInputContext
 fn enter_paused(
     mut commands: Commands,
     mut input_context: MessageWriter<LocalInputContextMessage>,
-    ui_cameras: Query<Entity, With<UiCameraConfig>>,
+    ui_cameras: Query<Entity, With<IsDefaultUiCamera>>,
 ) {
     input_context.write(LocalInputContextMessage(LocalInputContext::UiNavigation));
 
@@ -59,7 +59,7 @@ fn enter_paused(
 fn enter_game_over(
     mut commands: Commands,
     mut input_context: MessageWriter<LocalInputContextMessage>,
-    ui_cameras: Query<Entity, With<UiCameraConfig>>,
+    ui_cameras: Query<Entity, With<IsDefaultUiCamera>>,
 ) {
     input_context.write(LocalInputContextMessage(LocalInputContext::UiNavigation));
 

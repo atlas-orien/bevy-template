@@ -4,7 +4,7 @@ use bevy::prelude::*;
 pub const UI_CAMERA_ORDER: isize = 100;
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
-pub struct UiCameraConfig {
+struct UiCameraConfig {
     pub order: isize,
 }
 
@@ -22,7 +22,7 @@ pub struct UiCamera {
     pub camera: Camera,
     pub render_layers: RenderLayers,
     pub default_ui_camera: IsDefaultUiCamera,
-    pub config: UiCameraConfig,
+    config: UiCameraConfig,
 }
 
 impl Default for UiCamera {

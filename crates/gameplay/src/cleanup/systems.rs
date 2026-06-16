@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use render_2d::ui::DemoMenuRoot;
+use prefab::ui::DemoMenuRoot;
 
 pub fn despawn_demo_menu_system(
     mut commands: Commands,

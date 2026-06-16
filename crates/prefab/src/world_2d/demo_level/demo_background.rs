@@ -1,7 +1,7 @@
 //! Demo 视差背景 prefab。
 
 use bevy::prelude::*;
-use render_2d::background::DemoBackgroundLayer2dBundle;
+use render_2d::background::DemoBackgroundLayer2d;
 
 use crate::Prefab;
 
@@ -27,18 +27,20 @@ impl Prefab for DemoBackgroundPrefab {
                 Transform::default(),
                 Visibility::default(),
                 children![
-                    DemoBackgroundLayer2dBundle::new(
+                    DemoBackgroundLayer2d::new(
                         DEMO_SKY_BACKGROUND_COLOR,
                         DEMO_SKY_BACKGROUND_SIZE,
                         DEMO_SKY_BACKGROUND_Z,
                         DEMO_SKY_PARALLAX_FACTOR,
-                    ),
-                    DemoBackgroundLayer2dBundle::new(
+                    )
+                    .into_bundle(),
+                    DemoBackgroundLayer2d::new(
                         DEMO_FOREST_BACKGROUND_COLOR,
                         DEMO_FOREST_BACKGROUND_SIZE,
                         DEMO_FOREST_BACKGROUND_Z,
                         DEMO_FOREST_PARALLAX_FACTOR,
-                    ),
+                    )
+                    .into_bundle(),
                 ],
             ))
             .id()

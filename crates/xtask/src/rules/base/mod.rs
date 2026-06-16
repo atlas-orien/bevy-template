@@ -10,4 +10,5 @@ pub mod functions;
 pub mod paths;
 pub mod profiles;
 pub mod readability;
+pub mod render_api;
 pub mod source;

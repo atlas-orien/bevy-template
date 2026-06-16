@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 use ecs::components::world::gameplay::GameplaySessionEntity;
-use render_2d::props::{DemoLandmark2dBundle, DemoRock2dBundle};
+use render_2d::props::{DemoLandmark2d, DemoRock2d};
 
 use crate::Prefab;
 
@@ -24,7 +24,7 @@ impl Prefab for DemoRockPrefab {
         commands
             .spawn((
                 GameplaySessionEntity,
-                DemoRock2dBundle::new(Vec3::new(self.position.x, self.position.y, DEMO_ROCK_Z)),
+                DemoRock2d::new(Vec3::new(self.position.x, self.position.y, DEMO_ROCK_Z)),
             ))
             .id()
     }
@@ -46,7 +46,7 @@ impl Prefab for DemoLandmarkPrefab {
         commands
             .spawn((
                 GameplaySessionEntity,
-                DemoLandmark2dBundle::new(
+                DemoLandmark2d::new(
                     Vec3::new(self.position.x, self.position.y, DEMO_LANDMARK_Z),
                     self.color,
                 ),

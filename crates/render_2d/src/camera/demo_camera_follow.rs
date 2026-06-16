@@ -2,12 +2,12 @@
 
 use bevy::prelude::*;
 
-use super::DemoWorldCamera2d;
+use super::DemoWorldCamera2dMarker;
 
 const DEMO_CAMERA_FOLLOW_SMOOTHNESS: f32 = 12.0;
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
-pub struct DemoCameraFollow {
+pub(crate) struct DemoCameraFollow {
     pub smoothness: f32,
 }
 
@@ -22,10 +22,10 @@ impl Default for DemoCameraFollow {
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoCameraFollowTarget;
 
-pub fn demo_camera_follow_system(
+pub(super) fn demo_camera_follow_system(
     time: Res<Time>,
     target: Query<&GlobalTransform, With<DemoCameraFollowTarget>>,
-    mut cameras: Query<(&DemoCameraFollow, &mut Transform), With<DemoWorldCamera2d>>,
+    mut cameras: Query<(&DemoCameraFollow, &mut Transform), With<DemoWorldCamera2dMarker>>,
 ) {
     let Ok(target) = target.single() else {
         return;

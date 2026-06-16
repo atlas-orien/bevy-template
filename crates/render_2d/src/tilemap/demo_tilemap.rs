@@ -8,17 +8,17 @@ use bevy::{
 const DEMO_TILEMAP_ORIGIN: Vec3 = Vec3::new(-1536.0, -192.0, 0.0);
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct DemoTilemapLayer2d;
+struct DemoTilemapLayer2dMarker;
 
 #[derive(Bundle)]
-pub struct DemoTilemapLayer2dBundle {
-    pub marker: DemoTilemapLayer2d,
+pub struct DemoTilemapLayer2d {
+    marker: DemoTilemapLayer2dMarker,
     pub chunk: TilemapChunk,
     pub tiles: TilemapChunkTileData,
     pub transform: Transform,
 }
 
-impl DemoTilemapLayer2dBundle {
+impl DemoTilemapLayer2d {
     pub fn new(
         chunk_size: UVec2,
         tile_display_size: UVec2,
@@ -31,7 +31,7 @@ impl DemoTilemapLayer2dBundle {
             .collect();
 
         Self {
-            marker: DemoTilemapLayer2d,
+            marker: DemoTilemapLayer2dMarker,
             chunk: TilemapChunk {
                 chunk_size,
                 tile_display_size,

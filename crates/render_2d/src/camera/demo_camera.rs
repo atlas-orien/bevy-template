@@ -10,19 +10,19 @@ const DEMO_WORLD_CAMERA_LAYER: usize = 0;
 const DEMO_WORLD_CAMERA_Z: f32 = 1000.0;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct DemoWorldCamera2d;
+pub(crate) struct DemoWorldCamera2dMarker;
 
 #[derive(Bundle)]
-pub struct DemoWorldCamera2dBundle {
-    pub camera_2d: Camera2d,
-    pub camera: Camera,
-    pub render_layers: RenderLayers,
-    pub marker: DemoWorldCamera2d,
-    pub follow: DemoCameraFollow,
-    pub transform: Transform,
+pub struct DemoWorldCamera2d {
+    camera_2d: Camera2d,
+    camera: Camera,
+    render_layers: RenderLayers,
+    marker: DemoWorldCamera2dMarker,
+    follow: DemoCameraFollow,
+    transform: Transform,
 }
 
-impl Default for DemoWorldCamera2dBundle {
+impl Default for DemoWorldCamera2d {
     fn default() -> Self {
         Self {
             camera_2d: Camera2d,
@@ -31,7 +31,7 @@ impl Default for DemoWorldCamera2dBundle {
                 ..default()
             },
             render_layers: RenderLayers::layer(DEMO_WORLD_CAMERA_LAYER),
-            marker: DemoWorldCamera2d,
+            marker: DemoWorldCamera2dMarker,
             follow: DemoCameraFollow::default(),
             transform: Transform::from_xyz(0.0, 0.0, DEMO_WORLD_CAMERA_Z),
         }

@@ -1,10 +1,8 @@
 pub mod demo_menu;
+pub mod demo_menu_button;
 mod plugin;
-pub mod root;
+pub(crate) mod root;
 
-pub use demo_menu::{
-    DemoMenuButtonBundle, DemoMenuButtonIndex, DemoMenuButtonTextBundle, DemoMenuFocused,
-    DemoMenuRoot, DemoMenuRootBundle,
-};
+pub use demo_menu::DemoMenuVisual;
+pub use demo_menu_button::{DemoMenuButtonVisual, DemoMenuVisualFocused};
 pub use plugin::UiPlugin;
-pub use root::{FullScreenUiNodeBundle, UiLayer, UiRoot, UiRootBundle, UiRootNodeBundle};

@@ -1,15 +1,15 @@
 use bevy::prelude::*;
 
 #[derive(Component, Debug, Clone, Copy, Default)]
-pub struct UiRoot;
+pub(crate) struct UiRoot;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
-pub enum UiLayer {
+pub(crate) enum UiLayer {
     Root,
 }
 
 #[derive(Bundle)]
-pub struct UiRootBundle {
+pub(crate) struct UiRootBundle {
     pub marker: UiRoot,
     pub z_index: ZIndex,
 }
@@ -19,50 +19,6 @@ impl Default for UiRootBundle {
         Self {
             marker: UiRoot,
             z_index: ui_layer_z_index(UiLayer::Root),
-        }
-    }
-}
-
-#[derive(Bundle)]
-pub struct FullScreenUiNodeBundle {
-    pub node: Node,
-}
-
-impl Default for FullScreenUiNodeBundle {
-    fn default() -> Self {
-        Self {
-            node: Node {
-                width: percent(100),
-                height: percent(100),
-                ..default()
-            },
-        }
-    }
-}
-
-#[derive(Bundle)]
-pub struct UiRootNodeBundle {
-    pub marker: UiRoot,
-    pub z_index: ZIndex,
-    pub node: Node,
-}
-
-impl Default for UiRootNodeBundle {
-    fn default() -> Self {
-        Self::new(UiLayer::Root)
-    }
-}
-
-impl UiRootNodeBundle {
-    pub fn new(layer: UiLayer) -> Self {
-        Self {
-            marker: UiRoot,
-            z_index: ui_layer_z_index(layer),
-            node: Node {
-                width: percent(100),
-                height: percent(100),
-                ..default()
-            },
         }
     }
 }

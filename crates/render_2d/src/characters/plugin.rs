@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::demo_player::prepare_demo_player_sprite_atlas_system;
+use super::demo_player_sprite::prepare_demo_player_sprite_atlas_system;
 
 pub struct CharacterRenderPlugin;
 

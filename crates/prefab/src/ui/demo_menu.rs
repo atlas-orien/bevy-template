@@ -2,10 +2,7 @@
 
 use bevy::prelude::*;
 use interaction::InteractionAction;
-use render_2d::ui::{
-    DemoMenuButtonBundle, DemoMenuButtonIndex, DemoMenuButtonTextBundle, DemoMenuFocused,
-    DemoMenuRootBundle, UiRootBundle,
-};
+use render_2d::ui::{DemoMenuButtonVisual, DemoMenuVisual};
 
 use crate::Prefab;
 
@@ -28,6 +25,27 @@ pub enum DemoMenuAction {
 pub struct DemoMenuItem {
     pub label: &'static str,
     pub action: DemoMenuAction,
+}
+
+#[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
+pub struct DemoMenuButtonIndex(pub usize);
+
+#[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
+pub struct DemoMenuFocused {
+    pub focused: bool,
+}
+
+#[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
+pub struct DemoMenuRoot;
+
+impl DemoMenuFocused {
+    pub const fn focused() -> Self {
+        Self { focused: true }
+    }
+
+    pub const fn unfocused() -> Self {
+        Self { focused: false }
+    }
 }
 
 impl DemoMenuAction {
@@ -76,7 +94,7 @@ pub struct DemoMenuPrefab;
 impl Prefab for DemoMenuPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {
         commands
-            .spawn((UiRootBundle::default(), DemoMenuRootBundle::default()))
+            .spawn((DemoMenuRoot, DemoMenuVisual::default()))
             .with_children(|parent| {
                 for (index, item) in DEMO_MENU_ITEMS.iter().enumerate() {
                     parent.spawn(Self::button(index, *item));
@@ -89,7 +107,6 @@ impl Prefab for DemoMenuPrefab {
 impl DemoMenuPrefab {
     fn button(index: usize, item: DemoMenuItem) -> impl Bundle {
         (
-            DemoMenuButtonBundle::default(),
             DemoMenuButtonIndex(index),
             if index == 0 {
                 DemoMenuFocused::focused()
@@ -97,7 +114,7 @@ impl DemoMenuPrefab {
                 DemoMenuFocused::unfocused()
             },
             InteractionAction::new(item.action.id()),
-            children![DemoMenuButtonTextBundle::new(item.label)],
+            DemoMenuButtonVisual::new(item.label, index == 0).into_bundle(),
         )
     }
 }

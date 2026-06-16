@@ -11,12 +11,9 @@ use physics::{
 };
 use render_2d::animation::frame::DemoFrameManifest2d;
 use render_2d::camera::DemoCameraFollowTarget;
-use render_2d::characters::DemoNpcSprite2dBundle;
-use render_2d::characters::DemoPlayerSprite2dBundle;
-use render_2d::overlays::{
-    DemoHealthBarBackground2dBundle, DemoHealthBarFill2dBundle, DemoHealthBarOverlay2dBundle,
-};
-use render_2d::particles::DemoParticleEmitter2dBundle;
+use render_2d::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
+use render_2d::overlays::DemoHealthBarOverlay2d;
+use render_2d::particles::DemoParticleEmitter2d;
 
 use crate::Prefab;
 
@@ -62,7 +59,7 @@ impl Prefab for DemoNpcPrefab {
                 navigation::NavigationPath2d::default(),
                 Transform::from_xyz(self.position.x, self.position.y, DEMO_CHARACTER_Z),
                 Visibility::default(),
-                children![DemoNpcSprite2dBundle::default()],
+                children![DemoNpcSprite2d::default()],
             ))
             .id()
     }
@@ -95,15 +92,9 @@ impl Prefab for DemoPlayerPrefab {
                 Transform::from_xyz(self.position.x, self.position.y, DEMO_CHARACTER_Z),
                 Visibility::default(),
                 children![
-                    DemoPlayerSprite2dBundle::new(self.frame_manifest),
-                    DemoParticleEmitter2dBundle::default(),
-                    (
-                        DemoHealthBarOverlay2dBundle::default(),
-                        children![
-                            DemoHealthBarBackground2dBundle::default(),
-                            DemoHealthBarFill2dBundle::default(),
-                        ],
-                    ),
+                    DemoPlayerSprite2d::new(self.frame_manifest),
+                    DemoParticleEmitter2d::default(),
+                    DemoHealthBarOverlay2d.into_bundle(),
                 ],
             ))
             .insert((

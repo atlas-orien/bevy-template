@@ -7,8 +7,8 @@ use interaction::{
     InteractionAction, InteractionEventKind, InteractionEventMessage, UiNavigationInputKind,
     UiNavigationInputMessage,
 };
-use prefab::ui::{DEMO_MENU_ITEMS, DemoMenuAction};
-use render_2d::ui::{DemoMenuButtonIndex, DemoMenuFocused};
+use prefab::ui::{DEMO_MENU_ITEMS, DemoMenuAction, DemoMenuButtonIndex, DemoMenuFocused};
+use render_2d::ui::DemoMenuVisualFocused;
 
 use crate::api::{RuntimeUpdateMessage, RuntimeUpdateSender};
 use crate::state::{AppState, PauseState};
@@ -20,6 +20,7 @@ pub type DemoMenuButtonQuery<'world, 'state> = Query<
         &'static DemoMenuButtonIndex,
         &'static InteractionAction,
         &'static mut DemoMenuFocused,
+        &'static mut DemoMenuVisualFocused,
     ),
 >;
 
@@ -63,7 +64,7 @@ pub fn handle_demo_ui_navigation_system(
 fn focused_demo_menu_index(buttons: &DemoMenuButtonQuery) -> usize {
     buttons
         .iter()
-        .find_map(|(index, _, focus)| focus.focused.then_some(index.0))
+        .find_map(|(index, _, focus, _)| focus.focused.then_some(index.0))
         .unwrap_or(0)
 }
 
@@ -73,12 +74,14 @@ fn focused_demo_menu_action(
 ) -> Option<InteractionAction> {
     buttons
         .iter()
-        .find_map(|(index, action, _)| (index.0 == focused_index).then(|| action.clone()))
+        .find_map(|(index, action, _, _)| (index.0 == focused_index).then(|| action.clone()))
 }
 
 fn set_demo_menu_focus(focused_index: usize, buttons: &mut DemoMenuButtonQuery) {
-    for (index, _, mut focus) in buttons.iter_mut() {
-        focus.focused = index.0 == focused_index;
+    for (index, _, mut focus, mut visual_focus) in buttons.iter_mut() {
+        let focused = index.0 == focused_index;
+        focus.focused = focused;
+        visual_focus.focused = focused;
     }
 }
 

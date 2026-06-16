@@ -1,8 +1,7 @@
-pub mod demo_player;
+pub mod demo_npc_sprite;
+pub mod demo_player_sprite;
 mod plugin;
 
-pub use demo_player::{
-    DemoNpcSprite2d, DemoNpcSprite2dBundle, DemoPlayerSprite2d, DemoPlayerSprite2dBundle,
-    DemoPlayerSpriteAtlasReady2d, prepare_demo_player_sprite_atlas_system,
-};
+pub use demo_npc_sprite::DemoNpcSprite2d;
+pub use demo_player_sprite::DemoPlayerSprite2d;
 pub use plugin::CharacterRenderPlugin;

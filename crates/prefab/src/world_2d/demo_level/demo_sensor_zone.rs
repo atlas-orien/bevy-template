@@ -12,7 +12,7 @@ use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
     PhysicsSensor,
 };
-use render_2d::props::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2d};
+use render_2d::products::props::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2d};
 
 use crate::Prefab;
 

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use prefab::Prefab;
 use prefab::ui::DemoMenuPrefab;
-use render_2d::camera::UiCamera;
+use render_2d::primitives::camera::UiCamera;
 
 use crate::api::{LocalInputContext, LocalInputContextMessage};
 use crate::spawning::initial::spawn_initial_gameplay_plan_system;

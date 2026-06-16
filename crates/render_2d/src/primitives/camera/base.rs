@@ -2,7 +2,7 @@ use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 
 #[derive(Debug, Clone, Copy)]
-pub(in crate::camera) struct BaseCamera2dConfig {
+pub(in crate::primitives::camera) struct BaseCamera2dConfig {
     pub order: isize,
     pub layer: usize,
     pub z: f32,
@@ -10,7 +10,7 @@ pub(in crate::camera) struct BaseCamera2dConfig {
 }
 
 #[derive(Bundle)]
-pub(in crate::camera) struct BaseCamera2dBundle {
+pub(in crate::primitives::camera) struct BaseCamera2dBundle {
     camera_2d: Camera2d,
     camera: Camera,
     render_layers: RenderLayers,
@@ -18,7 +18,7 @@ pub(in crate::camera) struct BaseCamera2dBundle {
 }
 
 impl BaseCamera2dBundle {
-    pub(in crate::camera) fn new(config: BaseCamera2dConfig) -> Self {
+    pub(in crate::primitives::camera) fn new(config: BaseCamera2dConfig) -> Self {
         Self {
             camera_2d: Camera2d,
             camera: Camera {

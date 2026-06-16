@@ -1,7 +1,7 @@
 //! Demo 视差背景 prefab。
 
 use bevy::prelude::*;
-use render_2d::background::DemoBackground2d;
+use render_2d::products::background::DemoBackground2d;
 
 use crate::Prefab;
 

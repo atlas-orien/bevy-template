@@ -9,11 +9,11 @@ use ecs::components::{
 use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
-use render_2d::animation::frame::FrameAnimationManifest2d;
-use render_2d::camera::FollowCameraTarget2d;
-use render_2d::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
-use render_2d::overlays::DemoHealthBarOverlay2d;
-use render_2d::particles::DemoParticleEmitter2d;
+use render_2d::capabilities::particles::DemoParticleEmitter2d;
+use render_2d::primitives::animation::frame::FrameAnimationManifest2d;
+use render_2d::primitives::camera::FollowCameraTarget2d;
+use render_2d::products::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
+use render_2d::products::overlays::DemoHealthBarOverlay2d;
 
 use crate::Prefab;
 

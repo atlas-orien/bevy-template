@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-use super::frame::FrameAnimation2dPlugin;
-use super::skeletal::SkeletalAnimation2dPlugin;
+use crate::capabilities::animation::SkeletalAnimation2dPlugin;
+use crate::primitives::animation::FrameAnimation2dPlugin;
 
 pub struct Animation2dPlugin;
 

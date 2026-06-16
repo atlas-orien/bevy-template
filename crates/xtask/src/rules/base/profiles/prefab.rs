@@ -43,7 +43,7 @@ pub fn check_prefab(rules: PrefabRules<'_>, errors: &mut Vec<String>) {
         Path::new(rules.crate_path).join("src/ui"),
         rules.ui_presentation_terms,
         errors,
-        "UI visual presentation belongs in render_2d/src/ui, while prefab should only compose render bundles and semantic actions",
+        "UI visual presentation belongs in render_2d/src/products/ui, while prefab should only compose render bundles and semantic actions",
     );
     reject_paths(
         &[

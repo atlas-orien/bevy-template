@@ -8,7 +8,7 @@ use interaction::{
     UiNavigationInputMessage,
 };
 use prefab::ui::{DEMO_MENU_ITEMS, DemoMenuAction, DemoMenuButtonIndex, DemoMenuFocused};
-use render_2d::ui::DemoMenuVisualFocused;
+use render_2d::products::ui::DemoMenuVisualFocused;
 
 use crate::api::{RuntimeUpdateMessage, RuntimeUpdateSender};
 use crate::state::{AppState, PauseState};

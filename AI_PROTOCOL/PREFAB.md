@@ -73,8 +73,8 @@ impl Prefab for YourObjectPrefab {
 
 - `prefab` 可以组合 `render_2d` 暴露的、挂在 Bevy Main World Entity 上的表现组件、marker 或 bundle。
 - `prefab` 里的 render 组合只表达对象的表现数据或表现身份，不表示直接执行渲染。
-- UI prefab 必须使用 `render_2d::ui` 暴露的 UI root bundle，不要散装未绑定 camera 的 root UI。
-- UI camera 由 gameplay 使用 `render_2d::camera::UiCamera` 生成，再把 UI root 绑定到该 camera entity。
+- UI prefab 必须使用 `render_2d::products::ui` 暴露的 UI root bundle，不要散装未绑定 camera 的 root UI。
+- UI camera 由 gameplay 使用 `render_2d::primitives::camera::UiCamera` 生成，再把 UI root 绑定到该 camera entity。
 - UI prefab 公开 API 不暴露 Bevy `Entity` 或 camera target 句柄；camera 绑定由 gameplay 在 spawn 后插入 `UiTargetCamera(camera_entity)`。
 - 屏幕 UI root 应该显式带 `UiTargetCamera(ui_camera)`；UI camera 可以带 `IsDefaultUiCamera` 作为默认 fallback。
 - `prefab` 不直接操作 RenderApp、Render World、render graph、pipeline、GPU resource 或 `wgpu`。

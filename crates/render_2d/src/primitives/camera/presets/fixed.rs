@@ -2,8 +2,8 @@
 
 use bevy::prelude::*;
 
-use crate::camera::SceneCamera2d;
-use crate::camera::base::{BaseCamera2dBundle, BaseCamera2dConfig};
+use crate::primitives::camera::SceneCamera2d;
+use crate::primitives::camera::base::{BaseCamera2dBundle, BaseCamera2dConfig};
 
 const FIXED_CAMERA_2D_ORDER: isize = 0;
 const FIXED_CAMERA_2D_LAYER: usize = 0;

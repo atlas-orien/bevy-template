@@ -42,7 +42,7 @@
 
 `prefab` 可以组合 `render_2d` 暴露的 Main World 表现组件、marker 或 bundle，例如角色 sprite 表现 bundle。
 
-屏幕 UI prefab 使用 `render_2d::ui` 的 UI root bundle。UI camera 由 gameplay 通过 `render_2d::camera` 生成并传给 UI prefab。UI root 应显式绑定 `UiTargetCamera(ui_camera)`，按钮等子节点只声明 `InteractionAction`，点击后的业务放在 `gameplay/src/interaction`。
+屏幕 UI prefab 使用 `render_2d::products::ui` 的 UI root bundle。UI camera 由 gameplay 通过 `render_2d::primitives::camera` 生成并传给 UI prefab。UI root 应显式绑定 `UiTargetCamera(ui_camera)`，按钮等子节点只声明 `InteractionAction`，点击后的业务放在 `gameplay/src/interaction`。
 
 但 `prefab` 不直接操作 Bevy RenderApp、Render World、render graph、pipeline、GPU resource 或 `wgpu`。Render SubApp 如何抽取和绘制这些数据，属于 Bevy/render 层。
 

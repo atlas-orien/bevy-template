@@ -19,38 +19,22 @@
 
 ## 当前结构
 
-- `camera`: 2D 相机基础能力和可直接实例化的 camera presets。
-  - `camera/base.rs`: 共享 Bevy 2D camera bundle/config。
-  - `camera/markers.rs`: camera 语义 marker。
-  - `camera/presets/fixed.rs`: 固定不动的 2D 场景相机。
-  - `camera/presets/follow.rs`: 跟随目标的 2D 场景相机。
-  - `camera/presets/ui.rs`: UI 专用 camera 配置。
-- `animation`: 2D 表现层动画。
-- `atlases`: 共享 texture atlas、sprite sheet layout、tileset layout 表现资源配置。
-- `background`: 背景、远景、视差背景层。
-- `characters`: 角色 2D 表现。
-- `debug`: 渲染调试显示，例如边界、坐标轴、可视化标记。
-- `lighting`: 2D 光照感、发光层、假阴影、bloom 相关表现配置。
-- `items`: 物品、掉落物、可拾取物的 2D 表现。
-- `materials`: 自定义 2D material、shader、特殊 sprite material 的项目落点。
-- `mesh`: 自定义 2D mesh、程序化形状、非 sprite 几何表现。
-- `overlays`: 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示。
-- `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
-- `pixel`: pixel art、pixel-perfect camera、pixel grid snap 相关表现策略。
-- `tilemap`: 通用 tilemap primitive。
-  - `tilemap/chunk.rs`: `TilemapChunkLayer2d`，基于 Bevy `TilemapChunk` 组合 tileset、chunk size、tile size、tile index 数据和 transform。
-- `environment`: 天气、雾、环境氛围、非背景类环境装饰。
-- `images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块。
-- `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。
-- `particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
-- `screens`: 屏幕级表现，例如标题画面、过场屏、加载屏。
-- `text`: 世界空间文字 primitive，例如伤害数字、漂浮提示、角色头顶名字。
-- `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
-- `ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
-  - `ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。
-  - `ui/demo_menu.rs`: demo 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
+- `primitives`: 最小通用表现单元，例如 camera、images、layers、text、tilemap、frame animation。
+- `capabilities`: 较复杂的通用表现能力，例如 skeletal、effects、particles、materials、mesh、lighting、pixel。
+- `products`: 具体游戏对象、画面、场景或 UI 表现，例如 characters、props、background、ui、screens。
+- `animation`: 兼容导出层；新代码按具体职责写入 `primitives/animation` 或 `capabilities/animation`。
 
-每个目录都可以保留一个可删除的占位模块。`animation` 继续拆成 `frame` 和 `skeletal`，分别表达帧动画和骨骼动画的边界。用户开始真实项目后，可以直接删除或替换这些占位文件。
+关键路径：
+
+- `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
+- `primitives/animation/frame`: sprite sheet、texture atlas、逐帧播放。
+- `primitives/tilemap/chunk.rs`: `TilemapChunkLayer2d`，基于 Bevy `TilemapChunk` 组合 tileset、chunk size、tile size、tile index 数据和 transform。
+- `capabilities/animation/skeletal`: 自定义骨骼动画能力。
+- `products/ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
+- `products/characters`: 角色 2D 表现。
+- `products/background`: 背景、远景、视差背景层。
+
+每个目录都可以保留一个可删除的占位模块。用户开始真实项目后，可以直接删除或替换这些占位文件。
 
 ## 文件规则
 
@@ -80,8 +64,8 @@
 
 `animation` 只处理视觉动画，不处理玩法时序。
 
-- `animation/frame`: sprite sheet、texture atlas、逐帧播放。
-- `animation/skeletal`: 2D bone、skeleton、骨骼播放状态。
+- `primitives/animation/frame`: sprite sheet、texture atlas、逐帧播放。
+- `capabilities/animation/skeletal`: 2D bone、skeleton、骨骼播放状态。
 - 攻击前摇、技能窗口、硬直、combo、碰撞判定不放在 render animation。
 
 ## tilemap
@@ -89,7 +73,7 @@
 `tilemap` 只放通用 tilemap 表现 primitive。
 
 - `TilemapChunkLayer2d` 负责把 `Handle<Image>`、chunk size、tile display size、tile index 数据和 translation 组合成 Bevy tilemap chunk bundle。
-- 具体地图布局、demo 地面原点、tileset 路径和 loader settings 不放在 `render_2d::tilemap`。
+- 具体地图布局、demo 地面原点、tileset 路径和 loader settings 不放在 `render_2d::primitives::tilemap`。
 - demo 关卡地面属于 `prefab/src/world_2d/demo_level`；资源加载属于 `catalog`。
 
 ## 和 ecs/intent/gameplay 的区别

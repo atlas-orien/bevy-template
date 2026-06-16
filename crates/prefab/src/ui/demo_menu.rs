@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 use interaction::InteractionAction;
-use render_2d::ui::{DemoMenuButtonVisual, DemoMenuVisual};
+use render_2d::products::ui::{DemoMenuButtonVisual, DemoMenuVisual};
 
 use crate::Prefab;
 

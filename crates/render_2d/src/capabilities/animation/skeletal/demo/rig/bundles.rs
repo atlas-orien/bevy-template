@@ -5,13 +5,13 @@ use super::layout::{
     DEMO_ARM_SIZE, DEMO_BONE_COLOR, DEMO_BONE_Z, DEMO_JOINT_SIZE, DEMO_JOINT_Z, DEMO_TORSO_SIZE,
     DemoJoint2d, DemoSkeletonSide,
 };
-use crate::animation::skeletal::demo::systems::DemoSkeletalAnimation2d;
+use crate::capabilities::animation::skeletal::demo::systems::DemoSkeletalAnimation2d;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub(in crate::animation::skeletal::demo) struct DemoSkeleton2dRoot;
+pub(in crate::capabilities::animation::skeletal::demo) struct DemoSkeleton2dRoot;
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
-pub(in crate::animation::skeletal::demo) enum DemoBone2d {
+pub(in crate::capabilities::animation::skeletal::demo) enum DemoBone2d {
     Torso,
     LeftUpperArm,
     LeftLowerArm,
@@ -28,7 +28,7 @@ pub struct DemoSkeleton2dBundle {
 }
 
 impl DemoSkeleton2dBundle {
-    pub(in crate::animation::skeletal::demo) fn new(translation: Vec3) -> Self {
+    pub(in crate::capabilities::animation::skeletal::demo) fn new(translation: Vec3) -> Self {
         Self {
             marker: DemoSkeleton2dRoot,
             animation: DemoSkeletalAnimation2d::default(),
@@ -39,7 +39,7 @@ impl DemoSkeleton2dBundle {
 }
 
 #[derive(Bundle)]
-pub(in crate::animation::skeletal::demo) struct DemoBone2dBundle {
+pub(in crate::capabilities::animation::skeletal::demo) struct DemoBone2dBundle {
     bone: DemoBone2d,
     sprite: Sprite,
     anchor: Anchor,
@@ -47,7 +47,7 @@ pub(in crate::animation::skeletal::demo) struct DemoBone2dBundle {
 }
 
 impl DemoBone2dBundle {
-    pub(in crate::animation::skeletal::demo) fn torso(image: Handle<Image>) -> Self {
+    pub(in crate::capabilities::animation::skeletal::demo) fn torso(image: Handle<Image>) -> Self {
         Self {
             bone: DemoBone2d::Torso,
             sprite: bone_sprite(image, DEMO_TORSO_SIZE),
@@ -56,7 +56,7 @@ impl DemoBone2dBundle {
         }
     }
 
-    pub(in crate::animation::skeletal::demo) fn upper_arm(
+    pub(in crate::capabilities::animation::skeletal::demo) fn upper_arm(
         image: Handle<Image>,
         bone: DemoBone2d,
         side: DemoSkeletonSide,
@@ -73,7 +73,7 @@ impl DemoBone2dBundle {
         }
     }
 
-    pub(in crate::animation::skeletal::demo) fn lower_arm(
+    pub(in crate::capabilities::animation::skeletal::demo) fn lower_arm(
         image: Handle<Image>,
         bone: DemoBone2d,
         side: DemoSkeletonSide,
@@ -92,14 +92,14 @@ impl DemoBone2dBundle {
 }
 
 #[derive(Bundle)]
-pub(in crate::animation::skeletal::demo) struct DemoJoint2dBundle {
+pub(in crate::capabilities::animation::skeletal::demo) struct DemoJoint2dBundle {
     joint: DemoJoint2d,
     sprite: Sprite,
     transform: Transform,
 }
 
 impl DemoJoint2dBundle {
-    pub(in crate::animation::skeletal::demo) fn new(
+    pub(in crate::capabilities::animation::skeletal::demo) fn new(
         image: Handle<Image>,
         joint: DemoJoint2d,
         translation: Vec3,

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::camera::base::{BaseCamera2dBundle, BaseCamera2dConfig};
+use crate::primitives::camera::base::{BaseCamera2dBundle, BaseCamera2dConfig};
 
 pub const UI_CAMERA_ORDER: isize = 100;
 const UI_CAMERA_LAYER: usize = 1;

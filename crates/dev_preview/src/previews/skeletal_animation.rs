@@ -8,7 +8,7 @@ use ecs::EcsPlugin;
 use gameplay::api::GameplayApiPlugin;
 use prefab::Prefab;
 use render_2d::Render2dPlugin;
-use render_2d::camera::FixedCamera2dBundle;
+use render_2d::primitives::camera::FixedCamera2dBundle;
 
 pub fn run() {
     App::new()

@@ -4,7 +4,7 @@ use prefab::lifecycle::GameplaySessionEntity;
 use prefab::world_2d::demo_level::{
     DemoBackgroundPrefab, DemoLandmarkPrefab, DemoRockPrefab, DemoSensorZonePrefab,
 };
-use render_2d::camera::FollowCamera2dBundle;
+use render_2d::primitives::camera::FollowCamera2dBundle;
 
 use super::plan::GameplaySpawnPlan;
 

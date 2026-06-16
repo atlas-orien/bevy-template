@@ -40,39 +40,49 @@
 
 ## 代码落点
 
-- `animation/frame`: sprite sheet、texture atlas、逐帧动画。
-- `animation/skeletal`: 2D bone、skeleton、骨骼动画边界。
-- `atlases`: 共享 texture atlas、sprite sheet layout、tileset layout。
-- `background`: 背景、远景、视差背景层。
-- `camera`: 2D 相机基础能力和可直接实例化的 camera presets。
-- `characters`: 角色 2D 表现。
-- `debug`: 渲染调试显示，例如 gizmo、边界、坐标轴、可视化标记。
-- `effects`: 命中特效、技能特效、纯视觉生命周期效果。
-- `environment`: 天气、雾、环境氛围、非背景类环境装饰。
-- `images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块；不负责加载具体资源路径。
-- `items`: 物品、掉落物、可拾取物的 2D 表现。
-- `lighting`: 2D 光照感、发光层、假阴影、bloom 相关表现配置。
-- `materials`: 自定义 2D material、shader、特殊 sprite material。
-- `mesh`: 自定义 2D mesh、程序化形状、非 sprite 几何表现。
-- `overlays`: 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示。
-- `particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
-- `pixel`: pixel art、pixel-perfect、pixel grid snap 相关表现策略。
-- `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
-- `screens`: 标题画面、过场屏、加载屏等屏幕级表现。
-- `text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
-- `tilemap`: 通用 tile map primitive，例如基于 Bevy `TilemapChunk` 的 tile chunk layer。
-- `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
-- `ui`: 2D UI 表现。
-- `camera/base.rs`: 共享 Bevy 2D camera bundle/config，只放 `Camera2d`、`Camera`、`RenderLayers`、`Transform` 等基础组合。
-- `camera/markers.rs`: camera 语义 marker，例如 `SceneCamera2d`、`FollowCameraTarget2d`。
-- `camera/presets`: 业务可直接选择的 camera preset，例如 fixed、follow、ui。
-- `camera/presets/fixed.rs`: 固定不动的 2D 场景相机。
-- `camera/presets/follow.rs`: 跟随目标的 2D 场景相机。
-- `camera/presets/ui.rs`: UI 专用 camera 配置。
-- `ui`: UI root target、UI 层级 marker 和 UI node 基础 bundle。
-- `ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。
-- `ui/demo_menu.rs`: demo 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
-- `tilemap/chunk.rs`: 通用 `TilemapChunkLayer2d`，只负责把 tileset handle、chunk size、tile size、tile index 数据和 transform 组合成 Bevy tilemap chunk bundle。
+- `primitives`: 最小通用表现单元，供 capabilities/products 组合。
+- `capabilities`: 较复杂的通用表现能力，可以带 plugin、system、runtime state。
+- `products`: 具体游戏对象、画面、场景或 UI 表现，通常给 `prefab` 直接组合。
+- `animation`: 兼容导出层；新代码按具体职责写入 `primitives/animation` 或 `capabilities/animation`。
+
+`primitives`:
+
+- `primitives/animation/frame`: sprite sheet、texture atlas、逐帧动画。
+- `primitives/atlases`: 共享 texture atlas、sprite sheet layout、tileset layout。
+- `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
+- `primitives/images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块；不负责加载具体资源路径。
+- `primitives/layers`: 通用 layer stack 和 parallax layer 能力。
+- `primitives/text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
+- `primitives/tilemap`: 通用 tile map primitive，例如基于 Bevy `TilemapChunk` 的 tile chunk layer。
+- `primitives/camera/base.rs`: 共享 Bevy 2D camera bundle/config，只放 `Camera2d`、`Camera`、`RenderLayers`、`Transform` 等基础组合。
+- `primitives/camera/markers.rs`: camera 语义 marker，例如 `SceneCamera2d`、`FollowCameraTarget2d`。
+- `primitives/camera/presets`: 业务可直接选择的 camera preset，例如 fixed、follow、ui。
+- `primitives/tilemap/chunk.rs`: 通用 `TilemapChunkLayer2d`，只负责把 tileset handle、chunk size、tile size、tile index 数据和 transform 组合成 Bevy tilemap chunk bundle。
+
+`capabilities`:
+
+- `capabilities/animation/skeletal`: 2D bone、skeleton、骨骼动画边界。
+- `capabilities/effects`: 命中特效、技能特效、纯视觉生命周期效果。
+- `capabilities/lighting`: 2D 光照感、发光层、假阴影、bloom 相关表现配置。
+- `capabilities/materials`: 自定义 2D material、shader、特殊 sprite material。
+- `capabilities/mesh`: 自定义 2D mesh、程序化形状、非 sprite 几何表现。
+- `capabilities/particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
+- `capabilities/pixel`: pixel art、pixel-perfect、pixel grid snap 相关表现策略。
+
+`products`:
+
+- `products/background`: 背景、远景、视差背景层。
+- `products/characters`: 角色 2D 表现。
+- `products/debug`: 渲染调试显示，例如 gizmo、边界、坐标轴、可视化标记。
+- `products/environment`: 天气、雾、环境氛围、非背景类环境装饰。
+- `products/items`: 物品、掉落物、可拾取物的 2D 表现。
+- `products/overlays`: 贴在世界对象上的覆盖表现，例如血条、选中框、交互提示。
+- `products/props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
+- `products/screens`: 标题画面、过场屏、加载屏等屏幕级表现。
+- `products/transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
+- `products/ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
+- `products/ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。
+- `products/ui/demo_menu.rs`: demo 菜单 UI 的具体视觉表现 bundle，例如颜色、字体、尺寸、边距、按钮样式。
 
 ## 文件组织规则
 
@@ -125,13 +135,13 @@
 - `animation` 只定义 2D 表现层动画。
 - animation 可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。
 - animation 不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
-- `animation/frame` 是通用逐帧动画基础能力，不写具体角色、具体 demo 或具体内容目录。
-- `animation/frame` 不创建 `base/`、`content/`、`demo/` 子目录；当前目录本身就是通用 frame animation 层。
-- `animation/frame` 只暴露通用动画状态、manifest、handle、loader、plugin 和 system，不暴露 `Demo*` 类型或 `demo_*` API。
-- 具体角色如何使用 frame animation，写到 `render_2d/src/characters` 等语义目录；例如角色视觉 bundle 组合 `FrameAnimation2d` 和 `FrameAnimationManifest2d` handle。
+- `primitives/animation/frame` 是通用逐帧动画基础能力，不写具体角色、具体 demo 或具体内容目录。
+- `primitives/animation/frame` 不创建 `base/`、`content/`、`demo/` 子目录；当前目录本身就是通用 frame animation 层。
+- `primitives/animation/frame` 只暴露通用动画状态、manifest、handle、loader、plugin 和 system，不暴露 `Demo*` 类型或 `demo_*` API。
+- 具体角色如何使用 frame animation，写到 `render_2d/src/products/characters` 等语义目录；例如角色视觉 bundle 组合 `FrameAnimation2d` 和 `FrameAnimationManifest2d` handle。
 - 具体资源路径由 `catalog` 绑定；`animation/frame` 不直接加载具体图片资源。
-- `animation/skeletal` 当前不是通用骨骼 runtime，而是具体自定义骨骼动画产品集合。
-- `animation/skeletal` 下每个具体产品必须建目录，例如 `animation/skeletal/demo/`，不要写成 `demo_skeletal_animation.rs` 巨型单文件。
+- `capabilities/animation/skeletal` 当前不是通用骨骼 runtime，而是具体自定义骨骼动画产品集合。
+- `capabilities/animation/skeletal` 下每个具体产品必须建目录，例如 `capabilities/animation/skeletal/demo/`，不要写成 `demo_skeletal_animation.rs` 巨型单文件。
 - skeletal 产品目录 root 只放 `mod.rs`、`entry.rs`、`systems.rs`、`tests.rs` 和 `rig/`。
 - skeletal 产品入口写在 `entry.rs`，`mod.rs` 只声明模块和 re-export；这符合全项目 `mod.rs` 只做导出的规则。
 - skeletal 的骨架结构写在 `rig/` 子目录，至少拆成 `structure.rs`、`parts.rs`、`bundles.rs`、`layout.rs`。

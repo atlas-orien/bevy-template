@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 
 use super::FixedCamera2dBundle;
-use crate::camera::FollowCameraTarget2d;
+use crate::primitives::camera::FollowCameraTarget2d;
 
 const FOLLOW_CAMERA_2D_SMOOTHNESS: f32 = 12.0;
 
@@ -26,7 +26,7 @@ pub struct FollowCamera2dBundle {
     follow: FollowCamera2d,
 }
 
-pub(in crate::camera) fn follow_camera_system(
+pub(in crate::primitives::camera) fn follow_camera_system(
     time: Res<Time>,
     target: Query<&GlobalTransform, With<FollowCameraTarget2d>>,
     mut cameras: Query<(&FollowCamera2d, &mut Transform)>,

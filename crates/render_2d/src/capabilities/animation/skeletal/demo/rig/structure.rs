@@ -12,7 +12,7 @@ pub struct DemoSkeleton2dRig {
 }
 
 impl DemoSkeleton2dRig {
-    pub(in crate::animation::skeletal::demo) fn new(
+    pub(in crate::capabilities::animation::skeletal::demo) fn new(
         bone_image: Handle<Image>,
         joint_image: Handle<Image>,
     ) -> Self {
@@ -35,7 +35,7 @@ impl DemoSkeleton2dRig {
         }
     }
 
-    pub(in crate::animation::skeletal::demo) fn into_children(self) -> impl Bundle {
+    pub(in crate::capabilities::animation::skeletal::demo) fn into_children(self) -> impl Bundle {
         children![
             self.torso.into_bundle(),
             self.left_shoulder.into_bundle(),

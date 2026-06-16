@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 use ecs::components::world::gameplay::GameplaySessionEntity;
-use render_2d::props::{DemoLandmark2d, DemoRock2d};
+use render_2d::products::props::{DemoLandmark2d, DemoRock2d};
 
 use crate::Prefab;
 

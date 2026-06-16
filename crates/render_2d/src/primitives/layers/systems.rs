@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use super::{ParallaxLayer2d, RenderLayer2dMarker};
-use crate::camera::SceneCamera2d;
+use crate::primitives::camera::SceneCamera2d;
 
 pub(super) fn parallax_layer_system(
     camera: Query<&Transform, (With<SceneCamera2d>, Without<RenderLayer2dMarker>)>,

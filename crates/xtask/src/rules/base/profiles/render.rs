@@ -10,7 +10,8 @@ use crate::rules::base::paths::{
 use crate::rules::base::render_api::reject_multi_public_render_items;
 use crate::rules::base::skeletal_animation::{SkeletalAnimationRules, check_skeletal_animation};
 use crate::rules::base::source::{
-    reject_direct_input_access, reject_files_containing_all_terms, reject_terms_in_rust_files,
+    reject_direct_input_access, reject_files_containing_all_terms, reject_terms_in_file,
+    reject_terms_in_rust_files,
 };
 use crate::rules::base::tilemap::{TilemapRules, check_tilemap};
 use crate::rules::base::visual_primitives::{ImagesRules, TextRules, check_images, check_text};
@@ -97,6 +98,24 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         errors,
         "render_2d needs a crate root that exports presentation plugins/types",
     );
+    reject_terms_in_file(
+        Path::new(rules.crate_path).join("src/lib.rs"),
+        &[
+            "pub mod camera;",
+            "pub mod characters;",
+            "pub mod background;",
+            "pub mod images;",
+            "pub mod layers;",
+            "pub mod text;",
+            "pub mod tilemap;",
+            "pub mod ui;",
+            "pub use primitives::{",
+            "pub use products::{",
+            "pub use capabilities::{",
+        ],
+        errors,
+        "render_2d root should expose the grouped primitives/capabilities/products structure instead of restoring flat root modules",
+    );
     require_paths(
         rules.content_dirs,
         errors,
@@ -144,13 +163,13 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         "render_2d should expose static camera components/bundles only, while runtime camera-to-UI binding belongs in gameplay spawn code",
     );
     reject_free_functions_returning_any(
-        Path::new(rules.crate_path).join("src/ui"),
+        Path::new(rules.crate_path).join("src/products/ui"),
         &["-> impl Bundle", "-> Node"],
         errors,
-        "exposes UI presentation as free functions returning `Node` or `impl Bundle`; render_2d/src/ui should define named Component/Bundle structs for reusable UI presentation",
+        "exposes UI presentation as free functions returning `Node` or `impl Bundle`; render_2d/src/products/ui should define named Component/Bundle structs for reusable UI presentation",
     );
     reject_files_containing_all_terms(
-        Path::new(rules.crate_path).join("src/ui"),
+        Path::new(rules.crate_path).join("src/products/ui"),
         &[": FullScreenUiNodeBundle", ": Node"],
         errors,
         "combines `FullScreenUiNodeBundle` with another `Node`; Bevy entities may only receive one Node component, so UI root/layout bundles must expose a single composed Node",
@@ -164,6 +183,8 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         &[
             "crates/render_2d/src/ui/camera.rs",
             "crates/render_2d/src/ui/menu.rs",
+            "crates/render_2d/src/products/ui/camera.rs",
+            "crates/render_2d/src/products/ui/menu.rs",
         ],
         errors,
         "UI camera/menu demo files must use explicit architecture locations and demo names",

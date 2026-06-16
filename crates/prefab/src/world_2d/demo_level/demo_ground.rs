@@ -1,7 +1,7 @@
 //! Demo tilemap 地面 prefab。
 
 use bevy::prelude::*;
-use render_2d::tilemap::TilemapChunkLayer2d;
+use render_2d::primitives::tilemap::TilemapChunkLayer2d;
 
 use crate::Prefab;
 

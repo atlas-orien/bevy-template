@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 
-use crate::layers::{LayerStack2d, RenderLayer2d};
+use crate::primitives::layers::{LayerStack2d, RenderLayer2d};
 
 const DEMO_SKY_BACKGROUND_COLOR: Color = Color::srgb(0.18, 0.28, 0.38);
 const DEMO_SKY_BACKGROUND_SIZE: Vec2 = Vec2::new(2400.0, 1400.0);

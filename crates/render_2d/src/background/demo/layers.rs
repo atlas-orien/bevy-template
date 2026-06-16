@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::background::layered::BackgroundLayer2d;
+use crate::layers::RenderLayer2d;
 
 pub(in crate::background::demo) const DEMO_SKY_BACKGROUND_COLOR: Color =
     Color::srgb(0.18, 0.28, 0.38);
@@ -13,15 +13,15 @@ pub(in crate::background::demo) const DEMO_FOREST_BACKGROUND_SIZE: Vec2 = Vec2::
 pub(in crate::background::demo) const DEMO_FOREST_BACKGROUND_Z: f32 = -10.0;
 pub(in crate::background::demo) const DEMO_FOREST_PARALLAX_FACTOR: Vec2 = Vec2::new(0.35, 0.14);
 
-pub(in crate::background::demo) fn demo_background_layers() -> [BackgroundLayer2d; 2] {
+pub(in crate::background::demo) fn demo_background_layers() -> [RenderLayer2d; 2] {
     [
-        BackgroundLayer2d::color(
+        RenderLayer2d::color(
             DEMO_SKY_BACKGROUND_COLOR,
             DEMO_SKY_BACKGROUND_SIZE,
             DEMO_SKY_BACKGROUND_Z,
             DEMO_SKY_PARALLAX_FACTOR,
         ),
-        BackgroundLayer2d::color(
+        RenderLayer2d::color(
             DEMO_FOREST_BACKGROUND_COLOR,
             DEMO_FOREST_BACKGROUND_SIZE,
             DEMO_FOREST_BACKGROUND_Z,

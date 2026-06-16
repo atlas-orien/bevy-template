@@ -9,6 +9,7 @@ pub mod debug;
 pub mod effects;
 pub mod environment;
 pub mod items;
+pub mod layers;
 pub mod lighting;
 pub mod materials;
 pub mod mesh;
@@ -35,6 +36,7 @@ use self::debug::DebugRenderPlugin;
 use self::effects::EffectsPlugin;
 use self::environment::EnvironmentPlugin;
 use self::items::ItemsPlugin;
+use self::layers::Layers2dPlugin;
 use self::lighting::Lighting2dPlugin;
 use self::materials::Materials2dPlugin;
 use self::mesh::Mesh2dContentPlugin;
@@ -59,6 +61,7 @@ impl Plugin for Render2dPlugin {
             .add_plugins(ItemsPlugin)
             .add_plugins(PropsPlugin)
             .add_plugins(TilemapPlugin)
+            .add_plugins(Layers2dPlugin)
             .add_plugins(Lighting2dPlugin)
             .add_plugins(Materials2dPlugin)
             .add_plugins(Mesh2dContentPlugin)

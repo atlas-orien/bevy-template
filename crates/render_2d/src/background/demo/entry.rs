@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
 use super::layers::demo_background_layers;
-use crate::background::layered::LayeredBackground2d;
+use crate::layers::LayerStack2d;
 
 pub struct DemoBackground2d {
-    background: LayeredBackground2d,
+    layers: LayerStack2d,
 }
 
 impl Default for DemoBackground2d {
@@ -15,18 +15,18 @@ impl Default for DemoBackground2d {
 
 impl DemoBackground2d {
     pub fn into_bundle(self) -> impl Bundle {
-        self.background.into_bundle()
+        self.layers.into_bundle()
     }
 }
 
-impl From<LayeredBackground2d> for DemoBackground2d {
-    fn from(background: LayeredBackground2d) -> Self {
-        Self { background }
+impl From<LayerStack2d> for DemoBackground2d {
+    fn from(layers: LayerStack2d) -> Self {
+        Self { layers }
     }
 }
 
 impl DemoBackground2d {
     pub fn new() -> Self {
-        LayeredBackground2d::new(demo_background_layers()).into()
+        LayerStack2d::new(demo_background_layers()).into()
     }
 }

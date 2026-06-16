@@ -89,6 +89,13 @@
 - `images` 不加载具体资源路径；图片资源由 `catalog` 或上层传入 `Handle<Image>`。
 - `background`、`layers`、`ui` 等复合表现可以组合 `images`，不要重复散装 `Sprite`、`Transform`、`Visibility`。
 
+## Text 规则
+
+- `text` 是通用世界空间文字表现 primitive，第一版只处理 `Text2d`。
+- `text` 不处理 UI 布局文字；UI text 属于 `ui` 目录中的具体 UI 表现。
+- `text` 不加载具体字体路径；字体资源由 `catalog` 或上层传入 `Handle<Font>`。
+- `text` 可以提供已经命名的 bundle/product，例如 `WorldText2d` 和 `WorldText2dBundle`。
+
 ## 边界规则
 
 - 可以生成相机、sprite、UI 节点、渲染专用子实体和视觉效果实体。

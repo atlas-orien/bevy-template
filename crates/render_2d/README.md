@@ -43,7 +43,7 @@
 - `effects`: 命中特效、粒子替代 sprite、纯视觉生命周期效果。
 - `particles`: 粒子发射器、粒子配置、纯视觉粒子生命周期。
 - `screens`: 屏幕级表现，例如标题画面、过场屏、加载屏。
-- `text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
+- `text`: 世界空间文字 primitive，例如伤害数字、漂浮提示、角色头顶名字。
 - `transitions`: 屏幕转场、淡入淡出、wipe 等过渡表现。
 - `ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
   - `ui/root.rs`: UI root、全屏 UI node、UI 层级 bundle。

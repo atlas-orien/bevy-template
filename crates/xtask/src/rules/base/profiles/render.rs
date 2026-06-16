@@ -12,6 +12,7 @@ use crate::rules::base::skeletal_animation::{SkeletalAnimationRules, check_skele
 use crate::rules::base::source::{
     reject_direct_input_access, reject_files_containing_all_terms, reject_terms_in_rust_files,
 };
+use crate::rules::base::visual_primitives::{ImagesRules, TextRules, check_images, check_text};
 use crate::rules::util::require_path;
 
 pub struct Render3dRules<'a> {
@@ -72,6 +73,8 @@ pub struct Render2dRules<'a> {
     pub world_rule_terms: &'a [&'a str],
     pub hardcoded_sprite_sheet_terms: &'a [&'a str],
     pub camera: CameraRules<'a>,
+    pub images: ImagesRules<'a>,
+    pub text: TextRules<'a>,
     pub frame_animation: FrameAnimationRules<'a>,
     pub skeletal_animation: SkeletalAnimationRules<'a>,
 }
@@ -128,6 +131,8 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
     );
     check_frame_animation(rules.frame_animation, errors);
     check_camera(rules.camera, errors);
+    check_images(rules.images, errors);
+    check_text(rules.text, errors);
     check_skeletal_animation(rules.skeletal_animation, errors);
     reject_terms_in_rust_files(
         Path::new(rules.crate_path).join("src"),

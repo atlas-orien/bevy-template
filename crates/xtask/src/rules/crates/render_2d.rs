@@ -2,6 +2,7 @@ use crate::rules::base::camera::CameraRules;
 use crate::rules::base::frame_animation::FrameAnimationRules;
 use crate::rules::base::profiles::{Render2dRules, check_render_2d};
 use crate::rules::base::skeletal_animation::SkeletalAnimationRules;
+use crate::rules::base::visual_primitives::{ImagesRules, TextRules};
 use crate::rules::{CheckStatus, finish};
 
 const RENDER_2D_CRATE: &str = "crates/render_2d";
@@ -104,6 +105,30 @@ const CAMERA_PRESETS_REQUIRED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.r
 
 const CAMERA_PRESETS_ALLOWED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
 
+const IMAGES_ALLOWED_FILES: &[&str] = &["mod.rs"];
+
+const IMAGES_REQUIRED_API_TERMS: &[&str] = &[
+    "pub struct StaticImage2d",
+    "pub fn color(",
+    "pub fn image(",
+    "pub fn into_bundle(self) -> StaticImage2dBundle",
+    "pub struct StaticImage2dBundle",
+];
+
+const IMAGES_FORBIDDEN_TERMS: &[&str] = &["AssetServer", "asset_server", ".load(", "add_systems"];
+
+const TEXT_ALLOWED_FILES: &[&str] = &["mod.rs", "plugin.rs"];
+
+const TEXT_REQUIRED_API_TERMS: &[&str] = &[
+    "pub struct WorldText2d",
+    "pub fn new(",
+    "pub fn into_bundle(self) -> WorldText2dBundle",
+    "pub struct WorldText2dBundle",
+    "Text2d::new",
+];
+
+const TEXT_FORBIDDEN_TERMS: &[&str] = &["AssetServer", "asset_server", ".load(", "Node"];
+
 const SKELETAL_PRODUCT_REQUIRED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
 
 const SKELETAL_PRODUCT_ALLOWED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
@@ -136,6 +161,18 @@ pub fn check() -> CheckStatus {
                 root_allowed_dirs: CAMERA_ROOT_ALLOWED_DIRS,
                 presets_required_files: CAMERA_PRESETS_REQUIRED_FILES,
                 presets_allowed_files: CAMERA_PRESETS_ALLOWED_FILES,
+            },
+            images: ImagesRules {
+                images_dir: "crates/render_2d/src/images",
+                allowed_files: IMAGES_ALLOWED_FILES,
+                required_api_terms: IMAGES_REQUIRED_API_TERMS,
+                forbidden_terms: IMAGES_FORBIDDEN_TERMS,
+            },
+            text: TextRules {
+                text_dir: "crates/render_2d/src/text",
+                allowed_files: TEXT_ALLOWED_FILES,
+                required_api_terms: TEXT_REQUIRED_API_TERMS,
+                forbidden_terms: TEXT_FORBIDDEN_TERMS,
             },
             frame_animation: FrameAnimationRules {
                 frame_dir: "crates/render_2d/src/animation/frame",

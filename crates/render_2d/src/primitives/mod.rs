@@ -1,16 +1,16 @@
 //! 通用 2D 表现 primitive。
 
-pub mod animation;
 pub mod atlases;
 pub mod camera;
+pub mod frame_animation;
 pub mod images;
 pub mod layers;
 pub mod text;
 pub mod tilemap;
 
-pub use animation::PrimitiveAnimation2dPlugin;
 pub use atlases::AtlasesPlugin;
 pub use camera::Camera2dPlugin;
+pub use frame_animation::FrameAnimation2dPlugin;
 pub use layers::Layers2dPlugin;
 pub use text::Text2dContentPlugin;
 pub use tilemap::TilemapPlugin;
@@ -27,7 +27,7 @@ impl Plugin for Render2dPrimitivesPlugin {
             TilemapPlugin,
             Layers2dPlugin,
             Text2dContentPlugin,
-            PrimitiveAnimation2dPlugin,
+            FrameAnimation2dPlugin,
         ));
     }
 }

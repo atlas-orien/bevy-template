@@ -22,14 +22,13 @@
 - `primitives`: 最小通用表现单元，例如 camera、images、layers、text、tilemap、frame animation。
 - `capabilities`: 较复杂的通用表现能力，例如 skeletal、effects、particles、materials、mesh、lighting、pixel。
 - `products`: 具体游戏对象、画面、场景或 UI 表现，例如 characters、props、background、ui、screens。
-- `animation`: 兼容导出层；新代码按具体职责写入 `primitives/animation` 或 `capabilities/animation`。
 
 关键路径：
 
 - `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
-- `primitives/animation/frame`: sprite sheet、texture atlas、逐帧播放。
+- `primitives/frame_animation`: sprite sheet、texture atlas、逐帧播放。
 - `primitives/tilemap/chunk.rs`: `TilemapChunkLayer2d`，基于 Bevy `TilemapChunk` 组合 tileset、chunk size、tile size、tile index 数据和 transform。
-- `capabilities/animation/skeletal`: 自定义骨骼动画能力。
+- `capabilities/skeletal_animation`: 自定义骨骼动画能力。
 - `products/ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
 - `products/characters`: 角色 2D 表现。
 - `products/background`: 背景、远景、视差背景层。
@@ -62,10 +61,10 @@
 
 ## animation
 
-`animation` 只处理视觉动画，不处理玩法时序。
+`frame_animation` 和 `skeletal_animation` 只处理视觉动画，不处理玩法时序。
 
-- `primitives/animation/frame`: sprite sheet、texture atlas、逐帧播放。
-- `capabilities/animation/skeletal`: 2D bone、skeleton、骨骼播放状态。
+- `primitives/frame_animation`: sprite sheet、texture atlas、逐帧播放。
+- `capabilities/skeletal_animation`: 2D bone、skeleton、骨骼播放状态。
 - 攻击前摇、技能窗口、硬直、combo、碰撞判定不放在 render animation。
 
 ## tilemap

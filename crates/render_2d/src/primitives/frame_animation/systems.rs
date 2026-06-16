@@ -87,7 +87,7 @@ mod tests {
     use std::time::Duration;
 
     use super::*;
-    use crate::primitives::animation::frame::FrameAnimationClip2d;
+    use crate::primitives::frame_animation::FrameAnimationClip2d;
 
     const IDLE_CLIP: &str = "idle";
     const WALK_CLIP: &str = "walk";

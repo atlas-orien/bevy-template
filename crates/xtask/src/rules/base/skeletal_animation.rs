@@ -17,7 +17,7 @@ pub fn check_skeletal_animation(rules: SkeletalAnimationRules<'_>, errors: &mut 
         skeletal_dir,
         rules.forbidden_file_names,
         errors,
-        "animation/skeletal products are large custom animations and must live in product directories, not single files",
+        "skeletal_animation products are large custom animations and must live in product directories, not single files",
     );
 
     for product_dir in immediate_subdirs(skeletal_dir) {
@@ -27,7 +27,7 @@ pub fn check_skeletal_animation(rules: SkeletalAnimationRules<'_>, errors: &mut 
 
         if product_name == "rig" {
             errors.push(format!(
-                "{} is not a skeletal product directory; rig belongs under a concrete product such as animation/skeletal/demo/rig",
+                "{} is not a skeletal product directory; rig belongs under a concrete product such as skeletal_animation/demo/rig",
                 product_dir.display()
             ));
             continue;

@@ -10,10 +10,8 @@ const RENDER_2D_CRATE: &str = "crates/render_2d";
 const RENDER_2D_PROTOCOL: &str = "AI_PROTOCOL/RENDER_2D.md";
 
 const CONTENT_DIRS: &[&str] = &[
-    "crates/render_2d/src/animation",
     "crates/render_2d/src/primitives",
-    "crates/render_2d/src/primitives/animation",
-    "crates/render_2d/src/primitives/animation/frame",
+    "crates/render_2d/src/primitives/frame_animation",
     "crates/render_2d/src/primitives/atlases",
     "crates/render_2d/src/primitives/camera",
     "crates/render_2d/src/primitives/images",
@@ -21,8 +19,7 @@ const CONTENT_DIRS: &[&str] = &[
     "crates/render_2d/src/primitives/text",
     "crates/render_2d/src/primitives/tilemap",
     "crates/render_2d/src/capabilities",
-    "crates/render_2d/src/capabilities/animation",
-    "crates/render_2d/src/capabilities/animation/skeletal",
+    "crates/render_2d/src/capabilities/skeletal_animation",
     "crates/render_2d/src/capabilities/effects",
     "crates/render_2d/src/capabilities/lighting",
     "crates/render_2d/src/capabilities/materials",
@@ -89,8 +86,15 @@ const OBSOLETE_PATHS: &[&str] = &[
     "crates/render_2d/src/tilemap",
     "crates/render_2d/src/transitions",
     "crates/render_2d/src/ui",
+    "crates/render_2d/src/frame_animation",
+    "crates/render_2d/src/skeletal_animation",
+    "crates/render_2d/src/animation",
     "crates/render_2d/src/animation/frame",
     "crates/render_2d/src/animation/skeletal",
+    "crates/render_2d/src/primitives/animation",
+    "crates/render_2d/src/primitives/animation/frame",
+    "crates/render_2d/src/capabilities/animation",
+    "crates/render_2d/src/capabilities/animation/skeletal",
 ];
 
 const FORBIDDEN_DEPENDENCIES: &[&str] = &[
@@ -228,13 +232,13 @@ pub fn check() -> CheckStatus {
                 forbidden_terms: TILEMAP_FORBIDDEN_TERMS,
             },
             frame_animation: FrameAnimationRules {
-                frame_dir: "crates/render_2d/src/primitives/animation/frame",
+                frame_dir: "crates/render_2d/src/primitives/frame_animation",
                 forbidden_subdirs: FRAME_ANIMATION_ALLOWED_SUBDIRS,
                 forbidden_file_names: FRAME_ANIMATION_FORBIDDEN_FILE_NAMES,
                 hardcoded_sheet_terms: HARDCODED_SPRITE_SHEET_TERMS,
             },
             skeletal_animation: SkeletalAnimationRules {
-                skeletal_dir: "crates/render_2d/src/capabilities/animation/skeletal",
+                skeletal_dir: "crates/render_2d/src/capabilities/skeletal_animation",
                 product_required_files: SKELETAL_PRODUCT_REQUIRED_FILES,
                 product_allowed_files: SKELETAL_PRODUCT_ALLOWED_FILES,
                 rig_required_files: SKELETAL_RIG_REQUIRED_FILES,

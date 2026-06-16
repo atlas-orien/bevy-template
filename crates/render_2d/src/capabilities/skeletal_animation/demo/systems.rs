@@ -4,7 +4,7 @@ use super::rig::{DemoBone2d, DemoSkeleton2dRoot, DemoSkeletonSide};
 
 pub(super) const DEMO_SKELETON_CYCLE_SECONDS: f32 = 1.2;
 
-pub(in crate::capabilities::animation::skeletal) struct DemoSkeletalAnimationPlugin;
+pub(in crate::capabilities::skeletal_animation) struct DemoSkeletalAnimationPlugin;
 
 impl Plugin for DemoSkeletalAnimationPlugin {
     fn build(&self, app: &mut App) {

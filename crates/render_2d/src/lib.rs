@@ -1,6 +1,5 @@
 //! User-editable 2D presentation content, primitives, capabilities, and products.
 
-pub mod animation;
 pub mod capabilities;
 pub mod primitives;
 pub mod products;

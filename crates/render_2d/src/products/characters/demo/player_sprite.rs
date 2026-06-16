@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 
-use crate::primitives::animation::frame::{
+use crate::primitives::frame_animation::{
     FrameAnimation2d, FrameAnimationFacingFlip2d, FrameAnimationHandle2d, FrameAnimationManifest2d,
     FrameAnimationMovementClips2d,
 };

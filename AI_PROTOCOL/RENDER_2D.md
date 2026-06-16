@@ -43,11 +43,10 @@
 - `primitives`: 最小通用表现单元，供 capabilities/products 组合。
 - `capabilities`: 较复杂的通用表现能力，可以带 plugin、system、runtime state。
 - `products`: 具体游戏对象、画面、场景或 UI 表现，通常给 `prefab` 直接组合。
-- `animation`: 兼容导出层；新代码按具体职责写入 `primitives/animation` 或 `capabilities/animation`。
 
 `primitives`:
 
-- `primitives/animation/frame`: sprite sheet、texture atlas、逐帧动画。
+- `primitives/frame_animation`: sprite sheet、texture atlas、逐帧动画。
 - `primitives/atlases`: 共享 texture atlas、sprite sheet layout、tileset layout。
 - `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
 - `primitives/images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块；不负责加载具体资源路径。
@@ -61,7 +60,7 @@
 
 `capabilities`:
 
-- `capabilities/animation/skeletal`: 2D bone、skeleton、骨骼动画边界。
+- `capabilities/skeletal_animation`: 2D bone、skeleton、骨骼动画边界。
 - `capabilities/effects`: 命中特效、技能特效、纯视觉生命周期效果。
 - `capabilities/lighting`: 2D 光照感、发光层、假阴影、bloom 相关表现配置。
 - `capabilities/materials`: 自定义 2D material、shader、特殊 sprite material。
@@ -91,7 +90,7 @@
 - 模板阶段每个目录可以只保留可删除的占位文件。
 - 用户开始真实项目后，可以直接删除或替换占位文件。
 - 不新增 `common.rs`、`misc.rs`、`utils.rs` 这类含义模糊的文件。
-- 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `animation/frame`。
+- 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `frame_animation`。
 
 ## Images 规则
 
@@ -132,16 +131,16 @@
 
 ## Animation 规则
 
-- `animation` 只定义 2D 表现层动画。
-- animation 可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。
-- animation 不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
-- `primitives/animation/frame` 是通用逐帧动画基础能力，不写具体角色、具体 demo 或具体内容目录。
-- `primitives/animation/frame` 不创建 `base/`、`content/`、`demo/` 子目录；当前目录本身就是通用 frame animation 层。
-- `primitives/animation/frame` 只暴露通用动画状态、manifest、handle、loader、plugin 和 system，不暴露 `Demo*` 类型或 `demo_*` API。
+- `frame_animation` 和 `skeletal_animation` 只定义 2D 表现层动画。
+- animation 模块可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。
+- animation 模块不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
+- `primitives/frame_animation` 是通用逐帧动画基础能力，不写具体角色、具体 demo 或具体内容目录。
+- `primitives/frame_animation` 不创建 `base/`、`content/`、`demo/` 子目录；当前目录本身就是通用 frame animation 层。
+- `primitives/frame_animation` 只暴露通用动画状态、manifest、handle、loader、plugin 和 system，不暴露 `Demo*` 类型或 `demo_*` API。
 - 具体角色如何使用 frame animation，写到 `render_2d/src/products/characters` 等语义目录；例如角色视觉 bundle 组合 `FrameAnimation2d` 和 `FrameAnimationManifest2d` handle。
-- 具体资源路径由 `catalog` 绑定；`animation/frame` 不直接加载具体图片资源。
-- `capabilities/animation/skeletal` 当前不是通用骨骼 runtime，而是具体自定义骨骼动画产品集合。
-- `capabilities/animation/skeletal` 下每个具体产品必须建目录，例如 `capabilities/animation/skeletal/demo/`，不要写成 `demo_skeletal_animation.rs` 巨型单文件。
+- 具体资源路径由 `catalog` 绑定；`frame_animation` 不直接加载具体图片资源。
+- `capabilities/skeletal_animation` 当前不是通用骨骼 runtime，而是具体自定义骨骼动画产品集合。
+- `capabilities/skeletal_animation` 下每个具体产品必须建目录，例如 `capabilities/skeletal_animation/demo/`，不要写成 `demo_skeletal_animation.rs` 巨型单文件。
 - skeletal 产品目录 root 只放 `mod.rs`、`entry.rs`、`systems.rs`、`tests.rs` 和 `rig/`。
 - skeletal 产品入口写在 `entry.rs`，`mod.rs` 只声明模块和 re-export；这符合全项目 `mod.rs` 只做导出的规则。
 - skeletal 的骨架结构写在 `rig/` 子目录，至少拆成 `structure.rs`、`parts.rs`、`bundles.rs`、`layout.rs`。

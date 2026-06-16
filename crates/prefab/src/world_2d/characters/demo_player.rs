@@ -10,8 +10,8 @@ use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
 use render_2d::capabilities::particles::DemoParticleEmitter2d;
-use render_2d::primitives::animation::frame::FrameAnimationManifest2d;
 use render_2d::primitives::camera::FollowCameraTarget2d;
+use render_2d::primitives::frame_animation::FrameAnimationManifest2d;
 use render_2d::products::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
 use render_2d::products::overlays::DemoHealthBarOverlay2d;
 

@@ -3,50 +3,48 @@ use bevy::prelude::*;
 use super::bundles::{DemoBone2dBundle, DemoJoint2dBundle};
 use super::layout::{DemoJoint2d, DemoSkeletonSide};
 
-pub(in crate::capabilities::animation::skeletal::demo) struct DemoSkeletonTorso2d {
+pub(in crate::capabilities::skeletal_animation::demo) struct DemoSkeletonTorso2d {
     image: Handle<Image>,
 }
 
 impl DemoSkeletonTorso2d {
-    pub(in crate::capabilities::animation::skeletal::demo) fn new(image: Handle<Image>) -> Self {
+    pub(in crate::capabilities::skeletal_animation::demo) fn new(image: Handle<Image>) -> Self {
         Self { image }
     }
 
-    pub(in crate::capabilities::animation::skeletal::demo) fn into_bundle(
-        self,
-    ) -> DemoBone2dBundle {
+    pub(in crate::capabilities::skeletal_animation::demo) fn into_bundle(self) -> DemoBone2dBundle {
         DemoBone2dBundle::torso(self.image)
     }
 }
 
-pub(in crate::capabilities::animation::skeletal::demo) struct DemoSkeletonShoulder2d {
+pub(in crate::capabilities::skeletal_animation::demo) struct DemoSkeletonShoulder2d {
     joint: DemoJoint2d,
     image: Handle<Image>,
 }
 
 impl DemoSkeletonShoulder2d {
-    pub(in crate::capabilities::animation::skeletal::demo) fn new(
+    pub(in crate::capabilities::skeletal_animation::demo) fn new(
         joint: DemoJoint2d,
         image: Handle<Image>,
     ) -> Self {
         Self { joint, image }
     }
 
-    pub(in crate::capabilities::animation::skeletal::demo) fn into_bundle(
+    pub(in crate::capabilities::skeletal_animation::demo) fn into_bundle(
         self,
     ) -> DemoJoint2dBundle {
         DemoJoint2dBundle::new(self.image, self.joint, self.joint.translation())
     }
 }
 
-pub(in crate::capabilities::animation::skeletal::demo) struct DemoSkeletonArm2d {
+pub(in crate::capabilities::skeletal_animation::demo) struct DemoSkeletonArm2d {
     side: DemoSkeletonSide,
     bone_image: Handle<Image>,
     joint_image: Handle<Image>,
 }
 
 impl DemoSkeletonArm2d {
-    pub(in crate::capabilities::animation::skeletal::demo) fn new(
+    pub(in crate::capabilities::skeletal_animation::demo) fn new(
         side: DemoSkeletonSide,
         bone_image: Handle<Image>,
         joint_image: Handle<Image>,
@@ -58,7 +56,7 @@ impl DemoSkeletonArm2d {
         }
     }
 
-    pub(in crate::capabilities::animation::skeletal::demo) fn into_bundle(self) -> impl Bundle {
+    pub(in crate::capabilities::skeletal_animation::demo) fn into_bundle(self) -> impl Bundle {
         (
             DemoBone2dBundle::upper_arm(
                 self.bone_image.clone(),

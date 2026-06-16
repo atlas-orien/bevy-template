@@ -17,13 +17,13 @@ pub fn check_frame_animation(rules: FrameAnimationRules<'_>, errors: &mut Vec<St
         frame_dir,
         rules.forbidden_subdirs,
         errors,
-        "animation/frame is generic frame animation infrastructure; do not create demo/content/base subdomains here",
+        "frame_animation is generic frame animation infrastructure; do not create demo/content/base subdomains here",
     );
     reject_file_names(
         frame_dir,
         rules.forbidden_file_names,
         errors,
-        "animation/frame should stay generic; concrete animated characters or demo products belong in semantic render_2d directories such as characters",
+        "frame_animation should stay generic; concrete animated characters or demo products belong in semantic render_2d directories such as characters",
     );
     reject_terms_in_rust_files(
         frame_dir,
@@ -35,7 +35,7 @@ pub fn check_frame_animation(rules: FrameAnimationRules<'_>, errors: &mut Vec<St
         frame_dir,
         &["load::<Image>", "\""],
         errors,
-        "animation/frame must not bind concrete image paths; catalog loads manifests and concrete render products receive handles",
+        "frame_animation must not bind concrete image paths; catalog loads manifests and concrete render products receive handles",
     );
     reject_frame_demo_public_api(frame_dir, errors);
 }
@@ -53,7 +53,7 @@ fn reject_frame_demo_public_api(frame_dir: &Path, errors: &mut Vec<String>) {
 
             if line.contains("Demo") || line.contains("demo_") {
                 errors.push(format!(
-                    "{} exposes demo API from animation/frame; frame animation should expose generic animation/resource/system types only",
+                    "{} exposes demo API from frame_animation; frame animation should expose generic animation/resource/system types only",
                     file.display()
                 ));
                 break;

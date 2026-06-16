@@ -6,7 +6,7 @@ use bevy::{
 };
 use prefab::world_2d::characters::DemoPlayerPrefab;
 use prefab::world_2d::demo_level::{DemoGroundPrefab, DemoSkeletonPrefab};
-use render_2d::primitives::animation::frame::FrameAnimationManifest2d;
+use render_2d::primitives::frame_animation::FrameAnimationManifest2d;
 
 pub const DEMO_PLAYER_FRAMES: &str = "2d/animated/characters/demo-player/demo-player.frames.ron";
 pub const DEMO_TILESET_IMAGE: &str = "2d/static/tilemaps/demo_tileset.png";

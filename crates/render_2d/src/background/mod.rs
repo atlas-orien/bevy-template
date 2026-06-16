@@ -1,5 +1,5 @@
-pub mod demo_background;
+pub mod demo;
 mod plugin;
 
-pub use demo_background::DemoBackgroundLayer2d;
+pub use demo::DemoBackground2d;
 pub use plugin::BackgroundPlugin;

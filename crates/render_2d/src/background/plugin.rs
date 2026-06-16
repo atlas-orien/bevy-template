@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::demo_background::demo_parallax_background_system;
+use super::demo::demo_parallax_background_system;
 
 pub struct BackgroundPlugin;
 

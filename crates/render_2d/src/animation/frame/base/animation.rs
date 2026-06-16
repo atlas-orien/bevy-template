@@ -56,3 +56,21 @@ impl FrameAnimation2d {
         true
     }
 }
+
+#[derive(Component, Debug, Clone, PartialEq)]
+pub struct FrameAnimationMovementClips2d {
+    pub idle: String,
+    pub moving: String,
+}
+
+impl FrameAnimationMovementClips2d {
+    pub fn new(idle: impl Into<String>, moving: impl Into<String>) -> Self {
+        Self {
+            idle: idle.into(),
+            moving: moving.into(),
+        }
+    }
+}
+
+#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+pub struct FrameAnimationFacingFlip2d;

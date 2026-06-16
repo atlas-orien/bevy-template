@@ -3,10 +3,12 @@
 use bevy::prelude::*;
 
 use crate::animation::frame::{
-    DemoPlayerAnimation2d, FrameAnimationHandle2d, FrameAnimationManifest2d,
-    demo_player_idle_animation,
+    FrameAnimation2d, FrameAnimationFacingFlip2d, FrameAnimationHandle2d, FrameAnimationManifest2d,
+    FrameAnimationMovementClips2d,
 };
 
+const DEMO_IDLE_CLIP: &str = "idle";
+const DEMO_WALK_CLIP: &str = "walk";
 const DEMO_PLAYER_SPRITE_SIZE: Vec2 = Vec2::new(48.0, 48.0);
 const DEMO_PLAYER_SPRITE_TRANSLATION: Vec3 = Vec3::new(0.0, 18.0, 4.0);
 
@@ -30,8 +32,9 @@ type PendingDemoPlayerSpriteAtlasQuery<'world, 'state> = Query<
 pub struct DemoPlayerSprite2d {
     marker: DemoPlayerSprite2dMarker,
     frame_manifest: FrameAnimationHandle2d,
-    animation_marker: DemoPlayerAnimation2d,
-    animation: crate::animation::frame::FrameAnimation2d,
+    movement_clips: FrameAnimationMovementClips2d,
+    facing_flip: FrameAnimationFacingFlip2d,
+    animation: FrameAnimation2d,
     sprite: Sprite,
     transform: Transform,
 }
@@ -41,8 +44,9 @@ impl DemoPlayerSprite2d {
         Self {
             marker: DemoPlayerSprite2dMarker,
             frame_manifest: FrameAnimationHandle2d(frame_manifest),
-            animation_marker: DemoPlayerAnimation2d,
-            animation: demo_player_idle_animation(),
+            movement_clips: FrameAnimationMovementClips2d::new(DEMO_IDLE_CLIP, DEMO_WALK_CLIP),
+            facing_flip: FrameAnimationFacingFlip2d,
+            animation: FrameAnimation2d::new(DEMO_IDLE_CLIP),
             sprite: Sprite {
                 custom_size: Some(DEMO_PLAYER_SPRITE_SIZE),
                 ..default()

@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 use ecs::components::base::{Facing, MovementIntent};
 
-use super::FrameAnimation2d;
+use crate::animation::frame::FrameAnimation2d;
 
 pub const DEMO_IDLE_CLIP: &str = "idle";
 pub const DEMO_WALK_CLIP: &str = "walk";
@@ -11,7 +11,7 @@ pub const DEMO_WALK_CLIP: &str = "walk";
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoPlayerAnimation2d;
 
-pub(super) fn demo_player_animation_state_system(
+pub(in crate::animation::frame::demo) fn demo_player_animation_state_system(
     parents: Query<(&MovementIntent, Option<&Facing>)>,
     mut sprites: Query<(&ChildOf, &mut FrameAnimation2d, &mut Sprite), With<DemoPlayerAnimation2d>>,
 ) {

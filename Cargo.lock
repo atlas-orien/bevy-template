@@ -5110,6 +5110,8 @@ dependencies = [
  "bevy",
  "ecs",
  "error",
+ "ron",
+ "serde",
 ]
 
 [[package]]

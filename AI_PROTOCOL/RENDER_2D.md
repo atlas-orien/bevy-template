@@ -96,6 +96,10 @@
 - `animation` 只定义 2D 表现层动画。
 - animation 可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。
 - animation 不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
+- 帧动画的 sprite sheet 布局、clip、帧顺序、fps 和循环信息必须来自
+  `assets/2d/animated/**/*.frames.ron`。
+- `render_2d` 不允许为具体 sprite sheet 写硬编码切片逻辑，例如
+  `TextureAtlasLayout::from_grid(...)` 或 `ImageArrayLayout::{RowCount, ColumnCount}`。
 - 第一版不实现复杂骨骼 runtime，只保留清楚的数据边界。
 
 ## 渲染实体规则

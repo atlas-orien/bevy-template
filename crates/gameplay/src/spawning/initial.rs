@@ -8,18 +8,11 @@ use render_2d::camera::DemoWorldCamera2dBundle;
 
 use super::plan::GameplaySpawnPlan;
 
-pub fn default_gameplay_spawn_plan(
-    asset_server: &AssetServer,
-    atlas_layouts: &mut Assets<TextureAtlasLayout>,
-) -> GameplaySpawnPlan {
+pub fn default_gameplay_spawn_plan(asset_server: &AssetServer) -> GameplaySpawnPlan {
     GameplaySpawnPlan::new()
         .with(DemoBackgroundPrefab)
         .with(demo_ground(asset_server))
-        .with(demo_player(
-            Vec2::new(0.0, 96.0),
-            asset_server,
-            atlas_layouts,
-        ))
+        .with(demo_player(Vec2::new(0.0, 96.0), asset_server))
         .with(DemoRockPrefab::new(Vec2::new(-220.0, 94.0)))
         .with(DemoRockPrefab::new(Vec2::new(260.0, 94.0)))
         .with(DemoLandmarkPrefab::new(
@@ -40,12 +33,11 @@ pub fn default_gameplay_spawn_plan(
 pub fn spawn_initial_gameplay_plan_system(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut demo_session_started: MessageWriter<prefab::demo_events::DemoSessionStartedEvent>,
 ) {
     commands.spawn((DemoWorldCamera2dBundle::default(), GameplaySessionEntity));
 
-    for prefab in default_gameplay_spawn_plan(&asset_server, &mut atlas_layouts).into_prefabs() {
+    for prefab in default_gameplay_spawn_plan(&asset_server).into_prefabs() {
         prefab.spawn_boxed(&mut commands);
     }
 

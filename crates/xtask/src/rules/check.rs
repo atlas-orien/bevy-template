@@ -1,3 +1,4 @@
+use super::base::assets::require_animated_2d_frame_manifests;
 use super::base::readability::check_workspace_readability;
 use super::{CheckStatus, crates};
 
@@ -5,6 +6,7 @@ pub fn check_architecture() -> CheckStatus {
     let mut errors = Vec::new();
 
     check_workspace_readability("crates", &mut errors);
+    require_animated_2d_frame_manifests("assets/2d/animated", &mut errors);
 
     if let CheckStatus::Failed(mut rule_errors) = crates::app::check() {
         errors.append(&mut rule_errors);

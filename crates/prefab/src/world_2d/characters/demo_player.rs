@@ -9,6 +9,7 @@ use ecs::components::{
 use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
+use render_2d::animation::frame::DemoFrameManifest2d;
 use render_2d::camera::DemoCameraFollowTarget;
 use render_2d::characters::DemoNpcSprite2dBundle;
 use render_2d::characters::DemoPlayerSprite2dBundle;
@@ -30,8 +31,7 @@ const DEMO_PLAYER_FOOTSTEP_AUDIO: &str = "audio/demo_footstep.ogg";
 
 pub struct DemoPlayerPrefab {
     position: Vec2,
-    image: Handle<Image>,
-    atlas_layout: Handle<TextureAtlasLayout>,
+    frame_manifest: Handle<DemoFrameManifest2d>,
 }
 
 pub struct DemoNpcPrefab {
@@ -69,15 +69,10 @@ impl Prefab for DemoNpcPrefab {
 }
 
 impl DemoPlayerPrefab {
-    pub fn new(
-        position: Vec2,
-        image: Handle<Image>,
-        atlas_layout: Handle<TextureAtlasLayout>,
-    ) -> Self {
+    pub fn new(position: Vec2, frame_manifest: Handle<DemoFrameManifest2d>) -> Self {
         Self {
             position,
-            image,
-            atlas_layout,
+            frame_manifest,
         }
     }
 }
@@ -100,7 +95,7 @@ impl Prefab for DemoPlayerPrefab {
                 Transform::from_xyz(self.position.x, self.position.y, DEMO_CHARACTER_Z),
                 Visibility::default(),
                 children![
-                    DemoPlayerSprite2dBundle::new(self.image, self.atlas_layout),
+                    DemoPlayerSprite2dBundle::new(self.frame_manifest),
                     DemoParticleEmitter2dBundle::default(),
                     (
                         DemoHealthBarOverlay2dBundle::default(),

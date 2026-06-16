@@ -114,6 +114,7 @@ assets/2d/animated/{category}/{name}/
 - `{name}.png` 是 runtime sprite sheet。
 - `{name}.frames.ron` 是 runtime 帧动画描述文件。
 - 不管输入来自散帧，还是来自已经打包好的整张图，最终 runtime 输出结构必须一致。
+- `assets/2d/animated` 下每个 runtime `.png` 必须有同目录同名 `.frames.ron`。
 - `frames.ron` 描述帧尺寸、行列数、clip、帧顺序、fps 和是否循环。
 
 散帧输入来源：

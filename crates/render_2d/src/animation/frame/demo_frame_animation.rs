@@ -3,51 +3,53 @@
 use bevy::prelude::*;
 use ecs::components::base::{Facing, MovementIntent};
 
-const DEMO_IDLE_FIRST_FRAME: usize = 0;
-const DEMO_IDLE_LAST_FRAME: usize = 0;
-const DEMO_WALK_FIRST_FRAME: usize = 1;
-const DEMO_WALK_LAST_FRAME: usize = 6;
-const DEMO_FRAME_SECONDS: f32 = 0.12;
+use super::demo_frame_manifest::{DemoFrameManifest2d, DemoFrameManifestHandle2d};
+
+pub const DEMO_IDLE_CLIP: &str = "idle";
+pub const DEMO_WALK_CLIP: &str = "walk";
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub struct DemoFrameAnimation2d {
-    pub first_frame: usize,
-    pub last_frame: usize,
-    pub frame_seconds: f32,
+    pub clip: &'static str,
+    current_frame: usize,
     elapsed_seconds: f32,
 }
 
 impl DemoFrameAnimation2d {
     pub fn idle() -> Self {
         Self {
-            first_frame: DEMO_IDLE_FIRST_FRAME,
-            last_frame: DEMO_IDLE_LAST_FRAME,
-            frame_seconds: DEMO_FRAME_SECONDS,
+            clip: DEMO_IDLE_CLIP,
+            current_frame: 0,
             elapsed_seconds: 0.0,
         }
     }
 
-    pub fn set_range(&mut self, first_frame: usize, last_frame: usize) {
-        if self.first_frame == first_frame && self.last_frame == last_frame {
+    pub fn set_clip(&mut self, clip: &'static str) {
+        if self.clip == clip {
             return;
         }
 
-        self.first_frame = first_frame;
-        self.last_frame = last_frame;
+        self.clip = clip;
+        self.current_frame = 0;
         self.elapsed_seconds = 0.0;
     }
 
-    pub fn tick(&mut self, delta_seconds: f32) -> bool {
-        if self.first_frame == self.last_frame {
+    pub fn current_frame(&self) -> usize {
+        self.current_frame
+    }
+
+    pub fn tick(&mut self, delta_seconds: f32, frame_seconds: f32, frame_count: usize) -> bool {
+        if frame_count <= 1 {
             return false;
         }
 
         self.elapsed_seconds += delta_seconds;
-        if self.elapsed_seconds < self.frame_seconds {
+        if self.elapsed_seconds < frame_seconds {
             return false;
         }
 
         self.elapsed_seconds = 0.0;
+        self.current_frame = (self.current_frame + 1) % frame_count;
         true
     }
 }
@@ -67,11 +69,11 @@ pub fn demo_player_animation_state_system(
             continue;
         };
 
-        if movement.is_moving() {
-            animation.set_range(DEMO_WALK_FIRST_FRAME, DEMO_WALK_LAST_FRAME);
+        animation.set_clip(if movement.is_moving() {
+            DEMO_WALK_CLIP
         } else {
-            animation.set_range(DEMO_IDLE_FIRST_FRAME, DEMO_IDLE_LAST_FRAME);
-        }
+            DEMO_IDLE_CLIP
+        });
 
         if let Some(facing) = facing {
             sprite.flip_x = *facing == Facing::Left;
@@ -81,27 +83,40 @@ pub fn demo_player_animation_state_system(
 
 pub fn demo_frame_animation_system(
     time: Res<Time>,
-    mut sprites: Query<(&mut DemoFrameAnimation2d, &mut Sprite), With<DemoPlayerAnimation2d>>,
+    frame_manifests: Res<Assets<DemoFrameManifest2d>>,
+    mut sprites: Query<
+        (
+            &DemoFrameManifestHandle2d,
+            &mut DemoFrameAnimation2d,
+            &mut Sprite,
+        ),
+        With<DemoPlayerAnimation2d>,
+    >,
 ) {
-    for (mut animation, mut sprite) in &mut sprites {
+    for (manifest_handle, mut animation, mut sprite) in &mut sprites {
         let Some(atlas) = sprite.texture_atlas.as_mut() else {
             continue;
         };
-
-        if animation.first_frame == animation.last_frame {
-            atlas.index = animation.first_frame;
+        let Some(manifest) = frame_manifests.get(&manifest_handle.0) else {
             continue;
-        }
-
-        if !animation.tick(time.delta_secs()) {
-            continue;
-        }
-
-        atlas.index = if atlas.index >= animation.last_frame {
-            animation.first_frame
-        } else {
-            (atlas.index + 1).max(animation.first_frame)
         };
+        let Some(clip) = manifest.clip(animation.clip) else {
+            continue;
+        };
+        if !clip.repeat && animation.current_frame + 1 >= clip.frames.len() {
+            let Some(&frame) = clip.frames.get(animation.current_frame) else {
+                continue;
+            };
+            atlas.index = frame;
+            continue;
+        }
+
+        animation.tick(time.delta_secs(), 1.0 / clip.fps, clip.frames.len());
+
+        let Some(&frame) = clip.frames.get(animation.current_frame) else {
+            continue;
+        };
+        atlas.index = frame;
     }
 }
 
@@ -110,18 +125,53 @@ mod tests {
     use std::time::Duration;
 
     use super::*;
+    use crate::animation::frame::demo_frame_manifest::DemoFrameClip2d;
 
-    fn animation_app(delta_seconds: f32) -> App {
+    const DEMO_FRAME_SECONDS: f32 = 0.12;
+
+    fn animation_app(delta_seconds: f32) -> (App, Handle<DemoFrameManifest2d>) {
         let mut app = App::new();
         let mut time = Time::<()>::default();
         time.advance_by(Duration::from_secs_f32(delta_seconds));
+        let mut frame_manifests = Assets::<DemoFrameManifest2d>::default();
+        let manifest_handle = frame_manifests.add(DemoFrameManifest2d {
+            image: Handle::default(),
+            frame_size: UVec2::new(24, 24),
+            columns: 7,
+            rows: 1,
+            clips: [
+                (
+                    DEMO_IDLE_CLIP.to_string(),
+                    DemoFrameClip2d {
+                        frames: vec![0],
+                        fps: 1.0 / DEMO_FRAME_SECONDS,
+                        repeat: true,
+                    },
+                ),
+                (
+                    DEMO_WALK_CLIP.to_string(),
+                    DemoFrameClip2d {
+                        frames: vec![1, 2, 3, 4, 5, 6],
+                        fps: 1.0 / DEMO_FRAME_SECONDS,
+                        repeat: true,
+                    },
+                ),
+            ]
+            .into(),
+        });
         app.insert_resource(time)
+            .insert_resource(frame_manifests)
             .add_systems(Update, demo_frame_animation_system);
-        app
+        (app, manifest_handle)
     }
 
-    fn animated_sprite(index: usize, animation: DemoFrameAnimation2d) -> impl Bundle {
+    fn animated_sprite(
+        index: usize,
+        animation: DemoFrameAnimation2d,
+        manifest: Handle<DemoFrameManifest2d>,
+    ) -> impl Bundle {
         (
+            DemoFrameManifestHandle2d(manifest),
             animation,
             DemoPlayerAnimation2d,
             Sprite {
@@ -136,70 +186,66 @@ mod tests {
 
     #[test]
     fn single_frame_animation_stays_on_frame() {
-        let mut app = animation_app(DEMO_FRAME_SECONDS);
+        let (mut app, manifest) = animation_app(DEMO_FRAME_SECONDS);
         let entity = app
             .world_mut()
-            .spawn(animated_sprite(4, DemoFrameAnimation2d::idle()))
+            .spawn(animated_sprite(4, DemoFrameAnimation2d::idle(), manifest))
             .id();
 
         app.update();
 
         let sprite = app.world().get::<Sprite>(entity).unwrap();
-        assert_eq!(
-            sprite.texture_atlas.as_ref().unwrap().index,
-            DEMO_IDLE_FIRST_FRAME
-        );
+        assert_eq!(sprite.texture_atlas.as_ref().unwrap().index, 0);
     }
 
     #[test]
     fn multi_frame_animation_advances_after_frame_seconds() {
-        let mut app = animation_app(DEMO_FRAME_SECONDS);
+        let (mut app, manifest) = animation_app(DEMO_FRAME_SECONDS);
         let mut animation = DemoFrameAnimation2d::idle();
-        animation.set_range(DEMO_WALK_FIRST_FRAME, DEMO_WALK_LAST_FRAME);
+        animation.set_clip(DEMO_WALK_CLIP);
         let entity = app
             .world_mut()
-            .spawn(animated_sprite(DEMO_WALK_FIRST_FRAME, animation))
+            .spawn(animated_sprite(1, animation, manifest))
             .id();
 
         app.update();
 
         let sprite = app.world().get::<Sprite>(entity).unwrap();
-        assert_eq!(
-            sprite.texture_atlas.as_ref().unwrap().index,
-            DEMO_WALK_FIRST_FRAME + 1
-        );
+        assert_eq!(sprite.texture_atlas.as_ref().unwrap().index, 2);
+        let animation = app.world().get::<DemoFrameAnimation2d>(entity).unwrap();
+        assert_eq!(animation.current_frame(), 1);
     }
 
     #[test]
     fn multi_frame_animation_wraps_from_last_to_first() {
-        let mut app = animation_app(DEMO_FRAME_SECONDS);
+        let (mut app, manifest) = animation_app(DEMO_FRAME_SECONDS);
         let mut animation = DemoFrameAnimation2d::idle();
-        animation.set_range(DEMO_WALK_FIRST_FRAME, DEMO_WALK_LAST_FRAME);
+        animation.set_clip(DEMO_WALK_CLIP);
+        animation.current_frame = 5;
         let entity = app
             .world_mut()
-            .spawn(animated_sprite(DEMO_WALK_LAST_FRAME, animation))
+            .spawn(animated_sprite(6, animation, manifest))
             .id();
 
         app.update();
 
         let sprite = app.world().get::<Sprite>(entity).unwrap();
-        assert_eq!(
-            sprite.texture_atlas.as_ref().unwrap().index,
-            DEMO_WALK_FIRST_FRAME
-        );
+        assert_eq!(sprite.texture_atlas.as_ref().unwrap().index, 1);
+        let animation = app.world().get::<DemoFrameAnimation2d>(entity).unwrap();
+        assert_eq!(animation.current_frame(), 0);
     }
 
     #[test]
-    fn set_range_resets_elapsed_only_when_range_changes() {
+    fn set_clip_resets_elapsed_only_when_clip_changes() {
         let mut animation = DemoFrameAnimation2d::idle();
-        animation.set_range(DEMO_WALK_FIRST_FRAME, DEMO_WALK_LAST_FRAME);
-        assert!(!animation.tick(DEMO_FRAME_SECONDS / 2.0));
+        animation.set_clip(DEMO_WALK_CLIP);
+        assert!(!animation.tick(DEMO_FRAME_SECONDS / 2.0, DEMO_FRAME_SECONDS, 2));
 
-        animation.set_range(DEMO_WALK_FIRST_FRAME, DEMO_WALK_LAST_FRAME);
+        animation.set_clip(DEMO_WALK_CLIP);
         assert!(animation.elapsed_seconds > 0.0);
 
-        animation.set_range(DEMO_IDLE_FIRST_FRAME, DEMO_IDLE_LAST_FRAME);
+        animation.set_clip(DEMO_IDLE_CLIP);
         assert_eq!(animation.elapsed_seconds, 0.0);
-        assert!(!animation.tick(DEMO_FRAME_SECONDS / 2.0));
+        assert!(!animation.tick(DEMO_FRAME_SECONDS / 2.0, DEMO_FRAME_SECONDS, 1));
     }
 }

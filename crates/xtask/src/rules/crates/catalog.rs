@@ -18,7 +18,7 @@ const FORBIDDEN_DEPENDENCIES: &[&str] = &[
 ];
 
 const MANAGED_ASSET_PATHS: &[&str] = &[
-    "2d/animated/characters/demo_player.png",
+    "2d/animated/characters/demo-player/demo-player.frames.ron",
     "2d/static/tilemaps/demo_tileset.png",
     "2d/static/props/demo-skeletal-bone/demo-skeletal-bone.png",
     "2d/static/props/demo-skeletal-joint/demo-skeletal-joint.png",

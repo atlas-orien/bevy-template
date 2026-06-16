@@ -79,6 +79,12 @@ const WORLD_RULE_TERMS: &[&str] = &[
     "AttackWindow",
 ];
 
+const HARDCODED_SPRITE_SHEET_TERMS: &[&str] = &[
+    "TextureAtlasLayout::from_grid",
+    "ImageArrayLayout::RowCount",
+    "ImageArrayLayout::ColumnCount",
+];
+
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
     check_render_2d(
@@ -89,6 +95,7 @@ pub fn check() -> CheckStatus {
             obsolete_paths: OBSOLETE_PATHS,
             forbidden_dependencies: FORBIDDEN_DEPENDENCIES,
             world_rule_terms: WORLD_RULE_TERMS,
+            hardcoded_sprite_sheet_terms: HARDCODED_SPRITE_SHEET_TERMS,
         },
         &mut errors,
     );

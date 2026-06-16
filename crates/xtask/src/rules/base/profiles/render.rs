@@ -66,6 +66,7 @@ pub struct Render2dRules<'a> {
     pub obsolete_paths: &'a [&'a str],
     pub forbidden_dependencies: &'a [&'a str],
     pub world_rule_terms: &'a [&'a str],
+    pub hardcoded_sprite_sheet_terms: &'a [&'a str],
 }
 
 pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
@@ -111,6 +112,12 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         rules.world_rule_terms,
         errors,
         "render_2d should not drive gameplay rules, so move the rule to gameplay/ecs/physics",
+    );
+    reject_terms_in_rust_files(
+        Path::new(rules.crate_path).join("src"),
+        rules.hardcoded_sprite_sheet_terms,
+        errors,
+        "render_2d must load sprite sheet layout and frame clips from .frames.ron assets, not hardcode concrete sheet slicing in Rust",
     );
     reject_terms_in_rust_files(
         Path::new(rules.crate_path).join("src"),

@@ -1,11 +1,10 @@
-pub mod demo_frame_animation;
-pub mod demo_frame_manifest;
+pub mod base;
+pub mod demo_player;
 mod plugin;
 
-pub use demo_frame_animation::{
-    DemoFrameAnimation2d, DemoPlayerAnimation2d, demo_frame_animation_system,
-    demo_player_animation_state_system,
+pub use base::{
+    FrameAnimation2d, FrameAnimationBasePlugin, FrameAnimationClip2d, FrameAnimationHandle2d,
+    FrameAnimationLoader2d, FrameAnimationManifest2d, FrameAnimationManifestLoader2d,
 };
-pub use demo_frame_manifest::DemoFrameManifestHandle2d;
-pub use demo_frame_manifest::{DemoFrameClip2d, DemoFrameManifest2d, DemoFrameManifestLoader2d};
+pub use demo_player::{DemoPlayerAnimation2d, demo_player_idle_animation};
 pub use plugin::FrameAnimation2dPlugin;

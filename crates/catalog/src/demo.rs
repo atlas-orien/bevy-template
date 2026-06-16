@@ -6,7 +6,7 @@ use bevy::{
 };
 use prefab::world_2d::characters::DemoPlayerPrefab;
 use prefab::world_2d::demo_level::{DemoGroundPrefab, DemoSkeletonPrefab};
-use render_2d::animation::frame::DemoFrameManifest2d;
+use render_2d::animation::frame::FrameAnimationManifest2d;
 
 pub const DEMO_PLAYER_FRAMES: &str = "2d/animated/characters/demo-player/demo-player.frames.ron";
 pub const DEMO_TILESET_IMAGE: &str = "2d/static/tilemaps/demo_tileset.png";
@@ -18,7 +18,7 @@ pub const DEMO_SKELETON_JOINT_IMAGE: &str =
 pub fn demo_player(position: Vec2, asset_server: &AssetServer) -> DemoPlayerPrefab {
     DemoPlayerPrefab::new(
         position,
-        asset_server.load::<DemoFrameManifest2d>(DEMO_PLAYER_FRAMES),
+        asset_server.load::<FrameAnimationManifest2d>(DEMO_PLAYER_FRAMES),
     )
 }
 

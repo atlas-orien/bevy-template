@@ -1,4 +1,4 @@
-//! Demo sprite sheet frame manifest loaded from `.frames.ron` assets.
+//! 通用 sprite sheet frame manifest，加载自 `.frames.ron` 资源。
 
 use std::collections::BTreeMap;
 use std::io::{Error as IoError, ErrorKind};
@@ -12,44 +12,46 @@ use error::Result;
 use serde::Deserialize;
 
 #[derive(Asset, Debug, Clone, TypePath)]
-pub struct DemoFrameManifest2d {
+pub struct FrameAnimationManifest2d {
     pub image: Handle<Image>,
     pub frame_size: UVec2,
     pub columns: u32,
     pub rows: u32,
-    pub clips: BTreeMap<String, DemoFrameClip2d>,
+    pub clips: BTreeMap<String, FrameAnimationClip2d>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct DemoFrameClip2d {
+pub struct FrameAnimationClip2d {
     pub frames: Vec<usize>,
     pub fps: f32,
     pub repeat: bool,
 }
 
 #[derive(Default, TypePath)]
-pub struct DemoFrameManifestLoader2d;
+pub struct FrameAnimationManifestLoader2d;
 
 #[derive(Component, Debug, Clone, PartialEq)]
-pub struct DemoFrameManifestHandle2d(pub Handle<DemoFrameManifest2d>);
+pub struct FrameAnimationHandle2d(pub Handle<FrameAnimationManifest2d>);
+
+pub type FrameAnimationLoader2d = FrameAnimationManifestLoader2d;
 
 #[derive(Deserialize)]
-struct DemoFrameManifestRon {
+struct FrameAnimationManifestRon {
     image: String,
     frame_size: (u32, u32),
     columns: u32,
     rows: u32,
-    clips: BTreeMap<String, DemoFrameClipRon>,
+    clips: BTreeMap<String, FrameAnimationClipRon>,
 }
 
 #[derive(Deserialize)]
-struct DemoFrameClipRon {
+struct FrameAnimationClipRon {
     frames: Vec<usize>,
     fps: f32,
     repeat: bool,
 }
 
-impl DemoFrameManifest2d {
+impl FrameAnimationManifest2d {
     pub fn atlas_layout(&self) -> TextureAtlasLayout {
         let mut layout =
             TextureAtlasLayout::new_empty(self.frame_size * UVec2::new(self.columns, self.rows));
@@ -65,13 +67,13 @@ impl DemoFrameManifest2d {
         layout
     }
 
-    pub fn clip(&self, name: &str) -> Option<&DemoFrameClip2d> {
+    pub fn clip(&self, name: &str) -> Option<&FrameAnimationClip2d> {
         self.clips.get(name)
     }
 }
 
-impl From<DemoFrameClipRon> for DemoFrameClip2d {
-    fn from(value: DemoFrameClipRon) -> Self {
+impl From<FrameAnimationClipRon> for FrameAnimationClip2d {
+    fn from(value: FrameAnimationClipRon) -> Self {
         Self {
             frames: value.frames,
             fps: value.fps,
@@ -80,8 +82,8 @@ impl From<DemoFrameClipRon> for DemoFrameClip2d {
     }
 }
 
-impl AssetLoader for DemoFrameManifestLoader2d {
-    type Asset = DemoFrameManifest2d;
+impl AssetLoader for FrameAnimationManifestLoader2d {
+    type Asset = FrameAnimationManifest2d;
     type Settings = ();
     type Error = error::GameError;
 
@@ -93,7 +95,7 @@ impl AssetLoader for DemoFrameManifestLoader2d {
     ) -> Result<Self::Asset> {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
-        let manifest: DemoFrameManifestRon = ron::de::from_bytes(&bytes)
+        let manifest: FrameAnimationManifestRon = ron::de::from_bytes(&bytes)
             .map_err(|error| IoError::new(ErrorKind::InvalidData, error))?;
         let clips = manifest
             .clips
@@ -101,7 +103,7 @@ impl AssetLoader for DemoFrameManifestLoader2d {
             .map(|(name, clip)| (name, clip.into()))
             .collect();
 
-        Ok(DemoFrameManifest2d {
+        Ok(FrameAnimationManifest2d {
             image: load_context.load(manifest.image),
             frame_size: UVec2::new(manifest.frame_size.0, manifest.frame_size.1),
             columns: manifest.columns,
@@ -121,7 +123,7 @@ mod tests {
 
     #[test]
     fn manifest_builds_atlas_layout_from_resource_data() {
-        let manifest = DemoFrameManifest2d {
+        let manifest = FrameAnimationManifest2d {
             image: Handle::default(),
             frame_size: UVec2::new(24, 24),
             columns: 7,

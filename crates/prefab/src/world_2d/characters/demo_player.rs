@@ -9,7 +9,7 @@ use ecs::components::{
 use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
-use render_2d::animation::frame::DemoFrameManifest2d;
+use render_2d::animation::frame::FrameAnimationManifest2d;
 use render_2d::camera::DemoCameraFollowTarget;
 use render_2d::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
 use render_2d::overlays::DemoHealthBarOverlay2d;
@@ -28,7 +28,7 @@ const DEMO_PLAYER_FOOTSTEP_AUDIO: &str = "audio/demo_footstep.ogg";
 
 pub struct DemoPlayerPrefab {
     position: Vec2,
-    frame_manifest: Handle<DemoFrameManifest2d>,
+    frame_manifest: Handle<FrameAnimationManifest2d>,
 }
 
 pub struct DemoNpcPrefab {
@@ -66,7 +66,7 @@ impl Prefab for DemoNpcPrefab {
 }
 
 impl DemoPlayerPrefab {
-    pub fn new(position: Vec2, frame_manifest: Handle<DemoFrameManifest2d>) -> Self {
+    pub fn new(position: Vec2, frame_manifest: Handle<FrameAnimationManifest2d>) -> Self {
         Self {
             position,
             frame_manifest,

@@ -2,8 +2,10 @@
 
 use bevy::prelude::*;
 
-use crate::animation::frame::{DemoFrameAnimation2d, DemoPlayerAnimation2d};
-use crate::animation::frame::{DemoFrameManifest2d, DemoFrameManifestHandle2d};
+use crate::animation::frame::{
+    DemoPlayerAnimation2d, FrameAnimationHandle2d, FrameAnimationManifest2d,
+    demo_player_idle_animation,
+};
 
 const DEMO_PLAYER_SPRITE_SIZE: Vec2 = Vec2::new(48.0, 48.0);
 const DEMO_PLAYER_SPRITE_TRANSLATION: Vec3 = Vec3::new(0.0, 18.0, 4.0);
@@ -17,11 +19,7 @@ pub(super) struct DemoPlayerSpriteAtlasReady2d;
 type PendingDemoPlayerSpriteAtlasQuery<'world, 'state> = Query<
     'world,
     'state,
-    (
-        Entity,
-        &'static DemoFrameManifestHandle2d,
-        &'static mut Sprite,
-    ),
+    (Entity, &'static FrameAnimationHandle2d, &'static mut Sprite),
     (
         With<DemoPlayerSprite2dMarker>,
         Without<DemoPlayerSpriteAtlasReady2d>,
@@ -31,20 +29,20 @@ type PendingDemoPlayerSpriteAtlasQuery<'world, 'state> = Query<
 #[derive(Bundle)]
 pub struct DemoPlayerSprite2d {
     marker: DemoPlayerSprite2dMarker,
-    frame_manifest: DemoFrameManifestHandle2d,
+    frame_manifest: FrameAnimationHandle2d,
     animation_marker: DemoPlayerAnimation2d,
-    animation: DemoFrameAnimation2d,
+    animation: crate::animation::frame::FrameAnimation2d,
     sprite: Sprite,
     transform: Transform,
 }
 
 impl DemoPlayerSprite2d {
-    pub fn new(frame_manifest: Handle<DemoFrameManifest2d>) -> Self {
+    pub fn new(frame_manifest: Handle<FrameAnimationManifest2d>) -> Self {
         Self {
             marker: DemoPlayerSprite2dMarker,
-            frame_manifest: DemoFrameManifestHandle2d(frame_manifest),
+            frame_manifest: FrameAnimationHandle2d(frame_manifest),
             animation_marker: DemoPlayerAnimation2d,
-            animation: DemoFrameAnimation2d::idle(),
+            animation: demo_player_idle_animation(),
             sprite: Sprite {
                 custom_size: Some(DEMO_PLAYER_SPRITE_SIZE),
                 ..default()
@@ -56,7 +54,7 @@ impl DemoPlayerSprite2d {
 
 pub(super) fn prepare_demo_player_sprite_atlas_system(
     mut commands: Commands,
-    frame_manifests: Res<Assets<DemoFrameManifest2d>>,
+    frame_manifests: Res<Assets<FrameAnimationManifest2d>>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut sprites: PendingDemoPlayerSpriteAtlasQuery,
 ) {

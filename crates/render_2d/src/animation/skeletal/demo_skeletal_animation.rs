@@ -11,11 +11,84 @@ const DEMO_BONE_COLOR: Color = Color::srgb(0.38, 0.84, 0.95);
 const DEMO_BONE_Z: f32 = 6.0;
 const DEMO_JOINT_Z: f32 = 7.0;
 
+pub struct DemoSkeleton2d {
+    translation: Vec3,
+    bone_image: Handle<Image>,
+    joint_image: Handle<Image>,
+}
+
+impl DemoSkeleton2d {
+    pub fn new(translation: Vec3, bone_image: Handle<Image>, joint_image: Handle<Image>) -> Self {
+        Self {
+            translation,
+            bone_image,
+            joint_image,
+        }
+    }
+
+    pub fn into_bundle(self) -> impl Bundle {
+        (
+            DemoSkeleton2dRootBundle::new(self.translation),
+            children![
+                DemoBone2dBundle::torso(self.bone_image.clone()),
+                DemoJoint2dBundle::new(
+                    self.joint_image.clone(),
+                    DemoJoint2d::LeftShoulder,
+                    Vec3::new(-15.0, 34.0, 0.0),
+                ),
+                DemoJoint2dBundle::new(
+                    self.joint_image.clone(),
+                    DemoJoint2d::RightShoulder,
+                    Vec3::new(15.0, 34.0, 0.0),
+                ),
+                (
+                    DemoBone2dBundle::upper_arm(
+                        self.bone_image.clone(),
+                        DemoBone2d::LeftUpperArm,
+                        DemoSkeletonSide::Left,
+                    ),
+                    children![
+                        DemoJoint2dBundle::new(
+                            self.joint_image.clone(),
+                            DemoJoint2d::LeftElbow,
+                            Vec3::new(0.0, -26.0, 0.0),
+                        ),
+                        DemoBone2dBundle::lower_arm(
+                            self.bone_image.clone(),
+                            DemoBone2d::LeftLowerArm,
+                            DemoSkeletonSide::Left,
+                        ),
+                    ],
+                ),
+                (
+                    DemoBone2dBundle::upper_arm(
+                        self.bone_image.clone(),
+                        DemoBone2d::RightUpperArm,
+                        DemoSkeletonSide::Right,
+                    ),
+                    children![
+                        DemoJoint2dBundle::new(
+                            self.joint_image.clone(),
+                            DemoJoint2d::RightElbow,
+                            Vec3::new(0.0, -26.0, 0.0),
+                        ),
+                        DemoBone2dBundle::lower_arm(
+                            self.bone_image.clone(),
+                            DemoBone2d::RightLowerArm,
+                            DemoSkeletonSide::Right,
+                        ),
+                    ],
+                ),
+            ],
+        )
+    }
+}
+
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct DemoSkeleton2d;
+pub(super) struct DemoSkeleton2dRoot;
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
-pub enum DemoBone2d {
+pub(super) enum DemoBone2d {
     Torso,
     LeftUpperArm,
     LeftLowerArm,
@@ -24,7 +97,7 @@ pub enum DemoBone2d {
 }
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
-pub enum DemoJoint2d {
+enum DemoJoint2d {
     LeftShoulder,
     LeftElbow,
     RightShoulder,
@@ -32,10 +105,10 @@ pub enum DemoJoint2d {
 }
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
-pub struct DemoSkeletalAnimation2d {
-    pub elapsed_seconds: f32,
-    pub cycle_seconds: f32,
-    pub swing_radians: f32,
+pub(super) struct DemoSkeletalAnimation2d {
+    elapsed_seconds: f32,
+    cycle_seconds: f32,
+    swing_radians: f32,
 }
 
 impl Default for DemoSkeletalAnimation2d {
@@ -60,17 +133,17 @@ impl DemoSkeletalAnimation2d {
 }
 
 #[derive(Bundle)]
-pub struct DemoSkeleton2dBundle {
-    pub marker: DemoSkeleton2d,
-    pub animation: DemoSkeletalAnimation2d,
-    pub transform: Transform,
-    pub visibility: Visibility,
+struct DemoSkeleton2dRootBundle {
+    marker: DemoSkeleton2dRoot,
+    animation: DemoSkeletalAnimation2d,
+    transform: Transform,
+    visibility: Visibility,
 }
 
-impl DemoSkeleton2dBundle {
-    pub fn new(translation: Vec3) -> Self {
+impl DemoSkeleton2dRootBundle {
+    fn new(translation: Vec3) -> Self {
         Self {
-            marker: DemoSkeleton2d,
+            marker: DemoSkeleton2dRoot,
             animation: DemoSkeletalAnimation2d::default(),
             transform: Transform::from_translation(translation),
             visibility: Visibility::default(),
@@ -79,15 +152,15 @@ impl DemoSkeleton2dBundle {
 }
 
 #[derive(Bundle)]
-pub struct DemoBone2dBundle {
-    pub bone: DemoBone2d,
-    pub sprite: Sprite,
-    pub anchor: Anchor,
-    pub transform: Transform,
+struct DemoBone2dBundle {
+    bone: DemoBone2d,
+    sprite: Sprite,
+    anchor: Anchor,
+    transform: Transform,
 }
 
 impl DemoBone2dBundle {
-    pub fn torso(image: Handle<Image>) -> Self {
+    fn torso(image: Handle<Image>) -> Self {
         Self {
             bone: DemoBone2d::Torso,
             sprite: bone_sprite(image, DEMO_TORSO_SIZE),
@@ -96,7 +169,7 @@ impl DemoBone2dBundle {
         }
     }
 
-    pub fn upper_arm(image: Handle<Image>, bone: DemoBone2d, side: DemoSkeletonSide) -> Self {
+    fn upper_arm(image: Handle<Image>, bone: DemoBone2d, side: DemoSkeletonSide) -> Self {
         Self {
             bone,
             sprite: bone_sprite(image, DEMO_ARM_SIZE),
@@ -109,7 +182,7 @@ impl DemoBone2dBundle {
         }
     }
 
-    pub fn lower_arm(image: Handle<Image>, bone: DemoBone2d, side: DemoSkeletonSide) -> Self {
+    fn lower_arm(image: Handle<Image>, bone: DemoBone2d, side: DemoSkeletonSide) -> Self {
         Self {
             bone,
             sprite: bone_sprite(image, DEMO_ARM_SIZE),
@@ -124,14 +197,14 @@ impl DemoBone2dBundle {
 }
 
 #[derive(Bundle)]
-pub struct DemoJoint2dBundle {
-    pub joint: DemoJoint2d,
-    pub sprite: Sprite,
-    pub transform: Transform,
+struct DemoJoint2dBundle {
+    joint: DemoJoint2d,
+    sprite: Sprite,
+    transform: Transform,
 }
 
 impl DemoJoint2dBundle {
-    pub fn new(image: Handle<Image>, joint: DemoJoint2d, translation: Vec3) -> Self {
+    fn new(image: Handle<Image>, joint: DemoJoint2d, translation: Vec3) -> Self {
         Self {
             joint,
             sprite: Sprite {
@@ -145,7 +218,7 @@ impl DemoJoint2dBundle {
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub enum DemoSkeletonSide {
+enum DemoSkeletonSide {
     Left,
     Right,
 }
@@ -170,9 +243,9 @@ impl DemoSkeletonSide {
     }
 }
 
-pub fn demo_skeletal_animation_system(
+pub(super) fn demo_skeletal_animation_system(
     time: Res<Time>,
-    mut skeletons: Query<(Entity, &mut DemoSkeletalAnimation2d), With<DemoSkeleton2d>>,
+    mut skeletons: Query<(Entity, &mut DemoSkeletalAnimation2d), With<DemoSkeleton2dRoot>>,
     parents: Query<&ChildOf>,
     mut bones: Query<(Entity, &DemoBone2d, &mut Transform)>,
 ) {
@@ -190,7 +263,7 @@ pub fn demo_skeletal_animation_system(
     }
 }
 
-pub fn demo_bone_rotation(bone: DemoBone2d, swing: f32) -> Quat {
+fn demo_bone_rotation(bone: DemoBone2d, swing: f32) -> Quat {
     let angle = match bone {
         DemoBone2d::Torso => swing * 0.18,
         DemoBone2d::LeftUpperArm => DemoSkeletonSide::Left.rest_angle() + swing,
@@ -269,7 +342,9 @@ mod tests {
         let mut app = skeletal_app(DEMO_SKELETON_CYCLE_SECONDS / 4.0);
         let skeleton = app
             .world_mut()
-            .spawn(DemoSkeleton2dBundle::new(Vec3::ZERO))
+            .spawn(
+                DemoSkeleton2d::new(Vec3::ZERO, Handle::default(), Handle::default()).into_bundle(),
+            )
             .id();
         let bone = app
             .world_mut()

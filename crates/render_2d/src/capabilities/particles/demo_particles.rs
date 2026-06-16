@@ -1,8 +1,6 @@
 //! Demo 粒子：脚下扬尘发射与感应区爆发的纯视觉生命周期。
 
 use bevy::prelude::*;
-use ecs::components::base::MovementIntent;
-use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
 
 const DEMO_DUST_PARTICLES_PER_SECOND: f32 = 24.0;
 const DEMO_DUST_PARTICLE_LIFETIME_SECONDS: f32 = 0.35;
@@ -20,7 +18,7 @@ const DEMO_BURST_PARTICLE_LIFETIME_SECONDS: f32 = 0.45;
 const DEMO_BURST_PARTICLE_SPEED: f32 = 90.0;
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
-pub(super) struct DemoParticleEmitter2dMarker {
+pub struct DemoParticleEmitter2dState {
     enabled: bool,
     particles_per_second: f32,
     particle_lifetime_seconds: f32,
@@ -28,10 +26,14 @@ pub(super) struct DemoParticleEmitter2dMarker {
     max_live_particles: usize,
 }
 
-impl DemoParticleEmitter2dMarker {
+impl DemoParticleEmitter2dState {
     #[cfg(test)]
     fn emission_accumulator(&self) -> f32 {
         self.emission_accumulator
+    }
+
+    pub fn set_enabled(&mut self, enabled: bool) {
+        self.enabled = enabled;
     }
 
     fn reset_accumulator(&mut self) {
@@ -62,14 +64,14 @@ pub(super) struct DemoParticle2d {
 
 #[derive(Bundle)]
 pub struct DemoParticleEmitter2d {
-    emitter: DemoParticleEmitter2dMarker,
+    emitter: DemoParticleEmitter2dState,
     transform: Transform,
 }
 
 impl Default for DemoParticleEmitter2d {
     fn default() -> Self {
         Self {
-            emitter: DemoParticleEmitter2dMarker {
+            emitter: DemoParticleEmitter2dState {
                 enabled: false,
                 particles_per_second: DEMO_DUST_PARTICLES_PER_SECOND,
                 particle_lifetime_seconds: DEMO_DUST_PARTICLE_LIFETIME_SECONDS,
@@ -81,24 +83,11 @@ impl Default for DemoParticleEmitter2d {
     }
 }
 
-pub(super) fn demo_player_dust_system(
-    parents: Query<&MovementIntent>,
-    mut emitters: Query<(&ChildOf, &mut DemoParticleEmitter2dMarker)>,
-) {
-    for (parent, mut emitter) in &mut emitters {
-        let Ok(movement) = parents.get(parent.parent()) else {
-            continue;
-        };
-
-        emitter.enabled = movement.is_moving();
-    }
-}
-
 pub(super) fn demo_particle_emission_system(
     mut commands: Commands,
     time: Res<Time>,
     live_particles: Query<(), With<DemoParticle2d>>,
-    mut emitters: Query<(&GlobalTransform, &mut DemoParticleEmitter2dMarker)>,
+    mut emitters: Query<(&GlobalTransform, &mut DemoParticleEmitter2dState)>,
 ) {
     let live_count = live_particles.iter().len();
 
@@ -152,11 +141,7 @@ pub(super) fn demo_particle_update_system(
     }
 }
 
-pub(super) fn demo_sensor_particle_burst_system(
-    mut commands: Commands,
-    mut events: MessageReader<DemoSensorTriggeredEvent>,
-    transforms: Query<&GlobalTransform>,
-) {
+pub fn spawn_demo_sensor_particle_burst(commands: &mut Commands, position: Vec3) {
     const DIRECTIONS: [Vec2; 8] = [
         Vec2::new(1.0, 0.0),
         Vec2::new(0.7, 0.7),
@@ -168,28 +153,21 @@ pub(super) fn demo_sensor_particle_burst_system(
         Vec2::new(0.7, -0.7),
     ];
 
-    for event in events.read() {
-        let Ok(transform) = transforms.get(event.sensor) else {
-            continue;
-        };
-        let position = transform.translation();
-
-        for direction in DIRECTIONS {
-            commands.spawn((
-                Sprite {
-                    color: DEMO_BURST_PARTICLE_COLOR,
-                    custom_size: Some(DEMO_BURST_PARTICLE_SIZE),
-                    ..default()
-                },
-                Transform::from_xyz(position.x, position.y, DEMO_BURST_PARTICLE_Z),
-                DemoParticle2d {
-                    remaining_seconds: DEMO_BURST_PARTICLE_LIFETIME_SECONDS,
-                    lifetime_seconds: DEMO_BURST_PARTICLE_LIFETIME_SECONDS,
-                    velocity: direction.normalize_or_zero() * DEMO_BURST_PARTICLE_SPEED,
-                    initial_alpha: DEMO_BURST_PARTICLE_COLOR.alpha(),
-                },
-            ));
-        }
+    for direction in DIRECTIONS {
+        commands.spawn((
+            Sprite {
+                color: DEMO_BURST_PARTICLE_COLOR,
+                custom_size: Some(DEMO_BURST_PARTICLE_SIZE),
+                ..default()
+            },
+            Transform::from_xyz(position.x, position.y, DEMO_BURST_PARTICLE_Z),
+            DemoParticle2d {
+                remaining_seconds: DEMO_BURST_PARTICLE_LIFETIME_SECONDS,
+                lifetime_seconds: DEMO_BURST_PARTICLE_LIFETIME_SECONDS,
+                velocity: direction.normalize_or_zero() * DEMO_BURST_PARTICLE_SPEED,
+                initial_alpha: DEMO_BURST_PARTICLE_COLOR.alpha(),
+            },
+        ));
     }
 }
 
@@ -262,7 +240,7 @@ mod tests {
 
     #[test]
     fn emitter_accumulates_particle_rate() {
-        let mut emitter = DemoParticleEmitter2dMarker {
+        let mut emitter = DemoParticleEmitter2dState {
             enabled: true,
             particles_per_second: 4.0,
             particle_lifetime_seconds: TEST_LIFETIME_SECONDS,
@@ -283,7 +261,7 @@ mod tests {
         let emitter = app
             .world_mut()
             .spawn((
-                DemoParticleEmitter2dMarker {
+                DemoParticleEmitter2dState {
                     enabled: true,
                     particles_per_second: 4.0,
                     particle_lifetime_seconds: TEST_LIFETIME_SECONDS,
@@ -309,8 +287,22 @@ mod tests {
 
         let emitter = app
             .world()
-            .get::<DemoParticleEmitter2dMarker>(emitter)
+            .get::<DemoParticleEmitter2dState>(emitter)
             .unwrap();
         assert_eq!(emitter.emission_accumulator(), 0.0);
+    }
+
+    #[test]
+    fn burst_spawns_particles_around_position() {
+        let mut app = App::new();
+        app.add_systems(Update, |mut commands: Commands| {
+            spawn_demo_sensor_particle_burst(&mut commands, Vec3::new(2.0, 3.0, 0.0));
+        });
+
+        app.update();
+
+        let mut particles = app.world_mut().query::<&DemoParticle2d>();
+        let particle_count = particles.iter(app.world()).count();
+        assert_eq!(particle_count, 8);
     }
 }

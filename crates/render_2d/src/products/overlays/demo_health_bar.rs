@@ -1,7 +1,6 @@
 //! 角色头顶血条覆盖层与血量同步系统。
 
 use bevy::prelude::*;
-use ecs::components::base::{Health, MaxHealth};
 
 const DEMO_HEALTH_BAR_WIDTH: f32 = 46.0;
 const DEMO_HEALTH_BAR_HEIGHT: f32 = 5.0;
@@ -12,13 +11,11 @@ const DEMO_HEALTH_BAR_FILL_COLOR: Color = Color::srgb(0.18, 0.86, 0.36);
 const DEMO_HEALTH_BAR_BACKGROUND_Z: f32 = 0.0;
 const DEMO_HEALTH_BAR_FILL_Z: f32 = 0.1;
 
-#[derive(Component, Debug, Clone, Copy, PartialEq)]
-pub(super) struct DemoHealthBarOverlay2dMarker {
-    width: f32,
-}
+#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+pub struct DemoHealthBarOverlay2dMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub(super) struct DemoHealthBarFill2dMarker;
+pub struct DemoHealthBarFill2dMarker;
 
 pub struct DemoHealthBarOverlay2d;
 
@@ -32,9 +29,7 @@ struct DemoHealthBarOverlay2dBundle {
 impl Default for DemoHealthBarOverlay2dBundle {
     fn default() -> Self {
         Self {
-            marker: DemoHealthBarOverlay2dMarker {
-                width: DEMO_HEALTH_BAR_WIDTH,
-            },
+            marker: DemoHealthBarOverlay2dMarker,
             transform: Transform::from_translation(DEMO_HEALTH_BAR_TRANSLATION),
             visibility: Visibility::default(),
         }
@@ -53,29 +48,19 @@ impl DemoHealthBarOverlay2d {
     }
 }
 
-pub(super) fn demo_health_bar_system(
-    parents: Query<(&Health, &MaxHealth)>,
-    overlays: Query<(&ChildOf, &DemoHealthBarOverlay2dMarker, &Children)>,
-    mut fills: Query<(&mut Sprite, &mut Transform), With<DemoHealthBarFill2dMarker>>,
+pub fn set_demo_health_bar_ratio(
+    ratio: f32,
+    children: &Children,
+    fills: &mut Query<(&mut Sprite, &mut Transform), With<DemoHealthBarFill2dMarker>>,
 ) {
-    for (parent, overlay, children) in &overlays {
-        let Ok((health, max_health)) = parents.get(parent.parent()) else {
+    let ratio = ratio.clamp(0.0, 1.0);
+    for child in children {
+        let Ok((mut sprite, mut transform)) = fills.get_mut(*child) else {
             continue;
         };
-        let ratio = if max_health.0 <= 0.0 {
-            0.0
-        } else {
-            (health.0 / max_health.0).clamp(0.0, 1.0)
-        };
-
-        for child in children {
-            let Ok((mut sprite, mut transform)) = fills.get_mut(*child) else {
-                continue;
-            };
-            let width = overlay.width * ratio;
-            sprite.custom_size = Some(Vec2::new(width, DEMO_HEALTH_BAR_HEIGHT));
-            transform.translation.x = -(overlay.width - width) * 0.5;
-        }
+        let width = DEMO_HEALTH_BAR_WIDTH * ratio;
+        sprite.custom_size = Some(Vec2::new(width, DEMO_HEALTH_BAR_HEIGHT));
+        transform.translation.x = -(DEMO_HEALTH_BAR_WIDTH - width) * 0.5;
     }
 }
 

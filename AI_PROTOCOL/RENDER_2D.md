@@ -13,7 +13,7 @@
 - 用户配置的 2D 相机、屏幕、HUD、菜单、界面。
 - 用户配置的 sprite、texture atlas、tilemap、2D mesh、2D material、视觉动画。
 - 角色、物品、静物、背景、环境、特效、粒子、覆盖层、世界文字等具体项目表现。
-- 读取 `ecs` 数据，把游戏世界显示成 2D 画面。
+- 根据上层传入的视觉组件、资源句柄和表现状态，把游戏世界显示成 2D 画面。
 - 创建渲染专用 Entity、Component、Bundle、Resource 和视觉 system。
 
 ## Bevy 边界
@@ -87,8 +87,8 @@
 
 - 小目录可以直接把入口类型写在 `mod.rs`；复杂目录再拆成语义明确的文件。
 - 具体 Component、Bundle、Resource、system 拆到语义明确的文件里。
-- 模板阶段每个目录可以只保留可删除的占位文件。
-- 用户开始真实项目后，可以直接删除或替换占位文件。
+- `demo` 目录和 `Demo*` 类型是可删除示例，用来给 AI/人类开发提供参考组合方式。
+- 空产品目录可以保留很薄的 `mod.rs` / `plugin.rs` 占位；已经成型的 primitives、capabilities、products 结构不应删除或打散。
 - 不新增 `common.rs`、`misc.rs`、`utils.rs` 这类含义模糊的文件。
 - 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `frame_animation`。
 
@@ -125,7 +125,8 @@
 
 - 可以生成相机、sprite、UI 节点、渲染专用子实体和视觉效果实体。
 - 可以定义渲染专用 `Component`，例如 sprite marker、animation state、camera marker。
-- 可以读取 ECS 组件来决定显示方式。
+- 可以读取 `render_2d` 自己定义的视觉组件来决定显示方式。
+- 不读取 `ecs` crate 的玩法组件；玩法数据到视觉状态的同步属于 `prefab`、`gameplay` 或更高层桥接代码。
 - 不定义核心玩法组件、核心玩法 bundle、玩法 resource、玩法 event。
 - 不读取键盘、鼠标、手柄、外设、AI、网络或脚本输入。
 - 不写入 `intent`。
@@ -158,6 +159,13 @@
   `TextureAtlasLayout::from_grid(...)` 或 `ImageArrayLayout::{RowCount, ColumnCount}`。
 - 第一版不实现复杂骨骼 runtime，只保留清楚的数据边界。
 
+## Capabilities Plugin 规则
+
+- `Render2dPlugin` 默认只加载没有外部 message 前置条件的能力插件。
+- 依赖具体 gameplay message、demo event 或外部状态初始化的能力插件必须保持可选，由调用方显式安装。
+- `ParticlesPlugin` 只处理 `render_2d` 自己的 emitter 状态、粒子生成和粒子生命周期；`MovementIntent`、`DemoSensorTriggeredEvent` 等玩法数据由 `prefab` 或 `gameplay` 转换成粒子 emitter 状态或 burst 调用。
+- capability 可以暴露 `Demo*` 示例 bundle/component，但示例 runtime system 不应让普通 `Render2dPlugin` 在缺少 ECS/gameplay 初始化时 panic。
+
 ## 渲染实体规则
 
 如果表现需要缩放、偏移、动画状态或材质，优先创建玩法 Entity 的渲染子 Entity。
@@ -186,7 +194,7 @@ Gameplay Entity
 
 ## 依赖规则
 
-- `render_2d` 可以依赖 `ecs`。
+- `render_2d` 不依赖 `ecs`。
 - `render_2d` 必须依赖 `error`。
 - `render_2d` 不依赖 `audio`。
 - `render_2d` 不依赖 `external_runtime`。

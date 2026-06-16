@@ -6,14 +6,14 @@
 
 这里可以直接使用 Bevy 的 `Sprite`、`TextureAtlas`、`Text2d`、`Node`、`ImageNode`、`Transform`、`Visibility` 等类型。
 
-模板阶段默认没有真实游戏内容。每个表现目录只保留可替换的占位文件，用于固定代码落点。
+当前模板已经保留了一组可运行的基础表现、能力示例和 demo 产品，用来固定代码落点，并给后续 AI/人类开发提供参考。真实项目可以删除 `demo` 示例，但不要把目录重新改回散装的 flat 结构。
 
 ## 职责
 
 - 用户配置的 2D 相机。
 - 用户配置的 2D 屏幕、抬头显示、菜单、界面。
 - 用户配置的精灵、纹理图集、2D 动画。
-- 读取 `ecs` 数据，把游戏世界显示出来。
+- 根据上层传入的视觉组件、资源句柄和表现状态，把游戏世界显示出来。
 - 创建渲染专用 Entity、Component、bundle 和动画状态。
 - 提供 `prefab` 可以直接使用的高层表现 bundle。
 
@@ -35,7 +35,7 @@
 - `products/characters`: 角色 2D 表现。
 - `products/background`: 背景、远景、视差背景层。
 
-每个目录都可以保留一个可删除的占位模块。用户开始真实项目后，可以直接删除或替换这些占位文件。
+`demo` 目录和 `Demo*` 类型是可删除示例，用来展示推荐组合方式。空产品目录可以保留很薄的 `mod.rs` / `plugin.rs` 占位，但已经成型的 primitives、capabilities、products 结构不应删除或打散。
 
 ## 文件规则
 
@@ -66,8 +66,14 @@
 `frame_animation` 和 `skeletal_animation` 只处理视觉动画，不处理玩法时序。
 
 - `primitives/frame_animation`: sprite sheet、texture atlas、逐帧播放。
-- `capabilities/skeletal_animation`: 2D bone、skeleton、骨骼播放状态。
+- `capabilities/skeletal_animation`: 当前是自定义骨骼动画产品集合，具体动画放在独立目录，例如 `demo/`。
 - 攻击前摇、技能窗口、硬直、combo、碰撞判定不放在 render animation。
+
+## capabilities plugin
+
+`Render2dPlugin` 默认加载稳定、无外部 message 前置条件的能力插件，例如 skeletal、effects、pixel 等。
+
+`ParticlesPlugin` 只处理 `render_2d` 自己的 emitter 状态、粒子生成和粒子生命周期。`MovementIntent`、`DemoSensorTriggeredEvent` 等玩法数据由 `prefab` 或 `gameplay` 转换成粒子 emitter 状态或 burst 调用。
 
 ## tilemap
 

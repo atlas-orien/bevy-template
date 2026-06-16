@@ -101,6 +101,7 @@ const OBSOLETE_PATHS: &[&str] = &[
 ];
 
 const FORBIDDEN_DEPENDENCIES: &[&str] = &[
+    "ecs",
     "external_runtime",
     "audio",
     "intent",

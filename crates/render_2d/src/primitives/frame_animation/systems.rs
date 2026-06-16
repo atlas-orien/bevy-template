@@ -1,12 +1,8 @@
 //! 通用逐帧动画推进系统。
 
 use bevy::prelude::*;
-use ecs::components::base::{Facing, MovementIntent};
 
-use super::{
-    FrameAnimation2d, FrameAnimationFacingFlip2d, FrameAnimationHandle2d, FrameAnimationManifest2d,
-    FrameAnimationMovementClips2d,
-};
+use super::{FrameAnimation2d, FrameAnimationHandle2d, FrameAnimationManifest2d};
 
 pub(super) struct FrameAnimationSystemsPlugin;
 
@@ -14,39 +10,7 @@ impl Plugin for FrameAnimationSystemsPlugin {
     fn build(&self, app: &mut App) {
         app.init_asset::<FrameAnimationManifest2d>()
             .init_asset_loader::<super::FrameAnimationManifestLoader2d>()
-            .add_systems(
-                Update,
-                (movement_frame_animation_system, frame_animation_system).chain(),
-            );
-    }
-}
-
-fn movement_frame_animation_system(
-    parents: Query<(&MovementIntent, Option<&Facing>)>,
-    mut sprites: Query<(
-        &ChildOf,
-        &FrameAnimationMovementClips2d,
-        Option<&FrameAnimationFacingFlip2d>,
-        &mut FrameAnimation2d,
-        &mut Sprite,
-    )>,
-) {
-    for (parent, clips, facing_flip, mut animation, mut sprite) in &mut sprites {
-        let Ok((movement, facing)) = parents.get(parent.parent()) else {
-            continue;
-        };
-
-        animation.set_clip(if movement.is_moving() {
-            clips.moving.as_str()
-        } else {
-            clips.idle.as_str()
-        });
-
-        if facing_flip.is_some()
-            && let Some(facing) = facing
-        {
-            sprite.flip_x = *facing == Facing::Left;
-        }
+            .add_systems(Update, frame_animation_system);
     }
 }
 

@@ -6,6 +6,7 @@
 pub mod assets;
 pub mod dependencies;
 pub mod derives;
+pub mod frame_animation;
 pub mod functions;
 pub mod paths;
 pub mod profiles;

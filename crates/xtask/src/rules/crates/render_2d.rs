@@ -1,3 +1,4 @@
+use crate::rules::base::frame_animation::FrameAnimationRules;
 use crate::rules::base::profiles::{Render2dRules, check_render_2d};
 use crate::rules::{CheckStatus, finish};
 
@@ -85,6 +86,11 @@ const HARDCODED_SPRITE_SHEET_TERMS: &[&str] = &[
     "ImageArrayLayout::ColumnCount",
 ];
 
+const FRAME_ANIMATION_ALLOWED_SUBDIRS: &[&str] = &[];
+
+const FRAME_ANIMATION_FORBIDDEN_FILE_NAMES: &[&str] =
+    &["base.rs", "content.rs", "demo.rs", "example.rs"];
+
 pub fn check() -> CheckStatus {
     let mut errors = Vec::new();
     check_render_2d(
@@ -96,6 +102,12 @@ pub fn check() -> CheckStatus {
             forbidden_dependencies: FORBIDDEN_DEPENDENCIES,
             world_rule_terms: WORLD_RULE_TERMS,
             hardcoded_sprite_sheet_terms: HARDCODED_SPRITE_SHEET_TERMS,
+            frame_animation: FrameAnimationRules {
+                frame_dir: "crates/render_2d/src/animation/frame",
+                forbidden_subdirs: FRAME_ANIMATION_ALLOWED_SUBDIRS,
+                forbidden_file_names: FRAME_ANIMATION_FORBIDDEN_FILE_NAMES,
+                hardcoded_sheet_terms: HARDCODED_SPRITE_SHEET_TERMS,
+            },
         },
         &mut errors,
     );

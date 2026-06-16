@@ -96,6 +96,11 @@
 - `animation` 只定义 2D 表现层动画。
 - animation 可以修改视觉表现数据，例如 sprite atlas index、opacity、视觉 transform。
 - animation 不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
+- `animation/frame` 是通用逐帧动画基础能力，不写具体角色、具体 demo 或具体内容目录。
+- `animation/frame` 不创建 `base/`、`content/`、`demo/` 子目录；当前目录本身就是通用 frame animation 层。
+- `animation/frame` 只暴露通用动画状态、manifest、handle、loader、plugin 和 system，不暴露 `Demo*` 类型或 `demo_*` API。
+- 具体角色如何使用 frame animation，写到 `render_2d/src/characters` 等语义目录；例如角色视觉 bundle 组合 `FrameAnimation2d` 和 `FrameAnimationManifest2d` handle。
+- 具体资源路径由 `catalog` 绑定；`animation/frame` 不直接加载具体图片资源。
 - 帧动画的 sprite sheet 布局、clip、帧顺序、fps 和循环信息必须来自
   `assets/2d/animated/**/*.frames.ron`。
 - `render_2d` 不允许为具体 sprite sheet 写硬编码切片逻辑，例如

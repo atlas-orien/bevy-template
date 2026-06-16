@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use crate::rules::base::camera::{CameraRules, check_camera};
 use crate::rules::base::dependencies::reject_dependencies;
 use crate::rules::base::frame_animation::{FrameAnimationRules, check_frame_animation};
 use crate::rules::base::functions::reject_free_functions_returning_any;
@@ -70,6 +71,7 @@ pub struct Render2dRules<'a> {
     pub forbidden_dependencies: &'a [&'a str],
     pub world_rule_terms: &'a [&'a str],
     pub hardcoded_sprite_sheet_terms: &'a [&'a str],
+    pub camera: CameraRules<'a>,
     pub frame_animation: FrameAnimationRules<'a>,
     pub skeletal_animation: SkeletalAnimationRules<'a>,
 }
@@ -125,6 +127,7 @@ pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
         "render_2d must load sprite sheet layout and frame clips from .frames.ron assets, not hardcode concrete sheet slicing in Rust",
     );
     check_frame_animation(rules.frame_animation, errors);
+    check_camera(rules.camera, errors);
     check_skeletal_animation(rules.skeletal_animation, errors);
     reject_terms_in_rust_files(
         Path::new(rules.crate_path).join("src"),

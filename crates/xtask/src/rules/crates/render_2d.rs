@@ -1,3 +1,4 @@
+use crate::rules::base::camera::CameraRules;
 use crate::rules::base::frame_animation::FrameAnimationRules;
 use crate::rules::base::profiles::{Render2dRules, check_render_2d};
 use crate::rules::base::skeletal_animation::SkeletalAnimationRules;
@@ -92,6 +93,16 @@ const FRAME_ANIMATION_ALLOWED_SUBDIRS: &[&str] = &[];
 const FRAME_ANIMATION_FORBIDDEN_FILE_NAMES: &[&str] =
     &["base.rs", "content.rs", "demo.rs", "example.rs"];
 
+const CAMERA_ROOT_REQUIRED_FILES: &[&str] = &["mod.rs", "base.rs", "markers.rs", "plugin.rs"];
+
+const CAMERA_ROOT_ALLOWED_FILES: &[&str] = &["mod.rs", "base.rs", "markers.rs", "plugin.rs"];
+
+const CAMERA_ROOT_ALLOWED_DIRS: &[&str] = &["content"];
+
+const CAMERA_CONTENT_REQUIRED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
+
+const CAMERA_CONTENT_ALLOWED_FILES: &[&str] = &["mod.rs", "fixed.rs", "follow.rs", "ui.rs"];
+
 const SKELETAL_PRODUCT_REQUIRED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
 
 const SKELETAL_PRODUCT_ALLOWED_FILES: &[&str] = &["mod.rs", "entry.rs", "systems.rs", "tests.rs"];
@@ -117,6 +128,14 @@ pub fn check() -> CheckStatus {
             forbidden_dependencies: FORBIDDEN_DEPENDENCIES,
             world_rule_terms: WORLD_RULE_TERMS,
             hardcoded_sprite_sheet_terms: HARDCODED_SPRITE_SHEET_TERMS,
+            camera: CameraRules {
+                camera_dir: "crates/render_2d/src/camera",
+                root_required_files: CAMERA_ROOT_REQUIRED_FILES,
+                root_allowed_files: CAMERA_ROOT_ALLOWED_FILES,
+                root_allowed_dirs: CAMERA_ROOT_ALLOWED_DIRS,
+                content_required_files: CAMERA_CONTENT_REQUIRED_FILES,
+                content_allowed_files: CAMERA_CONTENT_ALLOWED_FILES,
+            },
             frame_animation: FrameAnimationRules {
                 frame_dir: "crates/render_2d/src/animation/frame",
                 forbidden_subdirs: FRAME_ANIMATION_ALLOWED_SUBDIRS,

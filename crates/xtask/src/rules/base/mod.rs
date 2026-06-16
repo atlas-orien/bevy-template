@@ -4,6 +4,7 @@
 //! rule modules can compose.
 
 pub mod assets;
+pub mod camera;
 pub mod dependencies;
 pub mod derives;
 pub mod frame_animation;

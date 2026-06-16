@@ -71,7 +71,7 @@
 
 ## capabilities plugin
 
-`Render2dPlugin` 默认加载稳定、无外部 message 前置条件的能力插件，例如 skeletal、effects、pixel 等。
+`Render2dPlugin` 默认加载稳定、无外部 message 前置条件的能力插件，例如 skeletal、effects、particles、pixel 等。
 
 `ParticlesPlugin` 只处理 `render_2d` 自己的 emitter 状态、粒子生成和粒子生命周期。`MovementIntent`、`DemoSensorTriggeredEvent` 等玩法数据由 `prefab` 或 `gameplay` 转换成粒子 emitter 状态或 burst 调用。
 

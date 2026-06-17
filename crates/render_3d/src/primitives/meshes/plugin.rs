@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-pub struct Lighting3dPlugin;
+pub struct Meshes3dPlugin;
 
-impl Plugin for Lighting3dPlugin {
+impl Plugin for Meshes3dPlugin {
     fn build(&self, _app: &mut App) {}
 }

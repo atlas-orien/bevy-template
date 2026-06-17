@@ -6,12 +6,10 @@
 
 这里可以直接使用 Bevy 的 `Camera3d`、`SceneRoot`、`Mesh3d`、`MeshMaterial3d`、`StandardMaterial`、`DirectionalLight`、`PointLight`、`SpotLight`、`AnimationPlayer`、`Transform`、`Visibility` 等类型。
 
-模板阶段默认没有真实游戏内容。每个表现目录只保留可替换的占位模块，用于固定代码落点。
-
 ## 职责
 
 - 用户配置的 3D 相机。
-- 用户配置的 3D 模型、材质、灯光、环境和场景表现。
+- 用户配置的 3D mesh、材质、灯光、环境和场景表现。
 - 用户配置的 3D 动画、特效、粒子和覆盖表现。
 - 读取 `ecs` 数据，把游戏世界显示出来。
 - 创建渲染专用 Entity、Component、bundle 和动画状态。
@@ -19,20 +17,37 @@
 
 ## 当前结构
 
-- `camera`: 3D 相机表现，例如固定相机、跟随相机、第一/第三人称相机。
-- `models`: 3D 模型加载、实例化、mesh 表现 bundle。
-- `materials`: 标准材质、自定义材质、shader material 的项目落点。
-- `animation`: 3D 动画、骨骼动画、animation graph 和播放状态。
-- `lighting`: 3D 光源、阴影、bloom、lightmap 相关表现。
-- `environment`: skybox、environment map、雾、体积、环境氛围。
-- `scenes`: 3D 场景装配、场景级表现。
-- `characters`: 角色 3D 表现。
-- `items`: 物品、装备、掉落物的 3D 表现。
-- `props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
-- `effects`: 命中特效、法术特效、拖尾、爆炸等纯视觉生命周期效果。
-- `particles`: 3D 粒子发射器、粒子配置、纯视觉粒子生命周期。
-- `overlays`: 世界空间血条、名字、选中框、交互提示。
-- `debug`: 3D 渲染调试显示，例如包围盒、坐标轴、骨骼可视化。
+`render_3d` 使用和 `render_2d` 一致的三层结构。
+
+### primitives
+
+通用、低层、可组合的 3D 表现基础件：
+
+- `primitives/camera`: 固定相机、跟随相机、轨道相机等相机基础结构。
+- `primitives/meshes`: mesh handle、material handle、静态 mesh 表现基础结构。
+- `primitives/materials`: 标准材质和项目通用材质基础结构。
+- `primitives/lights`: directional、point、spot、ambient 等光照基础结构。
+- `primitives/markers.rs`: 多个 primitive 都会用到的通用 marker。
+
+### capabilities
+
+可复用但不是最低层的 3D 表现能力：
+
+- `capabilities/animation`: glTF、骨骼动画、animation graph 和播放状态。
+- `capabilities/effects`: 命中特效、法术特效、拖尾、爆炸等纯视觉生命周期效果。
+- `capabilities/particles`: 3D 粒子发射器、粒子配置、纯视觉粒子生命周期。
+
+### products
+
+具体游戏对象或语义对象的 3D 表现产品：
+
+- `products/scenes`: 3D 场景装配和场景级表现。
+- `products/characters`: 角色 3D 表现。
+- `products/items`: 物品、装备、掉落物的 3D 表现。
+- `products/props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
+- `products/environment`: skybox、environment map、雾、体积、环境氛围。
+- `products/overlays`: 世界空间血条、名字、选中框、交互提示。
+- `products/debug`: 3D 渲染调试显示，例如包围盒、坐标轴、骨骼可视化。
 
 ## assets 配合
 
@@ -42,22 +57,13 @@
 
 常见映射：
 
-- `models`: 使用 `assets/3d/models`。
-- `materials`: 使用 `assets/3d/materials`、`assets/3d/textures` 和 `assets/shaders/3d`。
-- `animation`: 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons`。
-- `lighting`: 使用 `assets/3d/lightmaps`、`assets/3d/irradiance-volumes`、`assets/3d/environment-maps`。
-- `environment`: 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。
-- `scenes`: 使用 `assets/3d/scenes`，必要时也可以引用 `assets/scenes`。
+- `primitives/meshes` 使用 `assets/3d/models`。
+- `primitives/materials` 使用 `assets/3d/materials`、`assets/3d/textures` 和 `assets/shaders/3d`。
+- `capabilities/animation` 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons`。
+- `products/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。
+- `products/scenes` 使用 `assets/3d/scenes`，必要时也可以引用 `assets/scenes`。
 
-`render_3d` 不需要镜像 `assets/3d` 的目录结构。一个角色表现可以同时使用 model、texture、material、animation 和 rig，代码仍然应该放在 `characters`。
-
-## 文件规则
-
-- 每个目录的 `mod.rs` 只做模块导出、re-export 和 Plugin 组装。
-- 具体 Component、Bundle、system 拆到语义明确的文件里。
-- 不新增 `common.rs`、`misc.rs` 这类含义模糊的文件。
-- 默认模板不强制生成主相机；如果项目需要默认相机，写在 `camera`。
-- prefab 和 gameplay 不生成主相机。
+`render_3d` 不需要镜像 `assets/3d` 的目录结构。一个角色表现可以同时使用 model、texture、material、animation 和 rig，代码仍然应该放在 `products/characters`。
 
 ## Bevy 边界
 
@@ -94,6 +100,6 @@ Render2dPlugin
 - 不依赖 external_runtime、intent、prefab、physics、gameplay、render_2d。
 - 不放 2D 精灵、2D HUD、普通菜单、按钮、背包、tilemap 或 2D 相机。
 
-普通 UI 不属于 `render_3d`。贴在 3D 世界对象上的名字、血条、选中框、交互提示放到 `overlays`。真正存在于 3D 世界里的屏幕、广告牌、全息面板，按语义放到 `props`、`effects` 或具体对象目录。
+普通 UI 不属于 `render_3d`。贴在 3D 世界对象上的名字、血条、选中框、交互提示放到 `products/overlays`。真正存在于 3D 世界里的屏幕、广告牌、全息面板，按语义放到 `products/props`、`capabilities/effects` 或具体对象目录。
 
 `render_2d` 和 `render_3d` 应该保持独立。

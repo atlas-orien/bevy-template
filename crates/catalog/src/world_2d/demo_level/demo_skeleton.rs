@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use prefab::world_2d::demo_level::DemoSkeletonPrefab;
 
-use crate::paths::{DEMO_SKELETON_BONE_IMAGE, DEMO_SKELETON_JOINT_IMAGE};
+const DEMO_SKELETON_BONE_IMAGE: &str = "2d/static/props/demo-skeletal-bone/demo-skeletal-bone.png";
+const DEMO_SKELETON_JOINT_IMAGE: &str =
+    "2d/static/props/demo-skeletal-joint/demo-skeletal-joint.png";
 
 pub struct DemoSkeleton {
     position: Vec2,

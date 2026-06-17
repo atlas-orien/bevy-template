@@ -4,7 +4,7 @@ use bevy::{
 };
 use prefab::world_2d::demo_level::DemoGroundPrefab;
 
-use crate::paths::DEMO_TILESET_IMAGE;
+const DEMO_TILESET_IMAGE: &str = "2d/static/tilemaps/demo_tileset.png";
 
 pub struct DemoGround;
 

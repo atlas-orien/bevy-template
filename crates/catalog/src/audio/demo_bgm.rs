@@ -1,6 +1,6 @@
 use prefab::world_2d::demo_level::DemoBgmAudio;
 
-use crate::paths::DEMO_BGM_AUDIO;
+const DEMO_BGM_AUDIO: &str = "audio/demo_bgm.ogg";
 
 pub struct DemoBgm;
 

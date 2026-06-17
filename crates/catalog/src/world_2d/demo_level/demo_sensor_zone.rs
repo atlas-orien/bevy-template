@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use prefab::world_2d::demo_level::DemoSensorZonePrefab;
 
-use crate::paths::DEMO_SENSOR_AUDIO;
+const DEMO_SENSOR_AUDIO: &str = "audio/demo_pickup.ogg";
 
 pub struct DemoSensorZone {
     position: Vec2,

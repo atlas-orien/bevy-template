@@ -1,11 +1,8 @@
 //! Demo 3D primitives prefabs。
 
-use bevy::ecs::spawn::{Spawn, SpawnRelatedBundle};
 use bevy::prelude::*;
 use render_3d::primitives::camera::FixedCamera3dBundle;
-use render_3d::primitives::lights::{
-    DirectionalLight3dBundle, PointLight3dBundle, SpotLight3dBundle,
-};
+use render_3d::primitives::lights::DirectionalLight3dBundle;
 use render_3d::primitives::meshes::StaticMesh3d;
 
 use crate::Prefab;
@@ -35,58 +32,19 @@ pub struct DemoPreviewLights3dMarker;
 pub struct DemoPreviewLights3dPrefab;
 
 #[derive(Bundle)]
-#[bundle(ignore_from_components)]
 struct DemoPreviewLights3dBundle {
     marker: DemoPreviewLights3dMarker,
-    transform: Transform,
-    visibility: Visibility,
-    children: DemoPreviewLights3dChildrenBundle,
+    sunlight: DirectionalLight3dBundle,
 }
 
 impl Default for DemoPreviewLights3dBundle {
     fn default() -> Self {
         Self {
             marker: DemoPreviewLights3dMarker,
-            transform: Transform::default(),
-            visibility: Visibility::default(),
-            children: Children::spawn((
-                Spawn(DirectionalLight3dBundle::default()),
-                Spawn(PointLight3dBundle::new(
-                    PointLight {
-                        intensity: 900_000.0,
-                        range: 18.0,
-                        color: Color::srgb(0.86, 0.94, 1.0),
-                        shadows_enabled: true,
-                        ..default()
-                    },
-                    Vec3::new(-3.0, 4.5, 2.0),
-                )),
-                Spawn(SpotLight3dBundle::new(
-                    SpotLight {
-                        intensity: 1_800_000.0,
-                        range: 16.0,
-                        color: Color::srgb(1.0, 0.72, 0.48),
-                        shadows_enabled: true,
-                        inner_angle: 0.35,
-                        outer_angle: 0.75,
-                        ..default()
-                    },
-                    Vec3::new(3.8, 5.0, 4.0),
-                    Vec3::ZERO,
-                )),
-            )),
+            sunlight: DirectionalLight3dBundle::default(),
         }
     }
 }
-
-type DemoPreviewLights3dChildrenBundle = SpawnRelatedBundle<
-    ChildOf,
-    (
-        Spawn<DirectionalLight3dBundle>,
-        Spawn<PointLight3dBundle>,
-        Spawn<SpotLight3dBundle>,
-    ),
->;
 
 impl Prefab for DemoPreviewLights3dPrefab {
     fn spawn(self, commands: &mut Commands) -> Entity {

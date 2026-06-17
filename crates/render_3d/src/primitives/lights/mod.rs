@@ -17,7 +17,7 @@ pub struct DirectionalLight3dBundle {
 impl Default for DirectionalLight3dBundle {
     fn default() -> Self {
         Self::new(DirectionalLight {
-            illuminance: 35_000.0,
+            illuminance: 18_000.0,
             shadows_enabled: true,
             ..default()
         })

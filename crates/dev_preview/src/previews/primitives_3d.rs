@@ -19,7 +19,7 @@ pub fn run() {
         .add_plugins(Render3dPlugin)
         .insert_resource(GlobalAmbientLight {
             color: Color::WHITE,
-            brightness: 1_050.0,
+            brightness: 0.0,
             affects_lightmapped_meshes: true,
         })
         .add_systems(Startup, spawn_3d_primitives_preview_system)

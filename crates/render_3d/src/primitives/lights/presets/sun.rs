@@ -3,6 +3,7 @@
 use bevy::prelude::*;
 
 use crate::primitives::lights::base::DirectionalLight3dBundle;
+use crate::primitives::transforms::LookAtTransform3d;
 
 const SUN_LIGHT_3D_ILLUMINANCE: f32 = 18_000.0;
 const SUN_LIGHT_3D_TRANSLATION: Vec3 = Vec3::new(-2.5, 5.0, 4.5);
@@ -26,8 +27,8 @@ impl Default for SunLight3dBundle {
                     shadows_enabled: true,
                     ..default()
                 },
-                Transform::from_translation(SUN_LIGHT_3D_TRANSLATION)
-                    .looking_at(SUN_LIGHT_3D_TARGET, Vec3::Y),
+                LookAtTransform3d::new(SUN_LIGHT_3D_TRANSLATION, SUN_LIGHT_3D_TARGET, Vec3::Y)
+                    .into(),
             ),
             marker: SunLight3dMarker,
         }

@@ -4,6 +4,7 @@ use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 
 use crate::primitives::camera::base::{BaseCamera3dBundle, BaseCamera3dConfig};
+use crate::primitives::transforms::LookAtTransform3d;
 
 const FIXED_CAMERA_3D_ORDER: isize = 0;
 const FIXED_CAMERA_3D_LAYER: usize = 0;
@@ -43,7 +44,7 @@ impl FixedCamera3dBundle {
                     ..default()
                 },
                 render_layers: RenderLayers::layer(FIXED_CAMERA_3D_LAYER),
-                transform: Transform::from_translation(translation).looking_at(target, up),
+                transform: LookAtTransform3d::new(translation, target, up).into(),
                 ..default()
             }),
             marker: FixedCamera3dMarker,

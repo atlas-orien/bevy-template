@@ -3,8 +3,8 @@
 use bevy::prelude::*;
 
 use crate::primitives::frame_animation::{
-    FrameAnimation2d, FrameAnimationFacingFlip2d, FrameAnimationHandle2d, FrameAnimationManifest2d,
-    FrameAnimationMovementClips2d,
+    FrameAnimation2d, FrameAnimationFacingFlip2dMarker, FrameAnimationHandle2d,
+    FrameAnimationManifest2d, FrameAnimationMovementClips2d,
 };
 
 const DEMO_IDLE_CLIP: &str = "idle";
@@ -16,7 +16,7 @@ const DEMO_PLAYER_SPRITE_TRANSLATION: Vec3 = Vec3::new(0.0, 18.0, 4.0);
 pub(in crate::products::characters) struct DemoPlayerSprite2dMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub(in crate::products::characters) struct DemoPlayerSpriteAtlasReady2d;
+pub(in crate::products::characters) struct DemoPlayerSpriteAtlasReady2dMarker;
 
 type PendingDemoPlayerSpriteAtlasQuery<'world, 'state> = Query<
     'world,
@@ -24,7 +24,7 @@ type PendingDemoPlayerSpriteAtlasQuery<'world, 'state> = Query<
     (Entity, &'static FrameAnimationHandle2d, &'static mut Sprite),
     (
         With<DemoPlayerSprite2dMarker>,
-        Without<DemoPlayerSpriteAtlasReady2d>,
+        Without<DemoPlayerSpriteAtlasReady2dMarker>,
     ),
 >;
 
@@ -33,7 +33,7 @@ pub struct DemoPlayerSprite2d {
     marker: DemoPlayerSprite2dMarker,
     frame_manifest: FrameAnimationHandle2d,
     movement_clips: FrameAnimationMovementClips2d,
-    facing_flip: FrameAnimationFacingFlip2d,
+    facing_flip: FrameAnimationFacingFlip2dMarker,
     animation: FrameAnimation2d,
     sprite: Sprite,
     transform: Transform,
@@ -45,7 +45,7 @@ impl DemoPlayerSprite2d {
             marker: DemoPlayerSprite2dMarker,
             frame_manifest: FrameAnimationHandle2d(frame_manifest),
             movement_clips: FrameAnimationMovementClips2d::new(DEMO_IDLE_CLIP, DEMO_WALK_CLIP),
-            facing_flip: FrameAnimationFacingFlip2d,
+            facing_flip: FrameAnimationFacingFlip2dMarker,
             animation: FrameAnimation2d::new(DEMO_IDLE_CLIP),
             sprite: Sprite {
                 custom_size: Some(DEMO_PLAYER_SPRITE_SIZE),
@@ -72,6 +72,8 @@ pub(in crate::products::characters) fn prepare_demo_player_sprite_atlas_system(
             layout: atlas_layouts.add(manifest.atlas_layout()),
             index: 0,
         });
-        commands.entity(entity).insert(DemoPlayerSpriteAtlasReady2d);
+        commands
+            .entity(entity)
+            .insert(DemoPlayerSpriteAtlasReady2dMarker);
     }
 }

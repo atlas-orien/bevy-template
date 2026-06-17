@@ -1,3 +1,3 @@
 pub mod marker;
 
-pub use marker::PhysicsSensor;
+pub use marker::PhysicsSensorMarker;

@@ -178,7 +178,7 @@ demo 同时是 AI 的参照例子：**例子里没有测试，AI 以后写新功
 - `TogglePause` 在 `PauseState` 间正确切换。
 
 **`crates/prefab/src/world_2d/demo_level/demo_sensor_bridge.rs`**（系统级）
-- 带 `DemoSensorZone` 的 sensor 事件被转发；不带 marker 的被过滤。
+- 带 `DemoSensorZoneMarker` 的 sensor 事件被转发；不带 marker 的被过滤。
 
 **`crates/prefab/src/health/`**（纯逻辑）
 - 扣血不下穿 0；到 0 的判定边界。

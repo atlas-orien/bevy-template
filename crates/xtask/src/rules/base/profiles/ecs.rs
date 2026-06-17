@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::rules::base::derives::reject_derived_types;
+use crate::rules::base::derives::{check_component_marker_names, reject_derived_types};
 use crate::rules::base::paths::{reject_paths, require_mod_rs_under_src};
 use crate::rules::util::{derived_names, files_named_below, parse_rust_file, rust_files};
 
@@ -27,6 +27,7 @@ pub fn check_ecs(rules: EcsRules<'_>, errors: &mut Vec<String>) {
 fn check_ecs_components(root: &str, errors: &mut Vec<String>) {
     let root = Path::new(root);
     require_mod_rs_under_src(root.to_string_lossy().as_ref(), errors);
+    check_component_marker_names(root, errors);
 
     for readme in files_named_below(root, "README.md") {
         if readme != root.join("README.md") {

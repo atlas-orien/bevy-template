@@ -7,7 +7,7 @@ use render_2d::capabilities::particles::{
     DemoParticleEmitter2dState, spawn_demo_sensor_particle_burst,
 };
 use render_2d::primitives::frame_animation::{
-    FrameAnimation2d, FrameAnimationFacingFlip2d, FrameAnimationMovementClips2d,
+    FrameAnimation2d, FrameAnimationFacingFlip2dMarker, FrameAnimationMovementClips2d,
 };
 use render_2d::products::overlays::{
     DemoHealthBarFill2dMarker, DemoHealthBarOverlay2dMarker, set_demo_health_bar_ratio,
@@ -18,7 +18,7 @@ pub fn sync_demo_frame_animation_from_movement_system(
     mut sprites: Query<(
         &ChildOf,
         &FrameAnimationMovementClips2d,
-        Option<&FrameAnimationFacingFlip2d>,
+        Option<&FrameAnimationFacingFlip2dMarker>,
         &mut FrameAnimation2d,
         &mut Sprite,
     )>,

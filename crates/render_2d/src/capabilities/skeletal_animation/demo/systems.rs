@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::rig::{DemoBone2d, DemoSkeleton2dRoot, DemoSkeletonSide};
+use super::rig::{DemoBone2d, DemoSkeleton2dRootMarker, DemoSkeletonSide};
 
 pub(super) const DEMO_SKELETON_CYCLE_SECONDS: f32 = 1.2;
 
@@ -42,7 +42,7 @@ impl DemoSkeletalAnimation2d {
 
 pub(super) fn demo_skeletal_animation_system(
     time: Res<Time>,
-    mut skeletons: Query<(Entity, &mut DemoSkeletalAnimation2d), With<DemoSkeleton2dRoot>>,
+    mut skeletons: Query<(Entity, &mut DemoSkeletalAnimation2d), With<DemoSkeleton2dRootMarker>>,
     parents: Query<&ChildOf>,
     mut bones: Query<(Entity, &DemoBone2d, &mut Transform)>,
 ) {

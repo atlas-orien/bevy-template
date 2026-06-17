@@ -3,6 +3,6 @@ pub mod kind;
 
 pub use control::{
     PhysicsAdditionalSolverIterations, PhysicsCcd, PhysicsDamping, PhysicsGravityScale,
-    PhysicsLockedAxes, PhysicsRigidBodyDisabled, PhysicsSleeping, PhysicsSoftCcd,
+    PhysicsLockedAxes, PhysicsRigidBodyDisabledMarker, PhysicsSleeping, PhysicsSoftCcd,
 };
 pub use kind::PhysicsRigidBody;

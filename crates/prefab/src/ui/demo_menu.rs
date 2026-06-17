@@ -36,18 +36,18 @@ pub struct DemoMenuFocused {
 }
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
-pub struct DemoMenuRoot;
+pub struct DemoMenuRootMarker;
 
 #[derive(Bundle)]
 struct DemoMenuBundle {
-    root: DemoMenuRoot,
+    root: DemoMenuRootMarker,
     visual: DemoMenuVisual,
 }
 
 impl Default for DemoMenuBundle {
     fn default() -> Self {
         Self {
-            root: DemoMenuRoot,
+            root: DemoMenuRootMarker,
             visual: DemoMenuVisual::default(),
         }
     }

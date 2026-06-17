@@ -64,6 +64,8 @@ pub fn your_rule_system(
 ## 命名规则
 
 - 系统函数使用 `_system` 后缀，例如 `movement_system`、`damage_system`。
+- 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。
+- 以 `Marker` 结尾的 `Component` struct 必须是空 struct，不允许带字段。
 - 不要恢复独立的 `components` 或 `system` crate；ECS 数据和系统统一放在 `crates/ecs`。
 - 不要新增 `game_` 前缀的 ECS 模块名。
 - `components/base` 按最小语义组拆文件，不按“一类型一文件”机械拆分。
@@ -88,10 +90,10 @@ pub fn your_rule_system(
 当前模板只保留 ECS 基础结构和基础组件命名，不携带默认内容资源。
 
 - `crates/ecs/src/components/base`: 定义 `DisplayName`、`PublicEntityId`、`Health`、`MaxHealth`、`Speed`、`Velocity2d`、`Velocity3d`、`MovementIntent`、`MovementTarget`、`Facing`、`Faction`、`Team`、`AudioClip`、`AudioClips`。
-- `crates/ecs/src/components/characters`: 定义 `Character` 等通用角色身份 marker。
+- `crates/ecs/src/components/characters`: 定义 `CharacterMarker` 等通用角色身份 marker。
 - `crates/ecs/src/components/items`: 定义基础物品身份数据。
 - `crates/ecs/src/components/ui`: 保留 UI 相关 ECS 数据命名空间。
-- `crates/ecs/src/components/world`: 定义 gameplay-facing 实体标记，例如 `GameplayEntity`、`GameplaySessionEntity`、`GameplayEntityId`。
+- `crates/ecs/src/components/world`: 定义 gameplay-facing 实体标记，例如 `GameplayEntityMarker`、`GameplaySessionEntityMarker`、`GameplayEntityId`。
 - `crates/ecs/src/resources`: 定义 `WorldConfig`、`GameSession`，并通过 `ResourcesPlugin` 注册默认 Resource。
 - `crates/ecs/src/events`: 定义 `DamageEvent`、`HealEvent`、`SpawnedEvent`、`DiedEvent`，并通过 `EventsPlugin` 注册事件类型。
 - `crates/intent`: 提供写入 `MovementIntent` 等意图数据的语义 API。

@@ -3,16 +3,18 @@
 use bevy::prelude::*;
 
 use crate::primitives::camera::base::{BaseCamera2dBundle, BaseCamera2dConfig};
-use crate::primitives::markers::SceneCamera2d;
 
 const FIXED_CAMERA_2D_ORDER: isize = 0;
 const FIXED_CAMERA_2D_LAYER: usize = 0;
 const FIXED_CAMERA_2D_Z: f32 = 1000.0;
 
+#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+pub struct SceneCamera2dMarker;
+
 #[derive(Bundle)]
 pub struct FixedCamera2dBundle {
     camera: BaseCamera2dBundle,
-    marker: SceneCamera2d,
+    marker: SceneCamera2dMarker,
 }
 
 impl Default for FixedCamera2dBundle {
@@ -24,7 +26,7 @@ impl Default for FixedCamera2dBundle {
                 z: FIXED_CAMERA_2D_Z,
                 clear_color: default(),
             }),
-            marker: SceneCamera2d,
+            marker: SceneCamera2dMarker,
         }
     }
 }

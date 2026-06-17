@@ -3,10 +3,10 @@ use bevy::prelude::*;
 use ecs::components::base::AudioClips;
 use ecs::events::lifecycle::{DiedEvent, SpawnedEvent};
 
-use ecs::components::world::gameplay::GameplaySessionEntity;
+use ecs::components::world::gameplay::GameplaySessionEntityMarker;
 
 pub type GameplaySessionEntities<'world, 'state> =
-    Query<'world, 'state, Entity, With<GameplaySessionEntity>>;
+    Query<'world, 'state, Entity, With<GameplaySessionEntityMarker>>;
 
 pub fn despawn_gameplay_prefabs(
     commands: &mut Commands,

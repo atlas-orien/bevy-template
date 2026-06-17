@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Component, Debug, Clone, Copy, Default)]
-pub(crate) struct UiRoot;
+pub(crate) struct UiRootMarker;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 pub(crate) enum UiLayer {
@@ -10,14 +10,14 @@ pub(crate) enum UiLayer {
 
 #[derive(Bundle)]
 pub(crate) struct UiRootBundle {
-    pub marker: UiRoot,
+    pub marker: UiRootMarker,
     pub z_index: ZIndex,
 }
 
 impl Default for UiRootBundle {
     fn default() -> Self {
         Self {
-            marker: UiRoot,
+            marker: UiRootMarker,
             z_index: ui_layer_z_index(UiLayer::Root),
         }
     }

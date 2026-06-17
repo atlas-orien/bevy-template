@@ -4,7 +4,7 @@ use audio::playback::AudioPlaybackSettings;
 use audio::request::PlayAudioRequest;
 use bevy::prelude::*;
 use ecs::components::base::{AudioClips, MovementIntent};
-use ecs::components::characters::DemoPlayerControlled;
+use ecs::components::characters::DemoPlayerControlledMarker;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
 use ecs::events::demo_session::DemoSessionStartedEvent;
 
@@ -63,7 +63,7 @@ pub fn demo_sensor_audio_system(
 pub fn demo_footstep_audio_system(
     time: Res<Time>,
     mut timer: Local<Option<Timer>>,
-    players: Query<(&MovementIntent, &AudioClips), With<DemoPlayerControlled>>,
+    players: Query<(&MovementIntent, &AudioClips), With<DemoPlayerControlledMarker>>,
     mut audio_requests: MessageWriter<PlayAudioRequest>,
 ) {
     let timer = timer.get_or_insert_with(|| {

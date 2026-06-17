@@ -23,11 +23,13 @@
 
 通用、低层、可组合的 3D 表现基础件：
 
-- `primitives/camera`: 固定相机、跟随相机、轨道相机等相机基础结构。
-- `primitives/meshes`: mesh handle、material handle、静态 mesh 表现基础结构。
-- `primitives/materials`: 标准材质和项目通用材质基础结构。
-- `primitives/lights`: directional、point、spot、ambient 等光照基础结构。
-- `primitives/markers.rs`: 多个 primitive 都会用到的通用 marker。
+- `primitives/camera`: 3D camera 基础结构；当前提供 `FixedCamera3dBundle`。
+- `primitives/meshes`: 当前提供 `StaticMesh3d` / `StaticMesh3dBundle`，组合 `Mesh3d`、`MeshMaterial3d<StandardMaterial>`、`Transform`、`Visibility`。
+- `primitives/materials`: 当前提供 `StandardSurface3d`，用于创建项目默认的 `StandardMaterial` 配置。
+- `primitives/lights`: 当前提供 `DirectionalLight3dBundle`、`PointLight3dBundle`、`SpotLight3dBundle`。
+- 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。
+- 以 `Marker` 结尾的 `Component` struct 必须是空 struct，不允许带字段。
+- marker 和它标记的具体对象放在同一个模块里，不单独集中到 `markers.rs`。
 
 ### capabilities
 

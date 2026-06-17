@@ -28,7 +28,6 @@
 - `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
 - `primitives/atlases`: 通用 texture atlas sprite primitive。
 - `primitives/frame_animation`: sprite sheet、texture atlas、逐帧播放。
-- `primitives/markers.rs`: 跨 primitive 使用的无数据语义 marker。
 - `primitives/tilemap/chunk.rs`: `TilemapChunkLayer2d`，基于 Bevy `TilemapChunk` 组合 tileset、chunk size、tile size、tile index 数据和 transform。
 - `capabilities/skeletal_animation`: 自定义骨骼动画能力。
 - `products/ui`: 2D UI 表现、UI root target、UI 层级 marker 和 UI node 基础 bundle。
@@ -41,6 +40,9 @@
 
 - 小目录可以直接把入口类型写在 `mod.rs`；复杂目录再拆成语义明确的文件。
 - 具体 Component、Bundle、system 拆到语义明确的文件里。
+- 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。
+- 以 `Marker` 结尾的 `Component` struct 必须是空 struct，不允许带字段。
+- marker 和它标记的具体对象放在同一个模块里，不单独集中到 `markers.rs`。
 - 不新增 `common.rs`、`misc.rs` 这类含义模糊的文件。
 - 默认模板不强制生成主相机；如果项目需要默认相机，写在 `camera`。
 - prefab 和 gameplay 不生成主相机。

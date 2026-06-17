@@ -1,5 +1,5 @@
 pub mod character;
 mod plugin;
 
-pub use character::{Character, DemoPlayerControlled};
+pub use character::{CharacterMarker, DemoPlayerControlledMarker};
 pub use plugin::CharactersPlugin;

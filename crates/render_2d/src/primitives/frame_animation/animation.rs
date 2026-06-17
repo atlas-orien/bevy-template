@@ -73,4 +73,4 @@ impl FrameAnimationMovementClips2d {
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct FrameAnimationFacingFlip2d;
+pub struct FrameAnimationFacingFlip2dMarker;

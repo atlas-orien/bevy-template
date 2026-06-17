@@ -14,11 +14,11 @@
 - `PhysicsRigidBody`: 项目自己的刚体语义。
 - `PhysicsCharacterController2d`、`PhysicsCharacterController3d`: 项目自己的 2D / 3D kinematic character controller。
 - `PhysicsCharacterControllerOutput2d`、`PhysicsCharacterControllerOutput3d`: 项目自己的 character controller 输出。
-- `PhysicsLockedAxes`、`PhysicsGravityScale`、`PhysicsDamping`、`PhysicsCcd`、`PhysicsSoftCcd`、`PhysicsSleeping`、`PhysicsRigidBodyDisabled`、`PhysicsAdditionalSolverIterations`: 项目自己的刚体控制语义。
+- `PhysicsLockedAxes`、`PhysicsGravityScale`、`PhysicsDamping`、`PhysicsCcd`、`PhysicsSoftCcd`、`PhysicsSleeping`、`PhysicsRigidBodyDisabledMarker`、`PhysicsAdditionalSolverIterations`: 项目自己的刚体控制语义。
 - `PhysicsCollider2d/PhysicsCollider3d`: 项目自己的碰撞体语义。
-- `PhysicsColliderDisabled`、`PhysicsContactSkin`、`PhysicsContactForceEventThreshold`: 项目自己的碰撞体控制语义。
+- `PhysicsColliderDisabledMarker`、`PhysicsContactSkin`、`PhysicsContactForceEventThreshold`: 项目自己的碰撞体控制语义。
 - `PhysicsCollisionGroups`、`PhysicsSolverGroups`、`PhysicsActiveEvents`、`PhysicsActiveCollisionTypes`: 项目自己的碰撞体过滤和事件开关语义。
-- `PhysicsSensor`: 项目自己的传感器标记。
+- `PhysicsSensorMarker`: 项目自己的传感器标记。
 - `PhysicsLayer`: 项目自己的碰撞层语义。
 - `PhysicsMaterial`: 项目自己的物理材质语义。
 - `PhysicsMass`: 项目自己的质量语义。
@@ -64,7 +64,7 @@ Rapier 2D 第一版映射：
 - `PhysicsCollider2d::Circle` / `Rectangle` -> Rapier2D `Collider`
 - `PhysicsCollider2d::Polyline` -> Rapier2D line-segment `Collider`
 - `PhysicsCollider2d::ConvexPolygon` -> Rapier2D convex-hull `Collider`
-- `PhysicsSensor` -> Rapier2D `Sensor`
+- `PhysicsSensorMarker` -> Rapier2D `Sensor`
 - `PhysicsMaterial` -> Rapier2D `Friction` + `Restitution`
 - `PhysicsMass` -> Rapier2D `AdditionalMassProperties`
 - `PhysicsVelocity2d` + `PhysicsAngularVelocity2d` -> Rapier2D `Velocity`
@@ -83,7 +83,7 @@ Rapier 3D 第一版映射：
 
 - `PhysicsRigidBody` -> Rapier3D `RigidBody`
 - `PhysicsCollider3d::Sphere` / `Cuboid` -> Rapier3D `Collider`
-- `PhysicsSensor` -> Rapier3D `Sensor`
+- `PhysicsSensorMarker` -> Rapier3D `Sensor`
 - `PhysicsMaterial` -> Rapier3D `Friction` + `Restitution`
 - `PhysicsMass` -> Rapier3D `AdditionalMassProperties`
 - `PhysicsVelocity3d` + `PhysicsAngularVelocity3d` -> Rapier3D `Velocity`

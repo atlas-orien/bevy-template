@@ -5,7 +5,6 @@ pub mod camera;
 pub mod frame_animation;
 pub mod images;
 pub mod layers;
-pub mod markers;
 pub mod text;
 pub mod tilemap;
 

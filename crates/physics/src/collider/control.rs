@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct PhysicsColliderDisabled;
+pub struct PhysicsColliderDisabledMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, PartialEq)]
 pub struct PhysicsContactSkin(pub f32);

@@ -1,7 +1,7 @@
 //! Demo 静物装饰 prefab。
 
 use bevy::prelude::*;
-use ecs::components::world::gameplay::GameplaySessionEntity;
+use ecs::components::world::gameplay::GameplaySessionEntityMarker;
 use render_2d::products::props::{DemoLandmark2d, DemoRock2d};
 
 use crate::Prefab;
@@ -15,14 +15,14 @@ pub struct DemoRockPrefab {
 
 #[derive(Bundle)]
 struct DemoRockBundle {
-    session: GameplaySessionEntity,
+    session: GameplaySessionEntityMarker,
     visual: DemoRock2d,
 }
 
 impl DemoRockBundle {
     fn new(position: Vec2) -> Self {
         Self {
-            session: GameplaySessionEntity,
+            session: GameplaySessionEntityMarker,
             visual: DemoRock2d::new(Vec3::new(position.x, position.y, DEMO_ROCK_Z)),
         }
     }
@@ -47,14 +47,14 @@ pub struct DemoLandmarkPrefab {
 
 #[derive(Bundle)]
 struct DemoLandmarkBundle {
-    session: GameplaySessionEntity,
+    session: GameplaySessionEntityMarker,
     visual: DemoLandmark2d,
 }
 
 impl DemoLandmarkBundle {
     fn new(position: Vec2, color: Color) -> Self {
         Self {
-            session: GameplaySessionEntity,
+            session: GameplaySessionEntityMarker,
             visual: DemoLandmark2d::new(Vec3::new(position.x, position.y, DEMO_LANDMARK_Z), color),
         }
     }

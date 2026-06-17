@@ -15,18 +15,18 @@ const DEMO_MENU_GRID_ROWS: u16 = 2;
 const DEMO_MENU_GRID_GAP_PX: f32 = 14.0;
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
-struct DemoMenuRootVisual;
+struct DemoMenuRootVisualMarker;
 
 #[derive(Bundle)]
 pub(crate) struct DemoMenuRootBundle {
-    marker: DemoMenuRootVisual,
+    marker: DemoMenuRootVisualMarker,
     node: Node,
 }
 
 impl Default for DemoMenuRootBundle {
     fn default() -> Self {
         Self {
-            marker: DemoMenuRootVisual,
+            marker: DemoMenuRootVisualMarker,
             node: Node {
                 width: percent(100),
                 height: percent(100),

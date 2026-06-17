@@ -8,7 +8,7 @@ use super::layout::{
 use crate::capabilities::skeletal_animation::demo::systems::DemoSkeletalAnimation2d;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub(in crate::capabilities::skeletal_animation::demo) struct DemoSkeleton2dRoot;
+pub(in crate::capabilities::skeletal_animation::demo) struct DemoSkeleton2dRootMarker;
 
 #[derive(Component, Debug, Clone, Copy, Eq, PartialEq)]
 pub(in crate::capabilities::skeletal_animation::demo) enum DemoBone2d {
@@ -21,7 +21,7 @@ pub(in crate::capabilities::skeletal_animation::demo) enum DemoBone2d {
 
 #[derive(Bundle)]
 pub struct DemoSkeleton2dRootBundle {
-    marker: DemoSkeleton2dRoot,
+    marker: DemoSkeleton2dRootMarker,
     animation: DemoSkeletalAnimation2d,
     transform: Transform,
     visibility: Visibility,
@@ -30,7 +30,7 @@ pub struct DemoSkeleton2dRootBundle {
 impl DemoSkeleton2dRootBundle {
     pub(in crate::capabilities::skeletal_animation::demo) fn new(translation: Vec3) -> Self {
         Self {
-            marker: DemoSkeleton2dRoot,
+            marker: DemoSkeleton2dRootMarker,
             animation: DemoSkeletalAnimation2d::default(),
             transform: Transform::from_translation(translation),
             visibility: Visibility::default(),

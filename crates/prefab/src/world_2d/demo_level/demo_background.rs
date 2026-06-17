@@ -6,7 +6,7 @@ use render_2d::products::background::DemoBackground2dBundle;
 use crate::Prefab;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-struct DemoBackgroundRoot;
+struct DemoBackgroundRootMarker;
 
 #[derive(Default)]
 pub struct DemoBackgroundPrefab;
@@ -14,7 +14,7 @@ pub struct DemoBackgroundPrefab;
 #[derive(Bundle, Default)]
 #[bundle(ignore_from_components)]
 struct DemoBackgroundBundle {
-    root: DemoBackgroundRoot,
+    root: DemoBackgroundRootMarker,
     visual: DemoBackground2dBundle,
 }
 

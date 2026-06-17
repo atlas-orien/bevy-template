@@ -1,15 +1,15 @@
 # ECS 心智模型
 
-这份文档不是 Bevy API 手册，而是帮助从普通 Rust 对象模型切换到 Bevy ECS 模型。
+这份文档不是 Bevy API 手册，而是帮助建立本项目的 Bevy ECS 心智模型。
 
 如果想先理解 Bevy 真正如何运行 `App`、`Schedule` 和 `System`，先读 [bevy-runtime.md](bevy-runtime.md)。
 
 很多初学者真正卡住的地方不是语法，而是这些问题：
 
-- `Entity` 到底是不是对象实例？
+- `Entity` 到底保存什么？
 - `Component` 是一个共享实例，还是每个对象都有一份？
 - `spawn` 之后数据放在哪里？
-- 为什么不是 `object.move()`，而是 `Query` 和 `System`？
+- 为什么规则写成 `Query` 和 `System`？
 - `Prefab` 和真正生成出来的对象是什么关系？
 
 ## Bevy 到底是什么
@@ -68,11 +68,11 @@ Plugin 只注册能力。
 Prefab 实例组合生成 Entity。
 ```
 
-所以在这个项目里，架构设计优先围绕 ECS 和调度理解，而不是回到传统 root/tree 的对象管理方式。
+所以在这个项目里，架构设计优先围绕 ECS 和调度理解。
 
-## 普通 Rust 对象模型
+## 普通 Rust 数据实例
 
-如果只写普通 Rust，我们可能会这样创建数据：
+普通 Rust 里，一个类型定义可以对应多份数据实例：
 
 ```rust
 struct Speed(f32);
@@ -90,9 +90,9 @@ let c = Speed(250.0);
 println!("{}", a.0);
 ```
 
-如果有 100 个对象拥有速度，就会有 100 份 `Speed` 数据。它们不是共享同一个 `Speed` 实例。
+如果有 100 个实体拥有速度，就会有 100 份 `Speed` 数据。它们不是共享同一个 `Speed` 实例。
 
-## Bevy ECS 对象模型
+## Bevy ECS 数据模型
 
 在 Bevy 里，数据不是由我们直接放在普通变量里长期管理，而是交给 `World` 管理。
 
@@ -140,7 +140,7 @@ World 里有这么一个东西。
 
 ```text
 Entity(42)
-├── Character
+├── CharacterMarker
 ├── Speed(180.0)
 ├── MovementIntent
 ├── Transform
@@ -148,7 +148,7 @@ Entity(42)
 └── Character2dRender
 ```
 
-这个 Entity 被我们理解成“角色”，不是因为 `Entity` 自己叫角色，而是因为它拥有 `Character`、`Speed`、`MovementIntent` 等组件。
+这个 Entity 被我们理解成“角色”，不是因为 `Entity` 自己叫角色，而是因为它拥有 `CharacterMarker`、`Speed`、`MovementIntent` 等组件。
 
 ## Component
 
@@ -165,7 +165,7 @@ struct Speed(f32);
 
 ```rust
 #[derive(Component)]
-struct Character;
+struct CharacterMarker;
 ```
 
 如果 100 个 Entity 都有 `Speed`，那就是 100 份 `Speed` 数据：
@@ -223,13 +223,7 @@ fn movement_system(mut query: Query<(&Speed, &mut Transform)>) {
 
 `System` 是处理组件数据的函数。
 
-在面向对象写法里，我们可能会写：
-
-```rust
-object.move_right();
-```
-
-在 ECS 里，通常不是 Entity 调用方法，而是 system 批量处理符合条件的 Entity：
+在 ECS 里，不是 Entity 自己执行行为，而是 system 批量处理符合条件的 Entity：
 
 ```rust
 fn movement_system(mut query: Query<(&Speed, &mut Transform)>) {
@@ -305,9 +299,9 @@ World = 真正保存组件实例的地方
 ```text
 World
 └── Entity(42)
-    ├── GameplayEntity
-    ├── GameplaySessionEntity
-    ├── Character
+    ├── GameplayEntityMarker
+    ├── GameplaySessionEntityMarker
+    ├── CharacterMarker
     ├── Speed(180.0)
     ├── MovementIntent
     ├── Facing
@@ -320,40 +314,9 @@ World
 
 `Prefab::spawn` 返回的 `Entity` 不是对象实例本身，而是这组组件实例在 `World` 里的 ID。
 
-## 和传统 Root/Scene Tree 的区别
+## 查找实体
 
-很多传统游戏工具会使用 `root`、`scene`、`node tree` 来组织对象。
-
-例如：
-
-```text
-Root
-└── Level
-    ├── Character
-    ├── Enemy
-    └── Camera
-```
-
-这种结构的一个重要作用是：
-
-```text
-给对象一个层级位置。
-让代码可以从 root 往下找到实例。
-让父节点管理子节点。
-让生命周期跟着树结构传播。
-```
-
-在这种模型里，要找角色，可能会写成：
-
-```text
-root.get_node("Level/Character")
-```
-
-或者让父节点保存子节点引用。
-
-这是一种“对象在树里”的思路。
-
-Bevy ECS 的思路不同。它不要求先从 root 往下找到对象，而是问：
+Bevy ECS 不要求先从 root 往下找到实体，而是问：
 
 ```text
 World 里谁拥有我需要的这些组件？
@@ -362,32 +325,16 @@ World 里谁拥有我需要的这些组件？
 例如：
 
 ```rust
-Query<(&Character, &Transform)>
+Query<(&CharacterMarker, &Transform)>
 ```
 
 表达的是：
 
 ```text
-从整个 World 里找出所有同时拥有 Character 和 Transform 的 Entity。
+从整个 World 里找出所有同时拥有 CharacterMarker 和 Transform 的 Entity。
 ```
 
-所以核心差异是：
-
-```text
-传统 Root/Scene Tree:
-对象靠层级组织和路径查找。
-
-Bevy ECS/World:
-对象靠组件组合识别和 Query 查找。
-```
-
-删除传统 scene/root 之后，最容易产生的问题是：
-
-```text
-没有 root 了，我怎么找到对象？
-```
-
-在 ECS 里，答案通常不是重新造一个 root，而是使用：
+在 ECS 里，查找实体通常使用：
 
 ```text
 Component marker
@@ -396,17 +343,17 @@ Resource
 Entity ID
 ```
 
-例如，想找到角色，可以给目标 Entity 挂上 `Character` marker：
+例如，想找到角色，可以给目标 Entity 挂上 `CharacterMarker` marker：
 
 ```rust
 #[derive(Component)]
-struct Character;
+struct CharacterMarker;
 ```
 
 然后通过查询找到它：
 
 ```rust
-fn find_character(query: Query<Entity, With<Character>>) {
+fn find_character(query: Query<Entity, With<CharacterMarker>>) {
     for entity in &query {
         // entity 是目标 Entity ID
     }
@@ -420,7 +367,7 @@ fn find_character(query: Query<Entity, With<Character>>) {
 struct CharacterEntity(Entity);
 ```
 
-这不是回到 root tree，而是明确告诉 ECS：
+这表示：
 
 ```text
 这个 Entity 是一个全局关心的对象。
@@ -429,11 +376,10 @@ struct CharacterEntity(Entity);
 因此：
 
 ```text
-Root/Tree 解决的是路径和父子层级查找。
-ECS 解决的是数据组合和批量查询。
+ECS 通过数据组合和批量查询定位实体。
 ```
 
-这也是本项目不希望重新用 root 添加节点来表达世界结构的原因。对象实例由 `World` 管理，对象身份由组件组合表达，对象查找由 `Query` 或必要的 `Resource` 完成。
+本项目不使用 root 节点表达世界结构。实体由 `World` 管理，实体身份由组件组合表达，实体查找由 `Query` 或必要的 `Resource` 完成。
 
 ## 一句话总结
 

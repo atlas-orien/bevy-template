@@ -3,15 +3,15 @@
 use bevy::prelude::*;
 use ecs::components::{
     base::{AudioClips, Facing, Health, MaxHealth, MovementIntent, Speed},
-    characters::{Character, DemoPlayerControlled},
-    world::gameplay::{GameplayEntity, GameplayEntityId, GameplaySessionEntity},
+    characters::{CharacterMarker, DemoPlayerControlledMarker},
+    world::gameplay::{GameplayEntityId, GameplayEntityMarker, GameplaySessionEntityMarker},
 };
 use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
 use render_2d::capabilities::particles::DemoParticleEmitter2d;
+use render_2d::primitives::camera::FollowCameraTarget2dMarker;
 use render_2d::primitives::frame_animation::FrameAnimationManifest2d;
-use render_2d::primitives::markers::FollowCameraTarget2d;
 use render_2d::products::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
 use render_2d::products::overlays::DemoHealthBarOverlay2d;
 
@@ -37,9 +37,9 @@ pub struct DemoNpcPrefab {
 
 #[derive(Bundle)]
 struct DemoCharacterCoreBundle {
-    character: Character,
-    gameplay: GameplayEntity,
-    session: GameplaySessionEntity,
+    character: CharacterMarker,
+    gameplay: GameplayEntityMarker,
+    session: GameplaySessionEntityMarker,
     movement: MovementIntent,
     speed: Speed,
     facing: Facing,
@@ -50,9 +50,9 @@ struct DemoCharacterCoreBundle {
 impl DemoCharacterCoreBundle {
     fn new(position: Vec2, speed: Speed) -> Self {
         Self {
-            character: Character,
-            gameplay: GameplayEntity,
-            session: GameplaySessionEntity,
+            character: CharacterMarker,
+            gameplay: GameplayEntityMarker,
+            session: GameplaySessionEntityMarker,
             movement: MovementIntent::default(),
             speed,
             facing: Facing::default(),
@@ -84,16 +84,16 @@ impl Default for DemoNpcNavigationBundle {
 
 #[derive(Bundle)]
 struct DemoPlayerIdentityBundle {
-    controlled: DemoPlayerControlled,
-    camera_target: FollowCameraTarget2d,
+    controlled: DemoPlayerControlledMarker,
+    camera_target: FollowCameraTarget2dMarker,
     gameplay_id: GameplayEntityId,
 }
 
 impl Default for DemoPlayerIdentityBundle {
     fn default() -> Self {
         Self {
-            controlled: DemoPlayerControlled,
-            camera_target: FollowCameraTarget2d,
+            controlled: DemoPlayerControlledMarker,
+            camera_target: FollowCameraTarget2dMarker,
             gameplay_id: DEMO_PLAYER_ENTITY_ID,
         }
     }

@@ -3,4 +3,4 @@
 use bevy::prelude::*;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct DemoSensorZone;
+pub struct DemoSensorZoneMarker;

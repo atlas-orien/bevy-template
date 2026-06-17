@@ -51,7 +51,7 @@ impl Default for PhysicsSleeping {
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct PhysicsRigidBodyDisabled;
+pub struct PhysicsRigidBodyDisabledMarker;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct PhysicsAdditionalSolverIterations(pub usize);

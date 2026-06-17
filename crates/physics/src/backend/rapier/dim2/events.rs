@@ -7,13 +7,13 @@ use bevy_rapier2d::{
 };
 
 use crate::{
-    PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsContactForce2d, PhysicsSensor,
+    PhysicsCollisionEnded, PhysicsCollisionStarted, PhysicsContactForce2d, PhysicsSensorMarker,
     PhysicsSensorTriggered,
 };
 
 pub fn forward_collision_events(
     mut rapier_events: MessageReader<RapierCollisionEvent>,
-    sensors: Query<(), With<PhysicsSensor>>,
+    sensors: Query<(), With<PhysicsSensorMarker>>,
     mut started_events: MessageWriter<PhysicsCollisionStarted>,
     mut ended_events: MessageWriter<PhysicsCollisionEnded>,
     mut sensor_events: MessageWriter<PhysicsSensorTriggered>,
@@ -53,7 +53,11 @@ pub fn forward_contact_force_events(
     }
 }
 
-fn sensor_pair(a: Entity, b: Entity, sensors: &Query<(), With<PhysicsSensor>>) -> (Entity, Entity) {
+fn sensor_pair(
+    a: Entity,
+    b: Entity,
+    sensors: &Query<(), With<PhysicsSensorMarker>>,
+) -> (Entity, Entity) {
     if sensors.get(a).is_ok() {
         (a, b)
     } else if sensors.get(b).is_ok() {

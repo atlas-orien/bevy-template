@@ -11,7 +11,7 @@ const DEMO_TILE_SIZE: u32 = 32;
 const DEMO_TILEMAP_ORIGIN: Vec3 = Vec3::new(-1536.0, -192.0, 0.0);
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct DemoGroundRoot;
+pub struct DemoGroundRootMarker;
 
 pub struct DemoGroundPrefab {
     tileset: Handle<Image>,
@@ -19,7 +19,7 @@ pub struct DemoGroundPrefab {
 
 #[derive(Bundle)]
 struct DemoGroundBundle {
-    root: DemoGroundRoot,
+    root: DemoGroundRootMarker,
     layer: TilemapChunkLayer2d,
 }
 
@@ -28,7 +28,7 @@ impl DemoGroundBundle {
         let tile_indices = DEMO_GROUND.into_iter().flatten();
 
         Self {
-            root: DemoGroundRoot,
+            root: DemoGroundRootMarker,
             layer: TilemapChunkLayer2d::new(
                 UVec2::new(DEMO_GROUND_WIDTH as u32, DEMO_GROUND_HEIGHT as u32),
                 UVec2::splat(DEMO_TILE_SIZE),

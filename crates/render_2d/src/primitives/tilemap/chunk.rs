@@ -5,7 +5,8 @@ use bevy::{
     sprite_render::{TileData, TilemapChunk, TilemapChunkTileData},
 };
 
-use crate::primitives::markers::TilemapChunkLayer2dMarker;
+#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+pub struct TilemapChunkLayer2dMarker;
 
 #[derive(Bundle)]
 pub struct TilemapChunkLayer2d {

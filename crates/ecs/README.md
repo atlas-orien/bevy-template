@@ -13,7 +13,7 @@
 
 ECS 是 Entity Component System 的缩写，是 Bevy 使用的核心架构。
 
-传统面向对象写法里，我们可能会设计一个很大的 `Character` 类型，把血量、移动、输入、动画、背包、攻击逻辑都放进去。ECS 的思路不同：游戏对象不是一个“大类”，而是一个实体 ID 加上一组小的数据组件，再由系统函数去处理这些数据。
+本项目只使用 ECS 心智模型：实体由 `Entity` ID 表示，数据由小而清晰的 `Component` 组合表达，行为由 `System` 批量处理满足查询条件的实体。
 
 ### Entity
 
@@ -47,16 +47,16 @@ ECS 是 Entity Component System 的缩写，是 Bevy 使用的核心架构。
 - `Speed`: 移动速度
 - `MovementIntent`: 想往哪个方向移动，或想移动到哪个位置
 - `AudioClips`: 这个实体有哪些可播放音频槽位
-- `Character`: 角色标记
+- `CharacterMarker`: 角色标记
 - `Enemy`: 敌人标记
 - `Faction`: 阵营
 - `Inventory`: 背包数据
 
-在 ECS 里，一个“角色”不是一个很大的 `Character` 类，而是一个实体加上一组组件：
+在 ECS 里，一个“角色”由实体 ID 加上一组组件表达：
 
 ```text
 Entity
-+ Character
++ CharacterMarker
 + Health
 + MaxHealth
 + MovementIntent
@@ -101,7 +101,7 @@ Entity
 具体 prefab 可以组合这些 ECS 组件：
 
 ```text
-Character
+CharacterMarker
 Health
 MaxHealth
 Speed
@@ -184,8 +184,8 @@ app = 如何组装并启动游戏
 ## 当前结构
 
 - `crates/ecs/src/components/base`: 基础组件，例如名字、公开 ID、血量、移动、阵营。
-- `crates/ecs/src/components/characters`: 角色类实体数据，例如 `Character`、`Enemy`、`Npc` 以及对应 Bundle。
-- `crates/ecs/src/components/items`: 物品类实体数据，例如武器、防具、消耗品、掉落物。
+- `crates/ecs/src/components/characters`: 角色实体数据，例如 `CharacterMarker`、`Enemy`、`Npc` 以及对应 Bundle。
+- `crates/ecs/src/components/items`: 物品实体数据，例如武器、防具、消耗品、掉落物。
 - `crates/ecs/src/components/world`: 世界、地图、关卡、区域、出生点等数据。
 - `crates/ecs/src/components/ui`: UI 相关 ECS 数据，例如 HUD、血条、菜单、按钮动作。
 - `crates/ecs/src/events`: ECS 事件数据，例如 `combat.rs`、`lifecycle.rs`。

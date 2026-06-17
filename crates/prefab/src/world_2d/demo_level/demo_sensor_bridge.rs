@@ -1,13 +1,13 @@
 //! 把 physics 传感器事件过滤转发为 demo 感应区事件。
 
 use bevy::prelude::*;
-use ecs::components::world::DemoSensorZone;
+use ecs::components::world::DemoSensorZoneMarker;
 use ecs::events::demo_sensor::DemoSensorTriggeredEvent;
 use physics::PhysicsSensorTriggered;
 
 pub fn demo_sensor_bridge_system(
     mut sensor_events: MessageReader<PhysicsSensorTriggered>,
-    sensors: Query<(), With<DemoSensorZone>>,
+    sensors: Query<(), With<DemoSensorZoneMarker>>,
     mut demo_events: MessageWriter<DemoSensorTriggeredEvent>,
 ) {
     for event in sensor_events.read() {
@@ -32,7 +32,7 @@ mod tests {
         app.add_message::<PhysicsSensorTriggered>()
             .add_message::<DemoSensorTriggeredEvent>()
             .add_systems(Update, demo_sensor_bridge_system);
-        let sensor = app.world_mut().spawn(DemoSensorZone).id();
+        let sensor = app.world_mut().spawn(DemoSensorZoneMarker).id();
         let target = app.world_mut().spawn_empty().id();
         app.world_mut()
             .write_message(PhysicsSensorTriggered { sensor, target });

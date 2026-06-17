@@ -18,11 +18,12 @@ mod sensor;
 
 pub use body::{
     PhysicsAdditionalSolverIterations, PhysicsCcd, PhysicsDamping, PhysicsGravityScale,
-    PhysicsLockedAxes, PhysicsRigidBody, PhysicsRigidBodyDisabled, PhysicsSleeping, PhysicsSoftCcd,
+    PhysicsLockedAxes, PhysicsRigidBody, PhysicsRigidBodyDisabledMarker, PhysicsSleeping,
+    PhysicsSoftCcd,
 };
 pub use collider::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsCollider3d,
-    PhysicsColliderDisabled, PhysicsCollisionGroups, PhysicsContactForceEventThreshold,
+    PhysicsColliderDisabledMarker, PhysicsCollisionGroups, PhysicsContactForceEventThreshold,
     PhysicsContactSkin, PhysicsSolverGroups,
 };
 pub use config::PhysicsConfig;
@@ -52,6 +53,6 @@ pub use query::{
     PhysicsRayHit3d, PhysicsShapeCastHit2d, PhysicsShapeCastHit3d, PhysicsShapeCastHitDetails2d,
     PhysicsShapeCastHitDetails3d,
 };
-pub use sensor::PhysicsSensor;
+pub use sensor::PhysicsSensorMarker;
 
 pub use backend::{PhysicsQuery2d, PhysicsQuery3d};

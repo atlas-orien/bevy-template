@@ -2,6 +2,7 @@ use std::path::Path;
 
 use crate::rules::base::atlases::{AtlasesRules, check_atlases};
 use crate::rules::base::camera::{CameraRules, check_camera};
+use crate::rules::base::derives::check_component_marker_names;
 use crate::rules::base::frame_animation::{FrameAnimationRules, check_frame_animation};
 use crate::rules::base::functions::reject_free_functions_returning_any;
 use crate::rules::base::paths::{reject_paths, require_mod_rs_under_src};
@@ -20,6 +21,7 @@ pub struct Render3dRules<'a> {
 
 pub fn check_render_3d(rules: Render3dRules<'_>, errors: &mut Vec<String>) {
     require_mod_rs_under_src(rules.crate_path, errors);
+    check_component_marker_names(rules.crate_path, errors);
     reject_direct_input_access(
         rules.crate_path,
         errors,
@@ -49,6 +51,7 @@ pub struct Render2dRules<'a> {
 
 pub fn check_render_2d(rules: Render2dRules<'_>, errors: &mut Vec<String>) {
     require_mod_rs_under_src(rules.crate_path, errors);
+    check_component_marker_names(rules.crate_path, errors);
     reject_paths(
         rules.obsolete_paths,
         errors,

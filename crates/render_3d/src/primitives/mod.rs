@@ -2,7 +2,6 @@
 
 pub mod camera;
 pub mod lights;
-pub mod markers;
 pub mod materials;
 pub mod meshes;
 

@@ -9,7 +9,6 @@ use bevy::prelude::*;
 
 use crate::primitives::images::StaticImage2d;
 use crate::primitives::images::StaticImage2dBundle;
-use crate::primitives::markers::RenderLayer2dMarker;
 
 pub use plugin::Layers2dPlugin;
 
@@ -54,14 +53,17 @@ impl Default for LayerStack2dBundle {
 }
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct LayerStack2dRoot;
+pub struct LayerStack2dRootMarker;
 
 #[derive(Bundle, Default)]
 pub struct LayerStack2dRootBundle {
-    marker: LayerStack2dRoot,
+    marker: LayerStack2dRootMarker,
     transform: Transform,
     visibility: Visibility,
 }
+
+#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
+pub(in crate::primitives::layers) struct RenderLayer2dMarker;
 
 pub struct RenderLayer2d {
     color: Color,

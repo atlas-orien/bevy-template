@@ -35,6 +35,12 @@
 
 当前目录是模板默认结构，可以按具体游戏调整，但必须保持表现层边界清楚。
 
+## Marker 规则
+
+- 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。
+- 以 `Marker` 结尾的 `Component` struct 必须是空 struct，不允许带字段。
+- marker 和它标记的具体对象放在同一个模块里，不单独集中到 `markers.rs`。
+
 ## assets 配合规则
 
 `assets/3d` 是 runtime 资源目录，按资源类型分类。

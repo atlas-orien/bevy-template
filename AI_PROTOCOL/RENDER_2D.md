@@ -52,12 +52,12 @@
 - `primitives/camera`: 2D 相机基础能力和可直接实例化的 camera presets。
 - `primitives/images`: 通用静态图片表现 primitive，例如单张图片或纯色图片块；不负责加载具体资源路径。
 - `primitives/layers`: 通用 layer stack 和 parallax layer 能力。
-- `primitives/markers.rs`: 跨 primitive 使用的无数据语义 marker，例如 `SceneCamera2d`、`FollowCameraTarget2d`、`AtlasSprite2dMarker`、`RenderLayer2dMarker`、`TilemapChunkLayer2dMarker`。
 - `primitives/text`: 世界空间文字，例如伤害数字、漂浮提示、角色头顶名字。
 - `primitives/tilemap`: 通用 tile map primitive，例如基于 Bevy `TilemapChunk` 的 tile chunk layer。
 - `primitives/camera/base.rs`: 共享 Bevy 2D camera bundle/config，只放 `Camera2d`、`Camera`、`RenderLayers`、`Transform` 等基础组合。
 - `primitives/camera/presets`: 业务可直接选择的 camera preset，例如 fixed、follow、ui。
 - `primitives/tilemap/chunk.rs`: 通用 `TilemapChunkLayer2d`，只负责把 tileset handle、chunk size、tile size、tile index 数据和 transform 组合成 Bevy tilemap chunk bundle。
+- marker 不单独集中到 `markers.rs`。marker 应和它标记的具体对象、bundle、system 放在同一个模块里，例如 camera marker 放在 camera preset，atlas marker 放在 atlas primitive，layer marker 放在 layer primitive。
 
 `capabilities`:
 
@@ -89,6 +89,8 @@
 - 小目录可以直接把入口类型写在 `mod.rs`；复杂目录再拆成语义明确的文件。
 - 具体 Component、Bundle、Resource、system 拆到语义明确的文件里。
 - `demo` 目录和 `Demo*` 类型是可删除示例，用来给 AI/人类开发提供参考组合方式。
+- 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。
+- 以 `Marker` 结尾的 `Component` struct 必须是空 struct，不允许带字段。
 - 空产品目录可以保留很薄的 `mod.rs` / `plugin.rs` 占位；已经成型的 primitives、capabilities、products 结构不应删除或打散。
 - 不新增 `common.rs`、`misc.rs`、`utils.rs` 这类含义模糊的文件。
 - 帧动画和骨骼动画必须分目录；不要把骨骼、slot、skin、attachment 写进 `frame_animation`。

@@ -33,7 +33,7 @@
 
 不适合放这里：
 
-- `Character`、`Enemy` 这种角色身份，放到 `characters`
+- `CharacterMarker`、`Enemy` 这种角色身份，放到 `characters`
 - `Weapon`、`Consumable` 这种物品身份，放到 `items`
 - 系统函数，例如 `movement_system`
 - 音频播放 runtime，例如 `AudioPlayer` 或解码器，这些放到 `audio`
@@ -44,7 +44,7 @@
 
 适合放这里：
 
-- 角色身份 marker：`Character`、`Enemy`、`Npc`
+- 角色身份 marker：`CharacterMarker`、`Enemy`、`Npc`
 - 具体对象组合不放在 ecs，放到 prefab 或具体项目内容
 - 角色专属纯数据：例如职业、等级、角色类型
 
@@ -102,7 +102,7 @@
 
 适合放这里：
 
-- 玩法实体标记：`GameplayEntity`
+- 玩法实体标记：`GameplayEntityMarker`
 - 关卡 marker：`LevelMarker`
 - 出生点：`SpawnPoint`
 - 区域：`Zone`

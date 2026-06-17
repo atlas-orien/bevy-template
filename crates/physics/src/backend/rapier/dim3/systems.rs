@@ -6,11 +6,12 @@ use bevy_rapier3d::prelude::{
 
 use crate::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsAdditionalSolverIterations,
-    PhysicsCcd, PhysicsCharacterController3d, PhysicsCollider3d, PhysicsColliderDisabled,
+    PhysicsCcd, PhysicsCharacterController3d, PhysicsCollider3d, PhysicsColliderDisabledMarker,
     PhysicsCollisionGroups, PhysicsContactForceEventThreshold, PhysicsContactSkin, PhysicsDamping,
     PhysicsForce3d, PhysicsGravityScale, PhysicsImpulse3d, PhysicsImpulseJoint3d,
-    PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody, PhysicsRigidBodyDisabled,
-    PhysicsSensor, PhysicsSleeping, PhysicsSoftCcd, PhysicsSolverGroups,
+    PhysicsLockedAxes, PhysicsMass, PhysicsMaterial, PhysicsRigidBody,
+    PhysicsRigidBodyDisabledMarker, PhysicsSensorMarker, PhysicsSleeping, PhysicsSoftCcd,
+    PhysicsSolverGroups,
 };
 
 use super::convert;
@@ -122,7 +123,7 @@ pub fn sync_physics_sleeping(
 
 pub fn sync_physics_rigid_body_disabled(
     mut commands: Commands,
-    disabled: Query<Entity, Added<PhysicsRigidBodyDisabled>>,
+    disabled: Query<Entity, Added<PhysicsRigidBodyDisabledMarker>>,
     colliders: Query<&PhysicsCollider3d>,
 ) {
     for entity in &disabled {
@@ -167,7 +168,7 @@ pub fn sync_physics_colliders(
 
 pub fn sync_physics_collider_disabled(
     mut commands: Commands,
-    disabled: Query<Entity, Added<PhysicsColliderDisabled>>,
+    disabled: Query<Entity, Added<PhysicsColliderDisabledMarker>>,
     colliders: Query<&PhysicsCollider3d>,
 ) {
     for entity in &disabled {
@@ -180,7 +181,7 @@ pub fn sync_physics_collider_disabled(
 
 pub fn sync_physics_sensors(
     mut commands: Commands,
-    sensors: Query<Entity, Added<PhysicsSensor>>,
+    sensors: Query<Entity, Added<PhysicsSensorMarker>>,
     colliders: Query<&PhysicsCollider3d>,
 ) {
     for entity in &sensors {

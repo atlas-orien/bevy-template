@@ -4,13 +4,13 @@ use bevy::prelude::*;
 use ecs::components::{
     base::AudioClips,
     world::{
-        DemoSensorZone,
-        gameplay::{GameplayEntity, GameplayEntityId, GameplaySessionEntity},
+        DemoSensorZoneMarker,
+        gameplay::{GameplayEntityId, GameplayEntityMarker, GameplaySessionEntityMarker},
     },
 };
 use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
-    PhysicsSensor,
+    PhysicsSensorMarker,
 };
 use render_2d::products::props::{DEMO_SENSOR_ZONE_SIZE, DemoSensorZone2d};
 
@@ -26,18 +26,18 @@ pub struct DemoSensorZonePrefab {
 
 #[derive(Bundle)]
 struct DemoSensorIdentityBundle {
-    zone: DemoSensorZone,
-    gameplay: GameplayEntity,
-    session: GameplaySessionEntity,
+    zone: DemoSensorZoneMarker,
+    gameplay: GameplayEntityMarker,
+    session: GameplaySessionEntityMarker,
     gameplay_id: GameplayEntityId,
 }
 
 impl Default for DemoSensorIdentityBundle {
     fn default() -> Self {
         Self {
-            zone: DemoSensorZone,
-            gameplay: GameplayEntity,
-            session: GameplaySessionEntity,
+            zone: DemoSensorZoneMarker,
+            gameplay: GameplayEntityMarker,
+            session: GameplaySessionEntityMarker,
             gameplay_id: DEMO_SENSOR_ENTITY_ID,
         }
     }
@@ -60,7 +60,7 @@ impl DemoSensorAudioBundle {
 struct DemoSensorPhysicsBundle {
     rigid_body: PhysicsRigidBody,
     collider: PhysicsCollider2d,
-    sensor: PhysicsSensor,
+    sensor: PhysicsSensorMarker,
     active_events: PhysicsActiveEvents,
     active_collision_types: PhysicsActiveCollisionTypes,
 }
@@ -73,7 +73,7 @@ impl Default for DemoSensorPhysicsBundle {
                 width: DEMO_SENSOR_ZONE_SIZE.x,
                 height: DEMO_SENSOR_ZONE_SIZE.y,
             },
-            sensor: PhysicsSensor,
+            sensor: PhysicsSensorMarker,
             active_events: PhysicsActiveEvents {
                 collision: true,
                 contact_force: false,

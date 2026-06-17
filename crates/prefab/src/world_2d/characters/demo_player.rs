@@ -13,7 +13,9 @@ use render_2d::capabilities::particles::DemoParticleEmitter2d;
 use render_2d::primitives::camera::FollowCameraTarget2dMarker;
 use render_2d::primitives::frame_animation::FrameAnimationManifest2d;
 use render_2d::products::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
-use render_2d::products::overlays::DemoHealthBarOverlay2d;
+use render_2d::products::overlays::{
+    DemoHealthBarBackground2dBundle, DemoHealthBarFill2dBundle, DemoHealthBarOverlay2d,
+};
 
 use crate::Prefab;
 
@@ -233,8 +235,45 @@ impl Prefab for DemoPlayerPrefab {
             .with_children(|parent| {
                 parent.spawn(DemoPlayerSprite2d::new(self.frame_manifest));
                 parent.spawn(DemoParticleEmitter2d::default());
-                parent.spawn(DemoHealthBarOverlay2d.into_bundle());
+                parent
+                    .spawn(DemoHealthBarOverlay2d.into_bundle())
+                    .with_children(|health_bar| {
+                        health_bar.spawn(DemoHealthBarBackground2dBundle::default());
+                        health_bar.spawn(DemoHealthBarFill2dBundle::default());
+                    });
             })
             .id()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use bevy::ecs::system::RunSystemOnce as _;
+    use render_2d::products::overlays::{DemoHealthBarFill2dMarker, DemoHealthBarOverlay2dMarker};
+
+    use super::*;
+
+    #[test]
+    fn demo_player_spawns_health_bar_overlay_and_fill() {
+        let mut world = World::new();
+
+        world
+            .run_system_once(|mut commands: Commands| {
+                DemoPlayerPrefab::new(Vec2::ZERO, Handle::default(), "footstep")
+                    .spawn(&mut commands);
+            })
+            .expect("demo player spawn system should run");
+
+        let overlay_count = world
+            .query_filtered::<Entity, With<DemoHealthBarOverlay2dMarker>>()
+            .iter(&world)
+            .count();
+        let fill_count = world
+            .query_filtered::<Entity, With<DemoHealthBarFill2dMarker>>()
+            .iter(&world)
+            .count();
+
+        assert_eq!(overlay_count, 1);
+        assert_eq!(fill_count, 1);
     }
 }

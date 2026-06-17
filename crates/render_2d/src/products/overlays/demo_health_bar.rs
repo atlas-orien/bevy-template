@@ -42,30 +42,8 @@ impl DemoHealthBarOverlay2d {
     }
 }
 
-#[derive(Bundle)]
-#[bundle(ignore_from_components)]
-pub struct DemoHealthBarOverlay2dProductBundle(
-    DemoHealthBarOverlay2dBundle,
-    bevy::ecs::spawn::SpawnRelatedBundle<
-        bevy::ecs::hierarchy::ChildOf,
-        (
-            bevy::ecs::spawn::Spawn<DemoHealthBarBackground2dBundle>,
-            bevy::ecs::spawn::Spawn<DemoHealthBarFill2dBundle>,
-        ),
-    >,
-);
-
-impl Default for DemoHealthBarOverlay2dProductBundle {
-    fn default() -> Self {
-        Self(
-            DemoHealthBarOverlay2dBundle::default(),
-            children![
-                DemoHealthBarBackground2dBundle::default(),
-                DemoHealthBarFill2dBundle::default(),
-            ],
-        )
-    }
-}
+#[derive(Bundle, Default)]
+pub struct DemoHealthBarOverlay2dProductBundle(DemoHealthBarOverlay2dBundle);
 
 pub fn set_demo_health_bar_ratio(
     ratio: f32,
@@ -84,7 +62,7 @@ pub fn set_demo_health_bar_ratio(
 }
 
 #[derive(Bundle)]
-struct DemoHealthBarBackground2dBundle {
+pub struct DemoHealthBarBackground2dBundle {
     sprite: Sprite,
     transform: Transform,
 }
@@ -103,7 +81,7 @@ impl Default for DemoHealthBarBackground2dBundle {
 }
 
 #[derive(Bundle)]
-struct DemoHealthBarFill2dBundle {
+pub struct DemoHealthBarFill2dBundle {
     marker: DemoHealthBarFill2dMarker,
     sprite: Sprite,
     transform: Transform,

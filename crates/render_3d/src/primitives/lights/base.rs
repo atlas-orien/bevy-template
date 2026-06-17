@@ -20,6 +20,12 @@ impl DirectionalLight3dBundle {
     }
 }
 
+impl Default for DirectionalLight3dBundle {
+    fn default() -> Self {
+        Self::new(DirectionalLight::default(), Transform::default())
+    }
+}
+
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct PointLight3dMarker;
 
@@ -31,12 +37,18 @@ pub struct PointLight3dBundle {
 }
 
 impl PointLight3dBundle {
-    pub fn new(light: PointLight, translation: Vec3) -> Self {
+    pub fn new(light: PointLight, transform: Transform) -> Self {
         Self {
             marker: PointLight3dMarker,
             light,
-            transform: Transform::from_translation(translation),
+            transform,
         }
+    }
+}
+
+impl Default for PointLight3dBundle {
+    fn default() -> Self {
+        Self::new(PointLight::default(), Transform::default())
     }
 }
 
@@ -51,11 +63,17 @@ pub struct SpotLight3dBundle {
 }
 
 impl SpotLight3dBundle {
-    pub fn new(light: SpotLight, translation: Vec3, target: Vec3) -> Self {
+    pub fn new(light: SpotLight, transform: Transform) -> Self {
         Self {
             marker: SpotLight3dMarker,
             light,
-            transform: Transform::from_translation(translation).looking_at(target, Vec3::Y),
+            transform,
         }
+    }
+}
+
+impl Default for SpotLight3dBundle {
+    fn default() -> Self {
+        Self::new(SpotLight::default(), Transform::default())
     }
 }

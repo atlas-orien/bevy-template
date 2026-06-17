@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 use render_3d::primitives::camera::FixedCamera3dBundle;
-use render_3d::primitives::lights::DirectionalLight3dBundle;
+use render_3d::primitives::lights::SunLight3dBundle;
 use render_3d::primitives::meshes::StaticMesh3d;
 
 use crate::Prefab;
@@ -34,14 +34,14 @@ pub struct DemoPreviewLights3dPrefab;
 #[derive(Bundle)]
 struct DemoPreviewLights3dBundle {
     marker: DemoPreviewLights3dMarker,
-    sunlight: DirectionalLight3dBundle,
+    sunlight: SunLight3dBundle,
 }
 
 impl Default for DemoPreviewLights3dBundle {
     fn default() -> Self {
         Self {
             marker: DemoPreviewLights3dMarker,
-            sunlight: DirectionalLight3dBundle::default(),
+            sunlight: SunLight3dBundle::default(),
         }
     }
 }

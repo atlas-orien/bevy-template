@@ -1,13 +1,25 @@
 use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone)]
 pub(in crate::primitives::camera) struct BaseCamera3dConfig {
-    pub order: isize,
-    pub layer: usize,
-    pub translation: Vec3,
-    pub target: Vec3,
-    pub clear_color: ClearColorConfig,
+    pub camera_3d: Camera3d,
+    pub camera: Camera,
+    pub projection: Projection,
+    pub render_layers: RenderLayers,
+    pub transform: Transform,
+}
+
+impl Default for BaseCamera3dConfig {
+    fn default() -> Self {
+        Self {
+            camera_3d: Camera3d::default(),
+            camera: Camera::default(),
+            projection: Projection::Perspective(PerspectiveProjection::default()),
+            render_layers: RenderLayers::layer(0),
+            transform: Transform::default(),
+        }
+    }
 }
 
 #[derive(Bundle)]
@@ -22,16 +34,11 @@ pub(in crate::primitives::camera) struct BaseCamera3dBundle {
 impl BaseCamera3dBundle {
     pub(in crate::primitives::camera) fn new(config: BaseCamera3dConfig) -> Self {
         Self {
-            camera_3d: Camera3d::default(),
-            camera: Camera {
-                order: config.order,
-                clear_color: config.clear_color,
-                ..default()
-            },
-            projection: Projection::Perspective(PerspectiveProjection::default()),
-            render_layers: RenderLayers::layer(config.layer),
-            transform: Transform::from_translation(config.translation)
-                .looking_at(config.target, Vec3::Y),
+            camera_3d: config.camera_3d,
+            camera: config.camera,
+            projection: config.projection,
+            render_layers: config.render_layers,
+            transform: config.transform,
         }
     }
 }

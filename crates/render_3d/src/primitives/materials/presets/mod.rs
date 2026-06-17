@@ -1,3 +1,3 @@
-pub mod uv_checker;
+pub mod demo_metal;
 
-pub use uv_checker::UvCheckerMaterial3d;
+pub use demo_metal::DemoMetalMaterial3d;

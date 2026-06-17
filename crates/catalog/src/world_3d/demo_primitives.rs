@@ -3,7 +3,7 @@ use prefab::world_3d::{
     DemoPreviewCamera3dPrefab, DemoPreviewItems3dPrefab, DemoPreviewLights3dPrefab,
     DemoPreviewMaterials3d, DemoPreviewMeshes3d,
 };
-use render_3d::primitives::materials::{StandardSurface3d, UvCheckerMaterial3d};
+use render_3d::primitives::materials::{DemoMetalMaterial3d, StandardSurface3d};
 
 pub struct DemoPreviewCamera3d;
 
@@ -47,7 +47,7 @@ impl DemoPreviewItems3d {
                         .with_roughness(0.5)
                         .into_material(),
                 ),
-                sphere: materials.add(UvCheckerMaterial3d::material(asset_server)),
+                sphere: materials.add(DemoMetalMaterial3d::material(asset_server)),
                 capsule: materials.add(
                     StandardSurface3d::new(Color::srgb(0.38, 0.86, 0.58))
                         .with_roughness(0.58)

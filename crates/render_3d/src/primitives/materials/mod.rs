@@ -4,7 +4,7 @@ pub mod presets;
 use bevy::prelude::*;
 
 pub use plugin::Materials3dPrimitivePlugin;
-pub use presets::UvCheckerMaterial3d;
+pub use presets::DemoMetalMaterial3d;
 
 #[derive(Debug, Clone)]
 pub struct StandardSurface3d {

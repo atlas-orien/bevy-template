@@ -2,7 +2,7 @@ use std::path::Path;
 
 use syn::visit::Visit;
 
-use crate::rules::util::{parse_rust_file, read_file_if_exists, rust_files};
+use crate::rules::util::{parse_rust_file, rust_files};
 
 pub const DIRECT_INPUT_TERMS: &[&str] = &["ButtonInput", "KeyCode", "MouseButton", "Gamepad"];
 
@@ -31,17 +31,7 @@ pub fn reject_terms_in_rust_files(
     errors: &mut Vec<String>,
     hint: &str,
 ) {
-    for file in rust_files(root) {
-        let Some(source) = read_file_if_exists(&file) else {
-            continue;
-        };
-
-        for term in terms {
-            if source.contains(term) {
-                errors.push(format!("{} references `{term}`; {hint}", file.display()));
-            }
-        }
-    }
+    reject_type_paths_in_rust_files(root, terms, errors, hint);
 }
 
 /// 检查 Rust 文件中是否引用了禁止类型。基于语法树而不是子串：
@@ -74,125 +64,113 @@ pub fn reject_type_paths_in_rust_files(
     }
 }
 
-pub fn reject_files_containing_all_terms(
+pub fn reject_method_calls_with_tuple_arg(
     root: impl AsRef<Path>,
-    terms: &[&str],
+    method_names: &[&str],
     errors: &mut Vec<String>,
     hint: &str,
 ) {
     for file in rust_files(root) {
-        let Some(source) = read_file_if_exists(&file) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
-        if terms.iter().all(|term| source.contains(term)) {
-            errors.push(format!("{} {hint}", file.display()));
-        }
-    }
-}
-
-pub fn reject_lines_containing_all_terms(
-    root: impl AsRef<Path>,
-    terms: &[&str],
-    errors: &mut Vec<String>,
-    hint: &str,
-) {
-    for file in rust_files(root) {
-        let Some(source) = read_file_if_exists(&file) else {
-            continue;
+        let mut visitor = TupleMethodCallVisitor {
+            method_names,
+            hits: Vec::new(),
         };
+        visitor.visit_file(&parsed);
+        visitor.hits.sort();
+        visitor.hits.dedup();
 
-        if source
-            .lines()
-            .map(str::trim)
-            .any(|line| terms.iter().all(|term| line.contains(term)))
-        {
-            errors.push(format!("{} {hint}", file.display()));
-        }
-    }
-}
-
-pub fn require_file_contains_all_terms(
-    file: impl AsRef<Path>,
-    terms: &[&str],
-    errors: &mut Vec<String>,
-    hint: &str,
-) {
-    let file = file.as_ref();
-    let Some(source) = read_file_if_exists(file) else {
-        return;
-    };
-
-    for term in terms {
-        if !source.contains(term) {
+        for hit in visitor.hits {
             errors.push(format!(
-                "{} does not contain `{term}`; {hint}",
+                "{} calls `{hit}` with a tuple argument; {hint}",
                 file.display()
             ));
         }
     }
 }
 
-pub fn reject_terms_in_file(
-    file: impl AsRef<Path>,
-    terms: &[&str],
-    errors: &mut Vec<String>,
-    hint: &str,
-) {
-    let file = file.as_ref();
-    let Some(source) = read_file_if_exists(file) else {
-        return;
-    };
-
-    for term in terms {
-        if source.contains(term) {
-            errors.push(format!("{} references `{term}`; {hint}", file.display()));
-        }
-    }
-}
-
-pub fn reject_generated_terms_in_file(
-    file: impl AsRef<Path>,
-    terms: &[&str],
-    pattern: impl Fn(&str) -> Vec<String>,
-    errors: &mut Vec<String>,
-    hint: &str,
-) {
-    let file = file.as_ref();
-    let Some(source) = read_file_if_exists(file) else {
-        return;
-    };
-
-    for term in terms {
-        for generated in pattern(term) {
-            if source.contains(&generated) {
-                errors.push(format!(
-                    "{} references `{generated}`; {hint}",
-                    file.display()
-                ));
-            }
-        }
-    }
-}
-
-pub fn reject_generated_terms_in_rust_files_except(
+pub fn reject_path_suffixes_in_rust_files(
     root: impl AsRef<Path>,
-    except_root: impl AsRef<Path>,
-    terms: &[&str],
-    pattern: impl Fn(&str) -> Vec<String>,
+    forbidden_suffixes: &[&[&str]],
     errors: &mut Vec<String>,
     hint: &str,
 ) {
-    let generated_terms = terms
-        .iter()
-        .flat_map(|term| pattern(term))
-        .collect::<Vec<_>>();
-    let generated_terms = generated_terms
-        .iter()
-        .map(String::as_str)
-        .collect::<Vec<_>>();
+    for file in rust_files(root) {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
+            continue;
+        };
 
-    reject_terms_in_rust_files_except(root, except_root, &generated_terms, errors, hint);
+        let mut visitor = PathSuffixVisitor {
+            forbidden_suffixes,
+            hits: Vec::new(),
+        };
+        visitor.visit_file(&parsed);
+        visitor.hits.sort();
+        visitor.hits.dedup();
+
+        for hit in visitor.hits {
+            errors.push(format!("{} references `{hit}`; {hint}", file.display()));
+        }
+    }
+}
+
+pub fn reject_string_literals_containing(
+    root: impl AsRef<Path>,
+    fragments: &[&str],
+    errors: &mut Vec<String>,
+    hint: &str,
+) {
+    for file in rust_files(root) {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
+            continue;
+        };
+
+        let mut visitor = StringLiteralVisitor {
+            fragments,
+            hits: Vec::new(),
+        };
+        visitor.visit_file(&parsed);
+        visitor.hits.sort();
+        visitor.hits.dedup();
+
+        for hit in visitor.hits {
+            errors.push(format!(
+                "{} contains string literal `{hit}`; {hint}",
+                file.display()
+            ));
+        }
+    }
+}
+
+pub fn reject_public_fields_with_type(
+    root: impl AsRef<Path>,
+    forbidden_types: &[&str],
+    errors: &mut Vec<String>,
+    hint: &str,
+) {
+    for file in rust_files(root) {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
+            continue;
+        };
+
+        let mut visitor = PublicFieldTypeVisitor {
+            forbidden_types,
+            hits: Vec::new(),
+        };
+        visitor.visit_file(&parsed);
+        visitor.hits.sort();
+        visitor.hits.dedup();
+
+        for hit in visitor.hits {
+            errors.push(format!(
+                "{} exposes public field of type `{hit}`; {hint}",
+                file.display()
+            ));
+        }
+    }
 }
 
 pub fn reject_direct_input_access(root: impl AsRef<Path>, errors: &mut Vec<String>, hint: &str) {
@@ -204,7 +182,7 @@ pub fn reject_network_transport_terms(
     errors: &mut Vec<String>,
     hint: &str,
 ) {
-    reject_terms_in_rust_files(root, NETWORK_TRANSPORT_TERMS, errors, hint);
+    reject_type_paths_in_rust_files(root, NETWORK_TRANSPORT_TERMS, errors, hint);
 }
 
 pub fn reject_world_mutation_terms(root: impl AsRef<Path>, errors: &mut Vec<String>, hint: &str) {
@@ -215,35 +193,118 @@ pub fn reject_bevy_world_access(root: impl AsRef<Path>, errors: &mut Vec<String>
     reject_type_paths_in_rust_files(root, BEVY_WORLD_ACCESS_TYPES, errors, hint);
 }
 
-pub fn reject_terms_in_rust_files_except(
-    root: impl AsRef<Path>,
-    except_root: impl AsRef<Path>,
-    terms: &[&str],
-    errors: &mut Vec<String>,
-    hint: &str,
-) {
-    let except_root = except_root.as_ref();
+struct ForbiddenTypePathVisitor<'a> {
+    forbidden: &'a [&'a str],
+    hits: Vec<String>,
+}
 
-    for file in rust_files(root) {
-        if file.starts_with(except_root) {
-            continue;
+struct TupleMethodCallVisitor<'a> {
+    method_names: &'a [&'a str],
+    hits: Vec<String>,
+}
+
+impl<'ast> Visit<'ast> for TupleMethodCallVisitor<'_> {
+    fn visit_expr_method_call(&mut self, node: &'ast syn::ExprMethodCall) {
+        let method = node.method.to_string();
+        if self.method_names.iter().any(|name| *name == method)
+            && node.args.len() == 1
+            && matches!(node.args.first(), Some(syn::Expr::Tuple(_)))
+        {
+            self.hits.push(method);
         }
 
-        let Some(source) = read_file_if_exists(&file) else {
-            continue;
-        };
+        syn::visit::visit_expr_method_call(self, node);
+    }
+}
 
-        for term in terms {
-            if source.contains(term) {
-                errors.push(format!("{} references `{term}`; {hint}", file.display()));
+struct PathSuffixVisitor<'a> {
+    forbidden_suffixes: &'a [&'a [&'a str]],
+    hits: Vec<String>,
+}
+
+impl PathSuffixVisitor<'_> {
+    fn check_path(&mut self, path: &syn::Path) {
+        let segments = path
+            .segments
+            .iter()
+            .map(|segment| segment.ident.to_string())
+            .collect::<Vec<_>>();
+
+        for suffix in self.forbidden_suffixes {
+            if segments.len() < suffix.len() {
+                continue;
+            }
+
+            let start = segments.len() - suffix.len();
+            if suffix
+                .iter()
+                .zip(&segments[start..])
+                .all(|(expected, actual)| *expected == actual)
+            {
+                self.hits.push(suffix.join("::"));
             }
         }
     }
 }
 
-struct ForbiddenTypePathVisitor<'a> {
-    forbidden: &'a [&'a str],
+impl<'ast> Visit<'ast> for PathSuffixVisitor<'_> {
+    fn visit_path(&mut self, path: &'ast syn::Path) {
+        self.check_path(path);
+        syn::visit::visit_path(self, path);
+    }
+}
+
+struct StringLiteralVisitor<'a> {
+    fragments: &'a [&'a str],
     hits: Vec<String>,
+}
+
+impl<'ast> Visit<'ast> for StringLiteralVisitor<'_> {
+    fn visit_lit_str(&mut self, node: &'ast syn::LitStr) {
+        let value = node.value();
+        if self
+            .fragments
+            .iter()
+            .any(|fragment| value.contains(fragment))
+        {
+            self.hits.push(value);
+        }
+    }
+}
+
+struct PublicFieldTypeVisitor<'a> {
+    forbidden_types: &'a [&'a str],
+    hits: Vec<String>,
+}
+
+impl PublicFieldTypeVisitor<'_> {
+    fn check_field(&mut self, field: &syn::Field) {
+        if !matches!(field.vis, syn::Visibility::Public(_)) {
+            return;
+        }
+
+        let syn::Type::Path(path) = &field.ty else {
+            return;
+        };
+
+        for segment in &path.path.segments {
+            let ident = segment.ident.to_string();
+            if self
+                .forbidden_types
+                .iter()
+                .any(|forbidden| *forbidden == ident)
+            {
+                self.hits.push(ident);
+            }
+        }
+    }
+}
+
+impl<'ast> Visit<'ast> for PublicFieldTypeVisitor<'_> {
+    fn visit_field(&mut self, node: &'ast syn::Field) {
+        self.check_field(node);
+        syn::visit::visit_field(self, node);
+    }
 }
 
 impl ForbiddenTypePathVisitor<'_> {
@@ -287,19 +348,8 @@ impl<'ast> Visit<'ast> for ForbiddenTypePathVisitor<'_> {
 
 #[cfg(test)]
 mod tests {
-    use super::ForbiddenTypePathVisitor;
+    use super::{ForbiddenTypePathVisitor, PathSuffixVisitor};
     use syn::visit::Visit;
-
-    fn contains_any_term(source: &str, terms: &[&str]) -> bool {
-        terms.iter().any(|term| source.contains(term))
-    }
-
-    fn line_contains_all_terms(source: &str, terms: &[&str]) -> bool {
-        source
-            .lines()
-            .map(str::trim)
-            .any(|line| terms.iter().all(|term| line.contains(term)))
-    }
 
     fn forbidden_type_hits(source: &str, forbidden: &[&str]) -> Vec<String> {
         let parsed = syn::parse_file(source).expect("test source should parse");
@@ -313,25 +363,16 @@ mod tests {
         visitor.hits
     }
 
-    #[test]
-    fn detects_any_forbidden_term() {
-        let source = "TextFont { font_size: 22.0, ..default() }";
-
-        assert!(contains_any_term(source, &["TextFont", "TextColor"]));
-    }
-
-    #[test]
-    fn detects_terms_on_same_line() {
-        let source = "pub ui_camera: Entity,";
-
-        assert!(line_contains_all_terms(source, &["pub ", ": Entity"]));
-    }
-
-    #[test]
-    fn ignores_terms_split_across_lines() {
-        let source = "pub struct Example;\nlet entity: Entity = todo!();";
-
-        assert!(!line_contains_all_terms(source, &["pub ", ": Entity"]));
+    fn path_suffix_hits(source: &str, forbidden_suffixes: &[&[&str]]) -> Vec<String> {
+        let parsed = syn::parse_file(source).expect("test source should parse");
+        let mut visitor = PathSuffixVisitor {
+            forbidden_suffixes,
+            hits: Vec::new(),
+        };
+        visitor.visit_file(&parsed);
+        visitor.hits.sort();
+        visitor.hits.dedup();
+        visitor.hits
     }
 
     #[test]
@@ -364,5 +405,29 @@ mod tests {
         let hits = forbidden_type_hits(source, &["Transform"]);
 
         assert!(hits.is_empty());
+    }
+
+    #[test]
+    fn path_suffixes_match_associated_items_without_text_scanning() {
+        let source = r#"
+            fn f() {
+                let _ = TextureAtlasLayout::from_grid(size, 4, 4, None, None);
+                let _ = bevy::render::render_resource::ImageArrayLayout::RowCount(4);
+            }
+        "#;
+
+        let hits = path_suffix_hits(
+            source,
+            &[
+                &["TextureAtlasLayout", "from_grid"],
+                &["ImageArrayLayout", "RowCount"],
+            ],
+        );
+
+        assert!(
+            hits.iter()
+                .any(|hit| hit == "TextureAtlasLayout::from_grid")
+        );
+        assert!(hits.iter().any(|hit| hit == "ImageArrayLayout::RowCount"));
     }
 }

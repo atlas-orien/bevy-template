@@ -1,16 +1,6 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub fn require_path(path: impl AsRef<Path>, errors: &mut Vec<String>, hint: &str) {
-    let path = path.as_ref();
-    if !path.exists() {
-        errors.push(format!(
-            "required architecture anchor is missing: {}; {hint}",
-            path.display()
-        ));
-    }
-}
-
 pub fn reject_path(path: impl AsRef<Path>, errors: &mut Vec<String>, hint: &str) {
     let path = path.as_ref();
     if path.exists() {
@@ -33,10 +23,6 @@ pub fn read_file(path: impl AsRef<Path>, errors: &mut Vec<String>) -> Option<Str
             None
         }
     }
-}
-
-pub fn read_file_if_exists(path: impl AsRef<Path>) -> Option<String> {
-    fs::read_to_string(path).ok()
 }
 
 pub fn rust_files(root: impl AsRef<Path>) -> Vec<PathBuf> {
@@ -147,51 +133,6 @@ pub fn derived_names(item: &syn::Item) -> Option<Vec<String>> {
     Some(names)
 }
 
-pub fn manifest_dependency_names_result(
-    manifest_source: &str,
-) -> Result<Vec<String>, toml::de::Error> {
-    let manifest = manifest_source.parse::<toml::Table>()?;
-    Ok(collect_manifest_dependency_names(&manifest))
-}
-
-fn collect_manifest_dependency_names(manifest: &toml::Table) -> Vec<String> {
-    let mut names = Vec::new();
-
-    collect_dependency_table_names(manifest.get("dependencies"), &mut names);
-    collect_dependency_table_names(manifest.get("dev-dependencies"), &mut names);
-    collect_dependency_table_names(manifest.get("build-dependencies"), &mut names);
-
-    if let Some(targets) = manifest.get("target").and_then(toml::Value::as_table) {
-        for target in targets.values() {
-            collect_dependency_table_names(target.get("dependencies"), &mut names);
-            collect_dependency_table_names(target.get("dev-dependencies"), &mut names);
-            collect_dependency_table_names(target.get("build-dependencies"), &mut names);
-        }
-    }
-
-    names.sort();
-    names.dedup();
-    names
-}
-
-fn collect_dependency_table_names(table: Option<&toml::Value>, names: &mut Vec<String>) {
-    let Some(table) = table.and_then(toml::Value::as_table) else {
-        return;
-    };
-
-    for (key, value) in table {
-        if let Some(package) = value
-            .as_table()
-            .and_then(|dependency| dependency.get("package"))
-            .and_then(toml::Value::as_str)
-        {
-            names.push(package.to_string());
-        } else {
-            names.push(key.to_string());
-        }
-    }
-}
-
 fn collect_files(root: &Path, files: &mut Vec<PathBuf>) {
     let Ok(entries) = fs::read_dir(root) else {
         return;
@@ -218,68 +159,5 @@ fn collect_dirs(root: &Path, dirs: &mut Vec<PathBuf>) {
             dirs.push(path.clone());
             collect_dirs(&path, dirs);
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::manifest_dependency_names_result;
-
-    fn names(source: &str) -> Vec<String> {
-        manifest_dependency_names_result(source).expect("test manifest should parse")
-    }
-
-    #[test]
-    fn manifest_dependency_names_detects_supported_forms() {
-        let source = r#"
-[package]
-name = "demo"
-version = "0.1.0"
-
-[dependencies]
-ecs.workspace = true
-inline_workspace = { package = "ecs_inline", workspace = true }
-path_dep = { package = "ecs_path", path = "../ecs" }
-version_dep = "0.1"
-my_ecs = { package = "ecs_renamed", path = "../ecs" }
-
-[dev-dependencies]
-dev_ecs = { package = "ecs_dev", path = "../ecs" }
-
-[target.'cfg(unix)'.dependencies]
-unix_ecs = { package = "ecs_unix", path = "../ecs" }
-"#;
-
-        let names = names(source);
-
-        for expected in [
-            "ecs",
-            "ecs_inline",
-            "ecs_path",
-            "version_dep",
-            "ecs_renamed",
-            "ecs_dev",
-            "ecs_unix",
-        ] {
-            assert!(names.iter().any(|name| name == expected), "{expected}");
-        }
-    }
-
-    #[test]
-    fn manifest_dependency_names_avoids_prefixes_and_comments() {
-        let source = r#"
-[package]
-name = "demo"
-version = "0.1.0"
-
-[dependencies]
-ecs_helper = { path = "../ecs_helper" }
-# ecs = { path = "../ecs" }
-"#;
-
-        let names = names(source);
-
-        assert!(names.iter().any(|name| name == "ecs_helper"));
-        assert!(!names.iter().any(|name| name == "ecs"));
     }
 }

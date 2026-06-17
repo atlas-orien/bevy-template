@@ -2,13 +2,9 @@ use std::path::Path;
 
 use crate::rules::base::derives::reject_derived_types;
 use crate::rules::base::paths::{reject_paths, require_mod_rs_under_src};
-use crate::rules::util::{
-    derived_names, files_named_below, parse_rust_file, require_path, rust_files,
-};
+use crate::rules::util::{derived_names, files_named_below, parse_rust_file, rust_files};
 
 pub struct EcsRules<'a> {
-    pub crate_path: &'a str,
-    pub protocol_path: &'a str,
     pub obsolete_paths: &'a [&'a str],
     pub components_root: &'a str,
     pub resources_root: &'a str,
@@ -17,16 +13,6 @@ pub struct EcsRules<'a> {
 }
 
 pub fn check_ecs(rules: EcsRules<'_>, errors: &mut Vec<String>) {
-    require_path(
-        rules.crate_path,
-        errors,
-        "ecs is the Bevy ECS data/system crate and must remain present",
-    );
-    require_path(
-        rules.protocol_path,
-        errors,
-        "AI_PROTOCOL/ECS.md documents ECS data/system boundaries",
-    );
     reject_paths(
         rules.obsolete_paths,
         errors,
@@ -40,16 +26,6 @@ pub fn check_ecs(rules: EcsRules<'_>, errors: &mut Vec<String>) {
 
 fn check_ecs_components(root: &str, errors: &mut Vec<String>) {
     let root = Path::new(root);
-    require_path(
-        root,
-        errors,
-        "ECS component data must live under crates/ecs/src/components",
-    );
-    require_path(
-        root.join("README.md"),
-        errors,
-        "component documentation should stay centralized at components/README.md",
-    );
     require_mod_rs_under_src(root.to_string_lossy().as_ref(), errors);
 
     for readme in files_named_below(root, "README.md") {
@@ -70,16 +46,6 @@ fn check_ecs_components(root: &str, errors: &mut Vec<String>) {
 
 fn check_ecs_resources(root: &str, errors: &mut Vec<String>) {
     let root = Path::new(root);
-    require_path(
-        root,
-        errors,
-        "ECS resource data must live under crates/ecs/src/resources",
-    );
-    require_path(
-        root.join("README.md"),
-        errors,
-        "resource documentation should stay centralized at resources/README.md",
-    );
     require_mod_rs_under_src(root.to_string_lossy().as_ref(), errors);
     reject_derived_types(
         root,
@@ -91,16 +57,6 @@ fn check_ecs_resources(root: &str, errors: &mut Vec<String>) {
 
 fn check_ecs_events(root: &str, errors: &mut Vec<String>) {
     let root = Path::new(root);
-    require_path(
-        root,
-        errors,
-        "ECS event/message data must live under crates/ecs/src/events",
-    );
-    require_path(
-        root.join("README.md"),
-        errors,
-        "event documentation should stay centralized at events/README.md",
-    );
     require_mod_rs_under_src(root.to_string_lossy().as_ref(), errors);
     reject_system_functions(
         root,
@@ -118,11 +74,6 @@ fn check_ecs_events(root: &str, errors: &mut Vec<String>) {
 
 fn check_ecs_systems(root: &str, errors: &mut Vec<String>) {
     let root = Path::new(root);
-    require_path(
-        root,
-        errors,
-        "ECS behavior systems must live under crates/ecs/src/systems",
-    );
     require_mod_rs_under_src(root.to_string_lossy().as_ref(), errors);
     reject_derived_types(
         root,

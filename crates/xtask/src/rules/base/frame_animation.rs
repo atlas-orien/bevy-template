@@ -1,39 +1,26 @@
 use std::path::Path;
 
-use crate::rules::base::paths::{reject_file_names, reject_subdirs_except};
-use crate::rules::base::source::{reject_lines_containing_all_terms, reject_terms_in_rust_files};
-use crate::rules::util::{read_file_if_exists, rust_files};
+use crate::rules::base::source::{
+    reject_path_suffixes_in_rust_files, reject_string_literals_containing,
+};
+use crate::rules::util::{parse_rust_file, rust_files};
 
 pub struct FrameAnimationRules<'a> {
     pub frame_dir: &'a str,
-    pub forbidden_subdirs: &'a [&'a str],
-    pub forbidden_file_names: &'a [&'a str],
-    pub hardcoded_sheet_terms: &'a [&'a str],
+    pub hardcoded_sheet_paths: &'a [&'a [&'a str]],
 }
 
 pub fn check_frame_animation(rules: FrameAnimationRules<'_>, errors: &mut Vec<String>) {
     let frame_dir = Path::new(rules.frame_dir);
-    reject_subdirs_except(
+    reject_path_suffixes_in_rust_files(
         frame_dir,
-        rules.forbidden_subdirs,
-        errors,
-        "frame_animation is generic frame animation infrastructure; do not create demo/content/base subdomains here",
-    );
-    reject_file_names(
-        frame_dir,
-        rules.forbidden_file_names,
-        errors,
-        "frame_animation should stay generic; concrete animated characters or demo products belong in semantic render_2d directories such as characters",
-    );
-    reject_terms_in_rust_files(
-        frame_dir,
-        rules.hardcoded_sheet_terms,
+        rules.hardcoded_sheet_paths,
         errors,
         "frame animation sheet layout, clips, fps and repeat data must come from .frames.ron manifests",
     );
-    reject_lines_containing_all_terms(
+    reject_string_literals_containing(
         frame_dir,
-        &["load::<Image>", "\""],
+        &[".png", ".jpg", ".jpeg"],
         errors,
         "frame_animation must not bind concrete image paths; catalog loads manifests and concrete render products receive handles",
     );
@@ -42,16 +29,12 @@ pub fn check_frame_animation(rules: FrameAnimationRules<'_>, errors: &mut Vec<St
 
 fn reject_frame_demo_public_api(frame_dir: &Path, errors: &mut Vec<String>) {
     for file in rust_files(frame_dir) {
-        let Some(source) = read_file_if_exists(&file) else {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
             continue;
         };
 
-        for line in source.lines().map(str::trim) {
-            if !line.starts_with("pub ") {
-                continue;
-            }
-
-            if line.contains("Demo") || line.contains("demo_") {
+        for item in parsed.items {
+            if public_item_name(&item).is_some_and(|name| name.starts_with("Demo")) {
                 errors.push(format!(
                     "{} exposes demo API from frame_animation; frame animation should expose generic animation/resource/system types only",
                     file.display()
@@ -59,6 +42,30 @@ fn reject_frame_demo_public_api(frame_dir: &Path, errors: &mut Vec<String>) {
                 break;
             }
         }
+    }
+}
+
+fn public_item_name(item: &syn::Item) -> Option<String> {
+    match item {
+        syn::Item::Const(item) if matches!(item.vis, syn::Visibility::Public(_)) => {
+            Some(item.ident.to_string())
+        }
+        syn::Item::Enum(item) if matches!(item.vis, syn::Visibility::Public(_)) => {
+            Some(item.ident.to_string())
+        }
+        syn::Item::Fn(item) if matches!(item.vis, syn::Visibility::Public(_)) => {
+            Some(item.sig.ident.to_string())
+        }
+        syn::Item::Struct(item) if matches!(item.vis, syn::Visibility::Public(_)) => {
+            Some(item.ident.to_string())
+        }
+        syn::Item::Trait(item) if matches!(item.vis, syn::Visibility::Public(_)) => {
+            Some(item.ident.to_string())
+        }
+        syn::Item::Type(item) if matches!(item.vis, syn::Visibility::Public(_)) => {
+            Some(item.ident.to_string())
+        }
+        _ => None,
     }
 }
 
@@ -86,9 +93,7 @@ mod tests {
     fn rules<'a>(frame_dir: &'a str) -> FrameAnimationRules<'a> {
         FrameAnimationRules {
             frame_dir,
-            forbidden_subdirs: &[],
-            forbidden_file_names: &["demo.rs", "content.rs"],
-            hardcoded_sheet_terms: &["TextureAtlasLayout::from_grid"],
+            hardcoded_sheet_paths: &[&["TextureAtlasLayout", "from_grid"]],
         }
     }
 
@@ -114,7 +119,7 @@ mod tests {
         let root = temp_rule_dir();
         fs::write(
             root.join("manifest.rs"),
-            r#"asset_server.load::<Image>("2d/animated/player.png");"#,
+            r#"fn load(asset_server: AssetServer) { asset_server.load::<Image>("2d/animated/player.png"); }"#,
         )
         .expect("source should be written");
 

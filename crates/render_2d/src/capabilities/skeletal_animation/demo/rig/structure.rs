@@ -5,6 +5,17 @@ use super::parts::{
     DemoSkeletonArm2d, DemoSkeletonArm2dBundle, DemoSkeletonShoulder2d, DemoSkeletonTorso2d,
 };
 
+type DemoSkeleton2dChildren = bevy::ecs::spawn::SpawnRelatedBundle<
+    bevy::ecs::hierarchy::ChildOf,
+    (
+        bevy::ecs::spawn::Spawn<super::bundles::DemoBone2dBundle>,
+        bevy::ecs::spawn::Spawn<super::bundles::DemoJoint2dBundle>,
+        bevy::ecs::spawn::Spawn<super::bundles::DemoJoint2dBundle>,
+        bevy::ecs::spawn::Spawn<DemoSkeletonArm2dBundle>,
+        bevy::ecs::spawn::Spawn<DemoSkeletonArm2dBundle>,
+    ),
+>;
+
 pub struct DemoSkeleton2dRig {
     torso: DemoSkeletonTorso2d,
     left_shoulder: DemoSkeletonShoulder2d,
@@ -15,18 +26,7 @@ pub struct DemoSkeleton2dRig {
 
 #[derive(Bundle)]
 #[bundle(ignore_from_components)]
-pub struct DemoSkeleton2dChildrenBundle(
-    bevy::ecs::spawn::SpawnRelatedBundle<
-        bevy::ecs::hierarchy::ChildOf,
-        (
-            bevy::ecs::spawn::Spawn<super::bundles::DemoBone2dBundle>,
-            bevy::ecs::spawn::Spawn<super::bundles::DemoJoint2dBundle>,
-            bevy::ecs::spawn::Spawn<super::bundles::DemoJoint2dBundle>,
-            bevy::ecs::spawn::Spawn<DemoSkeletonArm2dBundle>,
-            bevy::ecs::spawn::Spawn<DemoSkeletonArm2dBundle>,
-        ),
-    >,
-);
+pub struct DemoSkeleton2dChildrenBundle(DemoSkeleton2dChildren);
 
 impl DemoSkeleton2dRig {
     pub(in crate::capabilities::skeletal_animation::demo) fn new(

@@ -75,6 +75,13 @@ crates/render_3d/src/characters/
 
 prefab 应该使用 `render_3d` 暴露的高层表现结构，不应该自己散落引用所有资源路径。
 
+材质基础结构和材质预设可以分层：
+
+- `primitives/materials` 定义通用材质描述和把资源句柄转换成 Bevy material 的能力。
+- `primitives/materials/presets` 可以定义模板自带 preview/demo 材质预设，并加载这些预设自己的资源路径。
+- 其它 render_3d 目录不要散落 `AssetServer::load` 或具体贴图路径；需要资源绑定时优先通过材质 preset 或更高层具体 product 表达。
+- prefab 不直接加载材质资源路径，只组合 render_3d 暴露的材质/presentation 结果。
+
 ## 边界规则
 
 - 可以直接使用 Bevy 的 `Camera3d`、`SceneRoot`、`Mesh3d`、`MeshMaterial3d`、`StandardMaterial`、`DirectionalLight`、`PointLight`、`SpotLight`、`AnimationPlayer`、`Transform`、`Visibility` 等类型。

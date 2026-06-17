@@ -25,7 +25,7 @@
 
 - `primitives/camera`: 3D camera 基础结构；当前提供 fixed、follow、orbit、isometric、top-down 等 camera preset。输入控制不放在这里，上层只修改对应 camera component 的数据。
 - `primitives/meshes`: 当前提供 `StaticMesh3d` / `StaticMesh3dBundle`，组合 `Mesh3d`、`MeshMaterial3d<StandardMaterial>`、`Transform`、`Visibility`。
-- `primitives/materials`: 当前提供 `StandardSurface3d`，用于创建项目默认的 `StandardMaterial` 配置。
+- `primitives/materials`: 当前提供 `StandardSurface3d`，用于创建项目默认的 `StandardMaterial` 配置。材质 primitive 可以接收 `Handle<Image>` 这类资源句柄，但具体资源路径和加载入口属于 `catalog`。
 - `primitives/lights`: 当前提供 direction / point / spot 基础 light bundle，以及 `presets/sun` 里的太阳光预设。
 - `primitives/transforms`: 当前提供 `LookAtTransform3d`，统一表达 3D 相机和灯光常用的 look-at transform。
 - 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。

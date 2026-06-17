@@ -8,6 +8,7 @@ pub mod camera;
 pub mod derives;
 pub mod frame_animation;
 pub mod functions;
+pub mod materials;
 pub mod paths;
 pub mod profiles;
 pub mod skeletal_animation;

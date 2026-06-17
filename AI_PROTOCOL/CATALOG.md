@@ -33,6 +33,7 @@
 - `catalog` 不读取输入、网络、外部 runtime 或 gameplay 状态。
 - `catalog` 只返回 prefab 或 prefab 所需的资源绑定数据。
 - 具体对象结构仍属于 `prefab`；视觉 bundle/system 仍属于 `render_2d`。
+- `render_3d::primitives::materials/presets` 可以封装模板自带 preview/demo 材质资源；这类材质资源不需要再经由 catalog 二次包装。
 - `catalog` 不直接定义通用 `NpcPrefab`、`PlayerPrefab` 等对象模板；这些放到 `prefab`。
 - `catalog` 定义的是具体内容，例如 `Npc1`、`Npc2`、`DemoPlayer`，并在内部转换成 `prefab` 暴露的模板。
 - `catalog` 可以定义默认相机内容，例如 `WorldCamera2d`，并转换成通用 camera prefab。

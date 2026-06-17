@@ -8,7 +8,7 @@ use super::plan::GameplaySpawnPlan;
 
 pub fn default_gameplay_spawn_plan(asset_server: &AssetServer) -> GameplaySpawnPlan {
     GameplaySpawnPlan::new()
-        .with(DemoBackgroundPrefab::default())
+        .with(DemoBackgroundPrefab)
         .with(demo_ground(asset_server))
         .with(demo_player(Vec2::new(0.0, 96.0), asset_server))
         .with(DemoRockPrefab::new(Vec2::new(-220.0, 94.0)))

@@ -2,7 +2,9 @@
 
 use bevy::prelude::*;
 use interaction::InteractionAction;
-use render_2d::products::ui::{DemoMenuButtonVisual, DemoMenuVisual};
+use render_2d::products::ui::{
+    DemoMenuButtonTextVisualBundle, DemoMenuButtonVisual, DemoMenuVisual,
+};
 
 use crate::Prefab;
 
@@ -112,24 +114,38 @@ impl Prefab for DemoMenuPrefab {
             .spawn(DemoMenuBundle::default())
             .with_children(|parent| {
                 for (index, item) in DEMO_MENU_ITEMS.iter().enumerate() {
-                    parent.spawn(Self::button(index, *item));
+                    parent
+                        .spawn(DemoMenuButtonBundle::new(index, *item))
+                        .with_children(|button| {
+                            button.spawn(DemoMenuButtonTextVisualBundle::new(item.label));
+                        });
                 }
             })
             .id()
     }
 }
 
-impl DemoMenuPrefab {
-    fn button(index: usize, item: DemoMenuItem) -> impl Bundle {
-        (
-            DemoMenuButtonIndex(index),
-            if index == 0 {
+#[derive(Bundle)]
+struct DemoMenuButtonBundle {
+    index: DemoMenuButtonIndex,
+    focused: DemoMenuFocused,
+    action: InteractionAction,
+    visual: render_2d::products::ui::DemoMenuButtonVisualBundle,
+}
+
+impl DemoMenuButtonBundle {
+    fn new(index: usize, item: DemoMenuItem) -> Self {
+        let focused = index == 0;
+
+        Self {
+            index: DemoMenuButtonIndex(index),
+            focused: if focused {
                 DemoMenuFocused::focused()
             } else {
                 DemoMenuFocused::unfocused()
             },
-            InteractionAction::new(item.action.id()),
-            DemoMenuButtonVisual::new(item.label, index == 0).into_bundle(),
-        )
+            action: InteractionAction::new(item.action.id()),
+            visual: DemoMenuButtonVisual::new(focused).into_bundle(),
+        }
     }
 }

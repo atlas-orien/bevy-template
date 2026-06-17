@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::demo_menu_button::apply_demo_menu_focus_system;
+use super::demo_menu::apply_demo_menu_focus_system;
 
 pub struct UiPlugin;
 

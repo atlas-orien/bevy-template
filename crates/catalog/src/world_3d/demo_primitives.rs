@@ -37,28 +37,24 @@ impl DemoPreviewItems3d {
             },
             DemoPreviewMaterials3d {
                 floor: materials.add(
-                    StandardSurface3d::new(Color::srgb(0.18, 0.22, 0.24))
+                    StandardSurface3d::new(Color::srgb(0.28, 0.32, 0.34))
                         .with_roughness(0.82)
-                        .unlit()
                         .into_material(),
                 ),
                 cube: materials.add(
                     StandardSurface3d::new(Color::srgb(0.92, 0.42, 0.24))
                         .with_roughness(0.5)
-                        .unlit()
                         .into_material(),
                 ),
                 sphere: materials.add(
                     StandardSurface3d::new(Color::srgb(0.25, 0.68, 0.95))
                         .with_roughness(0.35)
                         .with_metallic(0.15)
-                        .unlit()
                         .into_material(),
                 ),
                 capsule: materials.add(
                     StandardSurface3d::new(Color::srgb(0.38, 0.86, 0.58))
                         .with_roughness(0.58)
-                        .unlit()
                         .into_material(),
                 ),
             },

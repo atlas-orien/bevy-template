@@ -1,7 +1,7 @@
 use bevy::prelude::*;
+use catalog::world_2d::UiCamera2d;
 use prefab::Prefab;
 use prefab::ui::DemoMenuPrefab;
-use render_2d::primitives::camera::UiCamera;
 
 use crate::api::{LocalInputContext, LocalInputContextMessage};
 use crate::spawning::initial::spawn_initial_gameplay_plan_system;
@@ -28,7 +28,7 @@ fn enter_main_menu(
 ) {
     input_context.write(LocalInputContextMessage(LocalInputContext::UiNavigation));
 
-    let ui_camera = commands.spawn(UiCamera::default()).id();
+    let ui_camera = UiCamera2d::prefab().spawn(&mut commands);
     let menu = DemoMenuPrefab.spawn(&mut commands);
     commands.entity(menu).insert(UiTargetCamera(ui_camera));
 
@@ -49,7 +49,7 @@ fn enter_paused(
     let ui_camera = ui_cameras
         .iter()
         .next()
-        .unwrap_or_else(|| commands.spawn(UiCamera::default()).id());
+        .unwrap_or_else(|| UiCamera2d::prefab().spawn(&mut commands));
     let menu = DemoMenuPrefab.spawn(&mut commands);
     commands.entity(menu).insert(UiTargetCamera(ui_camera));
 
@@ -66,7 +66,7 @@ fn enter_game_over(
     let ui_camera = ui_cameras
         .iter()
         .next()
-        .unwrap_or_else(|| commands.spawn(UiCamera::default()).id());
+        .unwrap_or_else(|| UiCamera2d::prefab().spawn(&mut commands));
     let menu = DemoMenuPrefab.spawn(&mut commands);
     commands.entity(menu).insert(UiTargetCamera(ui_camera));
 

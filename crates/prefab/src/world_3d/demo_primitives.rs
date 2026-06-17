@@ -53,7 +53,7 @@ impl Default for DemoPreviewLights3dBundle {
                 Spawn(DirectionalLight3dBundle::default()),
                 Spawn(PointLight3dBundle::new(
                     PointLight {
-                        intensity: 420_000.0,
+                        intensity: 900_000.0,
                         range: 18.0,
                         color: Color::srgb(0.86, 0.94, 1.0),
                         shadows_enabled: true,
@@ -63,7 +63,7 @@ impl Default for DemoPreviewLights3dBundle {
                 )),
                 Spawn(SpotLight3dBundle::new(
                     SpotLight {
-                        intensity: 950_000.0,
+                        intensity: 1_800_000.0,
                         range: 16.0,
                         color: Color::srgb(1.0, 0.72, 0.48),
                         shadows_enabled: true,

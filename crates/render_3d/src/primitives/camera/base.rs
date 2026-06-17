@@ -14,6 +14,7 @@ pub(in crate::primitives::camera) struct BaseCamera3dConfig {
 pub(in crate::primitives::camera) struct BaseCamera3dBundle {
     camera_3d: Camera3d,
     camera: Camera,
+    projection: Projection,
     render_layers: RenderLayers,
     transform: Transform,
 }
@@ -27,6 +28,7 @@ impl BaseCamera3dBundle {
                 clear_color: config.clear_color,
                 ..default()
             },
+            projection: Projection::Perspective(PerspectiveProjection::default()),
             render_layers: RenderLayers::layer(config.layer),
             transform: Transform::from_translation(config.translation)
                 .looking_at(config.target, Vec3::Y),

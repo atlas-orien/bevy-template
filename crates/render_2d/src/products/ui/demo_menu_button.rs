@@ -44,39 +44,20 @@ impl DemoMenuButtonVisual {
 
 #[derive(Bundle)]
 #[bundle(ignore_from_components)]
-pub struct DemoMenuButtonVisualBundle(
-    DemoMenuButtonBundle,
-    DemoMenuVisualFocused,
-    bevy::ecs::spawn::SpawnRelatedBundle<
-        bevy::ecs::hierarchy::ChildOf,
-        bevy::ecs::spawn::Spawn<DemoMenuButtonTextBundle>,
-    >,
-);
-
-impl DemoMenuButtonVisualBundle {
-    pub fn new(label: &'static str, focused: bool) -> Self {
-        Self(
-            DemoMenuButtonBundle::default(),
-            if focused {
-                DemoMenuVisualFocused::focused()
-            } else {
-                DemoMenuVisualFocused::unfocused()
-            },
-            children![DemoMenuButtonTextBundle::new(label)],
-        )
-    }
-}
-
-#[derive(Bundle)]
-struct DemoMenuButtonBundle {
+pub struct DemoMenuButtonVisualBundle {
     button: Button,
     node: Node,
     border: BorderColor,
     background: BackgroundColor,
+    focused: DemoMenuVisualFocused,
+    text: bevy::ecs::spawn::SpawnRelatedBundle<
+        bevy::ecs::hierarchy::ChildOf,
+        bevy::ecs::spawn::Spawn<(Text, TextFont, TextColor)>,
+    >,
 }
 
-impl Default for DemoMenuButtonBundle {
-    fn default() -> Self {
+impl DemoMenuButtonVisualBundle {
+    pub fn new(label: &'static str, focused: bool) -> Self {
         Self {
             button: Button,
             node: Node {
@@ -91,26 +72,16 @@ impl Default for DemoMenuButtonBundle {
             },
             border: BorderColor::all(DEMO_MENU_NORMAL_BORDER),
             background: BackgroundColor(DEMO_MENU_NORMAL_BACKGROUND),
-        }
-    }
-}
-
-#[derive(Bundle)]
-struct DemoMenuButtonTextBundle {
-    text: Text,
-    font: TextFont,
-    color: TextColor,
-}
-
-impl DemoMenuButtonTextBundle {
-    fn new(label: impl Into<String>) -> Self {
-        Self {
-            text: Text::new(label),
-            font: TextFont {
-                font_size: DEMO_MENU_BUTTON_FONT_SIZE,
-                ..default()
+            focused: if focused {
+                DemoMenuVisualFocused::focused()
+            } else {
+                DemoMenuVisualFocused::unfocused()
             },
-            color: TextColor(DEMO_MENU_TEXT),
+            text: children![(
+                Text::new(label),
+                TextFont::from_font_size(DEMO_MENU_BUTTON_FONT_SIZE),
+                TextColor(DEMO_MENU_TEXT),
+            )],
         }
     }
 }

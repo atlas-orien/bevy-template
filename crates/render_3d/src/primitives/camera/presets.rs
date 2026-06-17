@@ -1,5 +1,6 @@
 //! 可直接实例化的 3D camera preset。
 
+use bevy::camera::ClearColorConfig;
 use bevy::prelude::*;
 
 use super::base::{BaseCamera3dBundle, BaseCamera3dConfig};
@@ -32,7 +33,7 @@ impl FixedCamera3dBundle {
                 layer: FIXED_CAMERA_3D_LAYER,
                 translation,
                 target,
-                clear_color: default(),
+                clear_color: ClearColorConfig::Custom(Color::srgb(0.08, 0.09, 0.11)),
             }),
             marker: FixedCamera3dMarker,
         }

@@ -16,19 +16,20 @@ pub struct DirectionalLight3dBundle {
 
 impl Default for DirectionalLight3dBundle {
     fn default() -> Self {
-        Self::new(
-            DirectionalLight::default(),
-            Transform::from_rotation(Quat::from_euler(EulerRot::XYZ, -0.8, -0.6, 0.0)),
-        )
+        Self::new(DirectionalLight {
+            illuminance: 35_000.0,
+            shadows_enabled: true,
+            ..default()
+        })
     }
 }
 
 impl DirectionalLight3dBundle {
-    pub fn new(light: DirectionalLight, transform: Transform) -> Self {
+    pub fn new(light: DirectionalLight) -> Self {
         Self {
             marker: DirectionalLight3dMarker,
             light,
-            transform,
+            transform: Transform::from_xyz(-2.5, 5.0, 4.5).looking_at(Vec3::ZERO, Vec3::Y),
         }
     }
 }

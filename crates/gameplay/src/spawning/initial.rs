@@ -1,14 +1,14 @@
 use bevy::prelude::*;
 use catalog::demo::{
     DemoBackground, DemoBgm, DemoGround, DemoLandmark, DemoPlayer, DemoRock, DemoSensorZone,
+    WorldCamera2d,
 };
-use prefab::lifecycle::GameplaySessionEntityMarker;
-use render_2d::primitives::camera::FollowCamera2dBundle;
 
 use super::plan::GameplaySpawnPlan;
 
 pub fn default_gameplay_spawn_plan(asset_server: &AssetServer) -> GameplaySpawnPlan {
     GameplaySpawnPlan::new()
+        .with(WorldCamera2d::prefab())
         .with(DemoBackground::prefab())
         .with(DemoGround::prefab(asset_server))
         .with(DemoPlayer::at(Vec2::new(0.0, 96.0)).prefab(asset_server))
@@ -26,7 +26,6 @@ pub fn spawn_initial_gameplay_plan_system(
     mut demo_session_started: MessageWriter<prefab::demo_events::DemoSessionStartedEvent>,
 ) {
     commands.insert_resource(DemoBgm::resource());
-    commands.spawn((FollowCamera2dBundle::default(), GameplaySessionEntityMarker));
 
     for prefab in default_gameplay_spawn_plan(&asset_server).into_prefabs() {
         prefab.spawn_boxed(&mut commands);

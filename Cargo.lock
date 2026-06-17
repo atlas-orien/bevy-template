@@ -1907,6 +1907,7 @@ dependencies = [
  "error",
  "prefab",
  "render_2d",
+ "render_3d",
 ]
 
 [[package]]
@@ -2410,6 +2411,7 @@ dependencies = [
  "peripherals",
  "prefab",
  "render_2d",
+ "render_3d",
 ]
 
 [[package]]
@@ -4724,6 +4726,7 @@ dependencies = [
  "navigation",
  "physics",
  "render_2d",
+ "render_3d",
 ]
 
 [[package]]

@@ -1,4 +1,9 @@
 //! 3D world prefab namespace.
-//!
-//! The first template version focuses on 2D. Add concrete 3D prefabs here when
-//! the project starts using `render_3d`.
+
+mod demo_primitives;
+
+pub use demo_primitives::{
+    DemoPreviewCamera3dMarker, DemoPreviewCamera3dPrefab, DemoPreviewItems3dMarker,
+    DemoPreviewItems3dPrefab, DemoPreviewLights3dMarker, DemoPreviewLights3dPrefab,
+    DemoPreviewMaterials3d, DemoPreviewMeshes3d,
+};

@@ -6,8 +6,8 @@ use super::base::{BaseCamera3dBundle, BaseCamera3dConfig};
 
 const FIXED_CAMERA_3D_ORDER: isize = 0;
 const FIXED_CAMERA_3D_LAYER: usize = 0;
-const FIXED_CAMERA_3D_TRANSLATION: Vec3 = Vec3::new(6.0, 5.0, 8.0);
-const FIXED_CAMERA_3D_TARGET: Vec3 = Vec3::ZERO;
+const FIXED_CAMERA_3D_TRANSLATION: Vec3 = Vec3::new(0.0, 3.2, 7.0);
+const FIXED_CAMERA_3D_TARGET: Vec3 = Vec3::new(0.0, 0.7, 0.0);
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct FixedCamera3dMarker;

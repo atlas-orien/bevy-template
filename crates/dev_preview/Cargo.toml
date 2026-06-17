@@ -17,3 +17,4 @@ interaction.workspace = true
 peripherals.workspace = true
 prefab.workspace = true
 render_2d.workspace = true
+render_3d.workspace = true

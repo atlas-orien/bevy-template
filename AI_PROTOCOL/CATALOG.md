@@ -10,7 +10,7 @@
 
 ## 核心职责
 
-- 定义具体内容对象，例如 `DemoPlayer`、`DemoGround`、`DemoSensorZone`。
+- 定义具体内容对象，例如 `WorldCamera2d`、`DemoPlayer`、`DemoGround`、`DemoSensorZone`。
 - 在具体内容对象里保存对应 runtime 资源路径、loader settings 和默认内容参数。
 - 使用 `AssetServer`、`Assets<TextureAtlasLayout>` 等 Bevy 资源加载能力创建带资源的 prefab。
 - 给 `gameplay`、`dev_preview` 这类上层代码提供清晰入口，例如 `DemoPlayer::at(...).prefab(asset_server)`。
@@ -20,6 +20,7 @@
 
 - 2D 世界内容：写到 `crates/catalog/src/world_2d`。
 - 3D 世界内容：未来写到 `crates/catalog/src/world_3d`。
+- 默认 2D / 3D 世界相机内容写到对应 `world_2d` / `world_3d`，不要归入 demo 内容。
 - 不天然属于 2D / 3D 世界对象的共享内容，例如 demo BGM：写到对应语义目录，例如 `crates/catalog/src/audio`。
 - 聚合导出可以写到 `crates/catalog/src/demo.rs`，但具体内容类型不要全部堆在 `demo.rs`。
 - 不创建 `dev_preview` 目录；开发预览应该使用 catalog 内容，预览自身的组合逻辑放在 `crates/dev_preview`。
@@ -34,6 +35,7 @@
 - 具体对象结构仍属于 `prefab`；视觉 bundle/system 仍属于 `render_2d`。
 - `catalog` 不直接定义通用 `NpcPrefab`、`PlayerPrefab` 等对象模板；这些放到 `prefab`。
 - `catalog` 定义的是具体内容，例如 `Npc1`、`Npc2`、`DemoPlayer`，并在内部转换成 `prefab` 暴露的模板。
+- `catalog` 可以定义默认相机内容，例如 `WorldCamera2d`，并转换成通用 camera prefab。
 
 ## 资源规则
 

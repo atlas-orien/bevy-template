@@ -135,14 +135,15 @@ pub fn register_update_schedules(app: &mut App) {
 ## 依赖规则
 
 - `gameplay` 可以依赖 `prefab`，用于 gameplay setup 中使用封装好的对象模板、spawn API 和窄 facade。
+- `gameplay` 应优先通过 `catalog` 选择默认内容对象，再由 catalog 返回 prefab；不要直接依赖具体 render/prefab bundle 来生成常规世界内容。
 - `gameplay` 可以依赖 `intent`，用于注册和调度 Entity 意图相关能力。
 - `gameplay` 可以依赖 `interaction`，用于消费 UI 和世界对象交互 message。
-- `gameplay` 可以依赖 `render_2d` 的 camera 基础配置，用于编排 UI camera 和 UI prefab 的生成。
+- `gameplay` 可以依赖 `render_2d` 的 UI camera 基础配置，用于编排 UI camera 和 UI prefab 的运行时绑定。
 - `gameplay` 必须依赖 `error`。
 - `gameplay` 不依赖 `external_runtime`；external runtime 持有 gameplay manager。
 - `gameplay` 不依赖 `audio`；音频基础插件和 ECS 音频槽位桥接通过 `prefab` 组合。
 - `gameplay` 不依赖 `ecs`。
-- `gameplay` 不依赖 `render_3d`；除 UI camera 生成编排外，不直接依赖 `render_2d` 的具体表现内容。
+- `gameplay` 不依赖 `render_3d`；除 UI camera 生成编排外，不直接依赖 `render_2d` 的具体表现内容。世界相机应通过 catalog/prefab 生成。
 - `gameplay` 不直接依赖 `physics`；对象组合通过 `prefab` 完成，并由 `gameplay` 注册 `PrefabPlugin`。
 
 ## 验证要求

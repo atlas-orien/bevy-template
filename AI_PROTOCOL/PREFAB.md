@@ -16,6 +16,7 @@
 - 2D 世界对象 prefab：写到 `crates/prefab/src/world_2d`。
 - 3D 世界对象 prefab：未来写到 `crates/prefab/src/world_3d`。
 - 屏幕 UI prefab：写到 `crates/prefab/src/ui`。
+- 2D 世界相机 prefab：写到 `crates/prefab/src/world_2d/camera.rs` 或 `world_2d/camera/`；世界相机是常规世界对象，不属于 demo。
 
 ## 骨架
 
@@ -54,7 +55,8 @@ impl Prefab for YourObjectPrefab {
 - `prefab` 不决定生成时机。
 - `prefab` 不在一个 prefab 的 `spawn` 内部生成另一个 prefab；多个 prefab 的生成顺序由 gameplay 编排。
 - `prefab` 可以给可交互对象挂 `interaction::InteractionAction`，但不处理点击后的业务。
-- `prefab/src/ui` 只放具体 UI 画面 prefab，例如 menu；不要放 camera prefab。
+- `prefab/src/ui` 只放具体 UI 画面 prefab，例如 menu；不要放 world camera prefab。
+- 世界相机 prefab 属于 `prefab/src/world_2d` / `prefab/src/world_3d`，可以组合 `render_2d` / `render_3d` 暴露的 camera bundle。
 - `gameplay` 注册 `PrefabPlugin`，`app` 不直接注册 `PrefabPlugin`、`EcsPlugin`、`PhysicsPlugin` 或 `Render2dPlugin`。
 - `external_runtime`、`intent`、`gameplay` 使用 `prefab` 暴露的最小合法接口，不直接使用裸 `ecs`。
 - `gameplay` 决定具体 gameplay session 使用哪些 prefab。
@@ -81,6 +83,7 @@ impl Prefab for YourObjectPrefab {
 - UI camera 由 gameplay 使用 `render_2d::primitives::camera::UiCamera` 生成，再把 UI root 绑定到该 camera entity。
 - UI prefab 公开 API 不暴露 Bevy `Entity` 或 camera target 句柄；camera 绑定由 gameplay 在 spawn 后插入 `UiTargetCamera(camera_entity)`。
 - 屏幕 UI root 应该显式带 `UiTargetCamera(ui_camera)`；UI camera 可以带 `IsDefaultUiCamera` 作为默认 fallback。
+- 世界 camera 应优先通过 prefab/catalog 生成，不要在 gameplay 里直接散装 render camera bundle。
 - `prefab` 不直接操作 RenderApp、Render World、render graph、pipeline、GPU resource 或 `wgpu`。
 - `prefab` 不把实体生成到 Render World；它只通过 `Commands` 生成 Main World Entity。
 - Render SubApp 如何 extract、prepare、queue 和 draw，属于 Bevy/render 层，不属于 `prefab`。

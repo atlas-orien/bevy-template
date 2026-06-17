@@ -13,3 +13,4 @@ bevy.workspace = true
 error.workspace = true
 prefab.workspace = true
 render_2d.workspace = true
+render_3d.workspace = true

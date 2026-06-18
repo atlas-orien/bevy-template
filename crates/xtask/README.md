@@ -20,6 +20,21 @@ cargo run -p xtask -- help
 
 ## 当前命令
 
+### pack-assets
+
+扫描 `workbench/` 下所有已配置资源并打包。
+
+```sh
+cargo run -p xtask -- pack-assets
+```
+
+当前会处理：
+
+```text
+workbench/source_frames/{category}/{name}/
+workbench/source_tilesets/{name}.png + {name}.tileset.ron
+```
+
 ### pack-frame
 
 把 `workbench/source_frames/{category}/{name}` 下的 PNG 散帧打包成 Bevy 运行时使用的 sprite sheet 和 `.frames.ron` 描述文件。

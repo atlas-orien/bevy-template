@@ -1,7 +1,9 @@
+mod asset_packer;
 mod frame_packer;
 mod rules;
 mod tileset_packer;
 
+use asset_packer::pack_all_assets;
 use error::{ErrorKind, GameError, Result};
 use frame_packer::{PackFrameOptions, pack_frame_target};
 use rules::CheckStatus;
@@ -18,6 +20,10 @@ fn main() -> ExitCode {
 
     let result = match command.as_str() {
         "check" | "check-architecture" => rules::check_architecture(),
+        "pack-assets" | "pack-all-assets" => match pack_all_assets() {
+            Ok(()) => CheckStatus::Passed,
+            Err(error) => CheckStatus::Failed(vec![error.to_string()]),
+        },
         "pack-frame" | "pack-frames" => match parse_pack_frame_args(args) {
             Ok((target, options)) => match pack_frame_target(&target, options) {
                 Ok(()) => CheckStatus::Passed,
@@ -59,6 +65,7 @@ fn print_help() {
     println!();
     println!("命令:");
     println!("  check                         检查项目架构规则");
+    println!("  pack-assets                   打包 workbench 下所有已配置资源");
     println!("  pack-frame <category/name>    打包 workbench/source_frames 下的帧动画散图");
     println!("  pack-tileset <name>           打包 workbench/source_tilesets 下的 tileset 图片");
     println!();

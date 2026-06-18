@@ -4,6 +4,8 @@ pub mod camera;
 pub mod lights;
 pub mod materials;
 pub mod meshes;
+pub mod shaders;
+pub mod textures;
 pub mod transforms;
 
 pub use camera::Camera3dContentPlugin;

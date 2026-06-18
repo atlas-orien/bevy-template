@@ -38,8 +38,8 @@
 | 现实世界 | 3D 游戏里的资源 | 目录 |
 |---|---|---|
 | 雕塑的形状 | mesh（网格） | `models/` |
-| 雕塑表面刷的漆、贴的花纹 | texture（贴图） | `textures/` |
-| “这个表面是金属还是橡胶”的规则 | material（材质） | `materials/` |
+| 雕塑表面刷的漆、贴的花纹 | texture（贴图） | `materials/{name}/` |
+| “这个表面是金属还是橡胶”的规则 | material（材质） | `materials/{name}/` |
 | 人体内的骨头 | skeleton（骨架） | `skeletons/` |
 | 骨头和肌肉皮肤的绑定关系 | rig（绑定） | `rigs/` |
 | 一段舞蹈动作 | animation（动画） | `animations/` |
@@ -115,7 +115,7 @@ emissive.png    -> 每个点是否发光
 
 把这几张贴图叠在一起，一面普通的墙就能看起来像真实的砖墙，而 mesh 本身可能只是一个平板（normal 贴图负责伪造凹凸感）。
 
-这就是为什么 `textures/` 目录里你会看到 `albedo.png`、`normal.png`、`roughness.png` 这一组文件——它们是同一个材质的不同“图层”。
+这就是为什么一个材质目录里会看到 `albedo.png`、`normal.png`、`roughness.png` 这一组文件——它们是同一个材质的不同“图层”。在本项目里，普通材质贴图跟着材质放到 `assets/3d/materials/{material-name}/`，而不是单独放一个顶层 `textures/`。
 
 ---
 
@@ -192,13 +192,13 @@ Animation 是一段**随时间变化的骨头姿势记录**，专业叫 **keyfra
 ```text
 拿到一个 character.glb（自带贴图和动画）
   -> 直接放 assets/3d/models/character/character.glb 就行
-  -> 不需要去 textures/ animations/ 里再拆一份
+  -> 不需要去 materials/ animations/ 里再拆一份
 
 只有当你想：
   - 多个模型共用同一套贴图
   - 给一个 mesh 换不同材质
   - 把一套动画套到多个角色上
-才需要把对应资源拆出来，单独放进 textures/ materials/ animations/
+才需要把对应资源拆出来，单独放进 materials/ animations/
 ```
 
 新手阶段：**绝大多数情况，一个 `.glb` 就是一个完整可用的 3D 物体**。
@@ -286,11 +286,11 @@ Animation 是一段**随时间变化的骨头姿势记录**，专业叫 **keyfra
 
 ### 7.1 按“资源类型”分，不按“游戏对象”分
 
-`assets/3d` 顶层目录是 `models / textures / materials / animations / ...`，**不会**出现 `player/`、`enemy/`、`sword/` 这种业务分类。
+`assets/3d` 顶层目录是 `models / materials / animations / ...`，**不会**出现 `player/`、`enemy/`、`sword/` 这种业务分类。
 
 原因：
 
-> 业务对象如何组合 model、material、texture、animation、rig，属于代码、`render_3d` 配置或 prefab 层，不属于 `assets/3d` 的目录职责。
+> 业务对象如何组合 model、material、animation、rig，属于代码、`render_3d` 配置或 prefab 层，不属于 `assets/3d` 的目录职责。
 
 也就是说——“玩家由哪个模型 + 哪套动画 + 哪个材质组成”这件事，是**代码/prefab**决定的，不是靠目录结构表达的。资源目录只负责按类型把原料码放整齐。
 

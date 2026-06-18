@@ -73,7 +73,6 @@ tilemaps/
 ```text
 assets/3d/
   models/
-  textures/
   materials/
   animations/
   rigs/
@@ -86,6 +85,7 @@ assets/3d/
 ```
 
 runtime 3D 模型优先使用 `.glb`。
+普通材质贴图放到对应 `materials/{material-name}/` 目录。
 
 ## Shaders
 

@@ -52,7 +52,7 @@
 常见映射：
 
 - `crates/render_3d/src/models` 使用 `assets/3d/models`。
-- `crates/render_3d/src/materials` 使用 `assets/3d/materials`、`assets/3d/textures`、`assets/shaders/3d`。
+- `crates/render_3d/src/materials` 使用 `assets/3d/materials` 和 `assets/shaders/3d`。
 - `crates/render_3d/src/animation` 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons`。
 - `crates/render_3d/src/lighting` 使用 `assets/3d/lightmaps`、`assets/3d/irradiance-volumes`、`assets/3d/environment-maps`。
 - `crates/render_3d/src/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。
@@ -62,8 +62,8 @@
 
 ```text
 assets/3d/models/humanoid/humanoid.glb
-assets/3d/materials/humanoid/skin-a.ron
-assets/3d/textures/humanoid/skin-a-base-color.png
+assets/3d/materials/humanoid-skin-a/skin-a.ron
+assets/3d/materials/humanoid-skin-a/base-color.png
 assets/3d/animations/humanoid/walk.glb
 ```
 
@@ -77,9 +77,11 @@ prefab 应该使用 `render_3d` 暴露的高层表现结构，不应该自己散
 
 材质基础结构和材质预设可以分层：
 
+- `primitives/textures` 定义单张 texture 的资源路径、颜色空间和加载设置。
+- `primitives/shaders` 定义 shader 资源路径和 shader handle 加载入口；StandardMaterial 默认使用 Bevy PBR shader，不需要自定义 shader。
 - `primitives/materials` 定义通用材质描述和把资源句柄转换成 Bevy material 的能力。
 - `primitives/materials/presets` 可以定义模板自带 preview/demo 材质预设，并加载这些预设自己的资源路径。
-- 其它 render_3d 目录不要散落 `AssetServer::load` 或具体贴图路径；需要资源绑定时优先通过材质 preset 或更高层具体 product 表达。
+- 其它 render_3d 目录不要散落 `AssetServer::load` 或具体贴图路径；需要资源绑定时优先通过 texture/shader primitive、材质 preset 或更高层具体 product 表达。
 - prefab 不直接加载材质资源路径，只组合 render_3d 暴露的材质/presentation 结果。
 
 ## 边界规则

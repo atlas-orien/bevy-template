@@ -62,7 +62,6 @@ assets/
     static/
   3d/
     models/
-    textures/
     materials/
     animations/
     rigs/
@@ -173,7 +172,6 @@ assets/ui/themes/
 ```text
 assets/3d/
   models/
-  textures/
   materials/
   animations/
   rigs/
@@ -196,8 +194,7 @@ assets/3d/
 
 - `models/`: 可实例化的「一个 3D 对象主体」。一个对象一个子目录，路径 `assets/3d/models/{name}/{name}.glb`。glb 可以只含 mesh + 骨架（body），也可以打包贴图 / 动画。
 - `scenes/`: 「一组对象 + 灯光 + 相机」的组合 glb 或场景数据（一个房间、一关、一个环境）。注意与 `assets/scenes`（通用 runtime 场景数据）区分。
-- `textures/`: 3D 材质用的贴图，例如 `albedo.png` / `base-color.png` / `normal.png` / `roughness.png` / `metallic.png` / `ao.png` / `emissive.png`（`albedo` 与 `base-color` 同义）。
-- `materials/`: 材质配置文件或材质相关 runtime 数据。
+- `materials/`: 材质配置文件和材质贴图组。一个材质一个子目录，例如 `assets/3d/materials/demo-metal/base-color.png`、`normal.png`、`roughness.png`、`metallic.png`、`ao.png`、`emissive.png`（`albedo` 与 `base-color` 同义）。
 - `animations/`: 可复用的 3D 动画资源。
 - `rigs/`: rig/avatar 映射、重定向配置或控制骨架的 runtime 数据。
 - `skeletons/`: 独立骨架或 skeleton 描述（一套骨骼命名标准的参考 / 契约）。
@@ -212,7 +209,7 @@ assets/3d/
 
 蒙皮（skin）把 mesh 顶点绑定到具体骨骼，所以 **mesh + 骨架在 runtime 不可分**，它俩作为「body」整体留在 `models/{name}/`。
 
-可以干净拆分并单独替换的只有：贴图（`textures/`）、材质（`materials/`）、动画（`animations/`）。不要试图在 `assets/` 层把 mesh 和骨架拆成两个可任意重组的文件。
+可以干净拆分并单独替换的只有：材质贴图组（`materials/{name}/`）、材质配置（`materials/{name}/`）、动画（`animations/`）。不要试图在 `assets/` 层把 mesh 和骨架拆成两个可任意重组的文件。
 
 ### 共享骨架 / 动画：按 rig family 分组
 
@@ -246,7 +243,7 @@ assets/3d/
 两种形态都允许，按是否需要部分替换来选：
 
 - **整体打包**：一个 glb 含一切 → 放 `models/`（单对象）或 `scenes/`（组合）。最省事，但部分替换只能靠 runtime 覆盖，且 mesh / 骨架无法单换。
-- **模块化（本项目偏好，便于部分替换）**：body 留 `models/`，贴图进 `textures/`，动画进 `animations/`，材质进 `materials/`，在代码 / `prefab` 组合。换皮、换动作、换材质这类「部分替换」需求，**优先用模块化形态实现**。
+- **模块化（本项目偏好，便于部分替换）**：body 留 `models/`，材质贴图组和材质配置进 `materials/{name}/`，动画进 `animations/`，在代码 / `prefab` 组合。换皮、换动作、换材质这类「部分替换」需求，**优先用模块化形态实现**。
 
 判定规则：贴图 / 材质 / 骨架 / 动画如果已打包进 glb 且无需跨对象复用，不必拆出来；一旦需要跨对象共享或部分替换，就按下面的流水线拆分。
 

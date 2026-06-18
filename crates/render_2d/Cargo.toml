@@ -11,5 +11,5 @@ publish = false
 [dependencies]
 bevy.workspace = true
 error.workspace = true
-ron.workspace = true
+helper.workspace = true
 serde.workspace = true

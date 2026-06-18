@@ -1,7 +1,6 @@
 //! 通用 sprite sheet frame manifest，加载自 `.frames.ron` 资源。
 
 use std::collections::BTreeMap;
-use std::io::{Error as IoError, ErrorKind};
 
 use bevy::{
     asset::{AssetLoader, LoadContext, io::Reader},
@@ -9,6 +8,7 @@ use bevy::{
     reflect::TypePath,
 };
 use error::Result;
+use helper::assets::ron;
 use serde::Deserialize;
 
 #[derive(Asset, Debug, Clone, TypePath)]
@@ -95,8 +95,7 @@ impl AssetLoader for FrameAnimationManifestLoader2d {
     ) -> Result<Self::Asset> {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
-        let manifest: FrameAnimationManifestRon = ron::de::from_bytes(&bytes)
-            .map_err(|error| IoError::new(ErrorKind::InvalidData, error))?;
+        let manifest: FrameAnimationManifestRon = ron::from_bytes(&bytes)?;
         let clips = manifest
             .clips
             .into_iter()

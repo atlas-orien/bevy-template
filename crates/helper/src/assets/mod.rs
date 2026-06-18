@@ -1,6 +1,7 @@
 //! Shared Bevy asset loading helpers.
 
 pub mod image;
+pub mod ron;
 pub mod shader;
 pub mod texture;
 

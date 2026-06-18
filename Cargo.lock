@@ -3313,6 +3313,8 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
+ "ron",
+ "serde",
 ]
 
 [[package]]
@@ -5112,7 +5114,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
- "ron",
+ "helper",
  "serde",
 ]
 

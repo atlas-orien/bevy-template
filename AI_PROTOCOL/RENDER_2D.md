@@ -150,6 +150,7 @@
 - `primitives/frame_animation` 只暴露通用动画状态、manifest、handle、loader、plugin 和 system，不暴露 `Demo*` 类型或 `demo_*` API。
 - 具体角色如何使用 frame animation，写到 `render_2d/src/products/characters` 等语义目录；例如角色视觉 bundle 组合 `FrameAnimation2d` 和 `FrameAnimationManifest2d` handle。
 - 具体资源路径由 `catalog` 绑定；`frame_animation` 不直接加载具体图片资源。
+- `.frames.ron` 的 Bevy `AssetLoader` 属于 `frame_animation`；它可以使用 `helper::assets::ron` 做薄反序列化，但 manifest 类型和转换逻辑不移出 `render_2d`。
 - `capabilities/skeletal_animation` 当前不是通用骨骼 runtime，而是具体自定义骨骼动画产品集合。
 - `capabilities/skeletal_animation` 下每个具体产品必须建目录，例如 `capabilities/skeletal_animation/demo/`，不要写成 `demo_skeletal_animation.rs` 巨型单文件。
 - skeletal 产品目录 root 只放 `mod.rs`、`entry.rs`、`systems.rs`、`tests.rs` 和 `rig/`。

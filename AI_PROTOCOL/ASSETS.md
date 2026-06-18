@@ -58,8 +58,8 @@
 ```text
 assets/
   2d/
-    animated/
     static/
+    manifests/
   3d/
     models/
     materials/
@@ -88,7 +88,9 @@ assets/
   platform/
 ```
 
-`assets/2d/animated` 和 `assets/2d/static` 下按游戏对象语义继续分类：
+`assets/2d/static` 放 2D 图片成品，`assets/2d/manifests` 放 2D runtime 描述文件。
+
+`assets/2d/static` 下按游戏对象语义继续分类：
 
 ```text
 backgrounds/
@@ -100,20 +102,24 @@ props/
 tilemaps/
 ```
 
+`assets/2d/manifests` 下按 manifest 类型继续分类，例如 `frames/`、`tilesets/`。
+
 ## 2D 动画规则
 
 2D 帧动画成品必须输出到：
 
 ```text
-assets/2d/animated/{category}/{name}/
+assets/2d/static/{category}/{name}/
   {name}.png
+
+assets/2d/manifests/frames/{category}/{name}/
   {name}.frames.ron
 ```
 
 - `{name}.png` 是 runtime sprite sheet。
 - `{name}.frames.ron` 是 runtime 帧动画描述文件。
 - 不管输入来自散帧，还是来自已经打包好的整张图，最终 runtime 输出结构必须一致。
-- `assets/2d/animated` 下每个 runtime `.png` 必须有同目录同名 `.frames.ron`。
+- `assets/2d/static` 下每个 runtime sprite sheet `.png` 必须有对应的 `assets/2d/manifests/frames` 描述文件。
 - `frames.ron` 描述帧尺寸、行列数、clip、帧顺序、fps 和是否循环。
 
 散帧输入来源：

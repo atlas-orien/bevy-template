@@ -119,7 +119,7 @@ mod tests {
         let root = temp_rule_dir();
         fs::write(
             root.join("manifest.rs"),
-            r#"fn load(asset_server: AssetServer) { asset_server.load::<Image>("2d/animated/player.png"); }"#,
+            r#"fn load(asset_server: AssetServer) { asset_server.load::<Image>("2d/static/player.png"); }"#,
         )
         .expect("source should be written");
 

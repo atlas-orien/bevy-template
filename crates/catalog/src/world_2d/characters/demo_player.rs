@@ -3,7 +3,8 @@ use prefab::world_2d::characters::DemoPlayerPrefab;
 use render_2d::primitives::frame_animation::FrameAnimationManifest2d;
 
 const DEMO_PLAYER_FOOTSTEP_AUDIO: &str = "audio/demo_footstep.ogg";
-const DEMO_PLAYER_FRAMES: &str = "2d/animated/characters/demo-player/demo-player.frames.ron";
+const DEMO_PLAYER_FRAMES: &str =
+    "2d/manifests/frames/characters/demo-player/demo-player.frames.ron";
 
 pub struct DemoPlayer {
     position: Vec2,

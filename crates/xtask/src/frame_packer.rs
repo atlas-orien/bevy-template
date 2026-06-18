@@ -7,7 +7,8 @@ use image::{GenericImage, RgbaImage};
 use serde::Serialize;
 
 const SOURCE_ROOT: &str = "workbench/source_frames";
-const OUTPUT_ROOT: &str = "assets/2d/animated";
+const OUTPUT_IMAGE_ROOT: &str = "assets/2d/static";
+const OUTPUT_MANIFEST_ROOT: &str = "assets/2d/manifests/frames";
 
 #[derive(Debug, Clone, Copy)]
 pub struct PackFrameOptions {
@@ -64,14 +65,16 @@ pub fn pack_frame_target(target: &str, options: PackFrameOptions) -> Result<()> 
         ));
     };
 
-    let output_dir = Path::new(OUTPUT_ROOT).join(target);
-    let output_image = output_dir.join(format!("{name}.png"));
-    let output_manifest = output_dir.join(format!("{name}.frames.ron"));
+    let output_image_dir = Path::new(OUTPUT_IMAGE_ROOT).join(target);
+    let output_manifest_dir = Path::new(OUTPUT_MANIFEST_ROOT).join(target);
+    let output_image = output_image_dir.join(format!("{name}.png"));
+    let output_manifest = output_manifest_dir.join(format!("{name}.frames.ron"));
 
     let frames = collect_source_frames(&source_dir)?;
     let packed = pack_frames(&frames, options)?;
 
-    fs::create_dir_all(&output_dir)?;
+    fs::create_dir_all(&output_image_dir)?;
+    fs::create_dir_all(&output_manifest_dir)?;
     packed.image.save(&output_image).map_err(|error| {
         asset_error(
             "pack-frame-save-image",
@@ -271,7 +274,7 @@ fn manifest_image_path(frames: &[SourceFrame]) -> Result<String> {
         })?;
 
     Ok(Path::new("2d")
-        .join("animated")
+        .join("static")
         .join(target)
         .join(format!("{name}.png"))
         .to_string_lossy()

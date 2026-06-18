@@ -39,8 +39,8 @@ workbench/source_frames/{category}/{name}/run_down_000.png
 输出：
 
 ```text
-assets/2d/animated/{category}/{name}/{name}.png
-assets/2d/animated/{category}/{name}/{name}.frames.ron
+assets/2d/static/{category}/{name}/{name}.png
+assets/2d/manifests/frames/{category}/{name}/{name}.frames.ron
 ```
 
 散帧命名必须是：

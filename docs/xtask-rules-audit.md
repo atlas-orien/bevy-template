@@ -18,7 +18,7 @@
 - 禁止标准 `Result` 或其它 crate 定义 `Result` alias。
 - crate-level `//!` 文档强制检查。
 - Rust 文件 400 行限制。
-- `assets/2d/animated` 下 png 必须有同名 `.frames.ron`。
+- `assets/2d/static` 下 sprite sheet png 必须有对应 `assets/2d/manifests/frames` 的 `.frames.ron`。
 - render 文件只允许一个 public `Bundle` 产品入口。
 - prefab 禁止所有 `.insert(`。
 

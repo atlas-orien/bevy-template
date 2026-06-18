@@ -1,5 +1,5 @@
 (
-    image: "2d/animated/characters/demo-player/demo-player.png",
+    image: "2d/static/characters/demo-player/demo-player.png",
     frame_size: (24, 24),
     columns: 7,
     rows: 1,

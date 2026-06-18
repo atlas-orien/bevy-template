@@ -158,7 +158,7 @@
 - skeletal 的骨架结构写在 `rig/` 子目录，至少拆成 `structure.rs`、`parts.rs`、`bundles.rs`、`layout.rs`。
 - `rig/structure.rs` 描述完整 rig 由哪些部件组成；`parts.rs` 描述 torso、arm、shoulder 等部件；`bundles.rs` 描述 root/bone/joint bundle；`layout.rs` 描述尺寸、颜色、位置和左右侧语义。
 - 帧动画的 sprite sheet 布局、clip、帧顺序、fps 和循环信息必须来自
-  `assets/2d/animated/**/*.frames.ron`。
+  `assets/2d/manifests/frames/**/*.frames.ron`。
 - `render_2d` 不允许为具体 sprite sheet 写硬编码切片逻辑，例如
   `TextureAtlasLayout::from_grid(...)` 或 `ImageArrayLayout::{RowCount, ColumnCount}`。
 - 第一版不实现复杂骨骼 runtime，只保留清楚的数据边界。

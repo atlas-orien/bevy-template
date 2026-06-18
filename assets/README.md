@@ -5,7 +5,7 @@
 代码里使用的路径相对 `assets/`：
 
 ```rust
-asset_server.load("2d/animated/characters/name/name.png")
+asset_server.load("2d/static/characters/name/name.png")
 ```
 
 原始素材、参考资料、用户输入和工具输入放到 `workbench/`，不要在 runtime 代码里加载 `workbench/`。
@@ -22,8 +22,8 @@ asset_server.load("2d/animated/characters/name/name.png")
 ```text
 assets/
   2d/
-    animated/
     static/
+    manifests/
   3d/
   ui/
   audio/
@@ -42,8 +42,10 @@ assets/
 帧动画资源放到：
 
 ```text
-assets/2d/animated/{category}/{name}/
+assets/2d/static/{category}/{name}/
   {name}.png
+
+assets/2d/manifests/frames/{category}/{name}/
   {name}.frames.ron
 ```
 
@@ -52,6 +54,13 @@ assets/2d/animated/{category}/{name}/
 ```text
 assets/2d/static/{category}/{name}/
   {name}.png
+```
+
+Tileset 切分描述放到：
+
+```text
+assets/2d/manifests/tilesets/
+  {name}.tileset.ron
 ```
 
 常用分类：

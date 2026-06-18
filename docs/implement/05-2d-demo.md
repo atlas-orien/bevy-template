@@ -95,7 +95,7 @@ M11 依赖 M3（需要可走的地面）。
 
 | 资产 | 落点 | 规格建议 |
 |---|---|---|
-| tileset | `assets/2d/static/tilemaps/demo_tileset.png` | 16×16 或 32×32 每 tile，至少 4 种 tile（草、土、石、装饰） |
+| tileset | `assets/2d/static/tilemaps/demo_tileset.png` + `assets/2d/manifests/tilesets/demo_tileset.tileset.ron` | 16×16 或 32×32 每 tile，至少 4 种 tile（草、土、石、装饰） |
 | 角色 sprite sheet | `assets/2d/static/characters/demo-player/demo-player.png` + `assets/2d/manifests/frames/characters/demo-player/demo-player.frames.ron` | 行 = 动画（idle / walk），列 = 帧，每帧尺寸固定 |
 | 背景远层 | `assets/2d/static/backgrounds/demo_far.png` | 可横向平铺 |
 | 背景近层 | `assets/2d/static/backgrounds/demo_near.png` | 可横向平铺，带透明 |

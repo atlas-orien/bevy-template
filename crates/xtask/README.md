@@ -56,6 +56,33 @@ cargo run -p xtask -- pack-frame {category}/{name} --columns 8 --fps 12
 cargo run -p xtask -- pack-frame effects/slash --once
 ```
 
+### pack-tileset
+
+把 `workbench/source_tilesets/{name}.png` 输出成 runtime tileset 图片和 `.tileset.ron` 切分描述。
+
+```sh
+cargo run -p xtask -- pack-tileset demo_tileset --rows 4 --tile-size 32
+```
+
+输入：
+
+```text
+workbench/source_tilesets/demo_tileset.png
+```
+
+输出：
+
+```text
+assets/2d/static/tilemaps/demo_tileset.png
+assets/2d/manifests/tilesets/demo_tileset.tileset.ron
+```
+
+如果图片已经在 `assets/2d/static/tilemaps/`，可以只生成 manifest：
+
+```sh
+cargo run -p xtask -- pack-tileset demo_tileset --rows 4 --tile-size 32 --from-static
+```
+
 ### check
 
 检查项目结构是否符合当前模板规则。

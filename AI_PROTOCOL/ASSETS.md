@@ -134,6 +134,24 @@ workbench/source_frames/{category}/{name}/
 workbench/source_sheets/{category}/{name}/
 ```
 
+## 2D Tileset 规则
+
+Tileset 图片成品和切分描述必须输出到：
+
+```text
+assets/2d/static/tilemaps/{name}.png
+assets/2d/manifests/tilesets/{name}.tileset.ron
+```
+
+- `{name}.png` 是 runtime tileset 图片。
+- `{name}.tileset.ron` 只描述 tileset 图片如何被切分，例如 image 路径、array rows、tile size。
+- 地图怎么排列不写进 tileset manifest；关卡布局属于程序、prefab、level 或 scene 数据。
+- tileset 输入来源：
+
+```text
+workbench/source_tilesets/{name}.png
+```
+
 如果打包好的 sprite sheet 没有描述文件，工具最多自动生成默认 clip 或草稿描述；动画语义分组仍需要用户或 AI 补充。
 
 ## 2D 静态规则

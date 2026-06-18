@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use render_3d::primitives::meshes::{StaticMesh3d, StaticMesh3dBundle};
+use render_3d::products::props::{DemoFloor3d, DemoFloor3dBundle};
 
 use crate::Prefab;
 
@@ -20,7 +20,7 @@ impl DemoPreviewFloor3dPrefab {
 #[derive(Bundle)]
 struct DemoPreviewFloor3dBundle {
     marker: DemoPreviewFloor3dMarker,
-    visual: StaticMesh3dBundle,
+    visual: DemoFloor3dBundle,
 }
 
 impl Prefab for DemoPreviewFloor3dPrefab {
@@ -28,7 +28,7 @@ impl Prefab for DemoPreviewFloor3dPrefab {
         commands
             .spawn(DemoPreviewFloor3dBundle {
                 marker: DemoPreviewFloor3dMarker,
-                visual: StaticMesh3d::at(self.mesh, self.material, Vec3::ZERO).into_bundle(),
+                visual: DemoFloor3d::new(self.mesh, self.material).into_bundle(),
             })
             .id()
     }

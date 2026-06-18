@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use render_3d::primitives::meshes::{StaticMesh3d, StaticMesh3dBundle};
+use render_3d::products::props::{DemoCube3d, DemoCube3dBundle};
 
 use crate::Prefab;
 
@@ -20,7 +20,7 @@ impl DemoPreviewCube3dPrefab {
 #[derive(Bundle)]
 struct DemoPreviewCube3dBundle {
     marker: DemoPreviewCube3dMarker,
-    visual: StaticMesh3dBundle,
+    visual: DemoCube3dBundle,
 }
 
 impl Prefab for DemoPreviewCube3dPrefab {
@@ -28,12 +28,7 @@ impl Prefab for DemoPreviewCube3dPrefab {
         commands
             .spawn(DemoPreviewCube3dBundle {
                 marker: DemoPreviewCube3dMarker,
-                visual: StaticMesh3d::new(
-                    self.mesh,
-                    self.material,
-                    Transform::from_xyz(-1.8, 0.6, 0.0).with_rotation(Quat::from_rotation_y(0.45)),
-                )
-                .into_bundle(),
+                visual: DemoCube3d::new(self.mesh, self.material).into_bundle(),
             })
             .id()
     }

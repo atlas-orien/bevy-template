@@ -3,7 +3,10 @@
 use bevy::asset::AssetPlugin;
 use bevy::prelude::*;
 use bevy::window::{Window, WindowPlugin};
-use catalog::world_3d::{DemoPreviewCamera3d, DemoPreviewItems3d, DemoPreviewLights3d};
+use catalog::world_3d::{
+    DemoPreviewCamera3d, DemoPreviewCapsule3d, DemoPreviewCube3d, DemoPreviewFloor3d,
+    DemoPreviewLights3d, DemoPreviewSphere3d,
+};
 use prefab::Prefab;
 use render_3d::Render3dPlugin;
 
@@ -42,5 +45,8 @@ fn spawn_3d_primitives_preview_system(
 ) {
     DemoPreviewCamera3d::prefab().spawn(&mut commands);
     DemoPreviewLights3d::prefab().spawn(&mut commands);
-    DemoPreviewItems3d::prefab(&asset_server, &mut meshes, &mut materials).spawn(&mut commands);
+    DemoPreviewFloor3d::prefab(&mut meshes, &mut materials).spawn(&mut commands);
+    DemoPreviewCube3d::prefab(&mut meshes, &mut materials).spawn(&mut commands);
+    DemoPreviewSphere3d::prefab(&asset_server, &mut meshes, &mut materials).spawn(&mut commands);
+    DemoPreviewCapsule3d::prefab(&mut meshes, &mut materials).spawn(&mut commands);
 }

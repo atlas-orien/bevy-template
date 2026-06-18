@@ -1,9 +1,13 @@
 //! 3D world prefab namespace.
 
-mod demo_primitives;
+pub mod cameras;
+pub mod lights;
+pub mod objects;
 
-pub use demo_primitives::{
-    DemoPreviewCamera3dMarker, DemoPreviewCamera3dPrefab, DemoPreviewItems3dMarker,
-    DemoPreviewItems3dPrefab, DemoPreviewLights3dMarker, DemoPreviewLights3dPrefab,
-    DemoPreviewMaterials3d, DemoPreviewMeshes3d,
+pub use cameras::{DemoPreviewCamera3dMarker, DemoPreviewCamera3dPrefab};
+pub use lights::{DemoPreviewLights3dMarker, DemoPreviewLights3dPrefab};
+pub use objects::{
+    DemoPreviewCapsule3dMarker, DemoPreviewCapsule3dPrefab, DemoPreviewCube3dMarker,
+    DemoPreviewCube3dPrefab, DemoPreviewFloor3dMarker, DemoPreviewFloor3dPrefab,
+    DemoPreviewSphere3dMarker, DemoPreviewSphere3dPrefab,
 };

@@ -1,15 +1,15 @@
 //! Demo 金属 PBR 材质预设。
 
 use bevy::prelude::*;
-use helper::assets::ImageAsset;
+use helper::assets::TextureAsset;
 
 use crate::primitives::materials::StandardSurface3d;
 
-const DEMO_METAL_BASE_COLOR: ImageAsset =
-    ImageAsset::srgb("3d/materials/demo-metal/base-color.png");
-const DEMO_METAL_NORMAL: ImageAsset = ImageAsset::linear("3d/materials/demo-metal/normal.png");
-const DEMO_METAL_OCCLUSION_ROUGH_METAL: ImageAsset =
-    ImageAsset::linear("3d/materials/demo-metal/occlusion-rough-metal.png");
+const DEMO_METAL_BASE_COLOR: TextureAsset =
+    TextureAsset::srgb("3d/materials/demo-metal/base-color.png");
+const DEMO_METAL_NORMAL: TextureAsset = TextureAsset::linear("3d/materials/demo-metal/normal.png");
+const DEMO_METAL_OCCLUSION_ROUGH_METAL: TextureAsset =
+    TextureAsset::linear("3d/materials/demo-metal/occlusion-rough-metal.png");
 
 pub struct DemoMetalMaterial3d;
 

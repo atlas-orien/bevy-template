@@ -2,6 +2,8 @@
 
 pub mod image;
 pub mod shader;
+pub mod texture;
 
-pub use image::{ImageAsset, ImageColorSpace};
+pub use image::ImageAsset;
 pub use shader::ShaderAsset;
+pub use texture::{TextureAsset, TextureColorSpace};

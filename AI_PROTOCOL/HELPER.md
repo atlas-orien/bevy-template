@@ -11,7 +11,7 @@
 ## 核心职责
 
 - 提供跨世界通信、channel、transport 等基础设施。
-- 提供跨 crate 共享、无游戏语义的 Bevy 资源加载 helper，例如 image 的 sRGB / linear 加载设置、shader handle 加载入口。
+- 提供跨 crate 共享、无游戏语义的 Bevy 资源加载 helper，例如普通 image、渲染 texture 的 sRGB / linear 加载设置、shader handle 加载入口。
 - 未来可以放 network、序列化、协议辅助、进程间通信等共享 helper。
 - 不保存游戏状态。
 

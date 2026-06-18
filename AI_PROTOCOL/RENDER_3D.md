@@ -77,7 +77,7 @@ prefab 应该使用 `render_3d` 暴露的高层表现结构，不应该自己散
 
 材质基础结构和材质预设可以分层：
 
-- `helper::assets` 定义通用 image / shader 资源路径和加载设置。
+- `helper::assets` 定义通用 image、texture、shader 资源路径和加载设置；材质贴图使用 `TextureAsset`，普通图片才使用 `ImageAsset`。
 - `primitives/materials` 定义通用材质描述和把资源句柄转换成 Bevy material 的能力。
 - `primitives/materials/presets` 可以定义模板自带 preview/demo 材质预设，并加载这些预设自己的资源路径。
 - 其它 render_3d 目录不要散落 `AssetServer::load` 或具体贴图路径；需要资源绑定时优先通过 `helper::assets`、材质 preset 或更高层具体 product 表达。

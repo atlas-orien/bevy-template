@@ -28,7 +28,7 @@
 - `primitives/materials`: 当前提供 `StandardSurface3d`，用于创建项目默认的 `StandardMaterial` 配置；`presets` 可以封装模板自带 preview/demo 材质资源。
 - `primitives/lights`: 当前提供 direction / point / spot 基础 light bundle，以及 `presets/sun` 里的太阳光预设。
 - `primitives/transforms`: 当前提供 `LookAtTransform3d`，统一表达 3D 相机和灯光常用的 look-at transform。
-- 通用 image / shader 资源加载 helper 位于 `helper::assets`；`render_3d` 只决定材质、mesh、灯光等表现语义。
+- 通用 image / texture / shader 资源加载 helper 位于 `helper::assets`；`render_3d` 只决定材质、mesh、灯光等表现语义。
 - 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。
 - 以 `Marker` 结尾的 `Component` struct 必须是空 struct，不允许带字段。
 - marker 和它标记的具体对象放在同一个模块里，不单独集中到 `markers.rs`。

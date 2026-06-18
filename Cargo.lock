@@ -5123,6 +5123,7 @@ dependencies = [
  "bevy",
  "ecs",
  "error",
+ "helper",
 ]
 
 [[package]]

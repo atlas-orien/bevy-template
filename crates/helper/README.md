@@ -6,6 +6,7 @@
 
 ## 当前结构
 
+- `assets`: 通用 Bevy 资源加载 helper，例如 image 的 sRGB / linear 加载设置。
 - `channel`: channel 基础实现。
 
 ## 不应该放这里

@@ -19,11 +19,7 @@ pub fn check() -> CheckStatus {
             world_rule_terms: WORLD_RULE_TERMS,
             material_presets: MaterialPresetRules {
                 crate_path: RENDER_3D_CRATE,
-                allowed_asset_load_dirs: &[
-                    "crates/render_3d/src/primitives/materials/presets",
-                    "crates/render_3d/src/primitives/textures",
-                    "crates/render_3d/src/primitives/shaders",
-                ],
+                allowed_asset_load_dirs: &["crates/render_3d/src/primitives/materials/presets"],
             },
         },
         &mut errors,

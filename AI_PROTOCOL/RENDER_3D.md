@@ -77,11 +77,10 @@ prefab 应该使用 `render_3d` 暴露的高层表现结构，不应该自己散
 
 材质基础结构和材质预设可以分层：
 
-- `primitives/textures` 定义单张 texture 的资源路径、颜色空间和加载设置。
-- `primitives/shaders` 定义 shader 资源路径和 shader handle 加载入口；StandardMaterial 默认使用 Bevy PBR shader，不需要自定义 shader。
+- `helper::assets` 定义通用 image / shader 资源路径和加载设置。
 - `primitives/materials` 定义通用材质描述和把资源句柄转换成 Bevy material 的能力。
 - `primitives/materials/presets` 可以定义模板自带 preview/demo 材质预设，并加载这些预设自己的资源路径。
-- 其它 render_3d 目录不要散落 `AssetServer::load` 或具体贴图路径；需要资源绑定时优先通过 texture/shader primitive、材质 preset 或更高层具体 product 表达。
+- 其它 render_3d 目录不要散落 `AssetServer::load` 或具体贴图路径；需要资源绑定时优先通过 `helper::assets`、材质 preset 或更高层具体 product 表达。
 - prefab 不直接加载材质资源路径，只组合 render_3d 暴露的材质/presentation 结果。
 
 ## 边界规则

@@ -2,8 +2,8 @@ use std::fs;
 use std::path::Path;
 
 use error::{ErrorKind, GameError, Result};
+use helper::assets::manifests::{TilesetManifest, TilesetSourceConfig};
 use helper::assets::ron as ron_asset;
-use serde::{Deserialize, Serialize};
 
 const SOURCE_ROOT: &str = "workbench/source_tilesets";
 const OUTPUT_IMAGE_ROOT: &str = "assets/2d/static/tilemaps";
@@ -14,19 +14,6 @@ pub struct PackTilesetOptions {
     pub rows: u32,
     pub tile_size: (u32, u32),
     pub from_static: bool,
-}
-
-#[derive(Deserialize)]
-struct SourceTilesetConfig {
-    rows: u32,
-    tile_size: (u32, u32),
-}
-
-#[derive(Serialize)]
-struct TilesetManifest {
-    image: String,
-    array_rows: u32,
-    tile_size: (u32, u32),
 }
 
 pub fn pack_tileset_target(target: &str, options: PackTilesetOptions) -> Result<()> {
@@ -86,7 +73,7 @@ pub fn pack_tileset_from_config(target: &str) -> Result<()> {
             format!("failed to read {}: {error}", config_path.display()),
         )
     })?;
-    let config: SourceTilesetConfig = ron_asset::from_bytes(&bytes)?;
+    let config: TilesetSourceConfig = ron_asset::from_bytes(&bytes)?;
 
     pack_tileset_target(
         target,

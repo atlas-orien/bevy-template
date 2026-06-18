@@ -6,7 +6,7 @@
 
 ## 当前结构
 
-- `assets`: 通用 Bevy 资源加载 helper。普通图片使用 `ImageAsset`，渲染贴图使用显式 sRGB / linear 的 `TextureAsset`，RON helper 只做 `bytes -> T` 反序列化。
+- `assets`: 通用 Bevy 资源加载 helper。普通图片使用 `ImageAsset`，渲染贴图使用显式 sRGB / linear 的 `TextureAsset`，RON helper 只做 `bytes -> T` 反序列化，`manifests` 定义标准 runtime manifest schema。
 - `channel`: channel 基础实现。
 
 ## 不应该放这里

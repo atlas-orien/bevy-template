@@ -11,7 +11,7 @@
 ## 核心职责
 
 - 提供跨世界通信、channel、transport 等基础设施。
-- 提供跨 crate 共享、无游戏语义的 Bevy 资源加载 helper，例如普通 image、渲染 texture 的 sRGB / linear 加载设置、shader handle 加载入口、薄 RON 反序列化工具。
+- 提供跨 crate 共享、无游戏语义的 Bevy 资源加载 helper，例如普通 image、渲染 texture 的 sRGB / linear 加载设置、shader handle 加载入口、薄 RON 反序列化工具和标准 runtime manifest schema。
 - 未来可以放 network、序列化、协议辅助、进程间通信等共享 helper。
 - 不保存游戏状态。
 
@@ -19,6 +19,7 @@
 
 - 通用 channel：写到 `crates/helper/src/channel.rs`。
 - 通用 Bevy asset helper：写到 `crates/helper/src/assets`。
+- runtime manifest schema 写到 `crates/helper/src/assets/manifests`；它只定义 RON 文件格式，不注册 Bevy `AssetLoader`，不转换成 render/gameplay 类型。
 - RON helper 只负责 `bytes -> T` 反序列化；具体 Bevy `AssetLoader` 和资源语义属于对应 render / gameplay 模块。
 - 未来 network helper：写到 `crates/helper/src/network`。
 

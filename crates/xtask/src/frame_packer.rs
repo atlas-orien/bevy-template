@@ -3,8 +3,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use error::{ErrorKind, GameError, Result};
+use helper::assets::manifests::{FrameClipManifest, FrameManifest};
 use image::{GenericImage, RgbaImage};
-use serde::Serialize;
 
 const SOURCE_ROOT: &str = "workbench/source_frames";
 const OUTPUT_IMAGE_ROOT: &str = "assets/2d/static";
@@ -32,22 +32,6 @@ struct SourceFrame {
     path: PathBuf,
     clip_name: String,
     frame_number: u32,
-}
-
-#[derive(Serialize)]
-struct FrameManifest {
-    image: String,
-    frame_size: (u32, u32),
-    columns: u32,
-    rows: u32,
-    clips: BTreeMap<String, FrameClip>,
-}
-
-#[derive(Serialize)]
-struct FrameClip {
-    frames: Vec<usize>,
-    fps: f32,
-    repeat: bool,
 }
 
 pub fn pack_frame_target(target: &str, options: PackFrameOptions) -> Result<()> {
@@ -184,7 +168,7 @@ fn pack_frames(frames: &[SourceFrame], options: PackFrameOptions) -> Result<Pack
     let rows = frame_count.div_ceil(columns);
 
     let mut output = RgbaImage::new(frame_width * columns, frame_height * rows);
-    let mut clips = BTreeMap::<String, FrameClip>::new();
+    let mut clips = BTreeMap::<String, FrameClipManifest>::new();
 
     for (index, frame) in frames.iter().enumerate() {
         let image = if index == 0 {
@@ -229,7 +213,7 @@ fn pack_frames(frames: &[SourceFrame], options: PackFrameOptions) -> Result<Pack
 
         clips
             .entry(frame.clip_name.clone())
-            .or_insert_with(|| FrameClip {
+            .or_insert_with(|| FrameClipManifest {
                 frames: Vec::new(),
                 fps: options.fps,
                 repeat: options.repeat,

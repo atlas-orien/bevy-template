@@ -8,8 +8,8 @@ use bevy::{
     reflect::TypePath,
 };
 use error::Result;
+use helper::assets::manifests::{FrameClipManifest, FrameManifest};
 use helper::assets::ron;
-use serde::Deserialize;
 
 #[derive(Asset, Debug, Clone, TypePath)]
 pub struct FrameAnimationManifest2d {
@@ -35,22 +35,6 @@ pub struct FrameAnimationHandle2d(pub Handle<FrameAnimationManifest2d>);
 
 pub type FrameAnimationLoader2d = FrameAnimationManifestLoader2d;
 
-#[derive(Deserialize)]
-struct FrameAnimationManifestRon {
-    image: String,
-    frame_size: (u32, u32),
-    columns: u32,
-    rows: u32,
-    clips: BTreeMap<String, FrameAnimationClipRon>,
-}
-
-#[derive(Deserialize)]
-struct FrameAnimationClipRon {
-    frames: Vec<usize>,
-    fps: f32,
-    repeat: bool,
-}
-
 impl FrameAnimationManifest2d {
     pub fn atlas_layout(&self) -> TextureAtlasLayout {
         let mut layout =
@@ -72,8 +56,8 @@ impl FrameAnimationManifest2d {
     }
 }
 
-impl From<FrameAnimationClipRon> for FrameAnimationClip2d {
-    fn from(value: FrameAnimationClipRon) -> Self {
+impl From<FrameClipManifest> for FrameAnimationClip2d {
+    fn from(value: FrameClipManifest) -> Self {
         Self {
             frames: value.frames,
             fps: value.fps,
@@ -95,7 +79,7 @@ impl AssetLoader for FrameAnimationManifestLoader2d {
     ) -> Result<Self::Asset> {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
-        let manifest: FrameAnimationManifestRon = ron::from_bytes(&bytes)?;
+        let manifest: FrameManifest = ron::from_bytes(&bytes)?;
         let clips = manifest
             .clips
             .into_iter()

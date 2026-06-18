@@ -1,5 +1,6 @@
 //! 角色头顶血条覆盖层与血量同步系统。
 
+use bevy::ecs::hierarchy::ChildSpawnerCommands;
 use bevy::prelude::*;
 
 const DEMO_HEALTH_BAR_WIDTH: f32 = 46.0;
@@ -17,7 +18,7 @@ pub struct DemoHealthBarOverlay2dMarker;
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct DemoHealthBarFill2dMarker;
 
-pub struct DemoHealthBarOverlay2d;
+pub struct DemoHealthBar2d;
 
 #[derive(Bundle)]
 struct DemoHealthBarOverlay2dBundle {
@@ -36,14 +37,16 @@ impl Default for DemoHealthBarOverlay2dBundle {
     }
 }
 
-impl DemoHealthBarOverlay2d {
-    pub fn into_bundle(self) -> DemoHealthBarOverlay2dProductBundle {
-        DemoHealthBarOverlay2dProductBundle::default()
+impl DemoHealthBar2d {
+    pub fn spawn(parent: &mut ChildSpawnerCommands) {
+        parent
+            .spawn(DemoHealthBarOverlay2dBundle::default())
+            .with_children(|health_bar| {
+                health_bar.spawn(DemoHealthBarBackground2dBundle::default());
+                health_bar.spawn(DemoHealthBarFill2dBundle::default());
+            });
     }
 }
-
-#[derive(Bundle, Default)]
-pub struct DemoHealthBarOverlay2dProductBundle(DemoHealthBarOverlay2dBundle);
 
 pub fn set_demo_health_bar_ratio(
     ratio: f32,

@@ -9,13 +9,9 @@ use ecs::components::{
 use physics::{
     PhysicsActiveCollisionTypes, PhysicsActiveEvents, PhysicsCollider2d, PhysicsRigidBody,
 };
-use render_2d::capabilities::particles::DemoParticleEmitter2d;
 use render_2d::primitives::camera::FollowCameraTarget2dMarker;
 use render_2d::primitives::frame_animation::FrameAnimationManifest2d;
-use render_2d::products::characters::{DemoNpcSprite2d, DemoPlayerSprite2d};
-use render_2d::products::overlays::{
-    DemoHealthBarBackground2dBundle, DemoHealthBarFill2dBundle, DemoHealthBarOverlay2d,
-};
+use render_2d::products::characters::{DemoNpcSprite2d, DemoPlayerVisual2d};
 
 use crate::Prefab;
 
@@ -233,14 +229,7 @@ impl Prefab for DemoPlayerPrefab {
         commands
             .spawn(DemoPlayerBundle::new(self.position, self.footstep_audio))
             .with_children(|parent| {
-                parent.spawn(DemoPlayerSprite2d::new(self.frame_manifest));
-                parent.spawn(DemoParticleEmitter2d::default());
-                parent
-                    .spawn(DemoHealthBarOverlay2d.into_bundle())
-                    .with_children(|health_bar| {
-                        health_bar.spawn(DemoHealthBarBackground2dBundle::default());
-                        health_bar.spawn(DemoHealthBarFill2dBundle::default());
-                    });
+                DemoPlayerVisual2d::new(self.frame_manifest).spawn(parent);
             })
             .id()
     }

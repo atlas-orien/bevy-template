@@ -2,8 +2,10 @@
 
 mod npc_sprite;
 mod player_sprite;
+mod player_visual;
 
 pub use npc_sprite::DemoNpcSprite2d;
 pub use player_sprite::DemoPlayerSprite2d;
+pub use player_visual::DemoPlayerVisual2d;
 
 pub(super) use player_sprite::prepare_demo_player_sprite_atlas_system;

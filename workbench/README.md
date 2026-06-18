@@ -35,6 +35,19 @@ assets/2d/manifests/tilesets/
 
 ## source_frames 规则
 
+`source_frames` 只放逐帧动画散图。推荐分类：
+
+```text
+characters/
+effects/
+items/
+props/
+backgrounds/
+```
+
+`tilemaps` 不放在 `source_frames`，必须走 `source_tilesets`。
+`particles` 默认是静态粒子贴图或粒子配置，不放在 `source_frames`；只有真正逐帧播放的粒子动画才按 `effects` 或其它语义分类放入 `source_frames`。
+
 源目录和目标目录必须使用相同的分类和名称：
 
 ```text

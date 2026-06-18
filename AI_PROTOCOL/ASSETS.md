@@ -128,6 +128,10 @@ assets/2d/manifests/frames/{category}/{name}/
 workbench/source_frames/{category}/{name}/
 ```
 
+- `source_frames` 只放逐帧动画散图，推荐分类为 `characters/`、`effects/`、`items/`、`props/`、`backgrounds/`。
+- `tilemaps` 不放在 `source_frames`，必须走 `workbench/source_tilesets`。
+- `particles` 默认是静态粒子贴图或粒子配置，不放在 `source_frames`；只有真正逐帧播放的粒子动画才按 `effects` 或其它语义分类放入 `source_frames`。
+
 已经打包好的 sprite sheet 输入来源未来使用：
 
 ```text

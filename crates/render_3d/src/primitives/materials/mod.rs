@@ -2,6 +2,7 @@ mod plugin;
 pub mod presets;
 
 use bevy::prelude::*;
+use helper::assets::TextureAsset;
 
 pub use plugin::Materials3dPrimitivePlugin;
 pub use presets::DemoMetalMaterial3d;
@@ -39,9 +40,25 @@ impl StandardSurface3d {
         self
     }
 
+    pub fn with_base_color_texture_asset(
+        self,
+        texture: TextureAsset,
+        asset_server: &AssetServer,
+    ) -> Self {
+        self.with_base_color_texture(texture.load(asset_server))
+    }
+
     pub fn with_normal_map_texture(mut self, texture: Handle<Image>) -> Self {
         self.normal_map_texture = Some(texture);
         self
+    }
+
+    pub fn with_normal_map_texture_asset(
+        self,
+        texture: TextureAsset,
+        asset_server: &AssetServer,
+    ) -> Self {
+        self.with_normal_map_texture(texture.load(asset_server))
     }
 
     pub fn with_metallic_roughness_texture(mut self, texture: Handle<Image>) -> Self {
@@ -49,13 +66,48 @@ impl StandardSurface3d {
         self
     }
 
+    pub fn with_metallic_roughness_texture_asset(
+        self,
+        texture: TextureAsset,
+        asset_server: &AssetServer,
+    ) -> Self {
+        self.with_metallic_roughness_texture(texture.load(asset_server))
+    }
+
     pub fn with_emissive_texture(mut self, texture: Handle<Image>) -> Self {
         self.emissive_texture = Some(texture);
         self
     }
 
+    pub fn with_emissive_texture_asset(
+        self,
+        texture: TextureAsset,
+        asset_server: &AssetServer,
+    ) -> Self {
+        self.with_emissive_texture(texture.load(asset_server))
+    }
+
     pub fn with_occlusion_texture(mut self, texture: Handle<Image>) -> Self {
         self.occlusion_texture = Some(texture);
+        self
+    }
+
+    pub fn with_occlusion_texture_asset(
+        self,
+        texture: TextureAsset,
+        asset_server: &AssetServer,
+    ) -> Self {
+        self.with_occlusion_texture(texture.load(asset_server))
+    }
+
+    pub fn with_occlusion_roughness_metallic_texture_asset(
+        mut self,
+        texture: TextureAsset,
+        asset_server: &AssetServer,
+    ) -> Self {
+        let handle = texture.load(asset_server);
+        self.occlusion_texture = Some(handle.clone());
+        self.metallic_roughness_texture = Some(handle);
         self
     }
 

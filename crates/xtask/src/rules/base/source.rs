@@ -226,6 +226,27 @@ pub fn reject_bevy_world_access(root: impl AsRef<Path>, errors: &mut Vec<String>
     reject_type_paths_in_rust_files(root, BEVY_WORLD_ACCESS_TYPES, errors, hint);
 }
 
+pub fn reject_direct_asset_server_loads(
+    root: impl AsRef<Path>,
+    errors: &mut Vec<String>,
+    hint: &str,
+) {
+    for file in rust_files(root) {
+        let Some(parsed) = parse_rust_file(&file, errors) else {
+            continue;
+        };
+
+        let mut visitor = DirectAssetServerLoadVisitor { hits: Vec::new() };
+        visitor.visit_file(&parsed);
+        visitor.hits.sort();
+        visitor.hits.dedup();
+
+        for hit in visitor.hits {
+            errors.push(format!("{} calls `{hit}` directly; {hint}", file.display()));
+        }
+    }
+}
+
 struct ForbiddenTypePathVisitor<'a> {
     forbidden: &'a [&'a str],
     hits: Vec<String>,
@@ -310,6 +331,10 @@ struct PublicFieldTypeVisitor<'a> {
     hits: Vec<String>,
 }
 
+struct DirectAssetServerLoadVisitor {
+    hits: Vec<String>,
+}
+
 impl PublicFieldTypeVisitor<'_> {
     fn check_field(&mut self, field: &syn::Field) {
         if !matches!(field.vis, syn::Visibility::Public(_)) {
@@ -337,6 +362,33 @@ impl<'ast> Visit<'ast> for PublicFieldTypeVisitor<'_> {
     fn visit_field(&mut self, node: &'ast syn::Field) {
         self.check_field(node);
         syn::visit::visit_field(self, node);
+    }
+}
+
+impl DirectAssetServerLoadVisitor {
+    fn receiver_name(receiver: &syn::Expr) -> Option<String> {
+        match receiver {
+            syn::Expr::Path(path) => path
+                .path
+                .segments
+                .last()
+                .map(|segment| segment.ident.to_string()),
+            syn::Expr::Reference(reference) => Self::receiver_name(&reference.expr),
+            _ => None,
+        }
+    }
+}
+
+impl<'ast> Visit<'ast> for DirectAssetServerLoadVisitor {
+    fn visit_expr_method_call(&mut self, node: &'ast syn::ExprMethodCall) {
+        let method = node.method.to_string();
+        if matches!(method.as_str(), "load" | "load_with_settings")
+            && Self::receiver_name(&node.receiver).is_some_and(|name| name == "asset_server")
+        {
+            self.hits.push(format!("asset_server.{method}"));
+        }
+
+        syn::visit::visit_expr_method_call(self, node);
     }
 }
 

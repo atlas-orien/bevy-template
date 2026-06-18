@@ -1,4 +1,3 @@
-use crate::rules::base::materials::MaterialPresetRules;
 use crate::rules::base::profiles::{Render3dRules, check_render_3d};
 use crate::rules::{CheckStatus, finish};
 
@@ -17,10 +16,6 @@ pub fn check() -> CheckStatus {
         Render3dRules {
             crate_path: RENDER_3D_CRATE,
             world_rule_terms: WORLD_RULE_TERMS,
-            material_presets: MaterialPresetRules {
-                crate_path: RENDER_3D_CRATE,
-                allowed_asset_load_dirs: &["crates/render_3d/src/primitives/materials/presets"],
-            },
         },
         &mut errors,
     );

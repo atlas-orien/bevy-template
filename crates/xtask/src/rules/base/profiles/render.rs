@@ -5,11 +5,11 @@ use crate::rules::base::camera::{CameraRules, check_camera};
 use crate::rules::base::derives::check_component_marker_names;
 use crate::rules::base::frame_animation::{FrameAnimationRules, check_frame_animation};
 use crate::rules::base::functions::reject_free_functions_returning_any;
-use crate::rules::base::materials::{MaterialPresetRules, check_material_presets};
 use crate::rules::base::paths::{reject_paths, require_mod_rs_under_src};
 use crate::rules::base::skeletal_animation::{SkeletalAnimationRules, check_skeletal_animation};
 use crate::rules::base::source::{
-    reject_direct_input_access, reject_path_suffixes_in_rust_files, reject_terms_in_rust_files,
+    reject_direct_asset_server_loads, reject_direct_input_access,
+    reject_path_suffixes_in_rust_files, reject_terms_in_rust_files,
     reject_type_paths_in_rust_files,
 };
 use crate::rules::base::tilemap::{TilemapRules, check_tilemap};
@@ -18,7 +18,6 @@ use crate::rules::base::visual_primitives::{ImagesRules, TextRules, check_images
 pub struct Render3dRules<'a> {
     pub crate_path: &'a str,
     pub world_rule_terms: &'a [&'a str],
-    pub material_presets: MaterialPresetRules<'a>,
 }
 
 pub fn check_render_3d(rules: Render3dRules<'_>, errors: &mut Vec<String>) {
@@ -35,7 +34,11 @@ pub fn check_render_3d(rules: Render3dRules<'_>, errors: &mut Vec<String>) {
         errors,
         "render_3d should not drive gameplay rules, so move the rule to gameplay/ecs/physics",
     );
-    check_material_presets(rules.material_presets, errors);
+    reject_direct_asset_server_loads(
+        Path::new(rules.crate_path).join("src"),
+        errors,
+        "render_3d must load concrete assets through helper::assets types such as TextureAsset, ImageAsset, or ShaderAsset",
+    );
 }
 
 pub struct Render2dRules<'a> {

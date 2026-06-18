@@ -9,7 +9,6 @@ use bevy::{
 };
 use error::Result;
 use helper::assets::manifests::{FrameClipManifest, FrameManifest};
-use helper::assets::ron;
 
 #[derive(Asset, Debug, Clone, TypePath)]
 pub struct FrameAnimationManifest2d {
@@ -79,7 +78,7 @@ impl AssetLoader for FrameAnimationManifestLoader2d {
     ) -> Result<Self::Asset> {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
-        let manifest: FrameManifest = ron::from_bytes(&bytes)?;
+        let manifest = FrameManifest::from_bytes(&bytes)?;
         let clips = manifest
             .clips
             .into_iter()

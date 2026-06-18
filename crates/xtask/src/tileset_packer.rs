@@ -3,7 +3,6 @@ use std::path::Path;
 
 use error::{ErrorKind, GameError, Result};
 use helper::assets::manifests::{TilesetManifest, TilesetSourceConfig};
-use helper::assets::ron as ron_asset;
 
 const SOURCE_ROOT: &str = "workbench/source_tilesets";
 const OUTPUT_IMAGE_ROOT: &str = "assets/2d/static/tilemaps";
@@ -67,13 +66,12 @@ pub fn pack_tileset_from_config(target: &str) -> Result<()> {
     validate_target(target)?;
 
     let config_path = Path::new(SOURCE_ROOT).join(format!("{target}.tileset.ron"));
-    let bytes = fs::read(&config_path).map_err(|error| {
+    let config = TilesetSourceConfig::from_path(&config_path).map_err(|error| {
         asset_error(
             "pack-tileset-config",
             format!("failed to read {}: {error}", config_path.display()),
         )
     })?;
-    let config: TilesetSourceConfig = ron_asset::from_bytes(&bytes)?;
 
     pack_tileset_target(
         target,

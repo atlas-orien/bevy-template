@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use crate::rules::base::source::{
-    reject_path_suffixes_in_rust_files, reject_string_literals_containing,
+    reject_path_suffixes_except_files, reject_path_suffixes_in_rust_files,
+    reject_string_literals_containing,
 };
 use crate::rules::util::{parse_rust_file, rust_files};
 
@@ -23,6 +24,13 @@ pub fn check_frame_animation(rules: FrameAnimationRules<'_>, errors: &mut Vec<St
         &[".png", ".jpg", ".jpeg"],
         errors,
         "frame_animation must not bind concrete image paths; catalog loads manifests and concrete render products receive handles",
+    );
+    reject_path_suffixes_except_files(
+        frame_dir,
+        &[&["ron", "from_bytes"]],
+        &[],
+        errors,
+        "standard frame manifest RON parsing must go through helper::assets::manifests::FrameManifest",
     );
     reject_frame_demo_public_api(frame_dir, errors);
 }

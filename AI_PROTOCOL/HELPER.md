@@ -19,8 +19,9 @@
 
 - 通用 channel：写到 `crates/helper/src/channel.rs`。
 - 通用 Bevy asset helper：写到 `crates/helper/src/assets`。
-- runtime manifest schema 写到 `crates/helper/src/assets/manifests`；它只定义 RON 文件格式，不注册 Bevy `AssetLoader`，不转换成 render/gameplay 类型。
+- runtime manifest schema 写到 `crates/helper/src/assets/manifests`；它定义 RON 文件格式和 `from_bytes` / `from_path` 读取入口，不注册 Bevy `AssetLoader`，不转换成 render/gameplay 类型。
 - RON helper 只负责 `bytes -> T` 反序列化；具体 Bevy `AssetLoader` 和资源语义属于对应 render / gameplay 模块。
+- 标准 manifest 的读取必须优先通过 `assets::manifests::*Manifest` 或对应 config 类型的 API；不要在业务 crate 里直接调用底层 RON helper 解析标准 manifest。
 - 未来 network helper：写到 `crates/helper/src/network`。
 
 ## 边界规则

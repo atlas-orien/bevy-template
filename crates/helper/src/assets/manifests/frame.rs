@@ -14,9 +14,13 @@ pub struct FrameManifest {
 }
 
 impl FrameManifest {
+    pub fn from_bytes(bytes: &[u8]) -> error::Result<Self> {
+        ron::from_bytes(bytes)
+    }
+
     pub fn from_path(path: impl AsRef<Path>) -> error::Result<Self> {
         let bytes = fs::read(path)?;
-        ron::from_bytes(&bytes)
+        Self::from_bytes(&bytes)
     }
 }
 

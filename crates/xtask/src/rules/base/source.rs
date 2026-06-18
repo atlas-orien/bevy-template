@@ -117,6 +117,39 @@ pub fn reject_path_suffixes_in_rust_files(
     }
 }
 
+pub fn reject_path_suffixes_except_files(
+    root: impl AsRef<Path>,
+    forbidden_suffixes: &[&[&str]],
+    allowed_file_suffixes: &[&str],
+    errors: &mut Vec<String>,
+    hint: &str,
+) {
+    for file in rust_files(root) {
+        if allowed_file_suffixes
+            .iter()
+            .any(|suffix| file.to_string_lossy().ends_with(suffix))
+        {
+            continue;
+        }
+
+        let Some(parsed) = parse_rust_file(&file, errors) else {
+            continue;
+        };
+
+        let mut visitor = PathSuffixVisitor {
+            forbidden_suffixes,
+            hits: Vec::new(),
+        };
+        visitor.visit_file(&parsed);
+        visitor.hits.sort();
+        visitor.hits.dedup();
+
+        for hit in visitor.hits {
+            errors.push(format!("{} references `{hit}`; {hint}", file.display()));
+        }
+    }
+}
+
 pub fn reject_string_literals_containing(
     root: impl AsRef<Path>,
     fragments: &[&str],

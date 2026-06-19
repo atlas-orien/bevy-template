@@ -87,3 +87,61 @@ pub fn spawn_demo_sensor_burst_particles_system(
         spawn_demo_sensor_particle_burst(&mut commands, transform.translation());
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use ecs::components::base::{MovementTarget, Speed};
+
+    use super::*;
+
+    #[derive(Bundle)]
+    struct TestMovingPlayerBundle {
+        movement: MovementIntent,
+        speed: Speed,
+        facing: Facing,
+    }
+
+    #[derive(Bundle)]
+    struct TestAnimatedSpriteBundle {
+        parent: ChildOf,
+        movement_clips: FrameAnimationMovementClips2d,
+        facing_flip: FrameAnimationFacingFlip2dMarker,
+        animation: FrameAnimation2d,
+        sprite: Sprite,
+    }
+
+    #[test]
+    fn movement_sync_selects_walk_clip_and_flips_left_facing_sprite() {
+        let mut app = App::new();
+        app.add_systems(Update, sync_demo_frame_animation_from_movement_system);
+
+        let player = app
+            .world_mut()
+            .spawn(TestMovingPlayerBundle {
+                movement: MovementIntent {
+                    target: MovementTarget::Direction(Vec2::NEG_X),
+                },
+                speed: Speed::default(),
+                facing: Facing::Left,
+            })
+            .id();
+
+        let sprite = app
+            .world_mut()
+            .spawn(TestAnimatedSpriteBundle {
+                parent: ChildOf(player),
+                movement_clips: FrameAnimationMovementClips2d::new("idle", "walk"),
+                facing_flip: FrameAnimationFacingFlip2dMarker,
+                animation: FrameAnimation2d::new("idle"),
+                sprite: Sprite::default(),
+            })
+            .id();
+
+        app.update();
+
+        let animation = app.world().get::<FrameAnimation2d>(sprite).unwrap();
+        let sprite = app.world().get::<Sprite>(sprite).unwrap();
+        assert_eq!(animation.clip, "walk");
+        assert!(sprite.flip_x);
+    }
+}

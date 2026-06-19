@@ -6,11 +6,20 @@ use super::{FrameAnimation2d, FrameAnimationHandle2d, FrameAnimationManifest2d};
 
 pub(super) struct FrameAnimationSystemsPlugin;
 
+#[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash)]
+pub enum FrameAnimationSystemSet {
+    Advance,
+}
+
 impl Plugin for FrameAnimationSystemsPlugin {
     fn build(&self, app: &mut App) {
         app.init_asset::<FrameAnimationManifest2d>()
             .init_asset_loader::<super::FrameAnimationManifestLoader2d>()
-            .add_systems(Update, frame_animation_system);
+            .configure_sets(PostUpdate, FrameAnimationSystemSet::Advance)
+            .add_systems(
+                PostUpdate,
+                frame_animation_system.in_set(FrameAnimationSystemSet::Advance),
+            );
     }
 }
 
@@ -91,6 +100,12 @@ mod tests {
             .insert_resource(frame_manifests)
             .add_systems(Update, frame_animation_system);
         (app, manifest_handle)
+    }
+
+    fn switch_to_walk_system(mut animations: Query<&mut FrameAnimation2d>) {
+        for mut animation in &mut animations {
+            animation.set_clip(WALK_CLIP);
+        }
     }
 
     fn animated_sprite(
@@ -176,5 +191,26 @@ mod tests {
         animation.set_clip(IDLE_CLIP);
         assert_eq!(animation.elapsed_seconds_for_test(), 0.0);
         assert!(!animation.tick(FRAME_SECONDS / 2.0, FRAME_SECONDS, 1));
+    }
+
+    #[test]
+    fn post_update_frame_animation_uses_clip_selected_during_update() {
+        let (mut app, manifest) = animation_app(FRAME_SECONDS);
+        app.add_systems(Update, switch_to_walk_system);
+        let entity = app
+            .world_mut()
+            .spawn(animated_sprite(
+                0,
+                FrameAnimation2d::new(IDLE_CLIP),
+                manifest,
+            ))
+            .id();
+
+        app.update();
+
+        let sprite = app.world().get::<Sprite>(entity).unwrap();
+        assert_eq!(sprite.texture_atlas.as_ref().unwrap().index, 2);
+        let animation = app.world().get::<FrameAnimation2d>(entity).unwrap();
+        assert_eq!(animation.clip, WALK_CLIP);
     }
 }

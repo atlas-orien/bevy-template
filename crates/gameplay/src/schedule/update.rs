@@ -15,10 +15,14 @@ pub fn register_update_schedules(app: &mut App) {
         (
             forward_manager_requests_system.in_set(GameplayUpdateSet::ReceiveRuntimeRequests),
             consume_gameplay_requests_system.in_set(GameplayUpdateSet::ConsumeRuntimeRequests),
+            apply_demo_local_user_input_system
+                .run_if(in_state(AppState::Playing))
+                .in_set(GameplayUpdateSet::ApplyLocalInput),
+            prefab::movement::movement_system
+                .run_if(in_state(PauseState::Running))
+                .in_set(GameplayUpdateSet::Movement),
             (
-                apply_demo_local_user_input_system.run_if(in_state(AppState::Playing)),
                 handle_demo_sensor_triggered_system.run_if(in_state(PauseState::Running)),
-                prefab::movement::movement_system.run_if(in_state(PauseState::Running)),
                 (
                     handle_demo_ui_interactions_system,
                     handle_demo_ui_navigation_system,

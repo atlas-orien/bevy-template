@@ -22,6 +22,7 @@ use bevy::prelude::*;
 use ecs::EcsPlugin;
 use physics::PhysicsPlugin;
 use render_2d::Render2dPlugin;
+use render_2d::primitives::frame_animation::FrameAnimationSystemSet;
 
 pub struct PrefabPlugin;
 
@@ -40,8 +41,6 @@ impl Plugin for PrefabPlugin {
                 lifecycle::play_spawn_audio_system,
                 lifecycle::play_despawn_audio_system,
                 world_2d::demo_level::demo_sensor_bridge_system,
-                world_2d::demo_level::sync_demo_frame_animation_from_movement_system,
-                world_2d::demo_level::sync_demo_particle_emitters_from_movement_system,
                 world_2d::demo_level::sync_demo_health_bars_system,
                 world_2d::demo_level::spawn_demo_sensor_burst_particles_system,
                 world_2d::demo_level::demo_bgm_audio_system,
@@ -49,6 +48,14 @@ impl Plugin for PrefabPlugin {
                 world_2d::demo_level::demo_footstep_audio_system,
                 navigation::sync_demo_navigation_targets_from_intent_system,
             ),
+        )
+        .add_systems(
+            PostUpdate,
+            (
+                world_2d::demo_level::sync_demo_frame_animation_from_movement_system,
+                world_2d::demo_level::sync_demo_particle_emitters_from_movement_system,
+            )
+                .before(FrameAnimationSystemSet::Advance),
         );
     }
 }

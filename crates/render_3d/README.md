@@ -25,7 +25,7 @@
 
 - `primitives/camera`: 3D camera 基础结构；当前提供 fixed、follow、orbit、isometric、top-down 等 camera preset。输入控制不放在这里，上层只修改对应 camera component 的数据。
 - `primitives/meshes`: 当前提供 `StaticMesh3d` / `StaticMesh3dBundle`，组合 `Mesh3d`、`MeshMaterial3d<StandardMaterial>`、`Transform`、`Visibility`。
-- `primitives/materials`: 当前提供 `StandardSurface3d`，用于创建项目默认的 `StandardMaterial` 配置；`presets` 可以封装模板自带 preview/demo 材质资源。
+- `primitives/materials`: 当前提供 `MaterialSurface3d` 作为材质组合器；不同文件为同一个类型补充 flat color、textured PBR 等链式组合能力；不绑定具体资源路径。
 - `primitives/lights`: 当前提供 direction / point / spot 基础 light bundle，以及 `presets/sun` 里的太阳光预设。
 - `primitives/transforms`: 当前提供 `LookAtTransform3d`，统一表达 3D 相机和灯光常用的 look-at transform。
 - 通用 image / texture / shader 资源加载 helper 位于 `helper::assets`；`render_3d` 只决定材质、mesh、灯光等表现语义。
@@ -62,7 +62,7 @@
 常见映射：
 
 - `primitives/meshes` 使用 `assets/3d/models`。
-- `primitives/materials` 使用 `assets/3d/materials` 和 `assets/shaders/3d`。
+- `primitives/materials` 使用上层传入的 texture / shader handle 和材质参数；具体资源路径由 catalog 或更高层绑定。
 - `capabilities/animation` 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons`。
 - `products/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。
 - `products/scenes` 使用 `assets/3d/scenes`，必要时也可以引用 `assets/scenes`。

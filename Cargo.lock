@@ -1905,6 +1905,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
+ "helper",
  "prefab",
  "render_2d",
  "render_3d",

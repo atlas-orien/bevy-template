@@ -20,7 +20,15 @@ impl MaterialSurface3d {
         self.set_double_sided(true).set_cull_mode(None)
     }
 
-    pub fn with_cull_mode(self, cull_mode: Option<Face>) -> Self {
-        self.set_cull_mode(cull_mode)
+    pub fn cull_back(self) -> Self {
+        self.set_cull_mode(Some(Face::Back))
+    }
+
+    pub fn cull_front(self) -> Self {
+        self.set_cull_mode(Some(Face::Front))
+    }
+
+    pub fn no_cull(self) -> Self {
+        self.set_cull_mode(None)
     }
 }

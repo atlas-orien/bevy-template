@@ -2399,12 +2399,14 @@ dependencies = [
  "catalog",
  "ecs",
  "error",
+ "external_runtime",
  "gameplay",
  "interaction",
  "peripherals",
  "prefab",
  "render_2d",
  "render_3d",
+ "tokio",
 ]
 
 [[package]]

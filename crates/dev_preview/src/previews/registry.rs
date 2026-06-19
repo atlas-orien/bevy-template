@@ -2,11 +2,11 @@ use super::{capabilities, demo_game, demo_menu, primitives_3d, skeletal_animatio
 
 pub const DEFAULT_PREVIEW: &str = "demo_game";
 
-pub fn run(name: &str) {
+pub async fn run(name: &str) {
     match name {
         "capabilities" => capabilities::run(),
-        "demo_game" => demo_game::run(),
-        "demo_menu" => demo_menu::run(),
+        "demo_game" => demo_game::run().await,
+        "demo_menu" => demo_menu::run().await,
         "primitives_3d" => primitives_3d::run(),
         "skeletal_animation" => skeletal_animation::run(),
         unknown => {

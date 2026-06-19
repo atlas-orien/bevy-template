@@ -1,33 +1,37 @@
 # 应用子包
 
-`app` 是最终运行入口子包，负责组装 Bevy 应用。
+`app` 是最终运行入口子包，负责组装空的 Bevy 应用外壳。
 
 ## 职责
 
-- 配置 `DefaultPlugins`、窗口、图片采样等顶层 Bevy 设置。
-- 注册游戏玩法插件。
+- 配置 `DefaultPlugins`、窗口等顶层 Bevy 设置。
 - 配置 Bevy 顶层运行环境。
+- 保持模板默认运行入口干净，不注册 demo gameplay。
 
 ## 当前默认组装
 
 ```rust
-GameplayPlugin::new(runtime_requests.inbox(), manager_updates.sender())
+app::run()
 ```
 
-`GameplayPlugin` 是游戏玩法入口，内部负责 gameplay 状态、spawn、API 消费和 intent 能力。
+默认 `app` 只启动一个空窗口。demo 游戏流程、demo 菜单、prefab 展示等开发期内容放在 `crates/dev_preview`。
 
-`external_runtime` 不作为 Bevy plugin 注册到 app。AI、脚本、回放等 Bevy App 外部来源由 external runtime 持有 `ExternalRuntimeManager` 进入 gameplay。网络是双向通信层，v2 单独设计。
+运行完整 demo：
 
-本机键盘、鼠标和手柄由 `peripherals` 作为 Bevy App 内部 plugin 接入。UI 和世界对象 hover/click 等 Bevy interaction 由 `interaction` 作为 Bevy App 内部 plugin 接入。
-
-顶层 `main` 创建两个具体 channel：
-
-```text
-RuntimeRequestChannel: ExternalRuntimeManager -> Bevy App / GameplayPlugin
-ManagerUpdateChannel: Bevy App / GameplayPlugin -> ExternalRuntimeManager
+```sh
+cargo run -p dev_preview
 ```
 
-接收方定义语义并持有 inbox；另一侧只拿 sender。
+指定某个预览：
+
+```sh
+cargo run -p dev_preview -- demo_game
+cargo run -p dev_preview -- demo_menu
+```
+
+`external_runtime` 不作为 Bevy plugin 注册到 app。AI、脚本、回放等 Bevy App 外部来源由 external runtime 持有 `ExternalRuntimeManager` 进入 gameplay；默认空 app 不启动这些 demo 通道。
+
+本机键盘、鼠标和手柄由 `peripherals` 作为 Bevy App 内部 plugin 接入。UI 和世界对象 hover/click 等 Bevy interaction 由 `interaction` 作为 Bevy App 内部 plugin 接入。默认空 app 不注册它们；demo preview 需要时自行组装。
 
 ## 不应该放这里
 
@@ -35,5 +39,6 @@ ManagerUpdateChannel: Bevy App / GameplayPlugin -> ExternalRuntimeManager
 - 不写具体输入控制逻辑。
 - 不写移动、战斗、生成等模拟逻辑。
 - 不写具体精灵、网格、界面细节。
+- 不默认注册 demo gameplay、demo input 或 demo interaction。
 
-这里应该保持很薄，只做 Bevy 外壳和 gameplay 入口组装。
+这里应该保持很薄，只做 Bevy 外壳。需要演示完整 gameplay 时使用 `dev_preview`。

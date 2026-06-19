@@ -59,7 +59,3 @@ toolcraft-config = "0.2.0"
 
 [dependencies]
 app.workspace = true
-external_runtime.workspace = true
-gameplay.workspace = true
-helper.workspace = true
-tokio.workspace = true

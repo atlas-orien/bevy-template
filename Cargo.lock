@@ -184,10 +184,6 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "error",
- "gameplay",
- "helper",
- "interaction",
- "peripherals",
 ]
 
 [[package]]
@@ -394,10 +390,6 @@ name = "bevy-template"
 version = "0.1.0"
 dependencies = [
  "app",
- "external_runtime",
- "gameplay",
- "helper",
- "tokio",
 ]
 
 [[package]]

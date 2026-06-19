@@ -11,7 +11,3 @@ publish = false
 [dependencies]
 bevy.workspace = true
 error.workspace = true
-gameplay.workspace = true
-helper.workspace = true
-interaction.workspace = true
-peripherals.workspace = true

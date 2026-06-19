@@ -8,7 +8,7 @@
 
 - 使用 Cargo 工作区拆分职责。
 - 让后续开发有明确的代码落点，不把 ECS、玩法、渲染和应用组装混在一起。
-- 默认 app 使用 2D 渲染层。
+- 默认 app 是空 Bevy 项目；demo 演示放在 `dev_preview`。
 - 3D 渲染层独立存在，需要时再接入 app。
 - 全项目统一使用 `error::Result<T>` 和 `error::GameError`。
 - `error::GameError` 使用 `thiserror` 定义，外部错误转换统一在 `crates/error` 中添加。
@@ -33,8 +33,9 @@
 - `crates/prefab`: 可生成对象模板基础库，组合 ECS、physics、render 数据
 - `crates/render_2d`: 2D 渲染和表现层，包含 2D 相机、屏幕、界面、精灵等
 - `crates/render_3d`: 3D 渲染和表现层，包含 3D 相机、场景、3D 界面等
-- `crates/app`: Bevy App 子包，负责组装 Bevy 外壳和 `GameplayPlugin`
-- `src/main.rs`: 工作区根入口，同时启动 `external_runtime` 和 Bevy App
+- `crates/app`: Bevy App 子包，负责组装空 Bevy 外壳
+- `crates/dev_preview`: 开发预览入口，运行 demo gameplay、UI、prefab、渲染能力等演示
+- `src/main.rs`: 工作区根入口，启动空 Bevy App
 - `assets`: Bevy 运行时资源目录，模板默认只保留空目录
 - `config`: runtime 配置目录，默认 `services.toml` 关闭 network，单机游戏无需联网
 - `workbench`: 用户给 AI 和离线工具使用的工作台目录，不由 Bevy runtime 直接加载
@@ -46,10 +47,17 @@
 当前默认 app 组装：
 
 ```rust
-GameplayPlugin
+app::run()
 ```
 
-`src/main.rs` 会创建两个具体 channel，再分别交给 `external_runtime` 和 Bevy App。底层 channel 机制由 `helper` 提供，request/update 的语义类型由 `gameplay::api` 定义。
+默认 `cargo run` 只启动一个空 Bevy 窗口，不进入 demo gameplay。完整演示通过 `dev_preview` 运行：
+
+```sh
+cargo run -p dev_preview
+cargo run -p dev_preview -- demo_game
+```
+
+demo gameplay 仍使用 `GameplayPlugin`、`peripherals`、`interaction`、`catalog` 和 `prefab` 等正式 crate 组合，但这些内容不再由默认 app 入口自动注册。
 
 `config/services.toml` 是默认 runtime 配置。`network.enabled = false` 时不会启动网络；需要联机时再打开并填写 `local_addr`、`remote_addr`。
 
@@ -73,7 +81,7 @@ RuntimeRequestChannel: external_runtime -> Bevy App
 ManagerUpdateChannel: Bevy App -> external_runtime
 ```
 
-`helper` 提供两个世界之间共享的通信基础设施。`external_runtime` 持有有状态的 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。普通用户代码通过 manager 查询公开 entity id，不接触 Bevy `Entity`。
+`helper` 提供两个世界之间共享的通信基础设施。`external_runtime` 持有有状态的 manager API，把 Bevy App 外部的 input/local、input/device、input/ai 等来源转换成 gameplay 请求。普通用户代码通过 manager 查询公开 entity id，不接触 Bevy `Entity`。这些能力是模板可选能力，默认空 app 不启动 external runtime。
 
 `GameplayPlugin` 是注册到 Bevy App 的玩法流程入口，负责状态、spawn、request 消费和 gameplay systems 的调度。
 
@@ -84,10 +92,9 @@ ManagerUpdateChannel: Bevy App -> external_runtime
 ```mermaid
 flowchart TD
     main["src/main.rs"] --> app["crates/app"]
-    main --> external_runtime["crates/external_runtime"]
+    dev_preview["crates/dev_preview"] --> gameplay["crates/gameplay"]
 
-    app --> gameplay["crates/gameplay"]
-    external_runtime --> gameplay
+    external_runtime["crates/external_runtime"] -. optional .-> gameplay
 
     gameplay --> prefab["crates/prefab"]
     gameplay --> intent["crates/intent"]
@@ -97,13 +104,13 @@ flowchart TD
     prefab --> render2d
 ```
 
-`app` 依赖 `gameplay` 是因为游戏玩法层需要注册到 Bevy App。这里的 `app -> gameplay` 只表示：
+默认 `app` 不依赖 `gameplay`，只负责空 Bevy 外壳。demo 游戏流程由 `dev_preview` 依赖并注册 `GameplayPlugin`：
 
 ```rust
-app.add_plugins(GameplayPlugin)
+app.add_plugins(GameplayPlugin::without_external_manager())
 ```
 
-它不表示 app 负责外部输入、意图、物理规则，也不表示 app 会直接创建刚体、碰撞体或渲染对象。app 只配置 Bevy 外壳；gameplay session 生命周期、对象生成时机和系统调度都放在 `gameplay`。
+它不表示 dev_preview 负责外部输入、意图、物理规则，也不表示 dev_preview 会直接创建刚体、碰撞体或渲染对象。dev_preview 只组装演示入口；gameplay session 生命周期、对象生成时机和系统调度都放在 `gameplay`。
 
 `external_runtime -> gameplay` 表示外部 runtime 持有 manager API，并通过 gameplay 的 API 边界向 Bevy App 提交请求。普通用户代码不应该直接关心 Bevy `Entity`。
 
@@ -124,7 +131,8 @@ app.add_plugins(GameplayPlugin)
 - `prefab` 负责组合 `ecs`、`physics`、`render_2d` 等基础库，提供可直接生成的完整对象模板和面向 gameplay 的封装入口。
 - `render_2d` 只放 2D 表现相关代码，可以创建相机、sprite、UI 和渲染专用子实体，但不能驱动 gameplay 规则。
 - `render_3d` 只放 3D 表现相关代码。
-- `app` 只负责 Bevy 外壳、窗口等顶层配置，并注册唯一游戏玩法入口 `GameplayPlugin`。
+- `app` 只负责空 Bevy 外壳、窗口等顶层配置。
+- `dev_preview` 负责开发期演示组装，例如 demo gameplay、demo UI、render preview。
 - 可失败的项目函数统一返回 `error::Result<T>`。
 - 每个非 `error` 子包都会把它重新导出为本子包的 `Result`。
 - 不要在功能子包里自己定义新的 `Result` 别名。
@@ -136,6 +144,12 @@ app.add_plugins(GameplayPlugin)
 
 ```sh
 cargo run
+```
+
+运行完整 demo：
+
+```sh
+cargo run -p dev_preview
 ```
 
 检查：

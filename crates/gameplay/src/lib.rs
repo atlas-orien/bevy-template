@@ -12,12 +12,9 @@ pub mod state;
 pub use error::Result;
 
 use bevy::prelude::*;
-use intent::IntentPlugin;
 use prefab::PrefabPlugin;
 
 use self::api::GameplayApiPlugin;
-use self::cleanup::CleanupPlugin;
-use self::lifecycle::LifecyclePlugin;
 use self::schedule::SchedulePlugin;
 use self::state::StatePlugin;
 
@@ -60,14 +57,6 @@ impl Plugin for GameplayPlugin {
             app.insert_resource(update_sender);
         }
 
-        app.add_plugins((
-            PrefabPlugin,
-            GameplayApiPlugin,
-            StatePlugin,
-            SchedulePlugin,
-            CleanupPlugin,
-            LifecyclePlugin,
-            IntentPlugin,
-        ));
+        app.add_plugins((PrefabPlugin, GameplayApiPlugin, StatePlugin, SchedulePlugin));
     }
 }

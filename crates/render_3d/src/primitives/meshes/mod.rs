@@ -1,8 +1,4 @@
-mod plugin;
-
 use bevy::prelude::*;
-
-pub use plugin::Meshes3dPlugin;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct StaticMesh3dMarker;

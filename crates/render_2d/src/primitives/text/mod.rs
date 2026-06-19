@@ -1,8 +1,4 @@
-mod plugin;
-
 use bevy::prelude::*;
-
-pub use plugin::Text2dContentPlugin;
 
 pub struct WorldText2d {
     text: String,

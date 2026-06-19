@@ -1,10 +1,6 @@
 //! 通用 texture atlas sprite primitive。
 
-mod plugin;
-
 use bevy::prelude::*;
-
-pub use plugin::AtlasesPlugin;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct AtlasSprite2dMarker;

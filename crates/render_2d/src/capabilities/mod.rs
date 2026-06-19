@@ -9,9 +9,6 @@ pub mod pixel;
 pub mod skeletal_animation;
 
 pub use effects::EffectsPlugin;
-pub use lighting::Lighting2dPlugin;
-pub use materials::Materials2dPlugin;
-pub use mesh::Mesh2dContentPlugin;
 pub use particles::ParticlesPlugin;
 pub use pixel::PixelPlugin;
 pub use skeletal_animation::SkeletalAnimation2dPlugin;
@@ -24,9 +21,6 @@ impl Plugin for Render2dCapabilitiesPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             SkeletalAnimation2dPlugin,
-            Lighting2dPlugin,
-            Materials2dPlugin,
-            Mesh2dContentPlugin,
             EffectsPlugin,
             ParticlesPlugin,
             PixelPlugin,

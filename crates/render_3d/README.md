@@ -24,7 +24,7 @@
 通用、低层、可组合的 3D 表现基础件：
 
 - `primitives/camera`: 3D camera 基础结构；当前提供 fixed、follow、orbit、isometric、top-down 等 camera preset。输入控制不放在这里，上层只修改对应 camera component 的数据。
-- `primitives/meshes`: 当前提供 `StaticMesh3d` / `StaticMesh3dBundle`，组合 `Mesh3d`、`MeshMaterial3d<StandardMaterial>`、`Transform`、`Visibility`。
+- `primitives/models`: 提供 `Model3d` / `Model3dBundle`，组合外部 glb/gltf 场景资源的 `SceneRoot`、`Transform`、`Visibility`。
 - `primitives/materials`: 当前提供 `MaterialSurface3d` 作为材质组合器；不同文件为同一个类型补充 flat color、textured PBR 等链式组合能力；不绑定具体资源路径。
 - `primitives/lights`: 当前提供 direction / point / spot 基础 light bundle，以及 `presets/sun` 里的太阳光预设。
 - `primitives/transforms`: 当前提供 `LookAtTransform3d`，统一表达 3D 相机和灯光常用的 look-at transform。
@@ -61,7 +61,7 @@
 
 常见映射：
 
-- `primitives/meshes` 使用 `assets/3d/models`。
+- `primitives/models` 使用 `assets/3d/models`，表达外部 glb/gltf 场景资源的 Bevy 实例入口。
 - `primitives/materials` 使用上层传入的 texture / shader handle 和材质参数；具体资源路径由 catalog 或更高层绑定。
 - `capabilities/animation` 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons`。
 - `products/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。

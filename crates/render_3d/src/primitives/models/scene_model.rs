@@ -22,12 +22,10 @@ impl SceneModel3d {
         self
     }
 
-    pub fn into_bundle(self, transform: Transform) -> SceneModel3dBundle {
+    pub fn into_bundle(self) -> SceneModel3dBundle {
         SceneModel3dBundle {
             marker: SceneModel3dMarker,
             scene: SceneRoot(self.scene),
-            transform,
-            visibility: Visibility::default(),
         }
     }
 }
@@ -36,6 +34,4 @@ impl SceneModel3d {
 pub struct SceneModel3dBundle {
     marker: SceneModel3dMarker,
     scene: SceneRoot,
-    transform: Transform,
-    visibility: Visibility,
 }

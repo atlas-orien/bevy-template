@@ -37,13 +37,11 @@ impl Model3d {
         self
     }
 
-    pub fn into_bundle(self, transform: Transform) -> Model3dBundle {
+    pub fn into_bundle(self) -> Model3dBundle {
         Model3dBundle {
             marker: Model3dMarker,
             mesh: self.mesh.into_component(),
             material: MeshMaterial3d(self.material),
-            transform,
-            visibility: Visibility::default(),
         }
     }
 }
@@ -53,6 +51,4 @@ pub struct Model3dBundle {
     marker: Model3dMarker,
     mesh: Mesh3d,
     material: MeshMaterial3d<StandardMaterial>,
-    transform: Transform,
-    visibility: Visibility,
 }

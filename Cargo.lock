@@ -5121,6 +5121,7 @@ dependencies = [
  "ecs",
  "error",
  "helper",
+ "serde",
 ]
 
 [[package]]

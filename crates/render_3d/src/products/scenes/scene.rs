@@ -1,14 +1,11 @@
 use bevy::prelude::*;
 
-#[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
-pub struct SceneModel3dMarker;
-
 #[derive(Debug, Clone)]
-pub struct SceneModel3d {
+pub struct Scene3d {
     scene: Handle<Scene>,
 }
 
-impl SceneModel3d {
+impl Scene3d {
     pub fn new(scene: Handle<Scene>) -> Self {
         Self { scene }
     }
@@ -22,16 +19,18 @@ impl SceneModel3d {
         self
     }
 
-    pub fn into_bundle(self) -> SceneModel3dBundle {
-        SceneModel3dBundle {
-            marker: SceneModel3dMarker,
+    pub fn into_bundle(self) -> Scene3dBundle {
+        Scene3dBundle {
+            marker: Scene3dEntityMarker,
             scene: SceneRoot(self.scene),
         }
     }
 }
 
 #[derive(Bundle)]
-pub struct SceneModel3dBundle {
-    marker: SceneModel3dMarker,
+pub struct Scene3dBundle {
+    marker: Scene3dEntityMarker,
     scene: SceneRoot,
 }
+
+use super::Scene3dEntityMarker;

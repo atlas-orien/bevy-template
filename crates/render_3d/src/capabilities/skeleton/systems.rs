@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use super::{Bone3d, Pose3d};
+use crate::capabilities::skeleton::Pose3d;
+use crate::primitives::skeletons::Bone3d;
 
 pub(super) fn apply_pose_to_bones_system(
     poses: Query<&Pose3d, Changed<Pose3d>>,

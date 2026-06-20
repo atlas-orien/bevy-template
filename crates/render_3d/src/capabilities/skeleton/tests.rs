@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use super::{Bone3d, BoneId3d, Pose3d, SkeletonId3d, plugin::Skeleton3dPlugin};
+use super::{Pose3d, plugin::Skeleton3dPlugin};
+use crate::primitives::skeletons::{Bone3d, BoneId3d, SkeletonId3d};
 
 #[test]
 fn pose_updates_matching_bone_transform() {

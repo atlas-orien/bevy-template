@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::{BoneId3d, SkeletonId3d};
+use crate::primitives::skeletons::{BoneId3d, SkeletonId3d};
 
 #[derive(Component, Debug, Clone, Copy)]
 pub struct BonePose3d {

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::SkeletonId3d;
+use crate::primitives::skeletons::SkeletonId3d;
 
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct RigBinding3d {

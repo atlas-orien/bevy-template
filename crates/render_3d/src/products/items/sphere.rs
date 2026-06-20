@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::primitives::models::{Model3d, ModelInstance3d, ModelInstance3dBundle};
+
 #[derive(Component, Debug, Clone, Copy, Default, Eq, PartialEq)]
 pub struct SphereItem3dMarker;
 
@@ -23,12 +25,11 @@ impl SphereItem3d {
     }
 
     pub fn into_bundle(self) -> SphereItem3dBundle {
+        let model = Model3d::new(self.mesh, self.material);
+
         SphereItem3dBundle {
             marker: SphereItem3dMarker,
-            mesh: Mesh3d(self.mesh),
-            material: MeshMaterial3d(self.material),
-            transform: self.transform,
-            visibility: Visibility::default(),
+            model: ModelInstance3d::new(model, self.transform).into_bundle(),
         }
     }
 }
@@ -36,8 +37,5 @@ impl SphereItem3d {
 #[derive(Bundle)]
 pub struct SphereItem3dBundle {
     marker: SphereItem3dMarker,
-    mesh: Mesh3d,
-    material: MeshMaterial3d<StandardMaterial>,
-    transform: Transform,
-    visibility: Visibility,
+    model: ModelInstance3dBundle,
 }

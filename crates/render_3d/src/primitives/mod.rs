@@ -3,6 +3,7 @@
 pub mod camera;
 pub mod lights;
 pub mod materials;
+pub mod meshes;
 pub mod models;
 pub mod transforms;
 

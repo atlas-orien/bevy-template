@@ -38,7 +38,8 @@
 
 可复用但不是最低层的 3D 表现能力：
 
-- `capabilities/animation`: glTF、骨骼动画、animation graph 和播放状态。
+- `capabilities/skeleton`: 通用骨骼、rig 绑定、pose 数据和把 pose 应用到骨骼 Transform 的系统；不绑定具体人物资源。
+- `capabilities/animation`: 未来放 clip、playback、blend 等随时间生成 pose 的能力。
 - `capabilities/effects`: 命中特效、法术特效、拖尾、爆炸等纯视觉生命周期效果。
 - `capabilities/particles`: 3D 粒子发射器、粒子配置、纯视觉粒子生命周期。
 
@@ -65,7 +66,8 @@
 - `primitives/meshes` 表达从 glb/gltf 或程序生成几何体中得到的单个 mesh 资源引用。
 - `primitives/models` 使用上层传入的 mesh/material handle，表达可实例化的 3D 模型外观组合。
 - `primitives/materials` 使用上层传入的 texture / shader handle 和材质参数；具体资源路径由 catalog 或更高层绑定。
-- `capabilities/animation` 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons`。
+- `capabilities/skeleton` 使用 `assets/3d/rigs`、`assets/3d/skeletons`。
+- `capabilities/animation` 使用 `assets/3d/animations`。
 - `products/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。
 - `products/scenes` 使用 `assets/3d/scenes`，必要时也可以引用 `assets/scenes`。
 

@@ -5,7 +5,7 @@ pub mod lights;
 pub mod materials;
 pub mod meshes;
 pub mod models;
-pub mod skeletons;
+pub mod skins;
 pub mod transforms;
 
 pub use camera::Camera3dContentPlugin;

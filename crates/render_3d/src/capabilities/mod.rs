@@ -3,4 +3,3 @@
 pub mod animation;
 pub mod effects;
 pub mod particles;
-pub mod skeleton;

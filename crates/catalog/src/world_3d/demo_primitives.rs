@@ -2,7 +2,8 @@ use bevy::prelude::*;
 use helper::assets::TextureAsset;
 use prefab::world_3d::{
     DemoPreviewCamera3dPrefab, DemoPreviewCapsule3dPrefab, DemoPreviewCube3dPrefab,
-    DemoPreviewFloor3dPrefab, DemoPreviewLights3dPrefab, DemoPreviewSphere3dPrefab,
+    DemoPreviewFloor3dPrefab, DemoPreviewLights3dPrefab, DemoPreviewOrbitCamera3dPrefab,
+    DemoPreviewSphere3dPrefab,
 };
 use render_3d::primitives::materials::MaterialSurface3d;
 
@@ -17,6 +18,10 @@ pub struct DemoPreviewCamera3d;
 impl DemoPreviewCamera3d {
     pub fn prefab() -> DemoPreviewCamera3dPrefab {
         DemoPreviewCamera3dPrefab
+    }
+
+    pub fn orbit_prefab() -> DemoPreviewOrbitCamera3dPrefab {
+        DemoPreviewOrbitCamera3dPrefab
     }
 }
 

@@ -1,3 +1,4 @@
+mod animation_3d;
 mod capabilities;
 mod demo_game;
 mod demo_menu;

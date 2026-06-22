@@ -6,40 +6,79 @@
 
 `crates/render_3d` 是项目 3D 表现内容层。
 
-它读取 ECS 世界数据，把游戏显示成 3D 画面。它不是不可修改的底层库，也不是 `bevy_render` 的二次实现。用户可以在这里写具体游戏的 3D 表现代码。
+它不是 `bevy_render` 的二次封装，也不是像 `physics` 那样默认不让用户修改的基础 facade。用户可以在这里写已经配置好的具体 3D 表现内容，`prefab` 直接组合这些高层表现 bundle、component、marker 或 plugin。
 
 ## 核心职责
 
-- 3D 相机。
-- 3D model、mesh、材质、灯光、环境、场景表现和表现专用 marker。
-- 3D 动画、特效、粒子、覆盖表现。
-- 根据 ECS 数据更新 3D 表现。
+- 用户配置的 3D 相机、scene、model、mesh、材质、灯光、环境和场景表现。
+- 用户配置的 3D 动画、特效、粒子、覆盖表现。
+- 角色、物品、静物、场景、环境、特效、覆盖层等具体项目表现。
+- 根据上层传入的视觉组件、资源句柄和表现状态，把游戏世界显示成 3D 画面。
+- 创建渲染专用 Entity、Component、Bundle、Resource 和视觉 system。
 - 提供 `prefab` 可以直接组合的高层表现 bundle、marker、component 或 plugin。
+
+## Bevy 边界
+
+- 绝对不要重写一次 `bevy_render`。
+- 能直接使用 Bevy 类型时，直接使用 Bevy 类型。
+- `Camera3d`、`Projection`、`Camera` 直接用 Bevy。
+- `SceneRoot`、`Mesh3d`、`MeshMaterial3d` 直接用 Bevy。
+- `StandardMaterial`、custom material、shader handle 直接用 Bevy。
+- `DirectionalLight`、`PointLight`、`SpotLight` 直接用 Bevy。
+- `AnimationPlayer`、`AnimationGraph`、`AnimationGraphHandle` 直接用 Bevy。
+- `Transform`、`Visibility` 直接用 Bevy。
+- 可以把 Bevy 类型组合进项目自己的高层表现 bundle，例如角色 3D 表现 bundle、道具 3D 表现 bundle、scene 表现 bundle。
+- 不新增只镜像 Bevy 字段的 facade。
+
+## 和 prefab 的关系
+
+- `render_3d` 提供已经配置好的具体表现内容。
+- `prefab` 直接使用 `render_3d` 提供的 bundle、component、marker 或 helper。
+- `prefab` 不应该为了 3D 表现再重复配置一遍 scene、mesh、材质、灯光、动画、覆盖层等细节。
+- 如果某个表现内容只属于某个具体游戏对象，可以先写在 `render_3d` 的对应分类目录，再由 `prefab` 组合。
 
 ## 代码落点
 
-- 3D 相机：写到 `crates/render_3d/src/camera`。
-- 3D 模型、mesh、实例化表现：写到 `crates/render_3d/src/models`。
-- 3D 材质、shader material、材质状态：写到 `crates/render_3d/src/materials`。
-- 3D 动画、骨骼动画、animation graph、播放状态：写到 `crates/render_3d/src/animation`。
-- 3D 光源、阴影、bloom、lightmap 表现：写到 `crates/render_3d/src/lighting`。
-- skybox、environment map、雾、体积、环境氛围：写到 `crates/render_3d/src/environment`。
-- 3D 场景装配和场景级表现：写到 `crates/render_3d/src/scenes`。
-- 角色 3D 表现：写到 `crates/render_3d/src/characters`。
-- 物品、装备、掉落物 3D 表现：写到 `crates/render_3d/src/items`。
-- 静物、装饰物、场景摆件 3D 表现：写到 `crates/render_3d/src/props`。
-- 命中特效、法术特效、拖尾、爆炸等纯视觉生命周期效果：写到 `crates/render_3d/src/effects`。
-- 3D 粒子发射器和粒子配置：写到 `crates/render_3d/src/particles`。
-- 世界空间血条、名字、选中框、交互提示：写到 `crates/render_3d/src/overlays`。
-- 3D 渲染调试显示：写到 `crates/render_3d/src/debug`。
+- `primitives`: 最小通用表现单元，供 capabilities/products 组合。
+- `capabilities`: 较复杂的通用表现能力，可以带 plugin、system、runtime state。
+- `products`: 具体游戏对象、画面、场景或 3D 表现，通常给 `prefab` 直接组合。
+- `products` 对 `prefab` 暴露的公共入口应优先是命名的 public bundle struct 或具体 product struct；不要把最终公共产品 API 做成散装 Bevy 字段。
 
-当前目录是模板默认结构，可以按具体游戏调整，但必须保持表现层边界清楚。
+`primitives`:
 
-## Marker 规则
+- `primitives/camera`: 3D camera 基础结构和可直接实例化的 camera presets。
+- `primitives/lights`: 3D light 基础 bundle 和可直接实例化的 light presets。
+- `primitives/materials`: 通用材质描述和把资源句柄转换成 Bevy material 的能力；不绑定具体资源路径。
+- `primitives/meshes`: 单个 mesh 资源或程序化 mesh 表现 primitive，不混入具体对象语义。
+- `primitives/models`: model、mesh、material、transform、visibility 的通用组合；完整 glb/gltf scene 属于 `products/scenes`。
+- `primitives/transforms`: 3D camera、light、model 常用的 transform helper，例如 look-at。
 
+`capabilities`:
+
+- `capabilities/animation`: 3D glTF animation、AnimationGraph、播放状态和状态同步 system。
+- `capabilities/effects`: 命中特效、技能特效、纯视觉生命周期效果。
+- `capabilities/particles`: 3D 粒子发射器、粒子配置、纯视觉粒子生命周期。
+
+`products`:
+
+- `products/characters`: 角色 3D 表现。
+- `products/debug`: 3D 渲染调试显示，例如包围盒、坐标轴、骨骼可视化。
+- `products/environment`: skybox、environment map、雾、体积、环境氛围。
+- `products/items`: 物品、装备、掉落物的 3D 表现。
+- `products/overlays`: 贴在世界对象上的覆盖表现，例如血条、名字、选中框、交互提示。
+- `products/props`: 静物、装饰物、可见但不负责玩法规则的场景物件。
+- `products/scenes`: 3D 场景装配和场景级表现。
+
+## 文件组织规则
+
+- 小目录可以直接把入口类型写在 `mod.rs`；复杂目录再拆成语义明确的文件。
+- 具体 Component、Bundle、Resource、system 拆到语义明确的文件里。
+- `demo` 目录和 `Demo*` 类型是可删除示例，用来给 AI/人类开发提供参考组合方式。
 - 空 `Component` 才是 marker；marker struct 名称必须以 `Marker` 结尾。
 - 以 `Marker` 结尾的 `Component` struct 必须是空 struct，不允许带字段。
-- marker 和它标记的具体对象放在同一个模块里，不单独集中到 `markers.rs`。
+- marker 和它标记的具体对象、bundle、system 放在同一个模块里，不单独集中到 `markers.rs`。
+- 空产品目录可以保留很薄的 `mod.rs` / `plugin.rs` 占位；已经成型的 primitives、capabilities、products 结构不应删除或打散。
+- 不新增 `common.rs`、`misc.rs`、`utils.rs` 这类含义模糊的文件。
 
 ## assets 配合规则
 
@@ -51,12 +90,12 @@
 
 常见映射：
 
-- `crates/render_3d/src/models` 使用 `assets/3d/models`。
-- `crates/render_3d/src/materials` 使用 `assets/3d/materials` 和 `assets/shaders/3d`。
-- `crates/render_3d/src/animation` 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons`。
-- `crates/render_3d/src/lighting` 使用 `assets/3d/lightmaps`、`assets/3d/irradiance-volumes`、`assets/3d/environment-maps`。
-- `crates/render_3d/src/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。
-- `crates/render_3d/src/scenes` 使用 `assets/3d/scenes`，必要时也可以使用 `assets/scenes`。
+- `primitives/meshes` 使用上层传入的 mesh handle，mesh 可能来自 `assets/3d/models` 或程序生成。
+- `primitives/models` 使用上层传入的 mesh/material handle。
+- `primitives/materials` 使用上层传入的 texture / shader handle 和材质参数。
+- `capabilities/animation` 使用 `assets/3d/animations`、`assets/3d/rigs`、`assets/3d/skeletons` 或 glTF 内嵌 animation label。
+- `products/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。
+- `products/scenes` 使用 `assets/3d/scenes`，必要时也可以引用 `assets/scenes`。
 
 示例：
 
@@ -103,6 +142,17 @@ prefab 应该使用 `render_3d` 暴露的高层表现结构，不应该自己散
 - 不放普通 UI、菜单、按钮、背包、HUD 等界面逻辑。
 
 普通 UI 不属于 `render_3d`。贴在 3D 世界对象上的名字、血条、选中框、交互提示放到 `overlays`。真正存在于 3D 世界里的屏幕、广告牌、全息面板，按语义放到 `props`、`effects` 或具体对象目录。
+
+## Animation 规则
+
+- `capabilities/animation` 定义 3D 表现层动画播放能力，包括 `AnimationClip3d`、`AnimationPlayback3d`、AnimationGraph 构造和 scene-ready 播放 system。
+- animation 模块可以修改视觉表现数据，例如 active animation node、播放模式、视觉 transform。
+- animation 模块不表达攻击判定、技能阶段、硬直、combo window、移动规则或物理碰撞。
+- 具体角色的 animation state、clip set 和状态同步 system 可以写在 `capabilities/animation/<product>/` 或具体 `products/characters` 子目录；第一版 demo fox 放在 `capabilities/animation/demo/`。
+- `catalog` 只绑定具体 glTF/scene/model 资源路径；catalog 不定义 `Demo*Animations`、animation set、animation state 或播放 system。
+- glTF animation label 到项目 animation state 的映射属于 `render_3d`，不属于 `catalog`。
+- 具体角色如何使用 animation，写到 `render_3d/src/products/characters` 等语义目录；例如角色视觉 bundle 组合 `DemoFox3dAnimationSet` 和 `DemoFox3dAnimationStateSet`。
+- 第一版不实现复杂骨骼 runtime，只使用 Bevy glTF loader 自动生成的 `AnimationPlayer`，后续骨骼/slot/skin/attachment 必须单独分目录。
 
 ## 渲染实体规则
 

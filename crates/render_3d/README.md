@@ -38,7 +38,7 @@
 
 可复用但不是最低层的 3D 表现能力：
 
-- `capabilities/animation`: 提供 `AnimationClip3d`、`AnimationPlayback3d` 和 scene-ready 播放系统；第一版不手写骨骼，使用 Bevy glTF loader 自动生成的 `AnimationPlayer`。
+- `capabilities/animation`: 提供 `AnimationClip3d`、`AnimationPlayback3d` 和 scene-ready 播放系统；`demo/` 放 3D glTF 动画状态切换示例。第一版不手写骨骼，使用 Bevy glTF loader 自动生成的 `AnimationPlayer`。
 - `capabilities/effects`: 命中特效、法术特效、拖尾、爆炸等纯视觉生命周期效果。
 - `capabilities/particles`: 3D 粒子发射器、粒子配置、纯视觉粒子生命周期。
 

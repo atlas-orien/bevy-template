@@ -27,12 +27,14 @@
 
 ## 边界规则
 
-- `catalog` 可以依赖 `bevy`、`prefab`、`render_2d`、`error`。
+- `catalog` 可以依赖 `bevy`、`prefab`、`render_2d`、`render_3d`、`error`。
 - `catalog` 不定义 ECS component、bundle、resource、message 或 gameplay system。
 - `catalog` 不 spawn entity，不接收 `Commands`，不决定生成时机。
 - `catalog` 不读取输入、网络、外部 runtime 或 gameplay 状态。
 - `catalog` 只返回 prefab 或 prefab 所需的资源绑定数据。
 - 具体对象结构仍属于 `prefab`；视觉 bundle/system 仍属于 `render_2d`。
+- 3D animation set、animation state、clip wrapper、播放系统和状态同步系统属于 `render_3d`，不属于 `catalog`。
+- `catalog` 不直接 import `render_3d::capabilities::animation::*` 来组装动画结构；需要 3D 动画时调用 `render_3d` 暴露的具体 product/capability constructor。
 - `render_3d::primitives::materials/presets` 可以封装模板自带 preview/demo 材质资源；这类材质资源不需要再经由 catalog 二次包装。
 - `catalog` 不直接定义通用 `NpcPrefab`、`PlayerPrefab` 等对象模板；这些放到 `prefab`。
 - `catalog` 定义的是具体内容，例如 `Npc1`、`Npc2`、`DemoPlayer`，并在内部转换成 `prefab` 暴露的模板。
@@ -44,6 +46,7 @@
 - 不新增集中式 `paths.rs`、`resources.rs`、`assets.rs` 来收集所有路径；这会随着内容增长变成全局杂物文件。
 - `gameplay` 和 `dev_preview` 不应该为具体 prefab 手写 `asset_server.load("...")`。
 - 如果资源需要 loader settings，例如 tilemap array layout，也由 `catalog` 统一封装。
+- 3D glTF 的 scene/model 路径可以写在具体 catalog 对象里；glTF animation label 到项目动画状态的映射属于 `render_3d` 具体 product/capability，不在 catalog 里另写 `Demo*Animations` 之类结构。
 
 ## 验证要求
 

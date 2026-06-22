@@ -18,6 +18,10 @@
 
 ## 当前模板资源
 
+- `assets/3d/models/demo-fox/fox.glb`
+  - 来源：Bevy 示例资源 `assets/models/animated/Fox.glb`
+  - 许可证：Bevy `CREDITS.md` 记录的 Khronos glTF sample model，CC0 1.0 Universal
+  - 用途：`dev_preview animation_3d` 的 3D glTF 动画状态切换示例
 - `assets/2d/static/props/demo-skeletal-bone/demo-skeletal-bone.png`
   - 来源：Bevy 示例资源 `assets/textures/rpg/props/generic-rpg-rod.png`
   - 许可证：Bevy `CREDITS.md` 记录的 Kenney 资源，CC0 1.0 Universal

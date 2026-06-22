@@ -1,6 +1,8 @@
 use crate::rules::base::derives::reject_derived_types;
 use crate::rules::base::paths::reject_paths;
-use crate::rules::base::source::{reject_bevy_world_access, reject_direct_input_access};
+use crate::rules::base::source::{
+    reject_bevy_world_access, reject_direct_input_access, reject_type_paths_in_rust_files,
+};
 use crate::rules::util::reject_path;
 
 pub struct CatalogRules<'a> {
@@ -22,6 +24,12 @@ pub fn check_catalog(rules: CatalogRules<'_>, errors: &mut Vec<String>) {
         "catalog should not access Bevy World or spawn entities; gameplay/dev_preview decide timing",
     );
     reject_direct_input_access(rules.crate_path, errors, "catalog should not read input");
+    reject_type_paths_in_rust_files(
+        rules.crate_path,
+        &["render_3d::capabilities::animation"],
+        errors,
+        "catalog must not assemble 3D animation state/clip sets; keep animation playback and state mapping in render_3d products/capabilities",
+    );
 }
 
 fn require_catalog_world_namespaces(crate_path: &str, errors: &mut Vec<String>) {

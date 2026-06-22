@@ -26,7 +26,6 @@
 - `primitives/camera`: 3D camera 基础结构；当前提供 fixed、follow、orbit、isometric、top-down 等 camera preset。输入控制不放在这里，上层只修改对应 camera component 的数据。
 - `primitives/meshes`: 提供 `MeshAsset3d`，只表达单个 `Handle<Mesh>`，不混入 material 或实例 transform。
 - `primitives/models`: 提供 `Model3d` / `Model3dBundle` 组合 mesh 和 material；`ModelInstance3d` / `ModelInstance3dBundle` 组合 model、transform 和 visibility。完整 glb/gltf scene 属于 `products/scenes`。
-- `primitives/skins`: 提供 `SkinAsset3d`、`SkinJoints3d`、`Skin3d`、`Skin3dBundle`，薄封装 Bevy 的 `SkinnedMesh` 和 `SkinnedMeshInverseBindposes`。
 - `primitives/materials`: 当前提供 `MaterialSurface3d` 作为材质组合器；不同文件为同一个类型补充 flat color、textured PBR 等链式组合能力；不绑定具体资源路径。
 - `primitives/lights`: 当前提供 direction / point / spot 基础 light bundle，以及 `presets/sun` 里的太阳光预设。
 - `primitives/transforms`: 当前提供 `LookAtTransform3d`，统一表达 3D 相机和灯光常用的 look-at transform。
@@ -39,7 +38,7 @@
 
 可复用但不是最低层的 3D 表现能力：
 
-- `capabilities/animation`: 未来放 clip、playback、blend 等随时间生成 pose 的能力。
+- `capabilities/animation`: 提供 `AnimationClip3d`、`AnimationPlayback3d` 和 scene-ready 播放系统；第一版不手写骨骼，使用 Bevy glTF loader 自动生成的 `AnimationPlayer`。
 - `capabilities/effects`: 命中特效、法术特效、拖尾、爆炸等纯视觉生命周期效果。
 - `capabilities/particles`: 3D 粒子发射器、粒子配置、纯视觉粒子生命周期。
 
@@ -65,7 +64,6 @@
 
 - `primitives/meshes` 表达从 glb/gltf 或程序生成几何体中得到的单个 mesh 资源引用。
 - `primitives/models` 使用上层传入的 mesh/material handle，表达可实例化的 3D 模型外观组合。
-- `primitives/skins` 表达 Bevy glTF 导入后的 skin 绑定：joint entities 和 inverse bind poses。
 - `primitives/materials` 使用上层传入的 texture / shader handle 和材质参数；具体资源路径由 catalog 或更高层绑定。
 - `capabilities/animation` 使用 `assets/3d/animations`。
 - `products/environment` 使用 `assets/3d/environment-maps`、`assets/3d/volumes`。

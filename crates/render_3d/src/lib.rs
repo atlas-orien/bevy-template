@@ -8,12 +8,13 @@ pub use error::Result;
 
 use bevy::prelude::*;
 
+use self::capabilities::animation::Animation3dPlugin;
 use self::primitives::Render3dPrimitivesPlugin;
 
 pub struct Render3dPlugin;
 
 impl Plugin for Render3dPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(Render3dPrimitivesPlugin);
+        app.add_plugins((Render3dPrimitivesPlugin, Animation3dPlugin));
     }
 }

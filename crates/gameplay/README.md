@@ -179,7 +179,7 @@ session、level、round 等玩法生命周期的标准落点。
 
 - 不定义 `Component`、`Bundle`、`Resource`、`Event`。
 - 不直接依赖或调用 `ecs`。
-- 不封装 Avian、Rapier 或其它物理后端。
+- 不封装物理后端。
 - 不直接读取键盘、手柄、鼠标、外设、AI、脚本或网络来源。
 - 不加载精灵、模型、音频。
 - 不播放动画。

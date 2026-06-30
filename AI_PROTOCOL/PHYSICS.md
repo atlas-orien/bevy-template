@@ -14,7 +14,7 @@
 bevy_rapier
 ```
 
-本项目不再提供 Avian 后端，也不通过 Cargo feature 切换物理后端。
+本项目不提供其它物理后端，也不通过 Cargo feature 切换物理后端。
 
 2D 和 3D 都需要支持：
 
@@ -143,7 +143,7 @@ bevy_rapier3d
 ## Cargo 规则
 
 - 只有 `crates/physics/Cargo.toml` 可以依赖 `bevy_rapier2d`、`bevy_rapier3d`。
-- 不要新增 Avian 依赖。
+- 不要新增其它物理后端依赖。
 - 不要为物理后端新增 Cargo feature。
 - 如果未来确实需要替换物理后端，必须先更新本文件和 `xtask` 规则。
 
